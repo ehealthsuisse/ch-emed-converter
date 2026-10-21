@@ -1,0 +1,218 @@
+{
+  "description": "Machine-readable mirror of the capability-gap sections of docs/mapping/chmed16a-ch-emed.md. A difference after a round trip is acceptable only if a gap of the same direction explains it (SC-004). path is a regular expression over the difference path; kinds are REMOVED, ADDED or CHANGED (first document compared with the round-tripped one).",
+  "gaps": [
+    {
+      "rule": "M-MDT-01",
+      "direction": "chmed16a-roundtrip",
+      "kinds": [
+        "REMOVED"
+      ],
+      "path": "^/Patient/Med(/.*)?$",
+      "reason": "Patient medical data (weight, height, risks, menstruation, gestation) has no place in the Medication Card"
+    },
+    {
+      "rule": "M-DOC-07",
+      "direction": "chmed16a-roundtrip",
+      "kinds": [
+        "REMOVED"
+      ],
+      "path": "^/(ValBy|ValDt)$",
+      "reason": "Validation of the medication plan has no representation in CH EMED"
+    },
+    {
+      "rule": "M-IN-06",
+      "direction": "chmed16a-roundtrip",
+      "kinds": [
+        "REMOVED"
+      ],
+      "path": "^(/FutureField|/Medicaments/\\d+/NewMedField)$",
+      "reason": "Unknown fields are ignored (CHMED16A parsers must ignore them)"
+    },
+    {
+      "rule": "M-DOS-07",
+      "direction": "chmed16a-roundtrip",
+      "kinds": [
+        "REMOVED"
+      ],
+      "path": "^/Medicaments/\\d+/(Pos|Unit)$",
+      "reason": "Complex taking times and non-daily cycles are carried as free text, the structure is lost"
+    },
+    {
+      "rule": "M-DOS-07",
+      "direction": "chmed16a-roundtrip",
+      "kinds": [
+        "ADDED",
+        "CHANGED"
+      ],
+      "path": "^/Medicaments/\\d+/AppInstr$",
+      "reason": "The free text of such a posology comes back as application instruction"
+    },
+    {
+      "rule": "M-DOS-02",
+      "direction": "chmed16a-roundtrip",
+      "kinds": [
+        "REMOVED"
+      ],
+      "path": "^/Medicaments/\\d+/(Pos|Unit)$",
+      "reason": "A posology with all doses 0 has no dose; the unit and the dates are carried as text"
+    },
+    {
+      "rule": "M-DOS-02",
+      "direction": "chmed16a-roundtrip",
+      "kinds": [
+        "ADDED",
+        "CHANGED"
+      ],
+      "path": "^/Medicaments/\\d+/AppInstr$",
+      "reason": "The dates of a posology without dose come back as text in the application instruction"
+    },
+    {
+      "rule": "M-MED-09",
+      "direction": "chmed16a-roundtrip",
+      "kinds": [
+        "REMOVED"
+      ],
+      "path": "^/Medicaments/\\d+/Unit$",
+      "reason": "A unit without posology has no dose to attach to"
+    },
+    {
+      "rule": "M-RX-02",
+      "direction": "chmed16a-roundtrip",
+      "kinds": [
+        "ADDED"
+      ],
+      "path": "^/(HcPerson|HcOrg|rev)$",
+      "reason": "A revision 1 prescription has no healthcare person/organisation; the output is revision 3 with the details from the author option"
+    },
+    {
+      "rule": "M-REV-24",
+      "direction": "chemed-roundtrip",
+      "kinds": [
+        "REMOVED"
+      ],
+      "path": "^/Medication(Statement|Request)/\\d+/contained/0/(amount|form|ingredient)$",
+      "reason": "Product details (form, amount, ingredients) are not part of CHMED16A; the GTIN identifies the product"
+    },
+    {
+      "rule": "M-REV-24",
+      "direction": "chemed-roundtrip",
+      "kinds": [
+        "REMOVED"
+      ],
+      "path": "^/Medication(Statement|Request)/\\d+/contained/0/code/coding/0/display$",
+      "reason": "The product name (display) is not part of CHMED16A"
+    },
+    {
+      "rule": "M-MED-01",
+      "direction": "chemed-roundtrip",
+      "kinds": [
+        "CHANGED"
+      ],
+      "path": "^/Medication(Statement|Request)/\\d+/contained/0/code/text$",
+      "reason": "CHMED16A has no product name; Medication.code.text is derived from the identifier"
+    },
+    {
+      "rule": "M-DOC-05",
+      "direction": "chemed-roundtrip",
+      "kinds": [
+        "CHANGED"
+      ],
+      "path": "^/MedicationStatement/\\d+/dateAsserted$",
+      "reason": "CHMED16A has only the document date; dateAsserted is set to it"
+    },
+    {
+      "rule": "M-DOS-04",
+      "direction": "chemed-roundtrip",
+      "kinds": [
+        "CHANGED"
+      ],
+      "path": "^/Medication(Statement|Request)/\\d+/dosage(Instruction)?/route/text$",
+      "reason": "The route text is replaced by the CHMED16A route code"
+    },
+    {
+      "rule": "M-REV-10",
+      "direction": "chemed-roundtrip",
+      "kinds": [
+        "CHANGED"
+      ],
+      "path": "^/MedicationStatement/\\d+/status$",
+      "reason": "The status of a statement is not representable; on-hold statements come back active, and the list shifts when statements are excluded"
+    },
+    {
+      "rule": "M-REV-10",
+      "direction": "chemed-roundtrip",
+      "kinds": [
+        "REMOVED"
+      ],
+      "path": "^/MedicationStatement/\\d+$",
+      "reason": "Stopped, not-taken and entered-in-error statements are excluded"
+    },
+    {
+      "rule": "M-AUT-02",
+      "direction": "chemed-roundtrip",
+      "kinds": [
+        "CHANGED",
+        "REMOVED"
+      ],
+      "path": "^/(Organization|Practitioner)/\\d+/(name|address|identifier)(/.*)?$",
+      "reason": "A CHMED16A plan carries only the author GLN; names and addresses come from the author option"
+    },
+    {
+      "rule": "M-PAT-04",
+      "direction": "chemed-roundtrip",
+      "kinds": [
+        "REMOVED",
+        "CHANGED"
+      ],
+      "path": "^/Patient/\\d+/identifier/\\d+/(type|value)$",
+      "reason": "Only VeKa identifiers are carried; other identifiers are replaced by the patient identifier option"
+    },
+    {
+      "rule": "M-PAT-05",
+      "direction": "chemed-roundtrip",
+      "kinds": [
+        "REMOVED"
+      ],
+      "path": "^/Patient/\\d+/address/\\d+/country$",
+      "reason": "The country is not carried over"
+    },
+    {
+      "rule": "M-PAT-06",
+      "direction": "chemed-roundtrip",
+      "kinds": [
+        "ADDED"
+      ],
+      "path": "^/Patient/\\d+/communication$",
+      "reason": "The patient language is derived from the document language"
+    },
+    {
+      "rule": "M-REV-23",
+      "direction": "chemed-roundtrip",
+      "kinds": [
+        "CHANGED"
+      ],
+      "path": "^/Composition/\\d+/confidentiality$",
+      "reason": "The document confidentiality is not carried over; it comes from the options"
+    },
+    {
+      "rule": "M-REV-19",
+      "direction": "chemed-roundtrip",
+      "kinds": [
+        "REMOVED",
+        "CHANGED",
+        "ADDED"
+      ],
+      "path": "^/MedicationStatement/\\d+/dosage/(other(/.*)?|patientInstruction|boundsPeriod|route(/.*)?)$",
+      "reason": "Dosage constructs CHMED16A cannot express are carried as text in the application instruction"
+    },
+    {
+      "rule": "M-REV-34",
+      "direction": "chemed-roundtrip",
+      "kinds": [
+        "REMOVED"
+      ],
+      "path": "^/MedicationRequest/\\d+/(dosageInstruction/(boundsPeriod|route)|reasonCode)$",
+      "reason": "A prescription has no start date (other than the prescription date), route or treatment reason"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+target/
+*.class
+*.log
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+
+# Local tools (downloaded, not committed)
+tools/validator_cli.jar
+
+# Claude Code (local agent configuration and skills)
+.claude/

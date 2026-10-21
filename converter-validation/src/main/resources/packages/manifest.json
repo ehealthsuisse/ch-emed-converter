@@ -1,0 +1,68 @@
+{
+  "root": "ch.fhir.ig.ch-emed#6.0.0",
+  "packages": [
+    {
+      "name": "ch.fhir.ig.ch-emed",
+      "version": "6.0.0",
+      "file": "ch.fhir.ig.ch-emed-6.0.0.tgz",
+      "sha256": "acfc1d5deb390468129bbbacf350b1a9760758783b224c3aececd7c6e0da0a68",
+      "load": true
+    },
+    {
+      "name": "ch.fhir.ig.ch-core",
+      "version": "6.0.0",
+      "file": "ch.fhir.ig.ch-core-6.0.0.tgz",
+      "sha256": "890b7d6d7eac286ba3ce28b5a8e88913a444bdccbfd163809a64337be6db21ca",
+      "load": true
+    },
+    {
+      "name": "hl7.fhir.uv.extensions.r4",
+      "version": "5.2.0",
+      "file": "hl7.fhir.uv.extensions.r4-5.2.0.tgz",
+      "sha256": "b406e75575f05676559d0759770c5939d023ee72fb2ef38e0b3259328487720a",
+      "load": true
+    },
+    {
+      "name": "hl7.terminology.r4",
+      "version": "7.0.1",
+      "file": "hl7.terminology.r4-7.0.1.tgz",
+      "sha256": "7e88619af8d6ec06f0f521a64800da7d8197ceb1c451c293ec1b796efce3840e",
+      "load": true
+    },
+    {
+      "name": "ch.fhir.ig.ch-term",
+      "version": "3.3.0",
+      "file": "ch.fhir.ig.ch-term-3.3.0.tgz",
+      "sha256": "6ea89184cdb3bae702a146a9233eca980f4bb66fe776c103d13d12f5b265a586",
+      "load": true
+    },
+    {
+      "name": "hl7.fhir.uv.extensions.r4",
+      "version": "5.3.0-ballot-tc1",
+      "file": "hl7.fhir.uv.extensions.r4-5.3.0-ballot-tc1.tgz",
+      "sha256": "5f5d1e88052d615453e6b7a1eb4f885df36590f14b52974e5860485d16819bd9",
+      "load": false
+    },
+    {
+      "name": "ihe.formatcode.fhir",
+      "version": "1.4.0",
+      "file": "ihe.formatcode.fhir-1.4.0.tgz",
+      "sha256": "d803d12f3b51940ae44f8a72372918cc409052e072d7e22bc968de58e301a34c",
+      "load": true
+    },
+    {
+      "name": "hl7.terminology.r4",
+      "version": "6.5.0",
+      "file": "hl7.terminology.r4-6.5.0.tgz",
+      "sha256": "a28b638483a11df696ed92198276236d759e41c7a3a8960c9e7e7d0a1185bd06",
+      "load": false
+    },
+    {
+      "name": "hl7.terminology.r4",
+      "version": "6.3.0",
+      "file": "hl7.terminology.r4-6.3.0.tgz",
+      "sha256": "5e080e5343406f964022b086da713df374e410245c518166c5b1b93a800cdd71",
+      "load": false
+    }
+  ]
+}

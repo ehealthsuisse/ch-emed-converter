@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ch-emed-converter/schemas/conversion-report/1.0.0",
+  "title": "Conversion Report",
+  "description": "Machine-readable conversion report shared by library, CLI and REST service. Contains no patient-identifying data.",
+  "type": "object",
+  "required": ["reportVersion", "converterVersion", "source", "target", "specifications", "outcome", "entries"],
+  "additionalProperties": false,
+  "properties": {
+    "reportVersion": { "const": "1.0.0" },
+    "converterVersion": { "type": "string" },
+    "source": { "$ref": "#/$defs/format" },
+    "target": { "$ref": "#/$defs/format" },
+    "specifications": {
+      "type": "object",
+      "description": "Pinned specification version per format, e.g. {\"CH_EMED\": \"ch.fhir.ig.ch-emed#6.0.0\"}",
+      "additionalProperties": { "type": "string" }
+    },
+    "outcome": { "enum": ["SUCCESS", "SUCCESS_WITH_WARNINGS", "FAILED"] },
+    "entries": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/entry" }
+    }
+  },
+  "$defs": {
+    "format": { "enum": ["CH_EMED", "CHMED16A"] },
+    "entry": {
+      "type": "object",
+      "required": ["severity", "code", "phase", "path", "message", "clinicalLoss"],
+      "additionalProperties": false,
+      "properties": {
+        "severity": { "enum": ["ERROR", "WARNING", "INFORMATION"] },
+        "code": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]*$" },
+        "phase": { "enum": ["PARSE", "VALIDATE_INPUT", "MAP", "VALIDATE_OUTPUT"] },
+        "path": { "type": "string", "description": "JSON Pointer (CHMED16A) or FHIRPath (CH EMED) in the source document" },
+        "targetPath": { "type": "string" },
+        "message": { "type": "string", "description": "Human-readable; never contains patient field values" },
+        "clinicalLoss": { "type": "boolean" }
+      }
+    }
+  }
+}

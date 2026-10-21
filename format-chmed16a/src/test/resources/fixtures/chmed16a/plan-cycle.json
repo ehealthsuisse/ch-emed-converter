@@ -1,0 +1,2 @@
+{"Id":"0c7f0f7e-3b1c-4c1e-9a55-1a2b3c4d5e06","MedType":1,"Auth":"7601000000001","Dt":"2026-10-01T09:30:00+02:00","Patient":{"FName":"Hans","LName":"Muster","BDt":"1950-03-21","Gender":1,"Street":"Testweg 1","Zip":"3000","City":"Bern","Lng":"de","Phone":"+41 31 000 00 00","Ids":[{"Type":1,"Val":"80756000000000000001"}]},
+"Medicaments":[{"Id":"7680521101306","IdType":2,"Pos":[{"DtFrom":"2026-10-01","CyDu":604800,"TT":[{"Off":28800,"DoFrom":1}]}],"Unit":"STK","AutoMed":0}]}
