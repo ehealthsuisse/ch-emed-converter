@@ -1,31 +1,30 @@
 <!--
 Sync Impact Report
 ==================
-Version change: 1.3.1 → 1.4.0
-Bump rationale: MINOR — new supported format (eRezept Schweiz QR code / URL) added to the
-Conversion Scope with matching conformance, test and data-protection rules; nothing removed.
+Version change: 1.4.0 → 1.4.1
+Bump rationale: PATCH — clarification only. The REST rule "return the conversion report with
+every response" could not be met by failures that occur before a conversion starts (malformed
+request, unsupported conversion, too large, busy, not ready, internal error); it now requires
+problem details for every failure and the report for every response where a conversion was
+attempted. No principle added, removed or redefined.
 
-Modified principles:
-  - I. Specification Conformance → added eRezept Schweiz (CHMED16A prescription per eRezept
-    conformance rules; signed URL structure preserved).
-  - III. Test-First → eRezept fixtures (synthetic signed URLs) added to the corpus requirement.
-  - IV. Patient Data Protection → no calls to HIN / eRezept services; signature data never
-    logged.
+Modified principles: none
 
 Modified sections:
-  - Conversion Scope → eRezept Schweiz row with its asymmetric direction (read signed QR/URL;
-    write unsigned CHMED16A prescription payload); signing and status checks out of scope.
+  - Domain & Technical Constraints → REST error/report rule clarified (see above).
 
 Added sections: none
 Removed sections: none
 
 Templates requiring updates: none — dependent templates read this file at runtime.
 Affected artefacts:
-  - specs/001-* rewritten from CHMED23A to CHMED16A (CHMED23A was withdrawn by IG eMediplan and
-    is deferred to a later feature; it stays in scope).
-  - specs/002-rest-conversion-service references updated to CHMED16A.
+  - specs/002-rest-conversion-service: constitution references updated to v1.4.1 (finding C2 of
+    the /speckit-analyze run of 2026-10-29).
 
 Follow-up TODOs: none
+
+Previous amendment (1.3.1 → 1.4.0, MINOR): eRezept Schweiz added to Conversion Scope, with
+conformance (I), test (III) and data-protection (IV) rules.
 -->
 
 # CH EMED Converter Constitution
@@ -189,8 +188,9 @@ The converter MUST support the following conversions, each in both directions:
   declared dependencies; locally invented codes are prohibited.
 - Errors MUST be reported with machine-readable codes plus human-readable messages; the CLI
   MUST exit non-zero on conversion errors and offer a JSON form of the conversion report; the
-  REST service MUST signal failures with appropriate HTTP status codes and return the conversion
-  report in machine-readable form with every response.
+  REST service MUST signal failures with appropriate HTTP status codes and machine-readable
+  problem details, and MUST return the conversion report in machine-readable form with every
+  response for which a conversion was attempted.
 - Third-party dependencies (including QR and compression libraries) MUST have a license
   compatible with the project license and are reviewed before introduction.
 
@@ -219,4 +219,4 @@ The converter MUST support the following conversions, each in both directions:
 - Compliance is checked in every plan (Constitution Check) and every code review; unjustified
   complexity or principle violations are grounds for rejecting a change.
 
-**Version**: 1.4.0 | **Ratified**: 2026-10-05 | **Last Amended**: 2026-10-18
+**Version**: 1.4.1 | **Ratified**: 2026-10-05 | **Last Amended**: 2026-10-29

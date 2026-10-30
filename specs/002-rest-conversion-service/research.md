@@ -9,7 +9,7 @@ Alternatives considered.
 ## R1 — Web framework
 
 - **Decision**: Spring Boot 4.1.x (current GA 4.1.1), Spring Web MVC on embedded Tomcat, pinned
-  via the Spring Boot BOM in the parent POM. Per constitution v1.4.0 ("once chosen, the web
+  via the Spring Boot BOM in the parent POM. Per constitution v1.4.1 ("once chosen, the web
   framework applies to the whole project"), Spring Boot is from now on the project's web
   framework. Spring dependencies are allowed **only** in the new `converter-rest` module.
 - **Rationale**: Decided by the user (2026-10-18). Actuator gives health/readiness/metrics,
@@ -20,28 +20,44 @@ Alternatives considered.
 
 ## R2 — Resource design
 
-- **Decision**: `POST /api/v1/conversions/{from}/{to}` with the input document as the raw request
-  body; options as query parameters (`strict`). `GET /api/v1/capabilities`. API description at
-  `GET /api/v1/openapi.yaml`.
-- **Rationale**: The body stays the native document (CHMED16A JSON, FHIR JSON, or the textual
-  CHMED16A QR payload as `text/plain`, mirroring FR-001 of feature 001), so clients send
-  files as they are; an unsupported pair is naturally `404` on a non-existent resource; new
-  formats add path values without changing existing operations (FR-001).
-- **Alternatives**: JSON request envelope containing the document (rejected: forces clients to
-  escape/embed documents); multipart (rejected: unnecessary for JSON-only input).
+- **Decision** (revised 2026-10-29): `POST /api/v1/conversions/{from}/{to}` with an
+  `application/json` request message `{document, options}`; `document` is the input document
+  base64-encoded (RFC 4648 §4, standard alphabet with padding), `options` the conversion options
+  (R12). `GET /api/v1/capabilities`. API description at `GET /api/v1/openapi.yaml`.
+- **Rationale**: Decided by the user (2026-10-29). One message format for every input form
+  (CHMED16A JSON, CHMED16A QR payload text, FHIR JSON, later QR images); options with personal
+  data travel in the body instead of URL or headers (FR-002); base64 delivers the exact input
+  bytes to the library, so the service never re-serializes a document; a single, strictly typed
+  schema eases client generation (SC-005). An unsupported pair remains `404` on a non-existent
+  resource; new formats add path values without changing existing operations (FR-001). The
+  library detects the input form (JSON or QR payload) itself, so no media type field is needed
+  in the request.
+- **Trade-offs accepted**: ~33 % larger requests (limits refer to the decoded document, R6);
+  documents not human-readable in the message (quickstart shows `base64`); both encoded and
+  decoded document briefly in memory (negligible at 5 MB).
+- **Alternatives**: Raw document as request body with options as query parameters/headers
+  (original decision; rejected: patient identifier and author would appear in URLs or headers
+  and are logged by proxies); multipart with a document part and an options part (rejected:
+  more complex for clients, two content models); JSON envelope with the document embedded as
+  JSON object (rejected: requires re-serialization of the input, may change bytes).
 
 ## R3 — Response format and byte identity (FR-003, FR-006)
 
-- **Decision**: Success: `application/json` envelope `{outcome, correlationId, report, output}`,
-  where `output` is the library's output bytes inserted **verbatim** as a raw JSON value (no
-  parse/re-serialize). Failures: `application/problem+json` (RFC 9457) extended with `errorType`,
-  `correlationId` and, when a conversion ran, the full `report`.
-- **Rationale**: Raw embedding guarantees the document is byte-identical to the library result;
-  RFC 9457 is the standard machine-readable error format and is natively supported by Spring.
+- **Decision** (revised 2026-10-29): Success: `application/json` message
+  `{outcome, correlationId, report, output, outputMediaType}`, where `output` is the library's
+  output bytes base64-encoded (RFC 4648 §4) and `outputMediaType` the media type of the decoded
+  document (`application/fhir+json` for `ch-emed`, `application/json` for `chmed16a`). Failures:
+  `application/problem+json` (RFC 9457) extended with `errorType`, `correlationId` and, when a
+  conversion was attempted, the full `report` (constitution v1.4.1).
+- **Rationale**: Base64 keeps the document byte-identical to the library result all the way to
+  the client (a client's JSON parser cannot alter it), mirrors the request, and allows binary
+  outputs (QR images) later without a new operation; RFC 9457 is the standard machine-readable
+  error format and is natively supported by Spring.
 - **Note**: Spring Boot 4 uses Jackson 3 for its own JSON; HAPI and `format-chmed16a` use
-  Jackson 2 internally. Both coexist (different packages); because `output` is embedded as raw
-  bytes, the REST layer never re-serializes documents.
-- **Alternatives**: Base64 `output` (rejected: spec requires native form); re-serializing the
+  Jackson 2 internally. Both coexist (different packages); the REST layer handles documents only
+  as byte arrays and never parses them.
+- **Alternatives**: Output embedded verbatim as raw JSON value (original decision; rejected:
+  asymmetric to the request, clients re-serialize it, no binary outputs); re-serializing the
   document as a JSON node (rejected: may change bytes, number formats, key order).
 
 ## R4 — Failure status mapping (FR-007, SC-006)
@@ -50,11 +66,11 @@ Alternatives considered.
 
   | Case | HTTP | `errorType` |
   |------|------|-------------|
-  | malformed request (bad option value, empty body) | 400 | `MALFORMED_REQUEST` |
-  | unsupported source/target pair or unknown format | 404 | `UNSUPPORTED_CONVERSION` |
-  | request larger than limit | 413 | `REQUEST_TOO_LARGE` |
-  | content type not accepted for the source format (not JSON; `text/plain` only for `chmed16a`) | 415 | `UNSUPPORTED_MEDIA_TYPE` |
-  | invalid input document (PARSE / VALIDATE_INPUT errors, wrong CHMED version, unsupported document type) | 422 | `INVALID_INPUT` |
+  | malformed request message (not JSON, missing/empty `document`, invalid base64, unknown property, invalid option value) | 400 | `MALFORMED_REQUEST` |
+  | unsupported source/target pair, unknown or syntactically invalid format name | 404 | `UNSUPPORTED_CONVERSION` |
+  | request message or decoded document larger than limit | 413 | `REQUEST_TOO_LARGE` |
+  | request `Content-Type` is not `application/json` | 415 | `UNSUPPORTED_MEDIA_TYPE` |
+  | invalid input document (PARSE / VALIDATE_INPUT errors incl. unparseable document, wrong CHMED version, unsupported document type, decoded QR payload above `maxDecodedSize`) | 422 | `INVALID_INPUT` |
   | conversion failed (strict-mode loss, missing required data, output validation error) | 422 | `CONVERSION_FAILED` |
   | concurrency limit reached | 503 | `SERVICE_BUSY` (with `Retry-After`) |
   | validation resources not ready | 503 | `NOT_READY` |
@@ -66,7 +82,7 @@ Alternatives considered.
 
 ## R5 — Statelessness, privacy and logging (FR-005, FR-014, constitution IV)
 
-- **Decision**: No session, no Spring cache, no request/response body logging, no Tomcat access
+- **Decision**: No session, no Spring cache, no request/response body or option logging, no Tomcat access
   log with bodies; `server.error.include-stacktrace=never`, `include-message=never`. One
   servlet filter writes one structured log line per request (time, method, route template,
   status, outcome, duration, input size, correlation id). Correlation id: incoming
@@ -77,10 +93,14 @@ Alternatives considered.
 
 ## R6 — Limits, timeouts and concurrency (FR-017)
 
-- **Decision**: Configuration properties `converter.rest.max-request-size` (default 5 MB),
-  `converter.rest.timeout` (default 10 s), `converter.rest.max-concurrent` (default = available
-  processors) and `converter.rest.queue-size` (default 2 × max-concurrent). Size is enforced by a
-  filter (Content-Length and a counting input stream). Conversions run on a bounded
+- **Decision**: Configuration properties `converter.rest.max-document-size` (decoded input
+  document, default 5 MB), `converter.rest.max-request-size` (whole request message, default
+  8 MB, must be ≥ 4/3 × max-document-size), `converter.rest.timeout` (default 10 s),
+  `converter.rest.max-concurrent` (default = available processors) and
+  `converter.rest.queue-size` (default 2 × max-concurrent). The request size is enforced by a
+  filter (Content-Length and a counting input stream), the document size after base64 decoding.
+  Independently, the library's `maxDecodedSize` (5 MB) limits the decompressed QR payload and
+  yields an `INVALID_INPUT` report entry. Conversions run on a bounded
   `ThreadPoolExecutor`; a full queue → `SERVICE_BUSY`, `Future.get(timeout)` → `CONVERSION_TIMEOUT`
   (task cancelled, no partial output). Request threads use virtual threads
   (`spring.threads.virtual.enabled=true`).
@@ -129,9 +149,31 @@ Alternatives considered.
 - **Decision**: Spring Boot slice/integration tests with MockMvc (contract, status mapping,
   limits); a parity test runs the 001 reference corpus through the service and the library and
   compares output bytes and report (SC-001); a load test with 20 parallel requests checks
-  isolation and p95 < 3 s (SC-003); a log-capture test scans for request content and patient
-  values (SC-004); end-to-end smoke test against the packaged JAR.
+  isolation and p95 < 3 s (SC-003); a log-capture test scans for request content, option values
+  and patient values (SC-004); a test with all outbound connections blocked proves FR-015; a
+  Java client generated from `openapi.yaml` (openapi-generator, test scope only) performs a
+  conversion against the packaged JAR (SC-005); end-to-end smoke test against the packaged JAR.
+  The parity test compares service, library and CLI output for the same input and options.
 - **Rationale**: Constitution III; each success criterion has an automated check.
+
+## R12 — Conversion options (FR-002)
+
+- **Decision**: The `options` object of the request message offers exactly the CLI options:
+  `strict` (boolean, default `false`), `language` (`de-CH` | `fr-CH` | `it-CH` | `en-CH`, used
+  only if the source has none, default `de-CH`), `confidentiality` (`normal` | `restricted` |
+  `secret`, default `normal`), `patientIdentifier` `{system, value}` and `author`
+  `{gln, given, family, organization {name, street, zip, city, country}}` — the same structure
+  as the CLI `--author` file. The service builds the library options from
+  `ConversionOptions.defaults()` and overrides only the values present in the request;
+  `validateOutput` is always `true`, `idStrategy`, `clock` and `maxDecodedSize` stay at the
+  library defaults (identical to the CLI, so output is byte-identical, FR-003). Unknown
+  properties or invalid values → `400 MALFORMED_REQUEST`; the problem `detail` names the
+  property, never its value.
+- **Rationale**: Constitution Conversion Scope (identical options in library, CLI and REST);
+  feature 001 FR-023 needs patient identifier and author for many CHMED16A plans; personal data
+  stays out of URLs, headers and logs (constitution IV).
+- **Alternatives**: Query parameters for all options (rejected: personal data in URLs);
+  headers for patient identifier and author (rejected: headers are commonly logged by gateways).
 
 ## Sources
 

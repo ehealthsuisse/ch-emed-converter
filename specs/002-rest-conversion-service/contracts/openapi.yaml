@@ -23,26 +23,17 @@ paths:
           in: path
           required: true
           schema: { $ref: '#/components/schemas/FormatName' }
-        - name: strict
-          in: query
-          required: false
-          description: Fail if clinically relevant information cannot be represented exactly.
-          schema: { type: boolean, default: false }
         - $ref: '#/components/parameters/CorrelationIdHeader'
       requestBody:
         required: true
         description: |
-          The input document in its native form: CHMED16A JSON, FHIR JSON, or (only when
-          `from` is `chmed16a`) the textual CHMED16A QR payload (`CHMED16A1…`).
+          Request message with the base64-encoded input document (CHMED16A JSON, CHMED16A QR
+          payload text `CHMED16A1…`, or FHIR JSON; the library detects the form) and the
+          conversion options. Options with personal data are only accepted here, never in
+          the URL or in headers.
         content:
           application/json:
-            schema: { type: object }
-          application/fhir+json:
-            schema: { type: object }
-          text/plain:
-            schema:
-              type: string
-              pattern: '^CHMED16A'
+            schema: { $ref: '#/components/schemas/ConversionRequest' }
       responses:
         '200':
           description: Conversion succeeded (possibly with warnings).
@@ -141,9 +132,68 @@ components:
               targetPath: { type: string }
               message: { type: string }
               clinicalLoss: { type: boolean }
+    Base64Document:
+      type: string
+      contentEncoding: base64
+      minLength: 1
+      description: Document bytes, base64-encoded (RFC 4648 §4, standard alphabet, with padding).
+    ConversionRequest:
+      type: object
+      additionalProperties: false
+      required: [document]
+      properties:
+        document: { $ref: '#/components/schemas/Base64Document' }
+        options: { $ref: '#/components/schemas/ConversionOptions' }
+    ConversionOptions:
+      type: object
+      additionalProperties: false
+      description: Same options as the CLI; omitted options take the library defaults.
+      properties:
+        strict:
+          type: boolean
+          default: false
+          description: Fail if clinically relevant information cannot be represented exactly.
+        language:
+          type: string
+          enum: [de-CH, fr-CH, it-CH, en-CH]
+          default: de-CH
+          description: Document language, used only if the source has none.
+        confidentiality:
+          type: string
+          enum: [normal, restricted, secret]
+          default: normal
+        patientIdentifier:
+          type: object
+          additionalProperties: false
+          required: [system, value]
+          description: Used only if the source has no patient identifier (feature 001 FR-023).
+          properties:
+            system: { type: string, minLength: 1, description: 'URI, e.g. urn:oid:…' }
+            value: { type: string, minLength: 1 }
+        author:
+          $ref: '#/components/schemas/AuthorDetails'
+    AuthorDetails:
+      type: object
+      additionalProperties: false
+      description: |
+        Used only where the source lacks author details required by CH EMED (feature 001
+        FR-023). Same structure as the CLI `--author` file.
+      properties:
+        gln: { type: string, description: 'Practitioner GLN; validated by the library as in the CLI.' }
+        given: { type: string }
+        family: { type: string }
+        organization:
+          type: object
+          additionalProperties: false
+          properties:
+            name: { type: string }
+            street: { type: string }
+            zip: { type: string }
+            city: { type: string }
+            country: { type: string }
     ConversionResponse:
       type: object
-      required: [outcome, correlationId, report, output]
+      required: [outcome, correlationId, report, output, outputMediaType]
       properties:
         outcome:
           type: string
@@ -151,8 +201,12 @@ components:
         correlationId: { type: string }
         report: { $ref: '#/components/schemas/ConversionReport' }
         output:
-          type: object
-          description: Output document, byte-identical to the library result (CHMED16A JSON or FHIR JSON).
+          $ref: '#/components/schemas/Base64Document'
+          description: Output document; after decoding byte-identical to the library result.
+        outputMediaType:
+          type: string
+          examples: [application/fhir+json, application/json]
+          description: Media type of the decoded output document.
     ErrorType:
       type: string
       enum:
@@ -210,7 +264,8 @@ components:
           additionalProperties: { type: string }
         limits:
           type: object
-          required: [maxRequestSizeBytes, timeoutSeconds]
+          required: [maxRequestSizeBytes, maxDocumentSizeBytes, timeoutSeconds]
           properties:
             maxRequestSizeBytes: { type: integer }
+            maxDocumentSizeBytes: { type: integer }
             timeoutSeconds: { type: integer }

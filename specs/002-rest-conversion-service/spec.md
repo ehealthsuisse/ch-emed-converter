@@ -17,6 +17,20 @@
   operated by the customer.
 - TLS is not required in the service; transport security is the operator's responsibility.
 
+### Session 2026-10-29
+
+- Q: Which conversion options does the service offer? → A: The same as the CLI (constitution
+  Conversion Scope: identical options in library, CLI and REST): strict, document language,
+  confidentiality, patient identifier and author details. Options carrying personal data are
+  never sent in the URL or in headers.
+- Q: How are document and options transported? → A: As one JSON request message; the input
+  document is embedded base64-encoded (RFC 4648 §4), the options as a JSON object. The response
+  carries the output document base64-encoded as well, so that byte identity can be verified by
+  the client.
+- Q: A document that cannot be parsed (e.g. not JSON) → A: The conversion is attempted; the
+  library's PARSE errors are returned as invalid input with report. Only a malformed request
+  message (not JSON, invalid base64, missing document) is rejected without conversion.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Convert a document over HTTP (Priority: P1)
@@ -122,9 +136,17 @@ data.
 
 ### Edge Cases
 
-- Request without a document, with an empty body, or with a body that does not match the
-  declared content type → client error, no conversion attempted.
-- Request larger than the configured maximum size → rejected with a specific "too large" error.
+- Request message that is not JSON, has no or an empty document, has a document that is not
+  valid base64, or contains unknown or invalid options → client error, no conversion attempted.
+- Request message that is not declared as JSON → "unsupported media type" error.
+- Document that is not parseable in the source format (e.g. not JSON) → input error with the
+  library's report (PARSE phase).
+- Request or decoded document larger than the configured maximum size → rejected with a
+  specific "too large" error.
+- Conversion needs a patient identifier or author details that neither the source nor the
+  request options provide → failed conversion naming the missing data (feature 001 FR-023).
+- eRezept URL sent as CHMED16A input → input error until the eRezept feature is implemented;
+  signature data is never logged.
 - Missing or unknown source or target format → client error naming the supported formats.
 - Source format declared by the caller differs from the detected format (e.g. CHMED23A sent as
   CHMED16A) → input error stating the detected format.
@@ -149,26 +171,33 @@ data.
   CHMED16A ↔ CH EMED (medication plan ↔ MedicationCard, prescription ↔ MedicationPrescription)
   from feature 001 — and MUST offer later conversions (CHMED23A, CARA EMED, eMediplan QR code, eRezept)
   without changes to the existing operations.
-- **FR-002**: Callers MUST be able to specify the source format, the target format and the
-  conversion options available in the library (at least strict mode) per request.
+- **FR-002**: Callers MUST be able to specify per request the source format, the target format
+  and the same conversion options as the CLI: strict mode, document language, confidentiality,
+  patient identifier and author details (feature 001 FR-022/FR-023). Options that carry personal
+  data (patient identifier, author details) MUST NOT be transmitted in the URL or in headers.
 - **FR-003**: For identical input and options, the service MUST return the same output document
-  and the same conversion report as the library (byte-identical output document).
+  and the same conversion report as the library and the CLI (byte-identical output document
+  after base64 decoding).
 - **FR-004**: Each response MUST contain the conversion outcome ("success", "success with
   warnings", "failed") and the machine-readable conversion report; successful responses MUST
   also contain the output document.
 - **FR-005**: The service MUST be stateless: each request is processed independently, and the
   service MUST NOT persist, cache or queue request or response content beyond the request.
-- **FR-006**: The interface MUST be a plain REST/JSON API (not a FHIR operation): the response is
-  a JSON envelope containing outcome, conversion report and, on success, the output document in
-  its native form (CHMED16A JSON or FHIR JSON) without additional wrapping.
+- **FR-006**: The interface MUST be a plain REST/JSON API (not a FHIR operation). The request is
+  a JSON message containing the input document base64-encoded and the conversion options; the
+  response is a JSON message containing outcome, conversion report and, on success, the output
+  document base64-encoded together with its media type. Documents are transported as exact
+  bytes and never re-serialized by the service.
 
 **Failure handling**
 
 - **FR-007**: The service MUST distinguish in its response status at least: malformed request,
   invalid input document, unsupported conversion, failed conversion (e.g. strict mode), request
   too large, timeout, and internal error.
-- **FR-008**: Failure responses MUST contain the machine-readable report with codes and
-  human-readable messages and MUST NOT contain stack traces or internal details.
+- **FR-008**: Failure responses MUST contain machine-readable problem details with codes and
+  human-readable messages and, whenever a conversion was attempted, the conversion report
+  (constitution v1.4.1); they MUST NOT contain stack traces, internal details, input content or
+  option values.
 - **FR-009**: Internal errors MUST be identifiable through a correlation id that appears in the
   response and in the operational log.
 
@@ -194,13 +223,16 @@ data.
   resources MUST be available locally.
 - **FR-016**: The service MUST provide health and readiness information; readiness MUST be
   negative while validation resources are unavailable.
-- **FR-017**: Maximum request size, conversion time limit and concurrency limits MUST be
-  configurable by the operator.
+- **FR-017**: Maximum request size, maximum decoded document size, conversion time limit and
+  concurrency limits MUST be configurable by the operator.
 
 ### Key Entities
 
-- **Conversion Request**: source format, target format, options and the input document.
-- **Conversion Response**: outcome, conversion report and, on success, the output document.
+- **Conversion Request**: source and target format (path), JSON message with the base64-encoded
+  input document and the conversion options (strict, language, confidentiality, patient
+  identifier, author details).
+- **Conversion Response**: outcome, conversion report and, on success, the base64-encoded output
+  document with its media type.
 - **Conversion Report**: as defined in feature 001 (entries with path, reason code, message,
   severity); identical for library, CLI and service.
 - **Capability Statement**: supported source/target pairs, options and pinned specification
@@ -236,8 +268,12 @@ data.
 - Access control and transport security (e.g. TLS) are provided by the operator's
   infrastructure (API gateway, reverse proxy, network segmentation); the service has no user
   or client management.
-- Request and response documents use JSON, matching the formats supported by the library
-  (CHMED16A JSON, FHIR JSON).
+- Request and response messages are JSON; the embedded documents are base64-encoded and can be
+  any form supported by the library (CHMED16A JSON, CHMED16A QR payload text, FHIR JSON, later
+  binary forms such as QR images).
+- "Standard server" in SC-002/SC-003 means 4 vCPU, 8 GB RAM, JVM 21 with default heap settings.
+- eRezept URLs and QR codes are handled by the eRezept feature; until then they are rejected as
+  invalid input.
 - The web framework is chosen in the plan of this feature and then applies project-wide
   (constitution v1.3.0).
 - QR image upload and download become relevant with the eMediplan QR code feature and are not
