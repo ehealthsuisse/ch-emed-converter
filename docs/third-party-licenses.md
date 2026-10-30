@@ -15,13 +15,22 @@ with the Apache-2.0/MIT/EPL policy of the project (constitution, technology gate
 | BSD-2/3-Clause | commonmark-java, Ucum-java, JGit, Stax2 API | |
 | Unicode-3.0 | ICU4J | permissive |
 | Unknown in the POM | `jakarta-regexp` 1.4 | Apache-2.0 (Apache Jakarta Regexp), the POM lacks the licence element |
-| project modules | `converter-core`, `converter-validation`, `format-chmed16a`, `converter-cli` | Apache-2.0 (see `LICENSE`, `<licenses>` in the parent POM) |
+| Apache-2.0 (REST service, feature 002) | Spring Framework 7.0, Spring Boot 4.1, Apache Tomcat Embed 11.0, Hibernate Validator 9.1, Jakarta Validation API, JBoss Logging, Micrometer, Jackson 3.1, log4j-to-slf4j | only in `converter-rest` |
+| BSD-2-Clause / CC0 | HdrHistogram (transitive of Micrometer, `converter-rest`) | permissive |
+| MIT (REST service) | jul-to-slf4j (`converter-rest`) | |
+| project modules | `converter-core`, `converter-validation`, `format-chmed16a`, `converter-cli`, `converter-rest` | Apache-2.0 (see `LICENSE`, `<licenses>` in the parent POM) |
+
+Reviewed again 2026-10-29 for the REST service (feature 002): the runtime dependencies of
+`converter-rest` (`converter-rest/target/licenses/THIRD-PARTY.txt`, 130 entries) add only
+Apache-2.0, MIT and BSD-2-Clause/CC0 licences. Test-only tools of the module (openapi-request-validator,
+openapi-generator, swagger-parser) are not shipped.
 
 ## Open items
 
 - The CLI distribution (`ch-emed-converter.jar` + `lib/`) contains Logback (EPL-1.0) and Saxon-HE
   (MPL-2.0) as unmodified JARs; the distribution archive (`ch-emed-converter-<version>-dist.zip`)
-  ships `LICENSE`, `NOTICE` and this overview. The project itself is licensed under Apache-2.0 (decided 2026-10-21), which is compatible with all licences above.
+  ships `LICENSE`, `NOTICE` and this overview. The same holds for the REST service distribution
+  (`ch-emed-converter-rest-<version>-dist.zip`, JAR + `lib/`). The project itself is licensed under Apache-2.0 (decided 2026-10-21), which is compatible with all licences above.
 - The transitive HTTP client libraries of the HL7 validator are on the classpath although the
   converter never calls a network service (constitution IV). The enforcer rules ban them as direct
   dependencies only.

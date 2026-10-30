@@ -181,6 +181,81 @@
           </execution>
         </executions>
       </plugin>
+      <!-- Thin runnable JAR, as for the CLI: target/ch-emed-converter-rest.jar references the
+           dependencies in target/lib/ through its manifest Class-Path, so the two must be shipped
+           together. No Spring Boot fat JAR (repackage). -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>ch.emed.converter.rest.RestApplication</mainClass>
+              <addClasspath>true</addClasspath>
+              <classpathPrefix>lib/</classpathPrefix>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-runtime-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/lib</outputDirectory>
+              <includeScope>runtime</includeScope>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <!-- THIRD-PARTY.txt of the service's runtime dependencies for the distribution archive;
+             the aggregate report of all modules (parent POM) is produced later in the build -->
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>2.5.0</version>
+        <configuration>
+          <outputDirectory>${project.build.directory}/licenses</outputDirectory>
+          <thirdPartyFilename>THIRD-PARTY.txt</thirdPartyFilename>
+          <includedScopes>compile,runtime</includedScopes>
+        </configuration>
+        <executions>
+          <execution>
+            <id>rest-third-party-licenses</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>add-third-party</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <!-- distribution: ch-emed-converter-rest-<version>-dist.zip with the JAR, lib/, start
+             scripts, operator documentation, LICENSE, NOTICE and THIRD-PARTY.txt -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <finalName>ch-emed-converter-rest-${project.version}</finalName>
+          <descriptors>
+            <descriptor>src/assembly/dist.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <id>distribution</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
@@ -195,13 +270,6 @@
             </env>
           </image>
         </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>repackage</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>

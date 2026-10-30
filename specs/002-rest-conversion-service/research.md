@@ -138,7 +138,9 @@ Alternatives considered.
 
 ## R10 — Packaging and operation
 
-- **Decision**: Executable Spring Boot JAR `ch-emed-converter-rest.jar`; OCI image built with
+- **Decision** (revised 2026-10-29): thin runnable JAR `ch-emed-converter-rest.jar` with its
+  dependencies in `lib/` (manifest `Class-Path`), the same layout as the CLI, instead of a Spring
+  Boot fat JAR; OCI image built with
   `spring-boot:build-image` (Paketo buildpacks, Java 21). Operator documentation
   `docs/operations/rest-service.md` states explicitly: no authentication and no TLS in the
   service; MUST run behind an API gateway / reverse proxy or in a protected network; no data is

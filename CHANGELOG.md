@@ -10,10 +10,14 @@ the report format MUST be recorded here (constitution, "Development Workflow").
 ### Changed
 
 - The CLI is a thin JAR (`converter-cli/target/ch-emed-converter.jar`) with its dependencies in
-  `converter-cli/target/lib/` instead of a shaded fat JAR; ship both together.
+  `converter-cli/target/lib/` instead of a shaded fat JAR; ship both together. The REST service
+  uses the same layout (`converter-rest/target/ch-emed-converter-rest.jar` + `lib/`) instead of a
+  Spring Boot fat JAR.
 - The build produces a distribution archive `converter-cli/target/ch-emed-converter-<version>-dist.zip`
   (JAR, `lib/`, start scripts for Linux/macOS and Windows, `LICENSE`, `NOTICE`, `THIRD-PARTY.txt`,
-  README, third-party licence overview).
+  README, third-party licence overview). The REST service has its own archive
+  `converter-rest/target/ch-emed-converter-rest-<version>-dist.zip` (JAR, `lib/`, start scripts,
+  operator documentation `rest-service.md`, licences).
 
 ### Added
 

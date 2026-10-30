@@ -29,7 +29,7 @@ generation, SC-005)
 **Testing**: JUnit 5, Spring Boot Test (MockMvc), AssertJ, swagger-request-validator; parity,
 load, log-scan, no-outbound-network and generated-client tests (research R11)
 
-**Target Platform**: JVM 21 on Linux; executable JAR and OCI image (Paketo buildpacks)
+**Target Platform**: JVM 21 on Linux; runnable thin JAR with `lib/` (as the CLI) and OCI image (Paketo buildpacks)
 
 **Project Type**: Web service (module of the existing Maven multi-module project)
 

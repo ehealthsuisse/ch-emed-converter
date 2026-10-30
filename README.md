@@ -37,8 +37,12 @@ licence report (`target/licenses/THIRD-PARTY.txt`) and packages the CLI as `conv
 `lib/` together). The distribution `converter-cli/target/ch-emed-converter-<version>-dist.zip`
 contains the JAR, `lib/`, the start scripts `ch-emed-converter.sh` / `ch-emed-converter.bat`
 (they use `JAVA_HOME`, Java 21+), `LICENSE`, `NOTICE`, `THIRD-PARTY.txt`, this README and the
-third-party licence overview. The REST service is packaged as the executable
-`converter-rest/target/ch-emed-converter-rest.jar`.
+third-party licence overview. The REST service is packaged the same way:
+`converter-rest/target/ch-emed-converter-rest.jar` with its dependencies in `converter-rest/target/lib/`
+(ship both together); its distribution `converter-rest/target/ch-emed-converter-rest-<version>-dist.zip`
+contains the JAR, `lib/`, the start scripts `ch-emed-converter-rest.sh` / `ch-emed-converter-rest.bat`
+(`JAVA_HOME`, Java 21+; JVM options in `JAVA_OPTS`), the operator documentation `rest-service.md`,
+`LICENSE`, `NOTICE`, `THIRD-PARTY.txt`, this README and the third-party licence overview.
 
 ## Command line
 

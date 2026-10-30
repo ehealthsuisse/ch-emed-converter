@@ -50,13 +50,28 @@ server is used. It needs no internet access and can run in a network without egr
 
 ## Running
 
-Requirements: Java 21. Build: `./mvnw -pl converter-rest -am package`.
+Requirements: Java 21. Build: `./mvnw -pl converter-rest -am package`. The build produces the
+distribution archive `converter-rest/target/ch-emed-converter-rest-<version>-dist.zip`:
+
+| File | Content |
+|------|---------|
+| `ch-emed-converter-rest.jar`, `lib/` | the service and its dependencies |
+| `ch-emed-converter-rest.sh` / `.bat` | start scripts for Linux/macOS and Windows; need `JAVA_HOME` (Java 21+), pass JVM options in `JAVA_OPTS` and all arguments on to the service |
+| `rest-service.md` | this document |
+| `LICENSE`, `NOTICE`, `THIRD-PARTY.txt`, `third-party-licenses.md`, `README.md` | licences and overview |
 
 ```bash
-java -jar converter-rest/target/ch-emed-converter-rest.jar
+unzip ch-emed-converter-rest-1.0.0-SNAPSHOT-dist.zip
+cd ch-emed-converter-rest-1.0.0-SNAPSHOT
+JAVA_OPTS="-Xmx2g" ./ch-emed-converter-rest.sh --server.port=8080
 ```
 
-The JAR is about 200 MB (HAPI FHIR, HL7 validator, IG packages). Building the validation
+Without the scripts: `java -jar ch-emed-converter-rest.jar` (in the build:
+`java -jar converter-rest/target/ch-emed-converter-rest.jar`).
+
+The JAR (about 60 KB) references its dependencies in `converter-rest/target/lib/` (131 JARs,
+about 190 MB: HAPI FHIR, HL7 validator, IG packages, Spring Boot) through its manifest `Class-Path`;
+ship the JAR and `lib/` together, side by side, as for the CLI. Building the validation
 context takes several seconds at startup; the first conversion after start is slower than the
 following ones (observed: about 6 s for a medication card, versus under a second when warm).
 
