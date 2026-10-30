@@ -99,7 +99,7 @@ RFC 9457 members plus extensions:
 |----------|---------|-------|
 | max-document-size | 5MB | > 0; decoded input document |
 | max-request-size | 8MB | ≥ 4/3 × max-document-size; whole request message |
-| timeout | 10s | > 0 |
+| timeout | 20s | > 0; above the 15 s of SC-002 (revised 2026-10-29) |
 | max-concurrent | available processors | ≥ 1 |
 | queue-size | 2 × max-concurrent | ≥ 0 |
 

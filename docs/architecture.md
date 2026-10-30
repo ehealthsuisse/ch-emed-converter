@@ -22,7 +22,7 @@ flowchart TB
     subgraph clients["Clients"]
         CLI["converter-cli<br/>picocli command line<br/>ch-emed-converter.jar + lib/"]
         EMB["Embedding systems<br/>(Java library)"]
-        REST["converter-rest<br/>(planned, feature 002)"]
+        REST["converter-rest<br/>Spring Boot REST/JSON service<br/>ch-emed-converter-rest.jar"]
     end
 
     subgraph core["converter-core (framework-free)"]
@@ -48,7 +48,7 @@ flowchart TB
 
     CLI --> API
     EMB --> API
-    REST -.-> API
+    REST --> API
     API --> PIPE
     PIPE --> REP
     PIPE --> SPI
@@ -63,8 +63,11 @@ flowchart TB
 ```
 
 Dependencies in the POMs: `format-chmed16a` and `converter-validation` depend on `converter-core`;
-`converter-cli` depends on all three (the format module at runtime). `converter-core` depends on
-neither.
+`converter-cli` depends on all three (the format module at runtime). `converter-rest` depends on
+`converter-core` and, at runtime, on the format and validation modules; it is the only module with
+Spring dependencies (Spring Boot BOM imported in its own POM, enforced by the parent's
+`enforce-framework-free` rule for all other modules). `converter-core` depends on neither.
+Operation of the service: [operations/rest-service.md](operations/rest-service.md).
 
 ## Conversion pipeline
 
@@ -155,7 +158,7 @@ flowchart LR
 | Item | Status | Notes |
 |---|---|---|
 | CHMED16A ↔ CH EMED | implemented (feature 001) | medication plan (MedType 1) and prescription (MedType 3); the prescription output is eRezept-ready |
-| REST service | planned (feature 002, draft) | plain REST/JSON API on top of `converter-core`, no access control in the service |
+| REST service | implemented (feature 002) | plain REST/JSON API on top of `converter-core` (`converter-rest`); documents base64-encoded, same options as the CLI; no access control or TLS in the service |
 | CHMED23A ↔ CH EMED | planned | separate, later feature; CHMED23A was withdrawn by IG eMediplan but stays in the constitution's scope |
 | CARA EMED | planned | named in the constitution as a format whose official examples join the test corpus |
 | eRezept QR code / URL | planned | QR images, QR payload creation and signed eRezept URLs (`https://eprescription.hin.ch/#CHMED16A1…`); feature 001 only decodes the textual `CHMED16A1…` payload |

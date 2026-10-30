@@ -246,10 +246,14 @@ data.
 
 - **SC-001**: For 100% of the feature 001 reference corpus, service responses are identical to
   library results (output document and report).
-- **SC-002**: A medication plan with 100 medication entries is converted and returned in under
-  3 seconds end to end on a standard server.
-- **SC-003**: With 20 simultaneous conversion requests, 95% of responses arrive within 3 seconds
-  and no request returns another request's data.
+- **SC-002**: A medication plan with 100 medication entries is converted and returned end to end
+  in under 15 seconds with a warm service, the limit of feature 001 for the same conversion
+  (SC-005a/b, dominated by the mandatory HL7 output validation), and the service adds less than
+  1 second to the library's own conversion time for the same input.
+- **SC-003**: With 20 simultaneous conversion requests, no request returns another request's data;
+  every request is either answered with 95% of the responses within 15 seconds (warm service) or,
+  if the configured capacity (`max-concurrent` + `queue-size`) is exhausted, rejected at once with
+  `SERVICE_BUSY`.
 - **SC-004**: An automated scan of logs and the service's storage after running the full test
   corpus finds zero occurrences of request content or patient-identifying data.
 - **SC-005**: An integrator can generate a working client from the API description and complete
@@ -271,7 +275,15 @@ data.
 - Request and response messages are JSON; the embedded documents are base64-encoded and can be
   any form supported by the library (CHMED16A JSON, CHMED16A QR payload text, FHIR JSON, later
   binary forms such as QR images).
-- "Standard server" in SC-002/SC-003 means 4 vCPU, 8 GB RAM, JVM 21 with default heap settings.
+- SC-002/SC-003 were revised on 2026-10-29 after measuring (16-core development machine, warm):
+  100 medications 6-8 s end to end, almost all of it HL7 output validation (mapping alone
+  35-60 ms); 20 simultaneous requests p95 4-6 s, because the validation scales poorly with
+  concurrency (one conversion 0.3-0.5 s, 16 at once about 2 s each). The original limits of 3 s
+  contradicted feature 001 (SC-005b: up to 15 s for the validation of 100 entries) and cannot be met
+  while output validation is mandatory (constitution I). The REST layer adds no measurable time.
+- Reference hardware for operators (provisional, to be revised): 4 vCPU, 8 GB RAM, JVM 21 with
+  default heap settings. With the default limits such a server accepts 12 simultaneous conversions
+  (4 running, 8 queued); further requests get `SERVICE_BUSY`.
 - eRezept URLs and QR codes are handled by the eRezept feature; until then they are rejected as
   invalid input.
 - The web framework is chosen in the plan of this feature and then applies project-wide

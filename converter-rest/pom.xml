@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>ch.emed.converter</groupId>
+    <artifactId>ch-emed-converter-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>converter-rest</artifactId>
+  <name>CH EMED Converter :: REST</name>
+  <description>Stateless REST/JSON conversion service (thin layer over converter-core)</description>
+
+  <properties>
+    <!-- research R1; the Spring Boot BOM is imported here only, so the versions of the other
+         modules stay untouched (constitution V: Spring confined to converter-rest) -->
+    <spring-boot.version>4.1.1</spring-boot.version>
+    <!-- formerly swagger-request-validator-mockmvc (relocated with 3.0.0) -->
+    <openapi-request-validator.version>3.0.0</openapi-request-validator.version>
+    <openapi-generator.version>7.26.0</openapi-generator.version>
+    <openapi.contract>${project.basedir}/../specs/002-rest-conversion-service/contracts</openapi.contract>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- same Jackson 2 as the library modules use for documents (byte identity, FR-003);
+           declared before the Boot BOM so that it wins. Spring itself uses Jackson 3. -->
+      <dependency>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>${jackson.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- openapi-request-validator 3.x needs json-schema-validator 2.x (test scope only; the
+           parent manages 1.5.x for the CLI tests) -->
+      <dependency>
+        <groupId>com.networknt</groupId>
+        <artifactId>json-schema-validator</artifactId>
+        <version>2.0.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ch.emed.converter</groupId>
+      <artifactId>converter-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ch.emed.converter</groupId>
+      <artifactId>converter-validation</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>ch.emed.converter</groupId>
+      <artifactId>format-chmed16a</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.atlassian.oai</groupId>
+      <artifactId>openapi-request-validator-mockmvc</artifactId>
+      <version>${openapi-request-validator.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <!-- parity test: library, CLI and service (research R11) -->
+      <groupId>ch.emed.converter</groupId>
+      <artifactId>converter-cli</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>ch-emed-converter-rest</finalName>
+    <plugins>
+      <plugin>
+        <!-- contract-first (research R8): the OpenAPI file of the spec is the source of truth and
+             is packaged unchanged; there is no second copy in src/main/resources -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-openapi-contract</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.outputDirectory}/static-api</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${openapi.contract}</directory>
+                  <includes>
+                    <include>openapi.yaml</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <!-- the REST module is the one place where Spring is allowed (constitution V) -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-framework-free</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <!-- SC-005: a client generated from the contract works (test scope only; the generated
+             client is used by GeneratedClientIT and never shipped) -->
+        <groupId>org.openapitools</groupId>
+        <artifactId>openapi-generator-maven-plugin</artifactId>
+        <version>${openapi-generator.version}</version>
+        <executions>
+          <execution>
+            <id>generate-test-client</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <inputSpec>${openapi.contract}/openapi.yaml</inputSpec>
+              <generatorName>java</generatorName>
+              <library>native</library>
+              <output>${project.build.directory}/generated-test-sources/openapi-client</output>
+              <addCompileSourceRoot>false</addCompileSourceRoot>
+              <addTestCompileSourceRoot>true</addTestCompileSourceRoot>
+              <apiPackage>ch.emed.converter.rest.client.api</apiPackage>
+              <modelPackage>ch.emed.converter.rest.client.model</modelPackage>
+              <invokerPackage>ch.emed.converter.rest.client</invokerPackage>
+              <generateApiTests>false</generateApiTests>
+              <generateModelTests>false</generateModelTests>
+              <generateApiDocumentation>false</generateApiDocumentation>
+              <generateModelDocumentation>false</generateModelDocumentation>
+              <configOptions>
+                <useJakartaEe>true</useJakartaEe>
+                <openApiNullable>false</openApiNullable>
+                <annotationLibrary>none</annotationLibrary>
+                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+              </configOptions>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring-boot.version}</version>
+        <configuration>
+          <!-- OCI image with Paketo buildpacks: ./mvnw -pl converter-rest spring-boot:build-image
+               (research R10; needs a Docker daemon). The image needs no network at runtime. -->
+          <image>
+            <name>ch-emed-converter-rest:${project.version}</name>
+            <env>
+              <BP_JVM_VERSION>21</BP_JVM_VERSION>
+            </env>
+          </image>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

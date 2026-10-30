@@ -24,6 +24,7 @@
     <module>converter-validation</module>
     <module>format-chmed16a</module>
     <module>converter-cli</module>
+    <module>converter-rest</module>
   </modules>
 
   <properties>
@@ -80,6 +81,11 @@
       <dependency>
         <groupId>ch.emed.converter</groupId>
         <artifactId>format-chmed16a</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.emed.converter</groupId>
+        <artifactId>converter-cli</artifactId>
         <version>${project.version}</version>
       </dependency>
 

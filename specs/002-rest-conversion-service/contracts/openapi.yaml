@@ -60,6 +60,7 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/CapabilitiesResponse' }
+        '503': { $ref: '#/components/responses/ProblemRetry' }
   /openapi.yaml:
     get:
       operationId: openapi

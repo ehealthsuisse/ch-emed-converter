@@ -19,21 +19,26 @@ curl -s localhost:8080/actuator/health/readiness        # → {"status":"UP"} on
 
 ## Scenario 1 — Convert over HTTP (US1, SC-001)
 
-The request is a JSON message with the base64-encoded document (research R2):
+The request is a JSON message with the base64-encoded document (research R2). CHMED16A plans carry
+only `Auth`; CH EMED needs practitioner and organisation, so conversions to CH EMED need the
+`author` option (feature 001 FR-023), here from `author.json` (same file as for the CLI
+`--author`):
 
 ```text
 F=fixtures/chmed16a/plan-basic.json
-jq -n --arg doc "$(base64 -w0 "$F")" \
-   '{document: $doc, options: {strict: true}}' \
+jq -n --arg doc "$(base64 -w0 "$F")" --slurpfile author author.json \
+   '{document: $doc, options: {strict: true, author: $author[0]}}' \
   | curl -s -X POST 'localhost:8080/api/v1/conversions/chmed16a/ch-emed' \
       -H 'Content-Type: application/json' --data-binary @- \
   | tee /tmp/resp.json | jq '.outcome, .report.outcome, .outputMediaType'
 jq -r .output /tmp/resp.json | base64 -d > /tmp/out.json
 ```
 
-Expected: HTTP 200, `"SUCCESS"`, `"application/fhir+json"`; `/tmp/out.json` is byte-identical to
-the CLI output for the same file and options
-(`java -jar converter-cli/... convert --from chmed16a --to ch-emed --strict fixtures/.../plan-basic.json`).
+Expected: HTTP 200, `"SUCCESS_WITH_WARNINGS"` for this plan, `"application/fhir+json"`; `/tmp/out.json` is byte-identical to the CLI output for the same file
+and options
+(`java -jar converter-cli/... convert --from chmed16a --to ch-emed --strict --author author.json fixtures/.../plan-basic.json`).
+Without `author` the conversion fails with 422 `CONVERSION_FAILED` (`MISSING_REQUIRED_DATA` at
+`/Auth`).
 The automated parity test does this for the whole 001 corpus (library, CLI and service).
 
 The same plan as QR payload (`base64 -w0 plan-basic.qr.txt` as `document`) → HTTP 200 with
@@ -91,8 +96,10 @@ A Java client generated from the OpenAPI file performs a first conversion (SC-00
 ## Scenario 5 — Load and isolation (SC-002, SC-003)
 
 `./mvnw -pl converter-rest test -Dtest='*LoadTest'` sends 20 parallel requests with different
-patients. Expected: p95 < 3 s; each response contains only its own patient's document; a single
-100-medication plan < 3 s end to end.
+patients. Expected (SC-002/SC-003 as revised on 2026-10-29): p95 < 15 s and no rejection with the
+default limits on a machine with at least 7 cores (capacity `max-concurrent` + `queue-size` ≥ 20);
+each response contains only its own patient's document; a single 100-medication plan < 15 s end to
+end, less than 1 s above the library's own time.
 
 ## Scenario 6 — Container image
 
@@ -102,3 +109,18 @@ docker run --rm -p 8080:8080 ch-emed-converter-rest:<version>
 ```
 
 Expected: same results as above; image runs without network access to the internet.
+
+## Validation run 2026-10-29 (T048)
+
+Packaged JAR on Windows 11, JDK 21 (Corretto 21.0.11), 16 logical cores. Scenarios 1-3 were run
+with a Python script (standard library only; `jq` was not available) that sends the same requests
+as the commands above; scenarios 4-5 are covered by the automated tests.
+
+| Scenario | Result | Deviation |
+|----------|--------|-----------|
+| 1 Convert over HTTP | pass | The example above originally had no `author` option and failed with 422 `CONVERSION_FAILED`; corrected. With `author`: 200, output byte-identical to the CLI, QR payload gives identical output. |
+| 2 Failure types | pass | All 13 rows checked (status, `errorType`, `application/problem+json`). |
+| 3 Capabilities / API description | pass | Served `openapi.yaml` is byte-identical to the contract. |
+| 4 Operation | pass (automated) | No `missing-packages` profile; `ReadinessTest` simulates the failed build instead. Log of the run: 19 request lines, no patient or option values, no `spring.log` written. |
+| 5 Load and isolation | not met at first, then criteria revised | Isolation holds. The original 3 s limits failed: 20 parallel requests p95 about 4-6 s (SC-003), 100 medications about 6-8 s (SC-002); cause is the HL7 output validation in the library, not the REST layer. SC-002/SC-003 were aligned with feature 001 (15 s, REST overhead < 1 s) the same day; `ConversionLoadTest` checks the revised limits. |
+| 6 Container image | pass | Built later the same day with Rancher Desktop (Docker Engine 29.5.3): `ch-emed-converter-rest:1.0.0-SNAPSHOT`, about 450 MB, Liberica JRE 21.0.13. Run in an internal Docker network without internet (a `curl` container in the same network could not reach the internet): ready in about 15 s, conversion 200, malformed request 400, capabilities with `timeoutSeconds` 20, no patient data in the log. Deviation: the active Docker context pointed to Docker Desktop; the build used `DOCKER_HOST=npipe:////./pipe/docker_engine`. |

@@ -33,6 +33,17 @@ the report format MUST be recorded here (constitution, "Development Workflow").
 - Single mapping specification `docs/mapping/chmed16a-ch-emed.md` (rule ids `M-…`), checked
   against the code by `MappingTraceabilityTest`.
 
+- **REST service** `converter-rest` (feature 002, Spring Boot 4.1): `POST
+  /api/v1/conversions/{from}/{to}` with a JSON message carrying the input document base64-encoded
+  and the same options as the CLI (`strict`, `language`, `confidentiality`, `patientIdentifier`,
+  `author`); the output document is returned base64-encoded and byte-identical to library and CLI.
+  RFC 9457 problem details with ten distinct `errorType`s; `GET /api/v1/capabilities`;
+  `GET /api/v1/openapi.yaml` (contract-first); liveness/readiness probes; configurable size, time
+  and concurrency limits. No authentication, no TLS, no persistence — operator documentation in
+  `docs/operations/rest-service.md`.
+- Constitution 1.4.1: the REST service returns the conversion report with every response for which
+  a conversion was attempted.
+
 - Licence: Apache License 2.0 (`LICENSE`, `<licenses>` in the parent POM).
 
 ### Pinned specifications

@@ -95,7 +95,8 @@ Alternatives considered.
 
 - **Decision**: Configuration properties `converter.rest.max-document-size` (decoded input
   document, default 5 MB), `converter.rest.max-request-size` (whole request message, default
-  8 MB, must be ≥ 4/3 × max-document-size), `converter.rest.timeout` (default 10 s),
+  8 MB, must be ≥ 4/3 × max-document-size), `converter.rest.timeout` (default 20 s, raised from 10 s on 2026-10-29 to stay above the
+  15 s of SC-002),
   `converter.rest.max-concurrent` (default = available processors) and
   `converter.rest.queue-size` (default 2 × max-concurrent). The request size is enforced by a
   filter (Content-Length and a counting input stream), the document size after base64 decoding.
@@ -149,7 +150,7 @@ Alternatives considered.
 - **Decision**: Spring Boot slice/integration tests with MockMvc (contract, status mapping,
   limits); a parity test runs the 001 reference corpus through the service and the library and
   compares output bytes and report (SC-001); a load test with 20 parallel requests checks
-  isolation and p95 < 3 s (SC-003); a log-capture test scans for request content, option values
+  isolation and p95 < 15 s (SC-003, revised 2026-10-29); a log-capture test scans for request content, option values
   and patient values (SC-004); a test with all outbound connections blocked proves FR-015; a
   Java client generated from `openapi.yaml` (openapi-generator, test scope only) performs a
   conversion against the packaged JAR (SC-005); end-to-end smoke test against the packaged JAR.

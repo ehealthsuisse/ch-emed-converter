@@ -1,8 +1,8 @@
 # ch-emed-converter
 
 Bidirectional conversion between **eMediplan CHMED16A** (medication plan, prescription) and
-**CH EMED 6.0.0** (Medication Card and Medication Prescription document), as a Java 21 library and a
-command-line tool. CH EMED is the hub model: every conversion goes to or from CH EMED, so further
+**CH EMED 6.0.0** (Medication Card and Medication Prescription document), as a Java 21 library, a
+command-line tool and a REST service with identical behaviour. CH EMED is the hub model: every conversion goes to or from CH EMED, so further
 formats can be plugged in as modules.
 
 - **Offline and local**: no network calls, no telemetry; patient data never leaves the process and
@@ -20,6 +20,7 @@ formats can be plugged in as modules.
 | `converter-validation` | offline CH EMED validation with the vendored IG packages |
 | `format-chmed16a` | CHMED16A model, parser, validator, mappers, serializer |
 | `converter-cli` | picocli command line (`ch-emed-converter.jar`) |
+| `converter-rest` | stateless REST/JSON service, Spring Boot (`ch-emed-converter-rest.jar`) |
 
 ## Build
 
@@ -36,7 +37,8 @@ licence report (`target/licenses/THIRD-PARTY.txt`) and packages the CLI as `conv
 `lib/` together). The distribution `converter-cli/target/ch-emed-converter-<version>-dist.zip`
 contains the JAR, `lib/`, the start scripts `ch-emed-converter.sh` / `ch-emed-converter.bat`
 (they use `JAVA_HOME`, Java 21+), `LICENSE`, `NOTICE`, `THIRD-PARTY.txt`, this README and the
-third-party licence overview.
+third-party licence overview. The REST service is packaged as the executable
+`converter-rest/target/ch-emed-converter-rest.jar`.
 
 ## Command line
 
@@ -80,6 +82,30 @@ result.report().entries();        // paths, reason codes, severities, clinicalLo
 is expensive to build). Contract:
 [contracts/library-api.md](specs/001-chmed16a-ch-emed-conversion/contracts/library-api.md).
 
+## REST service
+
+```text
+java -jar converter-rest/target/ch-emed-converter-rest.jar
+```
+
+`POST /api/v1/conversions/{from}/{to}` takes a JSON message with the input document
+base64-encoded and the same options as the CLI; the response carries outcome, report and the output
+document base64-encoded (byte-identical to library and CLI):
+
+```json
+{ "document": "eyJJZCI6…",
+  "options": { "strict": false, "author": { "gln": "7601000000001", "given": "…", "family": "…",
+               "organization": { "name": "…", "street": "…", "zip": "…", "city": "…", "country": "CH" } } } }
+```
+
+Failures are RFC 9457 problem details with a distinct `errorType`; `GET /api/v1/capabilities` lists
+conversions, options, pinned specifications and limits; `GET /api/v1/openapi.yaml` serves the
+contract ([openapi.yaml](specs/002-rest-conversion-service/contracts/openapi.yaml)).
+
+**The service has no authentication and no TLS and must run behind an API gateway or in a protected
+network** — requests contain patient data. Operation, configuration and probes:
+[docs/operations/rest-service.md](docs/operations/rest-service.md).
+
 ## Specifications and mapping
 
 - Architecture overview (modules, pipeline, adding a format): [docs/architecture.md](docs/architecture.md)
@@ -100,6 +126,7 @@ The conversion itself (mapping, PDF, serialization) takes well under 0.2 s for a
 medicaments (SC-005a, limit 2 s). The official validation of the produced CH EMED document dominates:
 about 10 s with a warm validation context, linear at about 80 ms per MedicationStatement (SC-005b,
 limit 15 s). The cold start (loading the packages) takes about 30–40 s. Reuse the `Converter`.
+The REST service builds the converter once at startup and adds no measurable time of its own.
 
 ## Data protection
 
