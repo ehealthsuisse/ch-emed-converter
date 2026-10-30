@@ -47,6 +47,12 @@ the report format MUST be recorded here (constitution, "Development Workflow").
   `docs/operations/rest-service.md`.
 - Constitution 1.4.1: the REST service returns the conversion report with every response for which
   a conversion was attempted.
+- Reason code `VALIDATION_INCOMPLETE` (ERROR): the HL7 validator aborts pattern checks after a fixed
+  500 ms of wall-clock time, so under CPU load valid documents failed validation depending on
+  timing. The validator now repeats such a run twice (after 0.2 s and 1 s); if every run is
+  affected, the report contains this single entry instead of the unreliable messages. The CLI
+  exits `3` and the REST service answers `503 SERVICE_BUSY` (with report and `Retry-After`)
+  instead of declaring the document invalid.
 
 - Licence: Apache License 2.0 (`LICENSE`, `<licenses>` in the parent POM).
 

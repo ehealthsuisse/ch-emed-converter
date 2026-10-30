@@ -11,6 +11,7 @@ import ch.emed.converter.core.api.FormatId;
 import ch.emed.converter.core.api.OrganizationDetails;
 import ch.emed.converter.core.api.PatientIdentifier;
 import ch.emed.converter.core.report.Outcome;
+import ch.emed.converter.core.report.ReasonCode;
 import ch.emed.converter.core.report.ReportJsonWriter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -112,7 +113,11 @@ final class ConvertCommand implements Callable<Integer> {
       context.err.print(TextReportRenderer.render(result.report(), strict));
     }
     if (result.outcome() == Outcome.FAILED) {
-      return CliMain.EXIT_FAILED;
+      // validation incomplete under system load: not an invalid input, the caller should retry
+      boolean incomplete =
+          result.report().entries().stream()
+              .anyMatch(e -> ReasonCode.VALIDATION_INCOMPLETE.equals(e.code()));
+      return incomplete ? CliMain.EXIT_INTERNAL : CliMain.EXIT_FAILED;
     }
     byte[] document = result.output().orElseThrow();
     if (output != null) {

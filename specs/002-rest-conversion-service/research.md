@@ -72,7 +72,7 @@ Alternatives considered.
   | request `Content-Type` is not `application/json` | 415 | `UNSUPPORTED_MEDIA_TYPE` |
   | invalid input document (PARSE / VALIDATE_INPUT errors incl. unparseable document, wrong CHMED version, unsupported document type, decoded QR payload above `maxDecodedSize`) | 422 | `INVALID_INPUT` |
   | conversion failed (strict-mode loss, missing required data, output validation error) | 422 | `CONVERSION_FAILED` |
-  | concurrency limit reached | 503 | `SERVICE_BUSY` (with `Retry-After`) |
+  | concurrency limit reached, or validation not completed under load (`VALIDATION_INCOMPLETE`, with report; added 2026-10-29) | 503 | `SERVICE_BUSY` (with `Retry-After`) |
   | validation resources not ready | 503 | `NOT_READY` |
   | conversion exceeded time limit | 504 | `CONVERSION_TIMEOUT` |
   | unexpected error | 500 | `INTERNAL_ERROR` |

@@ -148,7 +148,7 @@ included whenever a conversion was attempted.
 | 422 | `INVALID_INPUT` | Document cannot be parsed or fails input validation (with report) |
 | 422 | `CONVERSION_FAILED` | Strict-mode loss, missing required data, output validation error (with report) |
 | 500 | `INTERNAL_ERROR` | Unexpected error; see the log line with the correlation id |
-| 503 | `SERVICE_BUSY` | All slots and the queue are taken; retry after `Retry-After` seconds |
+| 503 | `SERVICE_BUSY` | All slots and the queue are taken, or the validation could not be completed under system load (report entry `VALIDATION_INCOMPLETE`); retry after `Retry-After` seconds |
 | 503 | `NOT_READY` | Converter not (yet) built; see readiness |
 | 504 | `CONVERSION_TIMEOUT` | Conversion exceeded `converter.rest.timeout` |
 
@@ -171,6 +171,15 @@ Targets of the spec (revised 2026-10-29, aligned with feature 001): 100 medicati
 to end with less than 1 s added by the service (SC-002); 20 simultaneous requests answered with
 p95 under 15 s, or rejected at once with `SERVICE_BUSY` beyond `max-concurrent` + `queue-size`
 (SC-003).
+
+**CPU starvation.** The HL7 validator aborts its pattern checks after a fixed 500 ms of wall-clock
+time. If the service does not get enough CPU (host overloaded by other processes, container CPU
+limit below `max-concurrent`), valid documents would fail validation. The service retries such a
+validation twice and otherwise answers `503 SERVICE_BUSY` with `VALIDATION_INCOMPLETE` in the
+report instead of declaring the document invalid. Keep `max-concurrent` at or below the CPUs
+actually available to the service (in a container: the CPU limit, not the host's cores) and do
+not co-locate CPU-heavy workloads. Repeated `validation hit the HL7 pattern time limit` warnings
+in the log mean the service is starved.
 
 The default `converter.rest.timeout` of 20 s lies above the 15 s target; plans with 100
 medications took 6-8 s alone. Raise it if callers send larger plans or many requests at once. On a 4-vCPU server the default limits accept 12

@@ -216,6 +216,7 @@ cross-check, `format-chmed16a/src/test/resources/schemas/`).
 | `PDF_CHARACTER_REPLACED` | INFORMATION | characters replaced in the original-representation PDF only |
 | `FHIR_VALIDATION` | per validator | CH EMED validation message (terminology limitations as INFORMATION) |
 | `EREZEPT_REQUIREMENT` | ERROR / WARNING | produced prescription violates eRezept data requirements (ERROR); a prescription read as input does (WARNING) |
+| `VALIDATION_INCOMPLETE` | ERROR | the CH EMED validation could not be completed under system load: the HL7 validator's pattern checks have a fixed time limit of 500 ms wall-clock time; the run is repeated twice (after 0.2 s and 1 s) and only if every run hits the limit, this single entry replaces the unreliable validation messages. Not a statement about the document; retry later (CLI exit 3, REST 503 `SERVICE_BUSY`). Added 2026-10-29 |
 
 ## Capability gaps
 

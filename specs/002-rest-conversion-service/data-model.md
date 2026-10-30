@@ -77,7 +77,9 @@ RFC 9457 members plus extensions:
 `SERVICE_BUSY` 503 (+ `Retry-After`) · `NOT_READY` 503 · `CONVERSION_TIMEOUT` 504 ·
 `INTERNAL_ERROR` 500.
 
-**Classification of a `FAILED` library result**: any ERROR entry in phase `PARSE` or
+**Classification of a `FAILED` library result**: a `VALIDATION_INCOMPLETE` entry (validation not
+completed under system load) → `SERVICE_BUSY` 503 with `Retry-After` and the report (added
+2026-10-29); otherwise any ERROR entry in phase `PARSE` or
 `VALIDATE_INPUT` → `INVALID_INPUT` (includes an unparseable document, a decoded QR payload above
 `maxDecodedSize` and, until the eRezept feature, eRezept URLs); otherwise (`MAP`,
 `VALIDATE_OUTPUT`, strict-mode loss, `MISSING_REQUIRED_DATA` for patient identifier/author) →

@@ -65,7 +65,8 @@ java -jar converter-cli/target/ch-emed-converter.jar formats
 | `--patient-id <system>\|<value>`, `--author <file>` | data CH EMED requires but CHMED16A may lack |
 
 Exit codes: `0` success or success with warnings, `1` failed (nothing on stdout), `2` usage error,
-`3` internal error. Full contract: [contracts/cli.md](specs/001-chmed16a-ch-emed-conversion/contracts/cli.md).
+`3` internal error or validation not completed under system load (`VALIDATION_INCOMPLETE`; retry).
+Full contract: [contracts/cli.md](specs/001-chmed16a-ch-emed-conversion/contracts/cli.md).
 
 ## Library
 

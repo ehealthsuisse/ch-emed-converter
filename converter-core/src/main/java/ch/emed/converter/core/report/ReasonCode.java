@@ -21,5 +21,12 @@ public final class ReasonCode {
   public static final String FHIR_VALIDATION = "FHIR_VALIDATION";
   public static final String EREZEPT_REQUIREMENT = "EREZEPT_REQUIREMENT";
 
+  /**
+   * The CH EMED validation could not be completed because of system load (the HL7 validator's
+   * pattern checks have a fixed time limit), even after retries. Not a statement about the
+   * document; callers should retry later.
+   */
+  public static final String VALIDATION_INCOMPLETE = "VALIDATION_INCOMPLETE";
+
   private ReasonCode() {}
 }

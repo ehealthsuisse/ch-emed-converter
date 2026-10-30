@@ -28,10 +28,14 @@ public class ProblemFactory {
     return create(errorType, detail, null, null, request);
   }
 
-  /** Failure of an attempted conversion; carries the report (constitution v1.4.1). */
+  /**
+   * Failure of an attempted conversion; carries the report (constitution v1.4.1). A temporary
+   * failure (503, e.g. validation incomplete under load) also gets {@code Retry-After}.
+   */
   public ResponseEntity<Problem> withReport(
       ErrorType errorType, String detail, String reportJson, HttpServletRequest request) {
-    return create(errorType, detail, reportJson, null, request);
+    ResponseEntity<Problem> problem = create(errorType, detail, reportJson, null, request);
+    return errorType.status() == 503 ? withRetryAfter(problem) : problem;
   }
 
   /** {@link ErrorType#UNSUPPORTED_CONVERSION} listing what is supported. */
@@ -43,7 +47,10 @@ public class ProblemFactory {
   /** Temporary failure (busy, not ready) with {@code Retry-After} in seconds. */
   public ResponseEntity<Problem> retryLater(
       ErrorType errorType, String detail, HttpServletRequest request) {
-    ResponseEntity<Problem> problem = create(errorType, detail, null, null, request);
+    return withRetryAfter(create(errorType, detail, null, null, request));
+  }
+
+  private static ResponseEntity<Problem> withRetryAfter(ResponseEntity<Problem> problem) {
     return ResponseEntity.status(problem.getStatusCode())
         .headers(problem.getHeaders())
         .header(HttpHeaders.RETRY_AFTER, RETRY_AFTER_SECONDS)

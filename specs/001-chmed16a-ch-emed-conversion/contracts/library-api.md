@@ -43,6 +43,10 @@ public record ConversionResult(Outcome outcome, Optional<byte[]> output,
 1. `convert` never throws for invalid input or unsupported conversions; these are reported as
    `FAILED` with ERROR entries. It throws only for programming errors (null request) or an
    unusable validation context (`IllegalStateException`).
+   A validation that cannot be completed under system load (the HL7 validator's pattern time
+   limit is hit in every run, after two retries) yields `FAILED` with a single
+   `VALIDATION_INCOMPLETE` ERROR instead of validation messages; it says nothing about the
+   document, callers should retry later (added 2026-10-29).
 2. `output` is present iff `outcome != FAILED`.
 3. Same request bytes + options + pinned versions → byte-identical `output` and equal `report`.
 4. Thread-safe: one `Converter` instance may serve concurrent requests (needed by 002).

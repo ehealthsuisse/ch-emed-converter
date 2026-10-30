@@ -9,14 +9,25 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import ch.emed.converter.core.api.ConversionPair;
+import ch.emed.converter.core.api.ConversionRequest;
+import ch.emed.converter.core.api.ConversionResult;
 import ch.emed.converter.core.api.Converter;
 import ch.emed.converter.core.api.FormatId;
+import ch.emed.converter.core.report.ConversionReport;
+import ch.emed.converter.core.report.Outcome;
+import ch.emed.converter.core.report.Phase;
+import ch.emed.converter.core.report.ReasonCode;
+import ch.emed.converter.core.report.ReportEntry;
+import ch.emed.converter.core.report.Severity;
 import ch.emed.converter.rest.RestTestSupport;
 import ch.emed.converter.rest.config.ConverterHolder;
 import ch.emed.converter.rest.execution.BoundedConversionExecutor;
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,6 +112,56 @@ class ServiceStateStatusContractTest {
     String body = response.getContentAsString();
     assertThat(body)
         .doesNotContain("Muster", "1950-03-21", "secret", "IllegalStateException", "at ch.");
+  }
+
+  /**
+   * The validation hit the HL7 validator's time limit under load ({@code VALIDATION_INCOMPLETE}):
+   * not an invalid document, so 503 SERVICE_BUSY with Retry-After - and, as a conversion was
+   * attempted, with the report (constitution v1.4.1).
+   */
+  @Test
+  void incompleteValidationIsBusyWithReport() throws Exception {
+    Converter converter = holder.converter().orElseThrow();
+    when(converter.convert(any()))
+        .thenAnswer(
+            invocation -> {
+              ConversionRequest request = invocation.getArgument(0);
+              ReportEntry entry =
+                  ReportEntry.of(
+                      Severity.ERROR,
+                      ReasonCode.VALIDATION_INCOMPLETE,
+                      Phase.VALIDATE_OUTPUT,
+                      "Bundle",
+                      "Validation could not be completed under the current system load.");
+              return new ConversionResult(
+                  Outcome.FAILED,
+                  Optional.empty(),
+                  ConversionReport.of(
+                      "test",
+                      request.source(),
+                      request.target(),
+                      Map.of(),
+                      Outcome.FAILED,
+                      List.of(entry)));
+            });
+    when(executor.execute(any()))
+        .thenAnswer(invocation -> invocation.<Callable<ConversionResult>>getArgument(0).call());
+
+    MockHttpServletResponse response =
+        mvc.perform(
+                post("/api/v1/conversions/{from}/{to}", "ch-emed", "chmed16a")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(RestTestSupport.requestMessage("{}".getBytes(), null)))
+            .andExpect(openApi().isValid(RestTestSupport.RESPONSE_CONTRACT))
+            .andReturn()
+            .getResponse();
+
+    assertThat(response.getStatus()).isEqualTo(503);
+    assertThat(response.getHeader("Retry-After")).isNotBlank();
+    JsonNode problem = RestTestSupport.json(response.getContentAsByteArray());
+    assertThat(problem.get("errorType").asText()).isEqualTo("SERVICE_BUSY");
+    assertThat(problem.get("report").get("entries").get(0).get("code").asText())
+        .isEqualTo(ReasonCode.VALIDATION_INCOMPLETE);
   }
 
   private MockHttpServletResponse assertProblem(int status, String errorType) throws Exception {
