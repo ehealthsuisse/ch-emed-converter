@@ -1,0 +1,4 @@
+{"Id":"0c7f0f7e-3b1c-4c1e-9a55-1a2b3c4d5e07","MedType":1,"Auth":"7601000000001","Dt":"2026-10-01T09:30:00+02:00",
+"Patient":{"FName":"Anna","LName":"Muster","BDt":"1990-07-01","Gender":2,"Lng":"fr","Ids":[{"Type":1,"Val":"80756000000000000002"}],
+ "Med":{"DLstMen":"2026-09-20","Meas":[{"Type":1,"Val":"60","Unit":2},{"Type":2,"Val":"170","Unit":1}],"Rc":[{"Id":1,"R":[577]},{"Id":3,"R":[78]},{"Id":4}]}},
+"Medicaments":[{"Id":"7680521101306","IdType":2,"Pos":[{"DtFrom":"2026-10-01","D":[1,0,0,0]}],"Unit":"STK","AutoMed":0}]}

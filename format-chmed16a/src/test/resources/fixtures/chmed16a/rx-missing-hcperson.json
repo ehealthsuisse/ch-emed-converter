@@ -1,0 +1,1 @@
+{"Patient":{"FName":"Hans","LName":"Muster","BDt":"1950-03-21","Gender":1,"Ids":[{"Type":1,"Val":"80756000000000000001"}]},"Medicaments":[{"Id":"7680521101306","IdType":2,"Pos":[{"D":[1,0,0,0]}],"Unit":"STK"}],"MedType":3,"Id":"3c0f5a61-27d8-4a7e-b3a9-6f0e5b0c9d11","Auth":"7601000000001","Dt":"2026-10-01T09:30:00+02:00"}

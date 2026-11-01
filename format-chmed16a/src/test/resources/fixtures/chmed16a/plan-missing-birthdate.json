@@ -1,0 +1,3 @@
+{"Id":"0c7f0f7e-3b1c-4c1e-9a55-1a2b3c4d5e22","MedType":1,"Auth":"7601000000001","Dt":"2026-10-01T09:30:00+02:00",
+"Patient":{"FName":"Hans","LName":"Muster","Gender":1,"Lng":"de","Ids":[{"Type":1,"Val":"80756000000000000001"}]},
+"Medicaments":[{"Id":"7680521101306","IdType":2,"Pos":[{"DtFrom":"2026-10-01","D":[1,0,0,0]}],"Unit":"STK","AutoMed":0}]}

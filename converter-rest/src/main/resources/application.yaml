@@ -1,0 +1,57 @@
+# Defaults of the REST conversion service (data-model §8, research R5-R7). Operators override
+# them with standard Spring Boot mechanisms (command line, environment, config files).
+spring:
+  application:
+    name: ch-emed-converter-rest
+  threads:
+    virtual:
+      enabled: true
+  jackson:
+    deserialization:
+      # contract: additionalProperties false; unknown properties are a malformed request
+      fail-on-unknown-properties: true
+  mvc:
+    problemdetails:
+      enabled: false
+
+server:
+  error:
+    include-stacktrace: never
+    include-message: never
+    include-binding-errors: never
+    include-exception: false
+
+logging:
+  # Spring Boot default: console only; a rotated log file only if the operator sets
+  # logging.file.name. The service logs metadata only (data-model §10).
+  level:
+    # HAPI FHIR and the HL7 validator log resource content at DEBUG/TRACE; keep them quiet even if
+    # the root level is raised (privacy, constitution IV)
+    org.hl7.fhir: WARN
+    ca.uhn.fhir: WARN
+    # the lenient parser warns about unknown elements of the validator's internal model
+    ca.uhn.fhir.parser.LenientErrorHandler: ERROR
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+      group:
+        # readiness is DOWN until the converter with its validation context is built (FR-016)
+        readiness:
+          include: readinessState,converter
+
+converter:
+  rest:
+    max-document-size: 5MB
+    max-request-size: 8MB
+    # includes the time in the queue; above the 30 s of SC-002, equal to the 40 s of SC-003
+    timeout: 40s
+    # max-concurrent defaults to the available processors, at most 4 (the HL7 validation gains no
+    # throughput above that); queue-size to four times max-concurrent

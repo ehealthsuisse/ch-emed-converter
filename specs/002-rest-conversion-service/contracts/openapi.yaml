@@ -1,0 +1,272 @@
+openapi: 3.1.0
+info:
+  title: CH EMED Converter REST API
+  version: 1.0.0
+  description: |
+    Stateless conversion between CH EMED and other Swiss eMedication formats.
+    The service has no authentication and no TLS; it MUST be operated behind an API gateway,
+    reverse proxy or in a protected network (see docs/operations/rest-service.md).
+    Requests contain patient data; nothing is stored.
+servers:
+  - url: /api/v1
+paths:
+  /conversions/{from}/{to}:
+    post:
+      operationId: convert
+      summary: Convert a document from one format to another
+      parameters:
+        - name: from
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/FormatName' }
+        - name: to
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/FormatName' }
+        - $ref: '#/components/parameters/CorrelationIdHeader'
+      requestBody:
+        required: true
+        description: |
+          Request message with the base64-encoded input document (CHMED16A JSON, CHMED16A QR
+          payload text `CHMED16A1…`, or FHIR JSON; the library detects the form) and the
+          conversion options. Options with personal data are only accepted here, never in
+          the URL or in headers.
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ConversionRequest' }
+      responses:
+        '200':
+          description: Conversion succeeded (possibly with warnings).
+          headers:
+            X-Correlation-Id: { $ref: '#/components/headers/CorrelationId' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ConversionResponse' }
+        '400': { $ref: '#/components/responses/Problem' }
+        '404': { $ref: '#/components/responses/Problem' }
+        '413': { $ref: '#/components/responses/Problem' }
+        '415': { $ref: '#/components/responses/Problem' }
+        '422': { $ref: '#/components/responses/Problem' }
+        '500': { $ref: '#/components/responses/Problem' }
+        '503': { $ref: '#/components/responses/ProblemRetry' }
+        '504': { $ref: '#/components/responses/Problem' }
+  /capabilities:
+    get:
+      operationId: capabilities
+      summary: Supported conversions, options, pinned specification versions and limits
+      responses:
+        '200':
+          description: Capabilities of the running service.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CapabilitiesResponse' }
+        '503': { $ref: '#/components/responses/ProblemRetry' }
+  /openapi.yaml:
+    get:
+      operationId: openapi
+      summary: This API description
+      responses:
+        '200':
+          description: OpenAPI document.
+          content:
+            application/yaml:
+              schema: { type: string }
+components:
+  parameters:
+    CorrelationIdHeader:
+      name: X-Correlation-Id
+      in: header
+      required: false
+      schema: { type: string, pattern: '^[A-Za-z0-9-]{1,64}$' }
+  headers:
+    CorrelationId:
+      schema: { type: string }
+  responses:
+    Problem:
+      description: Failure (see errorType).
+      headers:
+        X-Correlation-Id: { $ref: '#/components/headers/CorrelationId' }
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    ProblemRetry:
+      description: Service busy or not ready (see errorType).
+      headers:
+        X-Correlation-Id: { $ref: '#/components/headers/CorrelationId' }
+        Retry-After:
+          schema: { type: integer, minimum: 1 }
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+  schemas:
+    FormatName:
+      type: string
+      description: Format name; the set grows with new format modules (see /capabilities).
+      examples: [chmed16a, ch-emed]
+      pattern: '^[a-z0-9-]{1,32}$'
+    Outcome:
+      type: string
+      enum: [SUCCESS, SUCCESS_WITH_WARNINGS, FAILED]
+    ConversionReport:
+      description: Conversion report as defined in specs/001-chmed16a-ch-emed-conversion/contracts/conversion-report.schema.json
+      type: object
+      required: [reportVersion, converterVersion, source, target, specifications, outcome, entries]
+      properties:
+        reportVersion: { type: string }
+        converterVersion: { type: string }
+        source: { type: string }
+        target: { type: string }
+        specifications:
+          type: object
+          additionalProperties: { type: string }
+        outcome: { $ref: '#/components/schemas/Outcome' }
+        entries:
+          type: array
+          items:
+            type: object
+            required: [severity, code, phase, path, message, clinicalLoss]
+            properties:
+              severity: { type: string, enum: [ERROR, WARNING, INFORMATION] }
+              code: { type: string }
+              phase: { type: string, enum: [PARSE, VALIDATE_INPUT, MAP, VALIDATE_OUTPUT] }
+              path: { type: string }
+              targetPath: { type: string }
+              message: { type: string }
+              clinicalLoss: { type: boolean }
+    Base64Document:
+      type: string
+      contentEncoding: base64
+      minLength: 1
+      description: Document bytes, base64-encoded (RFC 4648 §4, standard alphabet, with padding).
+    ConversionRequest:
+      type: object
+      additionalProperties: false
+      required: [document]
+      properties:
+        document: { $ref: '#/components/schemas/Base64Document' }
+        options: { $ref: '#/components/schemas/ConversionOptions' }
+    ConversionOptions:
+      type: object
+      additionalProperties: false
+      description: Same options as the CLI; omitted options take the library defaults.
+      properties:
+        strict:
+          type: boolean
+          default: false
+          description: Fail if clinically relevant information cannot be represented exactly.
+        language:
+          type: string
+          enum: [de-CH, fr-CH, it-CH, en-CH]
+          default: de-CH
+          description: Document language, used only if the source has none.
+        confidentiality:
+          type: string
+          enum: [normal, restricted, secret]
+          default: normal
+        patientIdentifier:
+          type: object
+          additionalProperties: false
+          required: [system, value]
+          description: Used only if the source has no patient identifier (feature 001 FR-023).
+          properties:
+            system: { type: string, minLength: 1, description: 'URI, e.g. urn:oid:…' }
+            value: { type: string, minLength: 1 }
+        author:
+          $ref: '#/components/schemas/AuthorDetails'
+    AuthorDetails:
+      type: object
+      additionalProperties: false
+      description: |
+        Used only where the source lacks author details required by CH EMED (feature 001
+        FR-023). Same structure as the CLI `--author` file.
+      properties:
+        gln: { type: string, description: 'Practitioner GLN; validated by the library as in the CLI.' }
+        given: { type: string }
+        family: { type: string }
+        organization:
+          type: object
+          additionalProperties: false
+          properties:
+            name: { type: string }
+            street: { type: string }
+            zip: { type: string }
+            city: { type: string }
+            country: { type: string }
+    ConversionResponse:
+      type: object
+      required: [outcome, correlationId, report, output, outputMediaType]
+      properties:
+        outcome:
+          type: string
+          enum: [SUCCESS, SUCCESS_WITH_WARNINGS]
+        correlationId: { type: string }
+        report: { $ref: '#/components/schemas/ConversionReport' }
+        output:
+          $ref: '#/components/schemas/Base64Document'
+          description: Output document; after decoding byte-identical to the library result.
+        outputMediaType:
+          type: string
+          examples: [application/fhir+json, application/json]
+          description: Media type of the decoded output document.
+    ErrorType:
+      type: string
+      enum:
+        - MALFORMED_REQUEST
+        - UNSUPPORTED_CONVERSION
+        - REQUEST_TOO_LARGE
+        - UNSUPPORTED_MEDIA_TYPE
+        - INVALID_INPUT
+        - CONVERSION_FAILED
+        - SERVICE_BUSY
+        - NOT_READY
+        - CONVERSION_TIMEOUT
+        - INTERNAL_ERROR
+    ConversionPair:
+      type: object
+      required: [from, to]
+      properties:
+        from: { $ref: '#/components/schemas/FormatName' }
+        to: { $ref: '#/components/schemas/FormatName' }
+    Problem:
+      type: object
+      description: RFC 9457 problem details with extensions.
+      required: [type, title, status, errorType, correlationId]
+      properties:
+        type: { type: string, format: uri }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        errorType: { $ref: '#/components/schemas/ErrorType' }
+        correlationId: { type: string }
+        report: { $ref: '#/components/schemas/ConversionReport' }
+        supportedConversions:
+          type: array
+          items: { $ref: '#/components/schemas/ConversionPair' }
+    CapabilitiesResponse:
+      type: object
+      required: [converterVersion, conversions, options, specifications, limits]
+      properties:
+        converterVersion: { type: string }
+        conversions:
+          type: array
+          items: { $ref: '#/components/schemas/ConversionPair' }
+        options:
+          type: array
+          items:
+            type: object
+            required: [name, type, default]
+            properties:
+              name: { type: string }
+              type: { type: string }
+              default: {}
+              description: { type: string }
+        specifications:
+          type: object
+          additionalProperties: { type: string }
+        limits:
+          type: object
+          required: [maxRequestSizeBytes, maxDocumentSizeBytes, timeoutSeconds]
+          properties:
+            maxRequestSizeBytes: { type: integer }
+            maxDocumentSizeBytes: { type: integer }
+            timeoutSeconds: { type: integer }

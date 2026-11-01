@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Tests: same behaviour as the service (Spring Boot default console logging, levels as in
+     application.yaml). Needed because converter-cli (test scope, parity test) brings its own
+     logback.xml (WARN, stderr), which would otherwise win. -->
+<configuration>
+  <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+  <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+  <logger name="org.hl7.fhir" level="WARN"/>
+  <logger name="ca.uhn.fhir" level="WARN"/>
+  <logger name="ca.uhn.fhir.parser.LenientErrorHandler" level="ERROR"/>
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+  </root>
+</configuration>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- CLI logging: stderr only, WARN by default so that stderr carries the report. Loggers never
+     receive input content or patient data (data-model.md §5). -->
+<configuration>
+  <appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
+    <target>System.err</target>
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} %-5level %logger{30} - %msg%n</pattern>
+    </encoder>
+  </appender>
+  <!-- HAPI FHIR and the HL7 validator log resource content at DEBUG/TRACE; keep them quiet even if
+       the root level is raised (privacy, constitution IV). -->
+  <logger name="org.hl7.fhir" level="WARN"/>
+  <logger name="ca.uhn.fhir" level="WARN"/>
+  <!-- the lenient parser warns about unknown elements of the validator's internal model -->
+  <logger name="ca.uhn.fhir.parser.LenientErrorHandler" level="ERROR"/>
+  <root level="WARN">
+    <appender-ref ref="STDERR"/>
+  </root>
+</configuration>
