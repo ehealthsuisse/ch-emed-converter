@@ -105,7 +105,8 @@ completed under system load) → `SERVICE_BUSY` 503 with `Retry-After` and the r
 | max-concurrent | available processors, at most 4 | ≥ 1 |
 | queue-size | 4 × max-concurrent | ≥ 0 |
 
-Plus standard Spring Boot properties (`server.port`, `management.server.port`). The library's
+Plus standard Spring Boot properties (`server.port`, `management.server.port`, and
+`logging.file.name` for an optional rotated log file; default: console only). The library's
 `maxDecodedSize` (5 MB, decompressed QR payload) is not configurable in the service, as in the
 CLI.
 

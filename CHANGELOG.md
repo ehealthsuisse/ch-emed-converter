@@ -43,7 +43,8 @@ the report format MUST be recorded here (constitution, "Development Workflow").
   `author`); the output document is returned base64-encoded and byte-identical to library and CLI.
   RFC 9457 problem details with ten distinct `errorType`s; `GET /api/v1/capabilities`;
   `GET /api/v1/openapi.yaml` (contract-first); liveness/readiness probes; configurable size, time
-  and concurrency limits. No authentication, no TLS, no persistence — operator documentation in
+  and concurrency limits; console logging, optional log file with `logging.file.name`. No
+  authentication, no TLS, no persistence — operator documentation in
   `docs/operations/rest-service.md`.
 - Constitution 1.4.1: the REST service returns the conversion report with every response for which
   a conversion was attempted.

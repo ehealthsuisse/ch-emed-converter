@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Tests: same configuration as the service (logback-spring.xml). Needed because converter-cli
-     (test scope, parity test) brings its own logback.xml (WARN, stderr), which would otherwise
-     win. -->
+<!-- Tests: same behaviour as the service (Spring Boot default console logging, levels as in
+     application.yaml). Needed because converter-cli (test scope, parity test) brings its own
+     logback.xml (WARN, stderr), which would otherwise win. -->
 <configuration>
   <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
   <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>

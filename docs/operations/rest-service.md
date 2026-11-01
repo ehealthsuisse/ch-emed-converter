@@ -23,7 +23,8 @@ The operator is responsible for:
 ## What the service stores
 
 Nothing. It keeps no session, cache, queue or file of medication data beyond the lifetime of a
-request (FR-005). Logs go to standard output only; there is no log file.
+request (FR-005). Logs go to standard output; a log file exists only if you ask for one (see
+"Log file" below).
 
 Each request produces exactly one log line with metadata only, for example:
 
@@ -35,12 +36,27 @@ outcome=SUCCESS_WITH_WARNINGS durationMs=6112 requestBytes=284819 documentBytes=
 
 No request or response content, option values, report messages, patient data or eRezept
 signature data is logged (FR-014). HAPI FHIR and the HL7 validator, which log resource content at
-DEBUG/TRACE, are held at WARN by `logback-spring.xml`; do not raise them.
+DEBUG/TRACE, are held at WARN in `application.yaml`; do not raise them.
 
 Unexpected errors are logged with the correlation id and the exception type only. Clients receive
 the same correlation id in the `X-Correlation-Id` header and in the problem body; ask callers to
 quote it when they report a problem. A caller may send its own `X-Correlation-Id`
 (`[A-Za-z0-9-]{1,64}`); otherwise the service assigns a UUID.
+
+### Log file
+
+In a container, collect standard output (`docker logs`, log collector of the platform). When
+running directly on a server, either redirect the output of the start script or let the service
+write a rotated log file:
+
+```bash
+./ch-emed-converter-rest.sh --logging.file.name=/var/log/ch-emed/rest-service.log
+```
+
+The file holds the same metadata as the console. By default it rotates at 10 MB and keeps 7 days
+(`logging.logback.rollingpolicy.max-file-size`, `.max-history`). Without `logging.file.name` no
+file is written. Protect the directory like other operational logs: the log contains no patient
+data, but it does show when which conversions ran.
 
 ## No outbound connections
 

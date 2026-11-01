@@ -11,6 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The packaged service ({@code target/ch-emed-converter-rest.jar}) started once per test JVM in its
@@ -21,6 +23,7 @@ final class PackagedJar {
 
   static final Path JAR = Path.of("target", "ch-emed-converter-rest.jar");
   static final Path LOG = Path.of("target", "packaged-jar-it.log");
+  static final Path TEMP = Path.of("target", "packaged-jar-it-tmp");
 
   private static PackagedJar instance;
 
@@ -35,7 +38,7 @@ final class PackagedJar {
   /** Starts the JAR if needed and waits until readiness is UP. */
   static synchronized PackagedJar get() {
     if (instance == null) {
-      instance = start();
+      instance = start(LOG, TEMP);
       Runtime.getRuntime().addShutdownHook(new Thread(instance.process::destroy));
     }
     return instance;
@@ -43,6 +46,12 @@ final class PackagedJar {
 
   URI uri(String path) {
     return base.resolve(path);
+  }
+
+  /** Stops this instance and waits for its end, so that its files are complete. */
+  void stop() throws InterruptedException {
+    process.destroy();
+    process.waitFor();
   }
 
   String log() {
@@ -53,20 +62,27 @@ final class PackagedJar {
     }
   }
 
-  private static PackagedJar start() {
+  /** A further instance with its own console log and temp directory; the caller stops it. */
+  static PackagedJar start(Path consoleLog, Path tempDirectory, String... serviceArgs) {
     if (!Files.isRegularFile(JAR)) {
       throw new IllegalStateException(JAR + " missing; run the integration tests after package");
     }
     try {
+      Files.createDirectories(tempDirectory);
       int port;
       try (ServerSocket socket = new ServerSocket(0)) {
         port = socket.getLocalPort();
       }
       Path java = Path.of(System.getProperty("java.home"), "bin", "java");
+      List<String> command = new ArrayList<>();
+      command.add(java.toString());
+      command.add("-Djava.io.tmpdir=" + tempDirectory.toAbsolutePath());
+      command.addAll(List.of("-jar", JAR.toString(), "--server.port=" + port));
+      command.addAll(List.of(serviceArgs));
       Process process =
-          new ProcessBuilder(java.toString(), "-jar", JAR.toString(), "--server.port=" + port)
+          new ProcessBuilder(command)
               .redirectErrorStream(true)
-              .redirectOutput(LOG.toFile())
+              .redirectOutput(consoleLog.toFile())
               .start();
       PackagedJar jar = new PackagedJar(process, port);
       jar.awaitReady(Duration.ofMinutes(3));

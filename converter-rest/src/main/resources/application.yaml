@@ -21,6 +21,17 @@ server:
     include-binding-errors: never
     include-exception: false
 
+logging:
+  # Spring Boot default: console only; a rotated log file only if the operator sets
+  # logging.file.name. The service logs metadata only (data-model §10).
+  level:
+    # HAPI FHIR and the HL7 validator log resource content at DEBUG/TRACE; keep them quiet even if
+    # the root level is raised (privacy, constitution IV)
+    org.hl7.fhir: WARN
+    ca.uhn.fhir: WARN
+    # the lenient parser warns about unknown elements of the validator's internal model
+    ca.uhn.fhir.parser.LenientErrorHandler: ERROR
+
 management:
   endpoints:
     web:

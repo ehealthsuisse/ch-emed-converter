@@ -88,6 +88,9 @@ Alternatives considered.
   status, outcome, duration, input size, correlation id). Correlation id: incoming
   `X-Correlation-Id` accepted if it matches `[A-Za-z0-9-]{1,64}`, otherwise a new random UUID;
   returned as header and in the body.
+  Logs go to the console by default; the operator can add a rotated log file with
+  `logging.file.name` (Spring Boot default logging, added 2026-11-01). No file is written
+  unasked, in particular no `spring.log` in the temp directory.
 - **Rationale**: Constitution IV; correlation ids are operational metadata and not part of the
   deterministic document output.
 
