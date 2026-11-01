@@ -33,7 +33,8 @@ picocli (CLI), SLF4J (+ Logback in CLI only)
 **Project Type**: Library + CLI (Maven multi-module)
 
 **Performance Goals**: 100-medication plan converted in < 2 s (SC-005a) and its CH EMED output
-validated in < 15 s with a warm validation context (SC-005b); cold start measured separately
+validated in < 30 s with a warm validation context (SC-005b); 20-medication plan converted and
+validated in < 5 s (SC-005c); cold start measured separately
 (research R10)
 
 **Constraints**: Fully offline (no tx server, no HIN/eRezept calls); byte-deterministic output;

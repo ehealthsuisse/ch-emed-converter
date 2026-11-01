@@ -14,24 +14,31 @@ import org.springframework.validation.annotation.Validated;
  * @param maxDocumentSize maximum size of the decoded input document
  * @param maxRequestSize maximum size of the whole request message (base64 adds about a third)
  * @param timeout time limit of one conversion
- * @param maxConcurrent conversions running at the same time; default: available processors
- * @param queueSize conversions waiting for a free slot; default: twice {@code maxConcurrent}
+ * @param maxConcurrent conversions running at the same time; default: available processors, at most
+ *     4
+ * @param queueSize conversions waiting for a free slot; default: four times {@code maxConcurrent}
  */
 @Validated
 @ConfigurationProperties("converter.rest")
 public record ConverterRestProperties(
     @DefaultValue("5MB") DataSize maxDocumentSize,
     @DefaultValue("8MB") DataSize maxRequestSize,
-    @DefaultValue("20s") Duration timeout,
+    @DefaultValue("40s") Duration timeout,
     @Min(1) Integer maxConcurrent,
     @Min(0) Integer queueSize) {
 
+  /**
+   * Upper bound of the default: the throughput of the HL7 validation does not rise above four
+   * conversions at a time (measured with 4, 8 and 16); more only slow down each single conversion.
+   */
+  private static final int DEFAULT_MAX_CONCURRENT = 4;
+
   public ConverterRestProperties {
     if (maxConcurrent == null) {
-      maxConcurrent = Runtime.getRuntime().availableProcessors();
+      maxConcurrent = Math.min(Runtime.getRuntime().availableProcessors(), DEFAULT_MAX_CONCURRENT);
     }
     if (queueSize == null) {
-      queueSize = 2 * maxConcurrent;
+      queueSize = 4 * maxConcurrent;
     }
   }
 

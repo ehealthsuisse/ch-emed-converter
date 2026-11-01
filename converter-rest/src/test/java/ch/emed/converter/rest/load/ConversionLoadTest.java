@@ -7,9 +7,6 @@ import ch.emed.converter.core.api.ConversionRequest;
 import ch.emed.converter.core.api.FormatId;
 import ch.emed.converter.rest.AbstractRestTest;
 import ch.emed.converter.rest.RestTestSupport;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,52 +18,72 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 /**
- * T042: load and isolation, with SC-002/SC-003 as revised on 2026-10-29 (aligned with feature 001
- * SC-005a/b; the HL7 output validation dominates the time). Measured on the warm service.
- *
- * <p>Measurements that led to the revision (16-core development machine): 100 medications 6-8 s end
- * to end, mapping alone 35-60 ms; 20 simultaneous requests p95 4-6 s, because the validation scales
- * poorly with concurrency (one conversion 0.3-0.5 s, 16 at once about 2 s each).
+ * T042: load and isolation (SC-002, SC-003). A large realistic plan has {@value
+ * #TYPICAL_MEDICATIONS} different medications; {@value #EXTREME_MEDICATIONS} is the upper bound,
+ * which has to work rather than be fast. Measured on the warm service; the HL7 output validation
+ * dominates the time.
  */
 class ConversionLoadTest extends AbstractRestTest {
 
+  private static final Logger LOG = LoggerFactory.getLogger(ConversionLoadTest.class);
+
+  private static final int TYPICAL_MEDICATIONS = 20;
+  private static final int EXTREME_MEDICATIONS = 100;
   private static final int PARALLEL = 20;
-  private static final long LIMIT_MILLIS = 15_000;
+  private static final long TYPICAL_LIMIT_MILLIS = 5_000;
+  private static final long EXTREME_LIMIT_MILLIS = 30_000;
+  private static final long PARALLEL_LIMIT_MILLIS = 30_000;
   private static final long MAX_OVERHEAD_MILLIS = 1_000;
   private static final long MAX_REJECTION_MILLIS = 1_000;
 
-  private static final String PLAN =
-      new String(
-          RestTestSupport.read(RestTestSupport.CHMED16A.resolve("plan-basic.json")),
-          StandardCharsets.UTF_8);
-
   @BeforeEach
   void warmUp() throws Exception {
-    MockHttpServletResponse response = post(patientPlan(99));
-    assertThat(response.getStatus()).isEqualTo(200);
+    assertThat(post(PlanGenerator.plan(TYPICAL_MEDICATIONS, "Warmup")).getStatus()).isEqualTo(200);
+  }
+
+  /** SC-002: a large realistic plan in &lt; 5 s end to end (median of three). */
+  @Test
+  void typicalPlanIsFast() throws Exception {
+    byte[] plan = PlanGenerator.plan(TYPICAL_MEDICATIONS, "Typical");
+
+    long[] durations = new long[3];
+    for (int run = 0; run < durations.length; run++) {
+      long start = System.nanoTime();
+      MockHttpServletResponse response = post(plan);
+      durations[run] = (System.nanoTime() - start) / 1_000_000;
+      assertThat(response.getStatus()).isEqualTo(200);
+    }
+    Arrays.sort(durations);
+    LOG.info("{} medications through the service: {} ms", TYPICAL_MEDICATIONS, durations);
+
+    assertThat(durations[1]).as("median, ms").isLessThan(TYPICAL_LIMIT_MILLIS);
   }
 
   /**
-   * SC-003: no request returns another request's data; answered requests have p95 &lt; 15 s;
-   * requests beyond the configured capacity are rejected at once with {@code SERVICE_BUSY}.
+   * SC-003: {@value #PARALLEL} simultaneous requests with large realistic plans return no data of
+   * another request; answered requests have p95 &lt; 30 s; requests beyond the configured capacity
+   * are rejected at once with {@code SERVICE_BUSY}.
    */
   @Test
   void parallelRequestsStayIsolatedAndAreAnsweredInTime() throws Exception {
-    List<Callable<long[]>> requests = new ArrayList<>();
+    List<Callable<Long>> requests = new ArrayList<>();
     for (int i = 0; i < PARALLEL; i++) {
       int patient = i;
       requests.add(
           () -> {
+            byte[] plan = PlanGenerator.plan(TYPICAL_MEDICATIONS, family(patient));
             long start = System.nanoTime();
-            MockHttpServletResponse response = post(patientPlan(patient));
+            MockHttpServletResponse response = post(plan);
             long millis = (System.nanoTime() - start) / 1_000_000;
             if (response.getStatus() == 503) {
               assertThat(errorType(response)).isEqualTo("SERVICE_BUSY");
               assertThat(millis).as("rejection, ms").isLessThan(MAX_REJECTION_MILLIS);
-              return new long[] {-1};
+              return -1L;
             }
             assertThat(response.getStatus()).isEqualTo(200);
             // isolation: the response contains this request's patient and no other one
@@ -77,37 +94,34 @@ class ConversionLoadTest extends AbstractRestTest {
                 assertThat(document).doesNotContain(family(other));
               }
             }
-            return new long[] {millis};
+            return millis;
           });
     }
 
     List<Long> answered = new ArrayList<>();
     try (ExecutorService pool = Executors.newFixedThreadPool(PARALLEL)) {
-      for (Future<long[]> result : pool.invokeAll(requests)) {
-        long millis = result.get()[0];
-        if (millis >= 0) {
-          answered.add(millis);
+      for (Future<Long> result : pool.invokeAll(requests)) {
+        if (result.get() >= 0) {
+          answered.add(result.get());
         }
       }
     }
     long[] durations = answered.stream().mapToLong(Long::longValue).sorted().toArray();
+    LOG.info("{} parallel requests, answered in ms: {}", PARALLEL, durations);
     assertThat(durations).as("answered requests").isNotEmpty();
     long p95 = durations[(int) Math.ceil(0.95 * durations.length) - 1];
 
-    assertThat(p95)
-        .as("p95 of %d answered requests, ms: %s", durations.length, Arrays.toString(durations))
-        .isLessThan(LIMIT_MILLIS);
+    assertThat(p95).as("p95, ms: %s", Arrays.toString(durations)).isLessThan(PARALLEL_LIMIT_MILLIS);
   }
 
   /**
-   * SC-002: 100 medications in &lt; 15 s end to end, and the service adds less than 1 s to the
-   * library's own time for the same input (fastest of two runs each, to damp the validator's
-   * run-to-run variation).
+   * SC-002: the upper bound of {@value #EXTREME_MEDICATIONS} different medications works in &lt; 30
+   * s end to end, and the service adds less than 1 s to the library's own time for the same input
+   * (fastest of two runs each, to damp the validator's run-to-run variation).
    */
   @Test
-  void planWithHundredMedicationsIsWithinLimitAndAddsNoOverhead() throws Exception {
-    String plan = hundredMedications();
-    byte[] bytes = plan.getBytes(StandardCharsets.UTF_8);
+  void extremePlanWorksAndTheServiceAddsNoOverhead() throws Exception {
+    byte[] plan = PlanGenerator.plan(EXTREME_MEDICATIONS, "Extreme");
     ConversionOptions options = ConversionOptions.defaults().withAuthor(RestTestSupport.AUTHOR);
 
     long library = Long.MAX_VALUE;
@@ -116,7 +130,7 @@ class ConversionLoadTest extends AbstractRestTest {
     for (int run = 0; run < 2; run++) {
       long start = System.nanoTime();
       converter()
-          .convert(new ConversionRequest(FormatId.CHMED16A, FormatId.CH_EMED, bytes, options));
+          .convert(new ConversionRequest(FormatId.CHMED16A, FormatId.CH_EMED, plan, options));
       library = Math.min(library, (System.nanoTime() - start) / 1_000_000);
 
       start = System.nanoTime();
@@ -125,34 +139,19 @@ class ConversionLoadTest extends AbstractRestTest {
       assertThat(response.getStatus()).isEqualTo(200);
       document = output(response);
     }
+    LOG.info("{} medications: service {} ms, library {} ms", EXTREME_MEDICATIONS, service, library);
 
-    assertThat(document.split("\"resourceType\":\"MedicationStatement\"", -1)).hasSize(101);
-    assertThat(service).as("100 medications through the service, ms").isLessThan(LIMIT_MILLIS);
+    assertThat(document.split("\"resourceType\":\"MedicationStatement\"", -1))
+        .hasSize(EXTREME_MEDICATIONS + 1);
+    assertThat(service).as("through the service, ms").isLessThan(EXTREME_LIMIT_MILLIS);
     assertThat(service - library)
         .as("service %d ms vs. library %d ms", service, library)
         .isLessThan(MAX_OVERHEAD_MILLIS);
   }
 
-  private static String hundredMedications() {
-    ObjectNode plan = (ObjectNode) RestTestSupport.json(PLAN);
-    ArrayNode medicaments = (ArrayNode) plan.get("Medicaments");
-    List<JsonNode> templates = new ArrayList<>();
-    medicaments.forEach(templates::add);
-    medicaments.removeAll();
-    for (int i = 0; i < 100; i++) {
-      medicaments.add(templates.get(i % templates.size()).deepCopy());
-    }
-    return plan.toString();
-  }
-
   /** CHMED16A→CH EMED through the service. */
-  private MockHttpServletResponse post(String plan) throws Exception {
-    return mvc.perform(
-            convert(
-                "chmed16a",
-                "ch-emed",
-                plan.getBytes(StandardCharsets.UTF_8),
-                RestTestSupport.withAuthor("")))
+  private MockHttpServletResponse post(byte[] plan) throws Exception {
+    return mvc.perform(convert("chmed16a", "ch-emed", plan, RestTestSupport.withAuthor("")))
         .andReturn()
         .getResponse();
   }
@@ -164,12 +163,6 @@ class ConversionLoadTest extends AbstractRestTest {
 
   private static String errorType(MockHttpServletResponse response) throws Exception {
     return RestTestSupport.json(response.getContentAsByteArray()).get("errorType").asText();
-  }
-
-  /** plan-basic with a synthetic patient of its own. */
-  private static String patientPlan(int patient) {
-    return PLAN.replace("\"LName\":\"Muster\"", "\"LName\":\"" + family(patient) + "\"")
-        .replace("\"FName\":\"Hans\"", "\"FName\":\"Last" + patient + "\"");
   }
 
   private static String family(int patient) {

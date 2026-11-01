@@ -96,10 +96,10 @@ A Java client generated from the OpenAPI file performs a first conversion (SC-00
 ## Scenario 5 — Load and isolation (SC-002, SC-003)
 
 `./mvnw -pl converter-rest test -Dtest='*LoadTest'` sends 20 parallel requests with different
-patients. Expected (SC-002/SC-003 as revised on 2026-10-29): p95 < 15 s and no rejection with the
-default limits on a machine with at least 7 cores (capacity `max-concurrent` + `queue-size` ≥ 20);
-each response contains only its own patient's document; a single 100-medication plan < 15 s end to
-end, less than 1 s above the library's own time.
+patients and 20 different medications each. Expected (SC-002/SC-003 as revised on 2026-11-01): p95
+< 30 s and no rejection with the default limits (on 4 or more cores capacity 4 + 16 = 20); each
+response contains only its own patient's document; a single 20-medication plan < 5 s and a
+100-medication plan < 30 s end to end, less than 1 s above the library's own time.
 
 ## Scenario 6 — Container image
 

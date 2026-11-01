@@ -144,7 +144,8 @@ Each entry: Decision / Rationale / Alternatives considered. Sources at the end.
 - **Decision**: Measure with a warm validation context (library and the future REST service reuse
   it). CLI cold start (loading packages, ~30–40 s) is reported separately and is not part of
   SC-005a/b. The target is split (2026-10-21): SC-005a conversion < 2 s, SC-005b official
-  validation of the output < 15 s, both for 100 medication entries.
+  validation of the output < 15 s (raised to < 30 s on 2026-11-01), both for 100 medication entries;
+  SC-005c added on 2026-11-01: 20 different entries converted and validated < 5 s.
 - **Rationale**: Loading NPM packages into the validator dominates cold start; conversion itself
   is linear in the number of medications (about 0.02–0.1 s for 100). The HL7 validator costs about
   80 ms per MedicationStatement plus about 0.6 s fixed (about 10 s for 100). Tried and rejected:

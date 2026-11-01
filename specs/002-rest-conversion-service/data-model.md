@@ -101,9 +101,9 @@ completed under system load) → `SERVICE_BUSY` 503 with `Retry-After` and the r
 |----------|---------|-------|
 | max-document-size | 5MB | > 0; decoded input document |
 | max-request-size | 8MB | ≥ 4/3 × max-document-size; whole request message |
-| timeout | 20s | > 0; above the 15 s of SC-002 (revised 2026-10-29) |
-| max-concurrent | available processors | ≥ 1 |
-| queue-size | 2 × max-concurrent | ≥ 0 |
+| timeout | 40s | > 0; includes the time in the queue; above the 30 s of SC-002/SC-003 (revised 2026-11-01) |
+| max-concurrent | available processors, at most 4 | ≥ 1 |
+| queue-size | 4 × max-concurrent | ≥ 0 |
 
 Plus standard Spring Boot properties (`server.port`, `management.server.port`). The library's
 `maxDecodedSize` (5 MB, decompressed QR payload) is not configurable in the service, as in the

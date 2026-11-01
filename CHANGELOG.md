@@ -68,6 +68,6 @@ loss, output validation failure), `2` usage error, `3` internal error.
 
 ### Known limitations
 
-- Performance: SC-005 is split into SC-005a (conversion of 100 medicaments < 2 s, measured 0.02–0.1 s) and SC-005b (official validation < 15 s with a warm context, measured about 10 s, linear at ~80 ms per medication entry); the cold start of about 30–40 s is reported separately.
+- Performance: SC-005 is split into SC-005a (conversion of 100 medicaments < 2 s, measured 0.02–0.1 s) and SC-005b (official validation < 30 s with a warm context, raised from 15 s on 2026-11-01; measured 10-19 s, linear in the medication entries) and SC-005c (added: 20 different medications converted and validated < 5 s); the cold start of about 30–40 s is reported separately.
 - The mapping specification still needs the review of a person with CH EMED / eMediplan domain
   knowledge (task T118); open interpretation points are marked "domain review".

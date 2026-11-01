@@ -107,9 +107,9 @@ Standard Spring Boot mechanisms apply (command line `--name=value`, environment 
 |----------|---------|---------|
 | `converter.rest.max-document-size` | `5MB` | Maximum size of the decoded input document. Larger → `413 REQUEST_TOO_LARGE`. |
 | `converter.rest.max-request-size` | `8MB` | Maximum size of the whole request message. Must be ≥ 4/3 × `max-document-size` (base64 adds a third). Larger → `413 REQUEST_TOO_LARGE`, checked before the body is read. |
-| `converter.rest.timeout` | `20s` | Time limit of one conversion. Exceeded → conversion cancelled, `504 CONVERSION_TIMEOUT`, no partial output. |
-| `converter.rest.max-concurrent` | available processors | Conversions running at the same time. Conversion and validation are CPU-bound. |
-| `converter.rest.queue-size` | 2 × `max-concurrent` | Conversions waiting for a free slot. Full → `503 SERVICE_BUSY` with `Retry-After`. |
+| `converter.rest.timeout` | `40s` | Time limit of one conversion, including the time in the queue. Exceeded → conversion cancelled, `504 CONVERSION_TIMEOUT`, no partial output. |
+| `converter.rest.max-concurrent` | available processors, at most 4 | Conversions running at the same time. Higher values gain no throughput (see Capacity) and slow down each conversion. |
+| `converter.rest.queue-size` | 4 × `max-concurrent` | Conversions waiting for a free slot. Full → `503 SERVICE_BUSY` with `Retry-After`. |
 | `server.port` | `8080` | HTTP port of the API. |
 | `management.server.port` | same as `server.port` | Optional separate port for the health probes. |
 
@@ -162,15 +162,17 @@ immediately with 503 rather than piling up.
 Measured on a 16-core development machine (warm service). Almost all of the time is the HL7
 validation of the produced CH EMED document; the REST layer itself adds no measurable time.
 
-- One conversion: about 0.4 s for 2, 5.5 s for 50 and 6–7 s for 100 medications.
-- Concurrency: the validation scales poorly. Library only, each conversion of a small plan takes
-  0.3–0.5 s alone, about 1 s with 8 and about 2 s with 16 running at the same time. 20 simultaneous
-  requests (16 slots, 4 queued) took 4–6 s each (p95). Data is never mixed between requests.
+- One conversion: 3–4 s for 20 different medications, a realistic large plan; about 19 s for 100,
+  the upper bound.
+- Concurrency: 20 simultaneous 20-medication plans took about 24 s in total, whether 4, 8 or 16
+  ran at the same time (about 0.8 plans per second). More than four only make each conversion
+  slower: with 4 the answers arrived after 7–24 s, with 16 after 18–23 s. Data is never mixed
+  between requests.
 
-Targets of the spec (revised 2026-10-29, aligned with feature 001): 100 medications under 15 s end
-to end with less than 1 s added by the service (SC-002); 20 simultaneous requests answered with
-p95 under 15 s, or rejected at once with `SERVICE_BUSY` beyond `max-concurrent` + `queue-size`
-(SC-003).
+Targets of the spec (revised 2026-11-01): 20 different medications under 5 s and 100 under 30 s end
+to end, with less than 1 s added by the service (SC-002); 20 simultaneous requests with 20
+medications each answered with p95 under 30 s, or rejected at once with `SERVICE_BUSY` beyond
+`max-concurrent` + `queue-size` (SC-003).
 
 **CPU starvation.** The HL7 validator aborts its pattern checks after a fixed 500 ms of wall-clock
 time. If the service does not get enough CPU (host overloaded by other processes, container CPU
@@ -181,7 +183,6 @@ actually available to the service (in a container: the CPU limit, not the host's
 not co-locate CPU-heavy workloads. Repeated `validation hit the HL7 pattern time limit` warnings
 in the log mean the service is starved.
 
-The default `converter.rest.timeout` of 20 s lies above the 15 s target; plans with 100
-medications took 6-8 s alone. Raise it if callers send larger plans or many requests at once. On a 4-vCPU server the default limits accept 12
-simultaneous conversions (4 running, 8 queued); raise `queue-size` if callers send bursts and can
-wait.
+The default `converter.rest.timeout` of 40 s includes the time in the queue and lies above the 30 s
+targets. The default limits accept 20 simultaneous conversions (4 running, 16 queued); raise
+`queue-size` and `timeout` together if callers send larger bursts and can wait.

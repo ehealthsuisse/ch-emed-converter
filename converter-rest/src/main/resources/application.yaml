@@ -40,6 +40,7 @@ converter:
   rest:
     max-document-size: 5MB
     max-request-size: 8MB
-    # above the 15 s target of SC-002 for large plans (100 medications: 6-8 s alone)
-    timeout: 20s
-    # max-concurrent defaults to the number of available processors, queue-size to twice that
+    # includes the time in the queue; above the 30 s limits of SC-002 and SC-003
+    timeout: 40s
+    # max-concurrent defaults to the available processors, at most 4 (the HL7 validation gains no
+    # throughput above that); queue-size to four times max-concurrent
