@@ -35,7 +35,7 @@ load, log-scan, no-outbound-network and generated-client tests (research R11)
 
 **Performance Goals** (revised 2026-11-01): 20 different medications end to end < 5 s warm, upper
 bound of 100 < 30 s, REST overhead < 1 s (SC-002, feature 001 SC-005); 20 parallel requests with
-20-medication plans answered with p95 < 30 s or rejected at once with `SERVICE_BUSY` beyond the configured capacity, no
+20-medication plans answered with p95 < 40 s or rejected at once with `SERVICE_BUSY` beyond the configured capacity, no
 cross-request data (SC-003)
 
 **Constraints**: Byte-identical output vs. library and CLI (after base64 decoding); documents

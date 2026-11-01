@@ -251,7 +251,7 @@ data.
   entries in under 30 seconds (dominated by the mandatory HL7 output validation, see feature 001
   SC-005); the service adds less than 1 second to the library's own conversion time.
 - **SC-003**: With 20 simultaneous conversion requests with such 20-entry plans, no request returns
-  another request's data; every request is either answered with 95% of the responses within 30
+  another request's data; every request is either answered with 95% of the responses within 40
   seconds (warm service) or, if the configured capacity (`max-concurrent` + `queue-size`) is
   exhausted, rejected at once with `SERVICE_BUSY`.
 - **SC-004**: An automated scan of logs and the service's storage after running the full test

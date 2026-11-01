@@ -101,7 +101,7 @@ completed under system load) → `SERVICE_BUSY` 503 with `Retry-After` and the r
 |----------|---------|-------|
 | max-document-size | 5MB | > 0; decoded input document |
 | max-request-size | 8MB | ≥ 4/3 × max-document-size; whole request message |
-| timeout | 40s | > 0; includes the time in the queue; above the 30 s of SC-002/SC-003 (revised 2026-11-01) |
+| timeout | 40s | > 0; includes the time in the queue; above the 30 s of SC-002, equal to the 40 s of SC-003 (revised 2026-11-01) |
 | max-concurrent | available processors, at most 4 | ≥ 1 |
 | queue-size | 4 × max-concurrent | ≥ 0 |
 

@@ -187,7 +187,7 @@ validation of the produced CH EMED document; the REST layer itself adds no measu
 
 Targets of the spec (revised 2026-11-01): 20 different medications under 5 s and 100 under 30 s end
 to end, with less than 1 s added by the service (SC-002); 20 simultaneous requests with 20
-medications each answered with p95 under 30 s, or rejected at once with `SERVICE_BUSY` beyond
+medications each answered with p95 under 40 s, or rejected at once with `SERVICE_BUSY` beyond
 `max-concurrent` + `queue-size` (SC-003).
 
 **CPU starvation.** The HL7 validator aborts its pattern checks after a fixed 500 ms of wall-clock
@@ -199,6 +199,6 @@ actually available to the service (in a container: the CPU limit, not the host's
 not co-locate CPU-heavy workloads. Repeated `validation hit the HL7 pattern time limit` warnings
 in the log mean the service is starved.
 
-The default `converter.rest.timeout` of 40 s includes the time in the queue and lies above the 30 s
-targets. The default limits accept 20 simultaneous conversions (4 running, 16 queued); raise
+The default `converter.rest.timeout` of 40 s includes the time in the queue; it lies above the 30 s
+for a single large plan and equals the 40 s for simultaneous requests. The default limits accept 20 simultaneous conversions (4 running, 16 queued); raise
 `queue-size` and `timeout` together if callers send larger bursts and can wait.

@@ -51,7 +51,7 @@ converter:
   rest:
     max-document-size: 5MB
     max-request-size: 8MB
-    # includes the time in the queue; above the 30 s limits of SC-002 and SC-003
+    # includes the time in the queue; above the 30 s of SC-002, equal to the 40 s of SC-003
     timeout: 40s
     # max-concurrent defaults to the available processors, at most 4 (the HL7 validation gains no
     # throughput above that); queue-size to four times max-concurrent

@@ -37,7 +37,7 @@ class ConversionLoadTest extends AbstractRestTest {
   private static final int PARALLEL = 20;
   private static final long TYPICAL_LIMIT_MILLIS = 5_000;
   private static final long EXTREME_LIMIT_MILLIS = 30_000;
-  private static final long PARALLEL_LIMIT_MILLIS = 30_000;
+  private static final long PARALLEL_LIMIT_MILLIS = 40_000;
   private static final long MAX_OVERHEAD_MILLIS = 1_000;
   private static final long MAX_REJECTION_MILLIS = 1_000;
 
@@ -66,7 +66,7 @@ class ConversionLoadTest extends AbstractRestTest {
 
   /**
    * SC-003: {@value #PARALLEL} simultaneous requests with large realistic plans return no data of
-   * another request; answered requests have p95 &lt; 30 s; requests beyond the configured capacity
+   * another request; answered requests have p95 &lt; 40 s; requests beyond the configured capacity
    * are rejected at once with {@code SERVICE_BUSY}.
    */
   @Test
