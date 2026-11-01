@@ -35,13 +35,6 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <!-- openapi-request-validator 3.x needs json-schema-validator 2.x (test scope only; the
-           parent manages 1.5.x for the CLI tests) -->
-      <dependency>
-        <groupId>com.networknt</groupId>
-        <artifactId>json-schema-validator</artifactId>
-        <version>2.0.1</version>
-      </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>

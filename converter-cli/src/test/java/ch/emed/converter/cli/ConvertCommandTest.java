@@ -6,8 +6,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.networknt.schema.JsonSchemaFactory;
-import com.networknt.schema.SpecVersion;
+import com.networknt.schema.SchemaRegistry;
+import com.networknt.schema.SpecificationVersion;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -63,7 +63,7 @@ class ConvertCommandTest {
     try (InputStream schema =
         getClass().getResourceAsStream("/schemas/conversion-report.schema.json")) {
       assertThat(
-              JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012)
+              SchemaRegistry.withDefaultDialect(SpecificationVersion.DRAFT_2020_12)
                   .getSchema(schema)
                   .validate(MAPPER.readTree(report.toFile())))
           .isEmpty();

@@ -5,15 +5,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import ch.emed.converter.core.api.FormatId;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.networknt.schema.JsonSchema;
-import com.networknt.schema.JsonSchemaFactory;
-import com.networknt.schema.SpecVersion;
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
+import com.networknt.schema.Schema;
+import com.networknt.schema.SchemaRegistry;
+import com.networknt.schema.SpecificationVersion;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 class ReportJsonWriterTest {
@@ -63,12 +62,12 @@ class ReportJsonWriterTest {
   void serializedReportValidatesAgainstSchema() throws Exception {
     byte[] json = ReportJsonWriter.write(sampleReport());
 
-    JsonSchema schema;
+    Schema schema;
     try (InputStream in =
         getClass().getResourceAsStream("/schemas/conversion-report.schema.json")) {
-      schema = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012).getSchema(in);
+      schema = SchemaRegistry.withDefaultDialect(SpecificationVersion.DRAFT_2020_12).getSchema(in);
     }
-    Set<ValidationMessage> errors = schema.validate(MAPPER.readTree(json));
+    List<Error> errors = schema.validate(MAPPER.readTree(json));
     assertThat(errors).isEmpty();
   }
 

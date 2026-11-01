@@ -2,9 +2,9 @@ package ch.emed.converter.chmed16a.testsupport;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.networknt.schema.JsonSchema;
-import com.networknt.schema.JsonSchemaFactory;
-import com.networknt.schema.SpecVersion;
+import com.networknt.schema.Schema;
+import com.networknt.schema.SchemaRegistry;
+import com.networknt.schema.SpecificationVersion;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -14,14 +14,14 @@ import java.util.List;
 public final class ErezeptSchema {
 
   private static final ObjectMapper MAPPER = new ObjectMapper();
-  private static final JsonSchema SCHEMA = load();
+  private static final Schema SCHEMA = load();
 
   private ErezeptSchema() {}
 
-  private static JsonSchema load() {
+  private static Schema load() {
     try (InputStream in =
         ErezeptSchema.class.getResourceAsStream("/schemas/erezept-chmed16a-schemav7.json")) {
-      return JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012).getSchema(in);
+      return SchemaRegistry.withDefaultDialect(SpecificationVersion.DRAFT_2020_12).getSchema(in);
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }
