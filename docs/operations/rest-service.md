@@ -94,7 +94,7 @@ following ones (observed: about 6 s for a medication card, versus under a second
 Container image (Paketo buildpacks, Java 21; needs a running Docker daemon at build time):
 
 ```bash
-./mvnw -pl converter-rest -am package -DskipTests
+./mvnw -pl converter-rest -am install -DskipTests
 ./mvnw -pl converter-rest spring-boot:build-image
 docker run --rm -p 8080:8080 ch-emed-converter-rest:1.0.0-SNAPSHOT
 ```
@@ -175,15 +175,20 @@ versions and the configured limits of the running instance. Size `max-concurrent
 cores available to the service; requests beyond `max-concurrent + queue-size` are rejected
 immediately with 503 rather than piling up.
 
-Measured on a 16-core development machine (warm service). Almost all of the time is the HL7
-validation of the produced CH EMED document; the REST layer itself adds no measurable time.
+Almost all of the time is the HL7 validation of the produced CH EMED document; the REST layer
+itself adds no measurable time. The hardware makes a large difference (warm service, default
+limits):
 
-- One conversion: 3–4 s for 20 different medications, a realistic large plan; about 19 s for 100,
-  the upper bound.
-- Concurrency: 20 simultaneous 20-medication plans took about 24 s in total, whether 4, 8 or 16
-  ran at the same time (about 0.8 plans per second). More than four only make each conversion
-  slower: with 4 the answers arrived after 7–24 s, with 16 after 18–23 s. Data is never mixed
-  between requests.
+| Case | Linux server, limited to 4 vCPUs (Ryzen 9 3950X) | Windows workstation, 16 logical cores |
+|------|--------------------------------------------------|---------------------------------------|
+| 20 different medications, a realistic large plan | 0.4 s | 3–4 s |
+| 100 different medications, the upper bound | 1.9 s | 16–19 s |
+| 20 simultaneous 20-medication plans, all answered after | 7.9 s | 23–35 s |
+
+Data is never mixed between requests. Concurrency, measured on the workstation only: the 20
+simultaneous plans took about 24 s in total, whether 4, 8 or 16 ran at the same time; more than
+four only made each conversion slower (with 4 the answers arrived after 7–24 s, with 16 after
+18–23 s). Measure on your own hardware before relying on these numbers.
 
 Targets of the spec (revised 2026-11-01): 20 different medications under 5 s and 100 under 30 s end
 to end, with less than 1 s added by the service (SC-002); 20 simultaneous requests with 20

@@ -18,6 +18,7 @@ Thumbs.db
 
 # Local tools (downloaded, not committed)
 tools/validator_cli.jar
+tools/remote-build.sh
 
 # Claude Code (local agent configuration and skills)
 .claude/

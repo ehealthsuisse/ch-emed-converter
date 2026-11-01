@@ -102,7 +102,7 @@ Alternatives considered.
   stays above the 30 s of SC-002 and at the 40 s of SC-003),
   `converter.rest.max-concurrent` (default = available processors, at most 4) and
   `converter.rest.queue-size` (default 4 × max-concurrent; revised 2026-11-01 after measuring:
-  20 simultaneous 20-medication plans took about 24 s in total with 4, 8 and 16 conversions at a
+  20 simultaneous 20-medication plans took about 24 s in total on the Windows workstation with 4, 8 and 16 conversions at a
   time, so more than four only slow down each conversion and risk the validator's pattern time
   limit). The request size is enforced by a
   filter (Content-Length and a counting input stream), the document size after base64 decoding.

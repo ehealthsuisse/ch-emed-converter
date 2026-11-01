@@ -129,8 +129,10 @@ network** — requests contain patient data. Operation, configuration and probes
 
 The conversion itself (mapping, PDF, serialization) takes well under 0.2 s for a plan with 100
 medicaments (SC-005a, limit 2 s). The official validation of the produced CH EMED document dominates:
-10–19 s with a warm validation context depending on the machine, linear in the number of
-MedicationStatements (SC-005b, limit 30 s). A large realistic plan with 20 medications takes 3–4 s (SC-005c, limit 5 s). The cold start (loading the packages) takes about 30–40 s. Reuse the `Converter`.
+about 3 s with a warm validation context on a Linux server limited to 4 vCPUs (Ryzen 9 3950X), up
+to 19 s on a slower Windows workstation (SC-005b, limit 30 s). A large realistic plan with 20
+medications takes about 0.5 s there (3–4 s on the workstation; SC-005c, limit 5 s). The cold start
+(loading the packages) takes about 10 s there, up to 40 s on the workstation. Reuse the `Converter`.
 The REST service builds the converter once at startup and adds no measurable time of its own.
 
 ## Data protection

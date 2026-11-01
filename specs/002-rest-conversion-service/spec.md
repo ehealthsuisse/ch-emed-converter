@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-18
 
-**Status**: Draft
+**Status**: Implemented
 
 **Input**: User description: "Ein REST-Service muss dazugehören."
 
@@ -275,15 +275,18 @@ data.
 - Request and response messages are JSON; the embedded documents are base64-encoded and can be
   any form supported by the library (CHMED16A JSON, CHMED16A QR payload text, FHIR JSON, later
   binary forms such as QR images).
-- SC-002/SC-003 were revised on 2026-10-29 and 2026-11-01 after measuring (16-core development
-  machine, warm). The original limits of 3 s contradicted feature 001 and cannot be met while
+- SC-002/SC-003 were revised on 2026-10-29 and 2026-11-01 after measuring (Windows workstation
+  with 16 logical cores, warm). The original limits of 3 s contradicted feature 001 and cannot be met while
   output validation is mandatory (constitution I). The earlier tests used repeated medications
   (100 entries: 6-8 s) and 2-entry plans for the parallel case, which understated the load; with
   different medications: 20 entries 3-4 s, 100 entries about 19 s, almost all of it HL7 output
   validation (the REST layer adds no measurable time). 20 simultaneous 20-entry plans took about
   24 s in total with 4, 8 and 16 conversions at a time: the validation gains no throughput above
   four, so `max-concurrent` defaults to at most 4. 100 entries are an upper bound that has to
-  work rather than be fast; a real plan is expected to have about 10-20 entries.
+  work rather than be fast; a real plan is expected to have about 10-20 entries. Measured later on
+  a Linux server limited to 4 vCPUs (Ryzen 9 3950X; 2026-11-01): 20 entries 0.4 s, 100 entries
+  1.9 s, 20 simultaneous 20-entry plans p95 7.9 s. The limits stay generous on purpose, as the
+  operators' hardware is unknown.
 - Reference hardware for operators (provisional, to be revised): 4 vCPU, 8 GB RAM, JVM 21 with
   default heap settings. With the default limits a service accepts 20 simultaneous conversions
   (4 running, 16 queued); further requests get `SERVICE_BUSY`.

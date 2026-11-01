@@ -104,6 +104,7 @@ response contains only its own patient's document; a single 20-medication plan <
 ## Scenario 6 — Container image
 
 ```text
+./mvnw -pl converter-rest -am install -DskipTests
 ./mvnw -pl converter-rest spring-boot:build-image
 docker run --rm -p 8080:8080 ch-emed-converter-rest:<version>
 ```

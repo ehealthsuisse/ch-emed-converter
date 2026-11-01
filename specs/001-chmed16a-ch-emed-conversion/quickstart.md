@@ -95,7 +95,7 @@ for every patient value present in the fixtures. Expected: zero matches.
 
 `./mvnw -pl format-chmed16a -am test -Dtest=PerformanceTest -Dsurefire.failIfNoSpecifiedTests=false`
 converts a 100-medication plan. Expected: the conversion itself < 2 s (SC-005a) and the official
-validation of the result < 30 s (SC-005b, measured 10-19 s), and a 20-medication plan converted
+validation of the result < 30 s (SC-005b, measured 3-19 s depending on the machine), and a 20-medication plan converted
 and validated < 5 s (SC-005c); the cold start is logged separately.
 
 ## Cross-check with the official validator (Principle I)

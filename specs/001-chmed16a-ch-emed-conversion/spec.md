@@ -359,14 +359,14 @@ documents; the only differences are those listed in the mapping specification's 
 - **SC-005b**: The official validation of the CH EMED document produced from such a plan takes
   under 30 seconds with a warm validation context (raised from 15 s on 2026-11-01; 100 entries are
   the upper bound, which has to work rather than be fast; measured about 10 s at first, 17-19 s on
-  2026-11-01 on the same machine; linear in the number of
+  2026-11-01 on the same Windows workstation, 2.8 s on a Linux server limited to 4 vCPUs; linear in the number of
   entries); the cold start (loading the packages) is reported separately and is not part of
   SC-005a/b. (SC-005 was split on 2026-10-21 after measuring: the HL7 validator needs about 80 ms
   per MedicationStatement and neither the HL7 ValidationEngine nor parallel validation of
   sub-documents is fast enough for a joint limit of 2 seconds.)
 - **SC-005c**: A large realistic medication plan with 20 different medication entries is converted
   and validated in under 5 seconds with a warm validation context (added 2026-11-01; measured
-  3-4 s).
+  0.6 s on the Linux server with 4 vCPUs, 3-4 s on the Windows workstation).
 - **SC-006**: An automated scan of reports and logs produced from the test corpus finds zero
   occurrences of patient-identifying data.
 - **SC-007**: 100% of the CHMED16A prescriptions produced from the reference corpus meet the

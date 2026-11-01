@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 /**
  * SC-005a/b (research R10): a plan with 100 medicaments. The conversion itself (mapping, PDF,
  * serialization) must take under two seconds; the official HL7 validation of the produced document
- * under thirty seconds with a warm context (measured 10-19 s depending on the machine, dominated by
+ * under thirty seconds with a warm context (measured 3-19 s depending on the machine, dominated by
  * the HL7 validator). 100 is the upper bound; SC-005c: a large realistic plan with 20 medicaments
  * is converted and validated in under five seconds. The cold start is logged separately.
  */
