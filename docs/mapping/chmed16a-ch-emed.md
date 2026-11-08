@@ -41,6 +41,20 @@ pattern for foreign addresses (M-ERX-04) and the treatment of `Rep` above 24 mon
 | M-QR-03 | The content bytes of the code are read as UTF-8 (byte segments without ECI are taken as raw bytes; with an ECI, as declared). Not valid UTF-8 → `PARSE_ERROR`. |
 | M-QR-04 | The content must be a CHMED payload, read as M-IN-02 (a CHMED23A payload → `UNSUPPORTED_VERSION`), or a signed eRezept URL; anything else → `PARSE_ERROR` "QR code does not hold a CHMED payload". The content is never echoed. The resulting document and report equal those of the payload text. |
 
+## eRezept Schweiz input (feature 003)
+
+Signed eRezept URL `https://eprescription.hin.ch/#CHMED16A1…&i=<identity>&t=<timestamp>&s=<signature>`
+(eRezept developer documentation 0.10.2), directly or as the content of a QR code image (M-QR-04).
+Nothing is verified; the converter never contacts HIN or eRezept Schweiz (FR-005).
+
+| Id | Rule |
+|----|------|
+| M-URL-01 | Scheme and host `https://eprescription.hin.ch/` (case-insensitive) are required; another host → `EREZEPT_URL_INVALID` naming `host`. The URL length is limited by `maxDecodedSize`. A query part is ignored (INFORMATION `UNKNOWN_FIELD_IGNORED`). Open: the host of the erxproxy integration environment. |
+| M-URL-02 | The fragment is split on `&` in any order: the token starting with `CHMED` is the payload (M-IN-02); `i`, `t` and `s` must each occur exactly once and be non-empty, otherwise `EREZEPT_URL_INVALID` naming the parameter or `payload`; unknown parameters → INFORMATION `UNKNOWN_FIELD_IGNORED` with the name only. |
+| M-URL-03 | `i`, `t` and `s` are returned raw (`i` still URL-encoded) as signature data beside the document, never in the document, report or logs (FR-004). `t` not all digits or `s` not hex → INFORMATION `SIGNATURE_FORM_UNRECOGNISED`; the values are passed on unchanged. |
+| M-URL-04 | The payload must hold a prescription (`MedType` 3), otherwise `UNSUPPORTED_DOCUMENT_TYPE`; the prescription is converted as M-RX-*; the report always carries INFORMATION `SIGNATURE_NOT_VERIFIED`. The document equals the conversion of the plain prescription with the same options. |
+| M-URL-05 | Data supplied by the options `patientIdentifier` or `author` for a signed eRezept → INFORMATION `NOT_COVERED_BY_SIGNATURE` at `/Patient/Ids`, `/HcPerson` or `/HcOrg` (research R7). |
+
 ## Document metadata (Medication Card)
 
 | Id | CHMED16A | CH EMED | Notes |

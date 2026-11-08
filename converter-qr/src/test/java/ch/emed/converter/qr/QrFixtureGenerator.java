@@ -52,6 +52,10 @@ class QrFixtureGenerator {
     write(out.resolve("no-code.png"), Images.png(Images.grey(320, 240)));
     write(out.resolve("url-code.png"), Images.png(image(ascii("https://example.org/"))));
     write(out.resolve("not-an-image.gif"), Images.gif(basic));
+
+    // feature 003, US2: QR code of a synthetic signed eRezept URL
+    String signedUrl = Files.readString(FIXTURES.resolve("erezept/rx-signed.url.txt")).strip();
+    write(FIXTURES.resolve("erezept/rx-signed.png"), Images.png(image(ascii(signedUrl))));
   }
 
   private static BufferedImage image(byte[] content) {

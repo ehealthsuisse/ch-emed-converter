@@ -5,6 +5,7 @@ import ch.emed.converter.chmed16a.io.ChEmedDocumentReader.ChEmedDocument;
 import ch.emed.converter.chmed16a.io.ChEmedDocumentReader.DocumentType;
 import ch.emed.converter.chmed16a.io.Chmed16aJsonReader;
 import ch.emed.converter.chmed16a.io.Chmed16aJsonWriter;
+import ch.emed.converter.chmed16a.io.ErezeptUrlParser;
 import ch.emed.converter.chmed16a.io.InputFormDetector;
 import ch.emed.converter.chmed16a.mapping.MappingRule;
 import ch.emed.converter.chmed16a.mapping.MappingScope;
@@ -50,7 +51,7 @@ public final class Chmed16aFormatModule implements FormatModule {
 
   @Override
   public List<String> inputForms() {
-    return List.of("json", "qr-payload", "qr-image");
+    return List.of("json", "qr-payload", "erezept-url", "qr-image");
   }
 
   @Override
@@ -78,8 +79,7 @@ public final class Chmed16aFormatModule implements FormatModule {
     return switch (InputFormDetector.detect(input)) {
       case IMAGE -> readImage(input, ctx);
       case UNSUPPORTED_IMAGE -> fail(ctx, ReasonCode.IMAGE_UNREADABLE, "Unsupported image format");
-      case EREZEPT_URL ->
-          fail(ctx, ReasonCode.PARSE_ERROR, "Signed eRezept URLs are not yet supported");
+      case EREZEPT_URL -> readErezept(new String(input, StandardCharsets.UTF_8), ctx);
       case FHIR_JSON ->
           fail(ctx, ReasonCode.PARSE_ERROR, "Input is a FHIR resource; use source ch-emed");
       case PAYLOAD, JSON -> Chmed16aJsonReader.read(input, ctx.options(), ctx.report());
@@ -118,10 +118,47 @@ public final class Chmed16aFormatModule implements FormatModule {
       case PAYLOAD ->
           Chmed16aJsonReader.read(
               text.getBytes(StandardCharsets.UTF_8), ctx.options(), ctx.report());
-      case EREZEPT_URL ->
-          fail(ctx, ReasonCode.PARSE_ERROR, "Signed eRezept URLs are not yet supported");
+      case EREZEPT_URL -> readErezept(text, ctx);
       default -> fail(ctx, ReasonCode.PARSE_ERROR, "QR code does not hold a CHMED payload");
     };
+  }
+
+  /**
+   * Signed eRezept URL: the embedded prescription, with the signature data recorded raw and
+   * unverified beside the document (research R6).
+   */
+  @MappingRule("M-URL-04")
+  private static Medication readErezept(String url, MappingContext ctx) {
+    ErezeptUrlParser.Parsed parsed =
+        ErezeptUrlParser.parse(url, ctx.options().maxDecodedSize(), ctx.report());
+    if (parsed == null) {
+      return null;
+    }
+    Medication med =
+        Chmed16aJsonReader.read(
+            parsed.payload().getBytes(StandardCharsets.US_ASCII), ctx.options(), ctx.report());
+    if (med == null) {
+      return null;
+    }
+    if (!med.isPrescription()) {
+      ctx.report()
+          .add(
+              ReportEntry.error(
+                  ReasonCode.UNSUPPORTED_DOCUMENT_TYPE,
+                  Phase.PARSE,
+                  "/MedType",
+                  "A signed eRezept must hold a prescription (MedType 3)"));
+      return null;
+    }
+    ctx.setSignature(parsed.signature());
+    ctx.report()
+        .add(
+            ReportEntry.information(
+                ReasonCode.SIGNATURE_NOT_VERIFIED,
+                Phase.PARSE,
+                "/",
+                "The eRezept signature and the prescription status were not verified"));
+    return med;
   }
 
   private static String reasonCode(QrException.Kind kind) {

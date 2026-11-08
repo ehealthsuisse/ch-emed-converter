@@ -1,7 +1,10 @@
 package ch.emed.converter.chmed16a.mapping;
 
 import ch.emed.converter.core.api.ConversionOptions;
+import ch.emed.converter.core.report.Phase;
+import ch.emed.converter.core.report.ReasonCode;
 import ch.emed.converter.core.report.ReportCollector;
+import ch.emed.converter.core.report.ReportEntry;
 import ch.emed.converter.core.spi.MappingContext;
 
 /**
@@ -29,5 +32,22 @@ public record MappingScope(String documentId, MappingContext context) {
 
   public ConversionOptions options() {
     return context.options();
+  }
+
+  /**
+   * Records that an option supplied data at {@code path} that the signature of a signed eRezept
+   * does not cover (feature 003, research R7); no entry for unsigned input.
+   */
+  @MappingRule("M-URL-05")
+  public void suppliedByOption(String path) {
+    if (context.signature().isPresent()) {
+      report()
+          .add(
+              ReportEntry.information(
+                  ReasonCode.NOT_COVERED_BY_SIGNATURE,
+                  Phase.MAP,
+                  path,
+                  "Supplied by a conversion option; not covered by the eRezept signature"));
+    }
   }
 }

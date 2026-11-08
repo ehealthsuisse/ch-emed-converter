@@ -214,6 +214,7 @@ public final class AuthorMapper {
       gln = GLN.matcher(auth).matches() ? auth : details.gln();
       given = details.given();
       family = details.family();
+      scope.suppliedByOption("/HcPerson");
     } else {
       missing(
           scope,
@@ -261,6 +262,7 @@ public final class AuthorMapper {
       zip = details.zip();
       city = details.city();
       country = details.country();
+      scope.suppliedByOption("/HcOrg");
     } else {
       missing(
           scope,

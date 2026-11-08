@@ -289,7 +289,7 @@ conversion of the embedded prescription, and the signature values come back unch
 
 ### Tests (write first, must fail)
 
-- [ ] T028 [P] [US2] Create synthetic fixtures in
+- [X] T028 [P] [US2] Create synthetic fixtures in
   `format-chmed16a/src/test/resources/fixtures/erezept/` with a `README.md` (generation, "all
   values invented"):
   - `rx-signed.url.txt`: `https://eprescription.hin.ch/#` + payload of `chmed16a/rx-basic.json` +
@@ -303,7 +303,11 @@ conversion of the embedded prescription, and the signature values come back unch
   - `rx-foreign-host.url.txt` (`https://example.org/#…`);
   - `plan-signed.url.txt` (payload of a medication plan);
   - `rx-signed.png` (QR code of `rx-signed.url.txt`, made with `qrencode`).
-- [ ] T029 [P] [US2] In `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/io/ErezeptUrlParserTest.java`,
+  - *Done 2026-11-08 with `gzip -n` and `base64` in Git Bash (commands in `fixtures/erezept/README.md`);
+    `rx-signed.png` made with BoofCV (`QrFixtureGenerator`, see T020). Added
+    `rx-no-patient-id.json` / `rx-signed-no-patient-id.url.txt` (needs `patientIdentifier`) and
+    `rx-no-payload.url.txt`.*
+- [X] T029 [P] [US2] In `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/io/ErezeptUrlParserTest.java`,
   test the parser:
   - payload and raw `i`, `t`, `s` are extracted, and `i` stays URL-encoded;
   - parameter order is free; a query part is ignored;
@@ -313,7 +317,7 @@ conversion of the embedded prescription, and the signature values come back unch
   - `t` not all digits or `s` not hex → INFORMATION `SIGNATURE_FORM_UNRECOGNISED` (field name
     only), with the values passed on unchanged;
   - no message contains a parameter value.
-- [ ] T030 [US2] In `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/ErezeptInputTest.java`,
+- [X] T030 [US2] In `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/ErezeptInputTest.java`,
   test the conversion end to end:
   - `rx-signed.url.txt` → the document byte-equals the conversion of `rx-basic.json` with the same
     options;
@@ -326,10 +330,12 @@ conversion of the embedded prescription, and the signature values come back unch
     `NOT_COVERED_BY_SIGNATURE` at `/Patient/Ids`. The same holds for author details at
     `/HcPerson` (research R7);
   - a log capture during the test finds no fixture value (FR-016).
+  - *Done 2026-11-08 as `it/ErezeptInputIT.java`. Options for the author of a revision 1
+    prescription supply both `/HcPerson` and `/HcOrg`; both are marked.*
 
 ### Implementation
 
-- [ ] T031 [US2] Implement `ErezeptUrlParser.parse(String url, ReportCollector report)` →
+- [X] T031 [US2] Implement `ErezeptUrlParser.parse(String url, ReportCollector report)` →
   `Parsed(String payload, SignatureData signature)` or null, per research R6, in
   `format-chmed16a/src/main/java/ch/emed/converter/chmed16a/io/ErezeptUrlParser.java`:
   - host constant `eprescription.hin.ch`;
@@ -337,18 +343,20 @@ conversion of the embedded prescription, and the signature values come back unch
     are `key=value` pairs;
   - `t` is recognised by `[0-9]+`, `s` by `[0-9A-Fa-f]+`;
   - limit the URL length to `maxDecodedSize`.
-- [ ] T032 [US2] Wire EREZEPT_URL (direct, and from IMAGE) in
+- [X] T032 [US2] Wire EREZEPT_URL (direct, and from IMAGE) in
   `format-chmed16a/src/main/java/ch/emed/converter/chmed16a/Chmed16aFormatModule.java`:
   - parse the URL, decode the payload with the existing decoder, then require `isPrescription()`
     (otherwise `UNSUPPORTED_DOCUMENT_TYPE`);
   - call `ctx.setSignature`; add `SIGNATURE_NOT_VERIFIED` (path `/`);
   - add `erezept-url` to `inputForms()`;
   - depends on T031.
-- [ ] T033 [US2] Add `NOT_COVERED_BY_SIGNATURE` (INFORMATION, phase MAP, path of the supplemented
+- [X] T033 [US2] Add `NOT_COVERED_BY_SIGNATURE` (INFORMATION, phase MAP, path of the supplemented
   element) wherever an option fills data, when `ctx.signature()` is present. The places are in
   `format-chmed16a/src/main/java/ch/emed/converter/chmed16a/mapping/PatientMapper.java`
   (`patientIdentifier`) and `AuthorMapper.java` / `MedicationPrescriptionBuilder.java` (`author`).
-- [ ] T034 [US2] Add a section "eRezept Schweiz input" (M-URL-01 … M-URL-05, because M-ERX-* is taken by the eRezept readiness rules: host, parameters,
+  - *Done 2026-11-08 via `MappingScope.suppliedByOption(path)`, called in `PatientMapper` and
+    `AuthorMapper.mapPrescription` (`/HcPerson`, `/HcOrg`).*
+- [X] T034 [US2] Add a section "eRezept Schweiz input" (M-URL-01 … M-URL-05, because M-ERX-* is taken by the eRezept readiness rules: host, parameters,
   raw signature data, prescription only, options not covered by the signature) to
   `docs/mapping/chmed16a-ch-emed.md`. Note the open question about the host of the integration
   environment (research R6).
