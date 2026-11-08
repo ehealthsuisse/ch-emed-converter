@@ -133,7 +133,7 @@ converter-core/src/main/java/ch/emed/converter/core/
 converter-qr/                             # NEW: QR image codec, no CHMED knowledge
 ├── pom.xml                               # zxing core; enforcer framework-free
 └── src/main/java/ch/emed/converter/qr/
-    ├── QrImageReader.java                # image bytes → text; PNG/JPEG, pixel limit, one code only
+    ├── QrImageReader.java                # image bytes → content bytes (UTF-8); PNG/JPEG, size and pixel limits, one code only
     ├── QrImageWriter.java                # text → PNG (level M, quiet zone 4, 8 px/module, pHYs 4 cm)
     └── QrException.java                  # kind: UNREADABLE, TOO_LARGE, NOT_FOUND, MULTIPLE, CAPACITY
 

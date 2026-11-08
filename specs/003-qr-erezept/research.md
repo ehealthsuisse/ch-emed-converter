@@ -68,7 +68,7 @@ Alternatives considered. Sources read on 2026-11-08: eMediplan specification at 
     poor scans little reserve.
   - Q/H would lower the capacity to 1663/1273 bytes. A realistic 20-medication plan compresses to
     roughly 1.5–2.2 KB of Base64, so with Q/H, SC-005 would be at risk. SC-005 is measured with
-    the `PlanGenerator` of feature 002 and fixes the real figure.
+    the `LargePlanGenerator` of `format-chmed16a` (as in feature 002) and fixes the real figure.
   - The `pHYs` resolution makes "4 x 4 cm" a property of the file instead of a printing
     convention.
   - An integer module size keeps the image sharp and deterministic.
@@ -104,18 +104,27 @@ Alternatives considered. Sources read on 2026-11-08: eMediplan specification at 
 
 - **Decision**:
   - **Formats:** PNG and JPEG are recognised by their magic bytes (`89 50 4E 47`, `FF D8 FF`).
-    Other formats fail with `IMAGE_UNREADABLE`.
+    Other common image formats are recognised by their magic bytes too and fail with
+    `IMAGE_UNREADABLE` "unsupported image format": GIF `GIF8`, BMP `BM`, TIFF `II*\0` / `MM\0*`,
+    WebP `RIFF….WEBP`.
   - **No temp files:** ImageIO reads through a `MemoryCacheImageInputStream`; the disk cache
     stays off (FR-017).
   - **Pixel limit:** Before the pixels are decoded, the image dimensions are read from the header
-    and limited to 40 megapixels (`IMAGE_TOO_LARGE`). This protects against decompression bombs.
-    The byte size is already limited by the REST service's `max-document-size` (FR-018) and, in
-    the library, by `maxDecodedSize`.
+    and limited to 40 megapixels. This protects against decompression bombs. The byte size is
+    limited by `maxDecodedSize` in the library and by the REST service's configurable
+    `max-document-size` (FR-018). Both limits fail with `IMAGE_TOO_LARGE`, and the message says
+    which limit was hit. The pixel limit is a fixed protection, not an operator setting; FR-018
+    is met by the configurable byte limit.
   - **Decoding:** ZXing with `TRY_HARDER`, `PURE_BARCODE` off, and a binarizer fallback
     (`HybridBinarizer`, then `GlobalHistogramBinarizer`).
-  - **Several codes:** More than one QR code found fails with `QR_MULTIPLE`. Codes with
-    non-ASCII content, or content that is neither a CHMED payload nor an eRezept URL, fail with
-    `PARSE_ERROR`; the content is never echoed.
+  - **Content bytes:** The content is taken from ZXing's raw byte segments
+    (`ResultMetadataType.BYTE_SEGMENTS`) and decoded as UTF-8, as ChTransmissionFormat requires.
+    The text ZXing guesses from a character-set hint is not used. A plain-JSON payload (`CHMED16A0`)
+    with umlauts therefore arrives unchanged. Content that is not valid UTF-8 fails with
+    `PARSE_ERROR`.
+  - **Several codes:** More than one QR code found fails with `QR_MULTIPLE`. Content that is
+    neither a CHMED payload nor an eRezept URL fails with `PARSE_ERROR`; the content is never
+    echoed.
 - **Rationale**:
   - Magic bytes make detection independent of file names and media types.
   - The cache flag closes the only path through which the JDK would write image data to disk.
@@ -160,7 +169,11 @@ Alternatives considered. Sources read on 2026-11-08: eMediplan specification at 
     converter's own recognition is reported.
 - **Open item**: The documentation does not say whether the erxproxy's integration environment
   (`--env int`) uses a different host. The host list is a constant; a test URL from the
-  integration environment decides whether it needs a second entry (task in `/speckit-tasks`).
+  integration environment decides whether it needs a second entry (task T062).
+- **Open evidence**: That the unsigned payload can be signed by the erxproxy *without
+  modification* (constitution I) is shown indirectly: by the eRezept schema, the eRezept rules
+  and the payload form that the documentation names as the erxproxy input. A real signing run
+  needs an HIN test account and stays a manual check (T062), as in feature 001.
 - **Alternatives**:
   - Returning decoded values. Rejected: not lossless.
   - Accepting any host. Rejected: anything with a CHMED payload in the fragment would then pass as

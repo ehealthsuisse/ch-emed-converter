@@ -133,7 +133,7 @@ An integrator uses the library, the command line or the REST service and expects
 **Writing**
 
 - **FR-006**: The system MUST produce the textual CHMED16A QR payload from a CH EMED Medication Card or Medication Prescription, using the prefix, compression and encoding defined by the eMediplan specification.
-- **FR-007**: The system MUST produce, on request, a QR code image from a CH EMED Medication Card that meets the symbol requirements (size, error-correction level) of the eMediplan specification. For a CH EMED Medication Prescription it MUST refuse a QR image with a specific error.
+- **FR-007**: The system MUST produce, on request, a QR code image from a CH EMED Medication Card that meets the symbol requirements stated by the eMediplan specification (printed size 4 × 4 cm, blank margin around the code) and the symbol parameters the specification leaves open, as pinned in the repository (error-correction level, quiet zone, module size). For a CH EMED Medication Prescription it MUST refuse a QR image with a specific error.
 - **FR-008**: The system MUST fail with a specific error when a payload does not fit into one QR code; it MUST NOT split, shorten or drop content to make it fit.
 - **FR-009**: The system MUST produce an unsigned CHMED16A prescription payload that meets the eRezept data requirements, so that it can be signed by the HIN erxproxy without modification, and MUST refuse to produce it when those requirements are violated.
 - **FR-010**: The caller MUST be able to choose the target CHMED version of a QR output. Only CHMED16A is offered until CHMED23A is implemented; another version is refused with a specific error.
@@ -171,7 +171,7 @@ An integrator uses the library, the command line or the REST service and expects
 - **SC-002**: 100% of the produced QR code images are decoded to exactly the original payload by at least one independent QR reader.
 - **SC-003**: 100% of the synthetic signed eRezept fixtures are converted with identity, timestamp and signature returned unchanged and marked as not verified.
 - **SC-004**: 100% of the produced unsigned prescription payloads meet the eRezept data requirements and the published schema after decoding.
-- **SC-005**: A large realistic plan with 20 medications fits into one QR code image that meets the symbol requirements, and is read back without error.
+- **SC-005**: A large realistic plan with 20 medications fits into one QR code image that meets the symbol requirements and pinned parameters of FR-007, and is read back without error.
 - **SC-006**: Reading a QR code image adds less than 1 second to the conversion time of the same plan from plain JSON, on the reference hardware.
 - **SC-007**: An automated scan of logs and reports from all test runs finds zero raw payloads, eRezept URLs, signature data or patient-identifying data.
 - **SC-008**: For 100% of the inputs of the test corpus, library, CLI and REST give identical documents, payloads, images and reports.

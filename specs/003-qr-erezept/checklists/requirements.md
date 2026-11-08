@@ -33,5 +33,6 @@
 
 - Two clarifications resolved with the user on 2026-11-01 (no QR image of unsigned prescriptions; signature data beside the document).
 - One clarification added with the user on 2026-11-02 (options for missing data also apply to QR and URL inputs, FR-019).
+- FR-007 and SC-005 refined on 2026-11-08 after `/speckit-analyze` (finding H2): stated symbol requirements plus pinned parameters.
 - The domain terms CHMED16A, CH EMED, HIN erxproxy and PNG/JPEG are part of the problem statement, not implementation choices.
 - Items marked incomplete require spec updates before `/speckit-clarify` or `/speckit-plan`.

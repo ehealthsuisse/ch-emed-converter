@@ -11,9 +11,11 @@ Detection happens in this order, on the input bytes:
 
 | Form | Detection | Processing |
 |------|-----------|------------|
-| `IMAGE` | starts with `89 50 4E 47 0D 0A 1A 0A` (PNG) or `FF D8 FF` (JPEG) | `QrImageReader` → text. The text is then detected again as `PAYLOAD` or `EREZEPT_URL`; anything else is `PARSE_ERROR` |
+| `IMAGE` | starts with `89 50 4E 47 0D 0A 1A 0A` (PNG) or `FF D8 FF` (JPEG) | `QrImageReader` → content bytes (raw byte segments) decoded as UTF-8. The text is then detected again as `PAYLOAD` or `EREZEPT_URL`; anything else, or invalid UTF-8, is `PARSE_ERROR` |
+| `UNSUPPORTED_IMAGE` | starts with `GIF8` (GIF), `BM` (BMP), `49 49 2A 00` / `4D 4D 00 2A` (TIFF) or `RIFF` + `WEBP` at offset 8 (WebP) | `IMAGE_UNREADABLE` "unsupported image format"; no decoding attempted |
 | `EREZEPT_URL` | text (UTF-8, trimmed) starts with `https://eprescription.hin.ch/` (scheme and host case-insensitive) | `ErezeptUrlParser` → payload + `SignatureData` |
 | `PAYLOAD` | text starts with `CHMED` (case-insensitive) | `Chmed16aPayloadDecoder` (unchanged, M-IN-02) |
+| `FHIR_JSON` | a JSON object whose top-level `resourceType` is present (checked by the JSON reader before the CHMED16A schema) | `PARSE_ERROR` "Input is a FHIR resource; use source ch-emed" (FR-013) |
 | `JSON` | everything else | `Chmed16aJsonReader` (unchanged) |
 
 For source `ch-emed`, an input detected as `IMAGE`, `EREZEPT_URL` or `PAYLOAD` fails with
@@ -23,7 +25,10 @@ chmed16a" (FR-013). The input is never echoed.
 **Limits**:
 - `maxDecodedSize` (existing, 5 MB) limits the image bytes, the decompressed payload and the URL
   length.
-- Images are limited to 40 megapixels, read from the header before decoding (`IMAGE_TOO_LARGE`).
+- Images are limited to 40 megapixels, read from the header before decoding.
+- Both the byte limit and the pixel limit fail with `IMAGE_TOO_LARGE`, and the message names the
+  limit that was hit. FR-018 is met by the configurable byte limit (REST `max-document-size`);
+  the pixel limit is a fixed protection.
 
 ## 2. Output forms (`OutputForm`, option `outputForm`)
 
@@ -78,8 +83,8 @@ hex, the conversion adds INFORMATION `SIGNATURE_FORM_UNRECOGNISED` (field name o
 
 | Code | Severity | Phase | Meaning |
 |------|----------|-------|---------|
-| `IMAGE_UNREADABLE` | ERROR | PARSE | not a PNG/JPEG, or the image cannot be decoded |
-| `IMAGE_TOO_LARGE` | ERROR | PARSE | image above the pixel limit |
+| `IMAGE_UNREADABLE` | ERROR | PARSE | unsupported image format (GIF, BMP, TIFF, WebP), or a PNG/JPEG that cannot be decoded |
+| `IMAGE_TOO_LARGE` | ERROR | PARSE | image above the byte limit (`maxDecodedSize`) or the pixel limit (40 MP); the message names which |
 | `QR_NOT_FOUND` | ERROR | PARSE | no readable QR code in the image |
 | `QR_MULTIPLE` | ERROR | PARSE | more than one QR code in the image |
 | `EREZEPT_URL_INVALID` | ERROR | PARSE | foreign host, no payload, or `i`/`t`/`s` missing or duplicate (names the parameter) |
@@ -91,8 +96,10 @@ hex, the conversion adds INFORMATION `SIGNATURE_FORM_UNRECOGNISED` (field name o
 | `UNSUPPORTED_OUTPUT_FORM` | ERROR | PARSE | output form not offered for the target format |
 
 **Reused codes**:
-- `PARSE_ERROR`: QR content that is neither payload nor eRezept URL; wrong source for the detected
-  form.
+- `PARSE_ERROR`: QR content that is neither payload nor eRezept URL, or not valid UTF-8; wrong
+  source for the detected form, in both directions (FR-013).
+- `UNSUPPORTED_CONVERSION`: `ch-emed → chmed23a`, the version choice of FR-010; the message lists
+  the supported pairs.
 - `UNSUPPORTED_VERSION`: CHMED23A payload in an image or URL.
 - `UNSUPPORTED_DOCUMENT_TYPE`: an eRezept URL that holds a medication plan.
 - `UNKNOWN_FIELD_IGNORED`: unknown URL parameter, by name.

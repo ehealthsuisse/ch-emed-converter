@@ -74,7 +74,7 @@ java -jar converter-cli/target/ch-emed-converter.jar convert --from ch-emed --to
   done by the BoofCV test.
 - Running twice gives identical files.
 
-The 20-medication plan of `PlanGenerator` fits (`PerformanceTest`, SC-005). An oversized plan
+The 20-medication plan of `LargePlanGenerator` fits (`PerformanceTest`, SC-005). An oversized plan
 fails with `QR_CAPACITY_EXCEEDED`, and `qr-payload` still works for it.
 
 ## Scenario 4 — Prepare a prescription for signing (US4, SC-004)
