@@ -1,30 +1,36 @@
 <!--
 Sync Impact Report
 ==================
-Version change: 1.4.0 → 1.4.1
-Bump rationale: PATCH — clarification only. The REST rule "return the conversion report with
-every response" could not be met by failures that occur before a conversion starts (malformed
-request, unsupported conversion, too large, busy, not ready, internal error); it now requires
-problem details for every failure and the report for every response where a conversion was
-attempted. No principle added, removed or redefined.
+Version change: 1.4.1 → 1.5.0
+Bump rationale: MINOR — materially expanded guidance for one Conversion Scope item. "CARA EMED"
+was described as a format of its own; it is the FHIR implementation guide CH EMED EPR
+(`ch.fhir.ig.ch-emed-epr`) maintained by CARA, a profiling of CH EMED for the EPR. The scope row,
+its conformance, test-corpus and serialization rules now name CH EMED EPR, and transport to the
+EPR is stated as out of scope. No principle added or removed; no existing feature relied on the
+old wording.
 
-Modified principles: none
+Modified principles:
+  - I. Specification Conformance → CH EMED EPR (CARA EMED) bullet replaces the CARA EMED bullet;
+    the CH EMED bullet no longer mentions CH EMED EPR.
+  - III. Test-First with Reference Fixtures → corpus names CH EMED EPR instead of CARA EMED.
+  - V. Deterministic, Simple Conversion → hub example CHMED16A → CH EMED EPR.
 
 Modified sections:
-  - Domain & Technical Constraints → REST error/report rule clarified (see above).
+  - Conversion Scope → row "CH EMED EPR (CARA EMED) ↔ CH EMED" and a new bullet defining it.
+  - Domain & Technical Constraints → CH EMED EPR serialized as FHIR JSON.
+  - Development Workflow & Quality Gates → gate 4 names CH EMED EPR instead of CARA.
 
 Added sections: none
 Removed sections: none
 
 Templates requiring updates: none — dependent templates read this file at runtime.
 Affected artefacts:
-  - specs/002-rest-conversion-service: constitution references updated to v1.4.1 (finding C2 of
-    the /speckit-analyze run of 2026-10-29).
+  - docs/architecture.md lists "CARA EMED" and "CH EMED EPR" as two planned items; to be merged
+    by feature 004.
 
 Follow-up TODOs: none
 
-Previous amendment (1.3.1 → 1.4.0, MINOR): eRezept Schweiz added to Conversion Scope, with
-conformance (I), test (III) and data-protection (IV) rules.
+Previous amendment (1.4.0 → 1.4.1, PATCH): REST error/report rule clarified.
 -->
 
 # CH EMED Converter Constitution
@@ -34,11 +40,12 @@ conformance (I), test (III) and data-protection (IV) rules.
 ### I. Specification Conformance
 
 - Every output MUST conform to the specification of its target format:
-  - **CH EMED** (and CH EMED EPR where targeted): MUST validate without errors against the
-    HL7 FHIR R4 profiles of the pinned IG packages and the CH Core profiles they depend on.
+  - **CH EMED**: MUST validate without errors against the HL7 FHIR R4 profiles of the pinned IG
+    packages and the CH Core profiles they depend on.
+  - **CH EMED EPR** (CARA EMED): MUST validate without errors against the profiles of the pinned
+    CH EMED EPR IG package published by CARA and the CH EMED and CH Core profiles it depends on.
   - **CHMED16A / CHMED23A** (eMediplan): MUST conform to the respective published eMediplan
     specification, including the JSON structure and any schema provided by it.
-  - **CARA EMED**: MUST conform to the CARA EMED specification and profiles published by CARA.
   - **eMediplan QR code**: the payload MUST use the prefix, compression and encoding defined by
     the respective CHMED specification; generated QR images MUST meet the symbol requirements
     (size, error-correction level) of that specification.
@@ -83,7 +90,7 @@ Rationale: in medication data, silent loss or fabrication is a patient-safety ri
   expected output, and every produced output in tests MUST pass the conformance checks of
   Principle I.
 - The official example instances published for each supported format (CH EMED IG, eMediplan
-  CHMED16A/CHMED23A, CARA EMED) MUST be part of the test corpus.
+  CHMED16A/CHMED23A, CH EMED EPR) MUST be part of the test corpus.
 - Every bidirectional conversion pair MUST have round-trip tests
   (e.g. CHMED23A → CH EMED → CHMED23A); any difference after the round trip MUST match the
   documented capability gaps of Principle II.
@@ -120,7 +127,7 @@ Federal Act on Data Protection (revDSG/nDSG) and the Federal Act on the EPR (EPD
 ### V. Deterministic, Simple Conversion
 
 - CH EMED is the canonical hub model: every format is converted to and from CH EMED. Conversions
-  between two non-CH-EMED formats (e.g. CHMED16A → CARA EMED), if offered, MUST be composed via
+  between two other formats (e.g. CHMED16A → CH EMED EPR), if offered, MUST be composed via
   CH EMED rather than implemented as separate direct mappings.
 - Given identical input, configuration, and specification versions, the converter MUST produce
   byte-identical output (stable ordering, no wall-clock timestamps or random ids unless injected
@@ -145,7 +152,7 @@ The converter MUST support the following conversions, each in both directions:
 |----------------------------|---|-----------------|
 | CHMED16A (eMediplan)       | ↔ | CH EMED         |
 | CHMED23A (eMediplan)       | ↔ | CH EMED         |
-| CARA EMED                  | ↔ | CH EMED         |
+| CH EMED EPR (CARA EMED)    | ↔ | CH EMED         |
 | eMediplan QR code          | ↔ | CH EMED         |
 | eRezept Schweiz (QR / URL) | ↔ | CH EMED         |
 
@@ -159,6 +166,12 @@ The converter MUST support the following conversions, each in both directions:
   MedicationPrescription and the signature data is preserved, unverified, as metadata. Output
   is an unsigned CHMED16A prescription payload ready to be signed by the primary system via the
   HIN erxproxy; signing, signature verification and status checks are out of scope.
+- **CH EMED EPR (CARA EMED)**: "CARA EMED" denotes the FHIR implementation guide CH EMED EPR
+  (`ch.fhir.ig.ch-emed-epr`) that CARA maintains for the eMedication service of its EPR
+  community; there is no separate CARA format. It profiles CH EMED for the EPR. The conversion
+  turns documents conforming to the general CH EMED IG into documents conforming to CH EMED EPR
+  and back; other formats (e.g. CHMED16A) reach CH EMED EPR through CH EMED. Transport to the
+  EPR (IHE MHD, CARA's eMedication service) is out of scope.
 - Which CH EMED document types (e.g. MedicationCard, MedicationTreatmentPlan,
   MedicationPrescription, MedicationDispense, PharmaceuticalAdvice, MedicationList) are
   supported per format pair is defined in the respective feature spec, based on the semantics
@@ -183,7 +196,7 @@ The converter MUST support the following conversions, each in both directions:
   feature.
 - CHMED16A / CHMED23A: JSON as defined by the eMediplan specifications; both the plain JSON form
   and the QR payload form MUST be accepted as input.
-- CARA EMED: serialization as defined by the pinned CARA EMED specification.
+- CH EMED EPR: FHIR JSON, as for CH EMED.
 - Terminology: code systems and value sets MUST be taken from the pinned specifications or their
   declared dependencies; locally invented codes are prohibited.
 - Errors MUST be reported with machine-readable codes plus human-readable messages; the CLI
@@ -203,7 +216,7 @@ The converter MUST support the following conversions, each in both directions:
   2. the mapping specification is updated for any mapping change;
   3. no new test fixture contains real patient data;
   4. at least one reviewer has approved; mapping changes SHOULD be reviewed by someone with
-     domain knowledge of the formats involved (CH EMED, eMediplan, CARA).
+     domain knowledge of the formats involved (CH EMED, CH EMED EPR, eMediplan).
 - Changes to output that existing consumers rely on (structure, codes, report format) MUST be
   versioned following semantic versioning and noted in the changelog.
 
@@ -219,4 +232,4 @@ The converter MUST support the following conversions, each in both directions:
 - Compliance is checked in every plan (Constitution Check) and every code review; unjustified
   complexity or principle violations are grounds for rejecting a change.
 
-**Version**: 1.4.1 | **Ratified**: 2026-10-05 | **Last Amended**: 2026-10-29
+**Version**: 1.5.0 | **Ratified**: 2026-10-05 | **Last Amended**: 2026-11-08
