@@ -9,7 +9,10 @@ formats can be plugged in as modules.
   never appears in reports or logs.
 - **Conformant output**: CH EMED output is validated against the pinned IG packages (HL7 FHIR
   validator through HAPI FHIR); CHMED16A prescriptions meet the data requirements of eRezept
-  Schweiz.
+  Schweiz. As unsigned QR payload (`CHMED16A1…`) they are the input of the HIN erxproxy, which
+  signs them; the converter itself never contacts HIN.
+- **QR codes and eRezept**: reads eMediplan QR images (PNG, JPEG) and signed eRezept URLs or their
+  QR codes, and writes QR payloads and, for medication plans, QR images (feature 003).
 - **No silent loss**: everything that cannot be represented is listed in a machine-readable
   conversion report; `--strict` turns clinical loss into a failure.
 - **Deterministic**: the same input and options give byte-identical output.
@@ -17,6 +20,7 @@ formats can be plugged in as modules.
 | Module | Purpose |
 |--------|---------|
 | `converter-core` | framework-free API, conversion report, format SPI, original-representation PDF |
+| `converter-qr` | QR code image reader and writer (ZXing), without format knowledge |
 | `converter-validation` | offline CH EMED validation with the vendored IG packages |
 | `format-chmed16a` | CHMED16A model, parser, validator, mappers, serializer |
 | `converter-cli` | picocli command line (`ch-emed-converter.jar`) |

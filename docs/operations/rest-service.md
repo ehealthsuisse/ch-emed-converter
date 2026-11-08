@@ -64,6 +64,11 @@ The service makes no network calls during conversion (FR-015). Validation runs l
 packages vendored in the JAR (`ch.fhir.ig.ch-emed#6.0.0`, `ch.fhir.ig.ch-core#6.0.0`); no terminology
 server is used. It needs no internet access and can run in a network without egress.
 
+The service never contacts HIN or eRezept Schweiz either (feature 003). A prescription converted
+with `outputForm` `qr-payload` is the unsigned `CHMED16A1…` payload; the primary system has it
+signed by its local HIN erxproxy (`POST /ePrescription/create`), which returns the signed URL or its
+QR code. Signed eRezepte are read without verifying the signature.
+
 ## Running
 
 Requirements: Java 21. Build: `./mvnw -pl converter-rest -am package`. The build produces the

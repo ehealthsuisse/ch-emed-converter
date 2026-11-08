@@ -52,6 +52,7 @@ target `ch-emed` offers `document` only (`UNSUPPORTED_OUTPUT_FORM`). The QR para
 | M-QR-10 | `qr-payload`: `CHMED16A1` + Base64 (standard alphabet, padding) of GZip (no timestamp) of exactly the bytes of the `document` output; ASCII, no line break. Decoding gives back the `document` output (FR-012); the report equals that of `document`. |
 | M-QR-11 | `qr-image`: PNG of that payload: QR code byte mode without ECI, error correction M, smallest version, quiet zone 4 modules, 8 px per module, 1-bit grayscale, `pHYs` such that the symbol prints 40 mm wide. Equal input gives equal bytes (FR-011). |
 | M-QR-12 | A payload above 2331 bytes (version 40-M) → `QR_CAPACITY_EXCEEDED` naming the limit, no image; nothing is split, shortened or dropped (FR-008). `qr-payload` stays available. |
+| M-QR-13 | Prescriptions: `qr-image` → `QR_IMAGE_NOT_ALLOWED` before the reverse mapping (an image of an unsigned prescription could be taken for a signed eRezept). `qr-payload` gives the unsigned payload after the eRezept rules (M-ERX-*); a violation fails without payload (FR-009). The payload is the input of `POST /ePrescription/create` of the local HIN erxproxy, which signs it; the converter never calls it. |
 
 ## eRezept Schweiz input (feature 003)
 

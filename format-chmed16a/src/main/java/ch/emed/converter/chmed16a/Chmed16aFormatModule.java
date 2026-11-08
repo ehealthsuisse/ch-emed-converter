@@ -185,6 +185,11 @@ public final class Chmed16aFormatModule implements FormatModule {
     if (doc == null) {
       return null;
     }
+    if (doc.type() == DocumentType.MEDICATION_PRESCRIPTION
+        && ctx.options().outputForm() == OutputForm.QR_IMAGE) {
+      refuseImageOfPrescription(ctx);
+      return null;
+    }
     Medication result;
     if (doc.type() == DocumentType.MEDICATION_PRESCRIPTION) {
       result = PrescriptionBuilder.build(new ReverseScope(doc, ctx));
@@ -207,6 +212,22 @@ public final class Chmed16aFormatModule implements FormatModule {
   @Override
   public List<OutputForm> outputForms() {
     return List.of(OutputForm.DOCUMENT, OutputForm.QR_PAYLOAD, OutputForm.QR_IMAGE);
+  }
+
+  /**
+   * A QR image of an unsigned prescription could be mistaken for a signed eRezept; prescriptions
+   * are output as unsigned payload only, which the HIN erxproxy signs (clarification 2026-11-01).
+   */
+  @MappingRule("M-QR-13")
+  private static void refuseImageOfPrescription(MappingContext ctx) {
+    ctx.report()
+        .add(
+            ReportEntry.error(
+                ReasonCode.QR_IMAGE_NOT_ALLOWED,
+                Phase.MAP,
+                "/",
+                "No QR image for a prescription: prescriptions are output as unsigned payload only,"
+                    + " to be signed by the HIN erxproxy"));
   }
 
   /** Writes the JSON in the requested output form (feature 003); null after an ERROR entry. */

@@ -452,7 +452,7 @@ passes `erezept-chmed16a-schemav7.json` and the eRezept rules (SC-004).
 
 ### Tests (write first, must fail)
 
-- [ ] T043 [US4] In `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/PrescriptionPayloadTest.java`,
+- [X] T043 [US4] In `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/PrescriptionPayloadTest.java`,
   test prescriptions:
   - for every CH EMED prescription fixture that converts successfully, `QR_PAYLOAD` decodes to
     JSON that passes `schemas/erezept-chmed16a-schemav7.json` and `ErezeptPrescriptionRules`;
@@ -460,14 +460,16 @@ passes `erezept-chmed16a-schemav7.json` and the eRezept rules (SC-004).
   - `rx-missing-prescriber-gln.json` fails with the rule violations in the report and no output;
   - `QR_IMAGE` on `medication-prescription-example.json` → `QR_IMAGE_NOT_ALLOWED` (message:
     prescriptions are output as unsigned payload only), with no output.
+  - *Done 2026-11-08 as `it/PrescriptionPayloadIT.java`; it also checks that the decoded payload
+    equals the `document` output.*
 
 ### Implementation
 
-- [ ] T044 [US4] In `Chmed16aFormatModule.fromChEmed`, refuse `QR_IMAGE` for
+- [X] T044 [US4] In `Chmed16aFormatModule.fromChEmed`, refuse `QR_IMAGE` for
   `MEDICATION_PRESCRIPTION` with `QR_IMAGE_NOT_ALLOWED` (phase MAP), before building the result.
   `QR_PAYLOAD` reuses T041 after `ErezeptPrescriptionRules`, so the existing refusal on violations
   applies (FR-009).
-- [ ] T045 [US4] Add M-QR-13 (prescription: payload only, no image, eRezept rules) to
+- [X] T045 [US4] Add M-QR-13 (prescription: payload only, no image, eRezept rules) to
   `docs/mapping/chmed16a-ch-emed.md`. Add a note to `docs/operations/rest-service.md` and to
   `README.md` that the payload is the input of `POST /ePrescription/create` of the erxproxy, and
   that the converter never calls it.
