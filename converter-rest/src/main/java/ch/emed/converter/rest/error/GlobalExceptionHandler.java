@@ -145,5 +145,6 @@ public class GlobalExceptionHandler {
           "street",
           "zip",
           "city",
-          "country");
+          "country",
+          "outputForm");
 }

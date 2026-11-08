@@ -3,7 +3,10 @@ package ch.emed.converter.rest;
 import ch.emed.converter.cli.CliMain;
 import ch.emed.converter.core.api.AuthorDetails;
 import ch.emed.converter.core.api.Converter;
+import ch.emed.converter.core.api.FormatId;
+import ch.emed.converter.core.api.FormatInfo;
 import ch.emed.converter.core.api.OrganizationDetails;
+import ch.emed.converter.core.api.OutputForm;
 import com.atlassian.oai.validator.OpenApiInteractionValidator;
 import com.atlassian.oai.validator.report.LevelResolver;
 import com.atlassian.oai.validator.report.ValidationReport;
@@ -25,6 +28,16 @@ import java.util.List;
 
 /** Fixtures, request messages and the in-process CLI for the REST tests. */
 public final class RestTestSupport {
+
+  /**
+   * Format capabilities for converter mocks: both formats with the output form {@code document}
+   * only, so that requests without {@code outputForm} pass the controller's check (feature 003).
+   */
+  public static List<FormatInfo> documentFormats() {
+    return List.of(
+        new FormatInfo(FormatId.CH_EMED, List.of("json"), List.of(OutputForm.DOCUMENT)),
+        new FormatInfo(FormatId.CHMED16A, List.of("json"), List.of(OutputForm.DOCUMENT)));
+  }
 
   /** Feature 001 reference corpus (module {@code format-chmed16a}). */
   public static final Path FIXTURES =

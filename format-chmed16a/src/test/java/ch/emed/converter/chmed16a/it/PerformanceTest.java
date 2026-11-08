@@ -3,6 +3,8 @@ package ch.emed.converter.chmed16a.it;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import ch.emed.converter.chmed16a.Chmed16aFormatModule;
+import ch.emed.converter.chmed16a.io.Chmed16aPayloadEncoder;
+import ch.emed.converter.chmed16a.testsupport.ChEmedAssertions;
 import ch.emed.converter.chmed16a.testsupport.Fixtures;
 import ch.emed.converter.chmed16a.testsupport.LargePlanGenerator;
 import ch.emed.converter.chmed16a.testsupport.TestOptions;
@@ -12,14 +14,21 @@ import ch.emed.converter.core.api.ConversionResult;
 import ch.emed.converter.core.api.Converter;
 import ch.emed.converter.core.api.Converters;
 import ch.emed.converter.core.api.FormatId;
+import ch.emed.converter.core.api.OutputForm;
 import ch.emed.converter.core.fhir.ChEmedJson;
 import ch.emed.converter.core.report.Outcome;
 import ch.emed.converter.core.report.ReportCollector;
 import ch.emed.converter.core.spi.MappingContext;
+import ch.emed.converter.qr.QrImageReader;
+import ch.emed.converter.qr.QrImageWriter;
 import ch.emed.converter.validation.HapiChEmedValidator;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+import javax.imageio.ImageIO;
 import org.hl7.fhir.r4.model.Bundle;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -125,5 +134,71 @@ class PerformanceTest {
 
     assertThat(result[0].outcome()).isNotEqualTo(Outcome.FAILED);
     assertThat(typicalValidated).as("SC-005c: typical plan").isLessThan(TYPICAL_LIMIT_MILLIS);
+  }
+
+  @Test
+  void readingAQrImageAddsLessThanOneSecond() throws Exception {
+    // feature 003, SC-006: the 20-medicament plan as image vs. as JSON, warm, best of three runs
+    Converter converter = Converters.create(ChEmedAssertions.validator());
+    byte[] json = LargePlanGenerator.plan(TYPICAL_MEDICAMENTS);
+    byte[] image =
+        QrImageWriter.write(
+            new String(Chmed16aPayloadEncoder.encode(json), StandardCharsets.US_ASCII));
+    ConversionRequest fromJson =
+        new ConversionRequest(FormatId.CHMED16A, FormatId.CH_EMED, json, TestOptions.withAuthor());
+    ConversionRequest fromImage =
+        new ConversionRequest(FormatId.CHMED16A, FormatId.CH_EMED, image, TestOptions.withAuthor());
+    assertThat(converter.convert(fromImage).outcome()).as("warm-up").isNotEqualTo(Outcome.FAILED);
+    converter.convert(fromJson);
+
+    long jsonMillis = repeat(() -> converter.convert(fromJson)).stream().min(Long::compare).get();
+    long imageMillis = repeat(() -> converter.convert(fromImage)).stream().min(Long::compare).get();
+    LOG.info(
+        "20 medicaments, CHMED16A -> CH EMED with validation: JSON {} ms, QR image {} ms (+{} ms)",
+        jsonMillis,
+        imageMillis,
+        imageMillis - jsonMillis);
+
+    assertThat(imageMillis - jsonMillis).as("SC-006: image reading overhead").isLessThan(1_000);
+  }
+
+  @Test
+  void aTypicalPlanFitsIntoOneQrCode() throws Exception {
+    // feature 003, SC-005: 20 medicaments in one QR image at level M, read back without error
+    Converter converter = Converters.create(ChEmedAssertions.validator());
+    ConversionResult card =
+        converter.convert(
+            new ConversionRequest(
+                FormatId.CHMED16A,
+                FormatId.CH_EMED,
+                LargePlanGenerator.plan(TYPICAL_MEDICAMENTS),
+                TestOptions.withAuthor()));
+    ConversionOptions qr = ConversionOptions.defaults();
+    ConversionResult payload =
+        converter.convert(
+            new ConversionRequest(
+                FormatId.CH_EMED,
+                FormatId.CHMED16A,
+                card.output().orElseThrow(),
+                qr.withOutputForm(OutputForm.QR_PAYLOAD)));
+    ConversionResult image =
+        converter.convert(
+            new ConversionRequest(
+                FormatId.CH_EMED,
+                FormatId.CHMED16A,
+                card.output().orElseThrow(),
+                qr.withOutputForm(OutputForm.QR_IMAGE)));
+
+    assertThat(image.outcome()).as("SC-005: 20 medicaments fit").isNotEqualTo(Outcome.FAILED);
+    byte[] png = image.output().orElseThrow();
+    BufferedImage picture = ImageIO.read(new ByteArrayInputStream(png));
+    int version = (picture.getWidth() / 8 - 8 - 17) / 4;
+    LOG.info(
+        "20 medicaments: QR payload {} bytes, QR version {} (level M), PNG {} bytes",
+        payload.output().orElseThrow().length,
+        version,
+        png.length);
+    assertThat(QrImageReader.read(png, QrImageReader.DEFAULT_MAX_PIXELS))
+        .isEqualTo(payload.output().orElseThrow());
   }
 }

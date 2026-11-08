@@ -4,6 +4,7 @@ import ch.emed.converter.core.api.AuthorDetails;
 import ch.emed.converter.core.api.Confidentiality;
 import ch.emed.converter.core.api.ConversionOptions;
 import ch.emed.converter.core.api.OrganizationDetails;
+import ch.emed.converter.core.api.OutputForm;
 import ch.emed.converter.core.api.PatientIdentifier;
 import ch.emed.converter.rest.error.MalformedRequestException;
 import ch.emed.converter.rest.model.RequestOptions;
@@ -44,6 +45,13 @@ public class RequestOptionsMapper {
     }
     if (request.author() != null) {
       options = options.withAuthor(author(request.author()));
+    }
+    if (request.outputForm() != null) {
+      try {
+        options = options.withOutputForm(OutputForm.fromExternalName(request.outputForm()));
+      } catch (IllegalArgumentException e) {
+        throw invalid("options.outputForm");
+      }
     }
     return options;
   }

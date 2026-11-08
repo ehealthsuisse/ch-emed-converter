@@ -2,6 +2,10 @@
 
 Runnable JAR `ch-emed-converter.jar`, thin layer over the [library API](./library-api.md).
 
+Extended by feature 003: `--output-form document|qr-payload|qr-image` and `--signature-output
+<file>`; inputs may also be QR images and signed eRezept URLs. See
+[specs/003-qr-erezept/contracts/cli.md](../../003-qr-erezept/contracts/cli.md).
+
 ## Synopsis
 
 ```text
@@ -22,6 +26,8 @@ ch-emed-converter --version
 | `--confidentiality` | `normal`, `restricted`, `secret` (FR-022) | `normal` |
 | `--patient-id <system>\|<value>` | patient identifier if the source has none (FR-023) | — |
 | `--author <file>` | JSON file with author details `{"gln","given","family","organization":{"name","street","zip","city","country"}}` (FR-023) | — |
+| `--output-form` | `document`, `qr-payload`, `qr-image` (feature 003; `qr-*` only with `--to chmed16a`) | `document` |
+| `--signature-output <file>` | signature data of a signed eRezept (feature 003) | `<output>.signature.json` |
 
 `formats` prints supported conversion pairs and pinned specification versions.
 `--version` prints converter version and pinned specification versions.

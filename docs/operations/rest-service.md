@@ -64,6 +64,11 @@ The service makes no network calls during conversion (FR-015). Validation runs l
 packages vendored in the JAR (`ch.fhir.ig.ch-emed#6.0.0`, `ch.fhir.ig.ch-core#6.0.0`); no terminology
 server is used. It needs no internet access and can run in a network without egress.
 
+The service never contacts HIN or eRezept Schweiz either (feature 003). A prescription converted
+with `outputForm` `qr-payload` is the unsigned `CHMED16A1…` payload; the primary system has it
+signed by its local HIN erxproxy (`POST /ePrescription/create`), which returns the signed URL or its
+QR code. Signed eRezepte are read without verifying the signature.
+
 ## Running
 
 Requirements: Java 21. Build: `./mvnw -pl converter-rest -am package`. The build produces the
@@ -132,6 +137,11 @@ Standard Spring Boot mechanisms apply (command line `--name=value`, environment 
 Independently of these limits, the library rejects a CHMED16A QR payload that decompresses to more
 than 5 MB (`422 INVALID_INPUT`); this library limit is not configurable, as in the CLI.
 
+QR code images (feature 003, PNG or JPEG) are limited by `max-document-size` like every document
+and, in the library, to 40 megapixels (read from the image header before decoding; shown in
+capabilities as `limits.maxImagePixels`, not configurable). Images are decoded in memory only; no
+temporary files are written.
+
 Invalid configuration (e.g. `max-request-size` too small for `max-document-size`) stops the
 service at startup with a message naming the property.
 
@@ -157,12 +167,12 @@ included whenever a conversion was attempted.
 
 | HTTP | `errorType` | Typical cause |
 |------|-------------|---------------|
-| 400 | `MALFORMED_REQUEST` | Message not JSON, `document` missing or not base64, unknown property, invalid option value |
+| 400 | `MALFORMED_REQUEST` | Message not JSON, `document` missing or not base64, unknown property, invalid option value, `outputForm` not offered for the target (e.g. `qr-image` with target `ch-emed`) |
 | 404 | `UNSUPPORTED_CONVERSION` | Unknown format or pair; the body lists `supportedConversions` |
 | 413 | `REQUEST_TOO_LARGE` | Message or decoded document above the limits |
 | 415 | `UNSUPPORTED_MEDIA_TYPE` | Request not `application/json` |
-| 422 | `INVALID_INPUT` | Document cannot be parsed or fails input validation (with report) |
-| 422 | `CONVERSION_FAILED` | Strict-mode loss, missing required data, output validation error (with report) |
+| 422 | `INVALID_INPUT` | Document cannot be parsed or fails input validation (with report); for QR images and eRezept URLs: unsupported or unreadable image, no or several QR codes, invalid eRezept URL |
+| 422 | `CONVERSION_FAILED` | Strict-mode loss, missing required data, output validation error (with report); QR payload too large for one code, QR image requested for a prescription |
 | 500 | `INTERNAL_ERROR` | Unexpected error; see the log line with the correlation id |
 | 503 | `SERVICE_BUSY` | All slots and the queue are taken, or the validation could not be completed under system load (report entry `VALIDATION_INCOMPLETE`); retry after `Retry-After` seconds |
 | 503 | `NOT_READY` | Converter not (yet) built; see readiness |
@@ -207,3 +217,11 @@ in the log mean the service is starved.
 The default `converter.rest.timeout` of 40 s includes the time in the queue; it lies above the 30 s
 for a single large plan and equals the 40 s for simultaneous requests. The default limits accept 20 simultaneous conversions (4 running, 16 queued); raise
 `queue-size` and `timeout` together if callers send larger bursts and can wait.
+
+## Signature data of signed eRezepte
+
+For a signed eRezept (feature 003), the response carries `signature` with the raw parameters `i`
+(identity of the prescriber), `t` and `s` and `verified: false`. The service never verifies them,
+never checks the prescription status and never contacts HIN or eRezept Schweiz. Treat the field as
+sensitive: it identifies the prescriber. It never appears in the log, the report or problem
+details; gateways and clients must not log response bodies either.

@@ -49,6 +49,10 @@ class LogLeakTest extends AbstractRestTest {
     "20261001T093000",
     "c2lnbmF0dXJlLXRlc3QtMDAwMDAw",
     "eprescription",
+    // feature 003: synthetic signature values of fixtures/erezept
+    "1767225600",
+    "3066023100",
+    "emust1",
     // document fragments
     "\"Medicaments\"",
     "\"resourceType\"",
@@ -79,6 +83,27 @@ class LogLeakTest extends AbstractRestTest {
     }
     for (Path input : RestTestSupport.corpus(RestTestSupport.CH_EMED)) {
       mvc.perform(convert("ch-emed", "chmed16a", RestTestSupport.read(input), null));
+    }
+    // feature 003: QR images, signed eRezept URLs and both QR output forms
+    for (String directory : List.of("qr", "erezept")) {
+      for (Path input : RestTestSupport.corpus(RestTestSupport.FIXTURES.resolve(directory))) {
+        mvc.perform(
+            convert(
+                "chmed16a",
+                "ch-emed",
+                RestTestSupport.read(input),
+                RestTestSupport.withAuthor(options)));
+      }
+    }
+    for (Path input : RestTestSupport.corpus(RestTestSupport.CH_EMED)) {
+      for (String form : List.of("qr-payload", "qr-image")) {
+        mvc.perform(
+            convert(
+                "ch-emed",
+                "chmed16a",
+                RestTestSupport.read(input),
+                RestTestSupport.json("{\"outputForm\":\"" + form + "\"}")));
+      }
     }
 
     String log = output.getAll();

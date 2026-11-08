@@ -20,6 +20,10 @@
       <artifactId>converter-core</artifactId>
     </dependency>
     <dependency>
+      <groupId>ch.emed.converter</groupId>
+      <artifactId>converter-qr</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
     </dependency>

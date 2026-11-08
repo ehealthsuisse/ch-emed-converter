@@ -48,7 +48,8 @@ class CapabilitiesContractTest extends AbstractRestTest {
         .contains("chmed16a->ch-emed", "ch-emed->chmed16a");
 
     assertThat(stream(body.get("options")).map(o -> o.get("name").asText()))
-        .containsExactly("strict", "language", "confidentiality", "patientIdentifier", "author");
+        .containsExactly(
+            "strict", "language", "confidentiality", "patientIdentifier", "author", "outputForm");
     JsonNode strict = stream(body.get("options")).findFirst().orElseThrow();
     assertThat(strict.get("type").asText()).isEqualTo("boolean");
     assertThat(strict.get("default").asBoolean()).isFalse();
@@ -66,6 +67,8 @@ class CapabilitiesContractTest extends AbstractRestTest {
     assertThat(limits.get("maxDocumentSizeBytes").asLong())
         .isEqualTo(properties.maxDocumentSize().toBytes());
     assertThat(limits.get("timeoutSeconds").asLong()).isEqualTo(properties.timeout().toSeconds());
+    assertThat(limits.get("maxImagePixels").asLong())
+        .isEqualTo(ch.emed.converter.qr.QrImageReader.DEFAULT_MAX_PIXELS);
   }
 
   private static JsonNode option(JsonNode body, String name) {

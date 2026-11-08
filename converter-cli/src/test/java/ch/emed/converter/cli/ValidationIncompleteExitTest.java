@@ -8,6 +8,8 @@ import ch.emed.converter.core.api.ConversionRequest;
 import ch.emed.converter.core.api.ConversionResult;
 import ch.emed.converter.core.api.Converter;
 import ch.emed.converter.core.api.FormatId;
+import ch.emed.converter.core.api.FormatInfo;
+import ch.emed.converter.core.api.OutputForm;
 import ch.emed.converter.core.report.ConversionReport;
 import ch.emed.converter.core.report.Outcome;
 import ch.emed.converter.core.report.Phase;
@@ -89,6 +91,13 @@ class ValidationIncompleteExitTest {
     @Override
     public Map<String, String> pinnedSpecifications() {
       return Map.of();
+    }
+
+    @Override
+    public List<FormatInfo> formats() {
+      return List.of(
+          new FormatInfo(FormatId.CH_EMED, List.of("json"), List.of(OutputForm.DOCUMENT)),
+          new FormatInfo(FormatId.CHMED16A, List.of("json"), List.of(OutputForm.DOCUMENT)));
     }
 
     @Override

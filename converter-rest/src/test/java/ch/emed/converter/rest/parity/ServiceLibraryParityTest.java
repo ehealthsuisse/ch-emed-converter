@@ -7,7 +7,9 @@ import ch.emed.converter.core.api.ConversionOptions;
 import ch.emed.converter.core.api.ConversionRequest;
 import ch.emed.converter.core.api.ConversionResult;
 import ch.emed.converter.core.api.FormatId;
+import ch.emed.converter.core.api.OutputForm;
 import ch.emed.converter.core.api.PatientIdentifier;
+import ch.emed.converter.core.api.SignatureData;
 import ch.emed.converter.core.report.Outcome;
 import ch.emed.converter.core.report.ReportJsonWriter;
 import ch.emed.converter.rest.AbstractRestTest;
@@ -15,6 +17,7 @@ import ch.emed.converter.rest.RestTestSupport;
 import ch.emed.converter.rest.RestTestSupport.CliRun;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -113,6 +116,40 @@ class ServiceLibraryParityTest extends AbstractRestTest {
         libraryOptions);
   }
 
+  /** Feature 003: QR images and signed eRezept URLs, read with author details. */
+  static Stream<Path> transmissionForms() {
+    return Stream.concat(
+        RestTestSupport.corpus(RestTestSupport.FIXTURES.resolve("qr")).stream(),
+        RestTestSupport.corpus(RestTestSupport.FIXTURES.resolve("erezept")).stream());
+  }
+
+  @ParameterizedTest(name = "chmed16a -> ch-emed, input form: {0}")
+  @MethodSource("transmissionForms")
+  void qrAndErezeptInputs(Path input) throws Exception {
+    assertParity(
+        input, "chmed16a", "ch-emed", RestTestSupport.withAuthor(""), List.of(), WITH_AUTHOR);
+  }
+
+  /** Feature 003: every CH EMED document as QR payload and QR image. */
+  static Stream<Arguments> outputForms() {
+    return RestTestSupport.corpus(RestTestSupport.CH_EMED).stream()
+        .flatMap(
+            p ->
+                Stream.of(OutputForm.QR_PAYLOAD, OutputForm.QR_IMAGE).map(f -> Arguments.of(p, f)));
+  }
+
+  @ParameterizedTest(name = "ch-emed -> chmed16a as {1}: {0}")
+  @MethodSource("outputForms")
+  void qrOutputForms(Path input, OutputForm form) throws Exception {
+    assertParity(
+        input,
+        "ch-emed",
+        "chmed16a",
+        RestTestSupport.json("{\"outputForm\":\"" + form.externalName() + "\"}"),
+        List.of("--output-form", form.externalName()),
+        DEFAULTS.withOutputForm(form));
+  }
+
   private void assertParity(
       Path input,
       String from,
@@ -125,6 +162,8 @@ class ServiceLibraryParityTest extends AbstractRestTest {
     if (options != null && options.has("author") && !args.contains("--author")) {
       args.addAll(List.of("--author", RestTestSupport.authorFile(temp).toString()));
     }
+    Path signatureFile = temp.resolve("signature-" + System.nanoTime() + ".json");
+    args.addAll(List.of("--signature-output", signatureFile.toString()));
     byte[] document = RestTestSupport.read(input);
     ConversionResult library =
         converter()
@@ -155,6 +194,24 @@ class ServiceLibraryParityTest extends AbstractRestTest {
       assertThat(service.getStatus()).isEqualTo(200);
       assertThat(body.get("outcome").asText()).isEqualTo(library.outcome().name());
       assertThat(Base64.getDecoder().decode(body.get("output").asText())).isEqualTo(expected);
+    }
+
+    // feature 003: signature data, raw and unverified, beside the document in every interface
+    if (library.signature().isPresent()) {
+      SignatureData signature = library.signature().get();
+      JsonNode expected =
+          RestTestSupport.json(
+              RestTestSupport.JSON.writeValueAsBytes(
+                  java.util.Map.of(
+                      "identity", signature.identity(),
+                      "timestamp", signature.timestamp(),
+                      "signature", signature.signature(),
+                      "verified", signature.verified())));
+      assertThat(body.get("signature")).isEqualTo(expected);
+      assertThat(RestTestSupport.json(Files.readAllBytes(signatureFile))).isEqualTo(expected);
+    } else {
+      assertThat(body.has("signature")).isFalse();
+      assertThat(signatureFile).doesNotExist();
     }
   }
 }
