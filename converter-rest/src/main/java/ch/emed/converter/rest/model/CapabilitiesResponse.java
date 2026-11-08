@@ -11,14 +11,23 @@ import java.util.Map;
  *
  * @param converterVersion version of the converter library
  * @param conversions supported source/target pairs
+ * @param formats input and output forms per format (feature 003)
  * @param options conversion options of a request
  * @param specifications pinned specification per format
  * @param limits operator limits
  */
-@JsonPropertyOrder({"converterVersion", "conversions", "options", "specifications", "limits"})
+@JsonPropertyOrder({
+  "converterVersion",
+  "conversions",
+  "formats",
+  "options",
+  "specifications",
+  "limits"
+})
 public record CapabilitiesResponse(
     String converterVersion,
     List<ConversionPairDto> conversions,
+    List<Format> formats,
     List<Option> options,
     Map<String, String> specifications,
     Limits limits) {
@@ -35,6 +44,14 @@ public record CapabilitiesResponse(
       @JsonProperty("default") @JsonInclude(JsonInclude.Include.ALWAYS) Object defaultValue,
       String description) {}
 
-  /** Operator limits, {@code converter.rest.*}. */
-  public record Limits(long maxRequestSizeBytes, long maxDocumentSizeBytes, long timeoutSeconds) {}
+  /** Input and output forms of one format, external names (feature 003). */
+  @JsonPropertyOrder({"name", "inputForms", "outputForms"})
+  public record Format(String name, List<String> inputForms, List<String> outputForms) {}
+
+  /** Operator limits, {@code converter.rest.*}, and the fixed image pixel limit. */
+  public record Limits(
+      long maxRequestSizeBytes,
+      long maxDocumentSizeBytes,
+      long timeoutSeconds,
+      long maxImagePixels) {}
 }

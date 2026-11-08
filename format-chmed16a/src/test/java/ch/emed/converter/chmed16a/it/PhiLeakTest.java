@@ -12,6 +12,7 @@ import ch.emed.converter.core.api.ConversionResult;
 import ch.emed.converter.core.api.Converter;
 import ch.emed.converter.core.api.Converters;
 import ch.emed.converter.core.api.FormatId;
+import ch.emed.converter.core.api.OutputForm;
 import ch.emed.converter.core.report.ReportJsonWriter;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -138,6 +139,56 @@ class PhiLeakTest {
     }
 
     assertThat(conversions).as("corpus size").isGreaterThan(30);
+    assertThat(findings).as("leaks (the values themselves are never printed)").isEmpty();
+  }
+
+  @Test
+  void qrImagesErezeptUrlsAndQrOutputsLeakNothing() {
+    // feature 003, SC-007: values of every CHMED16A fixture, the raw URL fixtures and the
+    // synthetic signature values are searched in reports and logs of all new forms
+    PhiScanner scanner = new PhiScanner();
+    for (String fixture : chmed16aFixtures()) {
+      String text = Fixtures.text(fixture);
+      scanner.addChmed16aJson(text).addRawPayload(text);
+    }
+    for (String fixture : Fixtures.list("erezept", ".txt")) {
+      scanner.addRawPayload(Fixtures.text(fixture));
+    }
+    scanner.addChmed16aJson(Fixtures.text("erezept/rx-no-patient-id.json"));
+    List<String> findings = new ArrayList<>();
+    List<String> inputs = new ArrayList<>();
+    for (String suffix : List.of(".png", ".jpg", ".gif")) {
+      inputs.addAll(Fixtures.list("qr", suffix));
+      inputs.addAll(Fixtures.list("erezept", suffix));
+    }
+    inputs.addAll(Fixtures.list("erezept", ".txt"));
+    logs.list.clear();
+
+    for (String fixture : inputs) {
+      ConversionResult result =
+          converter.convert(
+              new ConversionRequest(
+                  FormatId.CHMED16A,
+                  FormatId.CH_EMED,
+                  Fixtures.bytes(fixture),
+                  TestOptions.withAuthorAndPatientId()));
+      scan(fixture, scanner, result, findings);
+    }
+    for (String fixture : Fixtures.list("chemed", ".json")) {
+      PhiScanner chEmed = new PhiScanner().addChEmedJson(Fixtures.text(fixture));
+      for (OutputForm form : List.of(OutputForm.QR_PAYLOAD, OutputForm.QR_IMAGE)) {
+        ConversionResult result =
+            converter.convert(
+                new ConversionRequest(
+                    FormatId.CH_EMED,
+                    FormatId.CHMED16A,
+                    Fixtures.bytes(fixture),
+                    ConversionOptions.defaults().withOutputForm(form)));
+        scan(fixture + " as " + form, chEmed, result, findings);
+      }
+    }
+
+    assertThat(inputs).as("feature 003 inputs").hasSizeGreaterThan(20);
     assertThat(findings).as("leaks (the values themselves are never printed)").isEmpty();
   }
 

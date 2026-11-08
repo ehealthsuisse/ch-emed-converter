@@ -21,6 +21,7 @@
 
   <modules>
     <module>converter-core</module>
+    <module>converter-qr</module>
     <module>converter-validation</module>
     <module>format-chmed16a</module>
     <module>converter-cli</module>
@@ -42,6 +43,8 @@
     <assertj.version>3.27.6</assertj.version>
     <jsonassert.version>1.5.3</jsonassert.version>
     <json-schema-validator.version>2.0.1</json-schema-validator.version>
+    <zxing.version>3.5.4</zxing.version>
+    <boofcv.version>1.6.0</boofcv.version>
   </properties>
 
   <dependencyManagement>
@@ -71,6 +74,11 @@
       <dependency>
         <groupId>ch.emed.converter</groupId>
         <artifactId>converter-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.emed.converter</groupId>
+        <artifactId>converter-qr</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -128,6 +136,16 @@
         <groupId>com.networknt</groupId>
         <artifactId>json-schema-validator</artifactId>
         <version>${json-schema-validator.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.zxing</groupId>
+        <artifactId>core</artifactId>
+        <version>${zxing.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.boofcv</groupId>
+        <artifactId>boofcv-recognition</artifactId>
+        <version>${boofcv.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

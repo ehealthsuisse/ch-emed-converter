@@ -8,8 +8,11 @@ import ch.emed.converter.core.api.ConversionRequest;
 import ch.emed.converter.core.api.ConversionResult;
 import ch.emed.converter.core.api.Converter;
 import ch.emed.converter.core.api.FormatId;
+import ch.emed.converter.core.api.FormatInfo;
 import ch.emed.converter.core.api.OrganizationDetails;
+import ch.emed.converter.core.api.OutputForm;
 import ch.emed.converter.core.api.PatientIdentifier;
+import ch.emed.converter.core.api.SignatureData;
 import ch.emed.converter.core.report.Outcome;
 import ch.emed.converter.core.report.ReasonCode;
 import ch.emed.converter.core.report.ReportJsonWriter;
@@ -19,7 +22,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Model.CommandSpec;
@@ -51,6 +56,19 @@ final class ConvertCommand implements Callable<Integer> {
       names = {"-o", "--output"},
       description = "Write the output document to this file (default: stdout)")
   Path output;
+
+  @Option(
+      names = "--output-form",
+      defaultValue = "document",
+      description = "Output form: document, qr-payload or qr-image (qr-* only with --to chmed16a)")
+  String outputForm;
+
+  @Option(
+      names = "--signature-output",
+      description =
+          "Write the signature data of a signed eRezept to this file (default:"
+              + " <output>.signature.json)")
+  Path signatureOutput;
 
   @Option(names = "--report", description = "Write the JSON conversion report to this file")
   Path report;
@@ -93,7 +111,7 @@ final class ConvertCommand implements Callable<Integer> {
     Converter converter = context.converter();
     FormatId source = format(from, converter);
     FormatId target = format(to, converter);
-    ConversionOptions options = options();
+    ConversionOptions options = options().withOutputForm(outputForm(target, converter));
     if (!reportFormat.equals("json") && !reportFormat.equals("text")) {
       throw usage("--report-format must be json or text");
     }
@@ -126,7 +144,54 @@ final class ConvertCommand implements Callable<Integer> {
       context.out.write(document);
       context.out.flush();
     }
+    if (result.signature().isPresent()) {
+      writeSignature(result.signature().get());
+    }
     return CliMain.EXIT_OK;
+  }
+
+  /** The output form, which the target must offer (feature 003). */
+  private OutputForm outputForm(FormatId target, Converter converter) {
+    OutputForm form;
+    try {
+      form = OutputForm.fromExternalName(outputForm);
+    } catch (IllegalArgumentException e) {
+      throw usage("--output-form must be document, qr-payload or qr-image");
+    }
+    boolean offered =
+        converter.formats().stream()
+            .filter(f -> f.format().equals(target))
+            .map(FormatInfo::outputForms)
+            .anyMatch(forms -> forms.contains(form));
+    if (!offered) {
+      throw usage("--output-form " + outputForm + " is not offered for --to " + to);
+    }
+    return form;
+  }
+
+  /**
+   * Writes the signature data of a signed eRezept as JSON, never to stdout or stderr (feature 003,
+   * FR-004); without a file (output to stdout), only a note is printed.
+   */
+  private void writeSignature(SignatureData signature) throws IOException {
+    Path file =
+        signatureOutput != null
+            ? signatureOutput
+            : output != null
+                ? output.resolveSibling(output.getFileName() + ".signature.json")
+                : null;
+    if (file == null) {
+      context.err.println(
+          "Note: the signature data of the signed eRezept was not written; use"
+              + " --signature-output FILE or -o FILE.");
+      return;
+    }
+    Map<String, Object> json = new LinkedHashMap<>();
+    json.put("identity", signature.identity());
+    json.put("timestamp", signature.timestamp());
+    json.put("signature", signature.signature());
+    json.put("verified", signature.verified());
+    Files.write(file, MAPPER.writerWithDefaultPrettyPrinter().writeValueAsBytes(json));
   }
 
   private FormatId format(String name, Converter converter) {

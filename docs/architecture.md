@@ -33,9 +33,13 @@ flowchart TB
         UTIL["Shared<br/>IdStrategy (deterministic ids)<br/>PDF renderer (PDFBox)<br/>ChEmedJson (HAPI R4)"]
     end
 
+    subgraph qr["converter-qr"]
+        QRC["QrImageReader · QrImageWriter<br/>ZXing, PNG/JPEG, no format knowledge"]
+    end
+
     subgraph fmt["format-chmed16a"]
         FM["Chmed16aFormatModule"]
-        IO["io<br/>JSON / QR reader and writer"]
+        IO["io<br/>JSON reader and writer, QR payload,<br/>input-form detection, eRezept URL parser"]
         FWD["mapping<br/>CHMED16A → CH EMED"]
         REV["mapping.reverse<br/>CH EMED → CHMED16A"]
         VAL16["validation<br/>CHMED16A schema + eRezept rules"]
@@ -56,6 +60,7 @@ flowchart TB
     FM -. "implements via ServiceLoader" .-> SPI
     HV -. "implements via ServiceLoader" .-> SPI
     FM --> IO
+    IO --> QRC
     FM --> FWD
     FM --> REV
     FM --> VAL16
@@ -63,6 +68,7 @@ flowchart TB
 ```
 
 Dependencies in the POMs: `format-chmed16a` and `converter-validation` depend on `converter-core`;
+`format-chmed16a` also depends on `converter-qr` (feature 003), which depends on ZXing only;
 `converter-cli` depends on all three (the format module at runtime). `converter-rest` depends on
 `converter-core` and, at runtime, on the format and validation modules; it is the only module with
 Spring dependencies (Spring Boot BOM imported in its own POM, enforced by the parent's
@@ -142,17 +148,17 @@ flowchart LR
     HUB(("CH EMED 6.0.0<br/>HL7 FHIR R4<br/>hub model"))
     CHMED23A["CHMED23A<br/>(planned, separate feature)"]
     CARA["CARA EMED<br/>(planned)"]
-    ERX["eRezept Schweiz QR code / URL<br/>(planned, builds on feature 001)"]
+    ERX["eMediplan QR code, eRezept Schweiz QR code / URL<br/>(implemented, feature 003)"]
     EPR["CH EMED EPR<br/>profile variant<br/>(planned)"]
 
     CHMED16A <--> HUB
     CHMED23A <-.-> HUB
     CARA <-.-> HUB
-    ERX -.-> CHMED16A
+    ERX <--> CHMED16A
     HUB -.-> EPR
 
     classDef planned stroke-dasharray: 5 5
-    class CHMED23A,CARA,ERX,EPR planned
+    class CHMED23A,CARA,EPR planned
 ```
 
 | Item | Status | Notes |
@@ -161,7 +167,7 @@ flowchart LR
 | REST service | implemented (feature 002) | plain REST/JSON API on top of `converter-core` (`converter-rest`); documents base64-encoded, same options as the CLI; no access control or TLS in the service |
 | CHMED23A ↔ CH EMED | planned | separate, later feature; CHMED23A was withdrawn by IG eMediplan but stays in the constitution's scope |
 | CARA EMED | planned | named in the constitution as a format whose official examples join the test corpus |
-| eRezept QR code / URL | planned | QR images, QR payload creation and signed eRezept URLs (`https://eprescription.hin.ch/#CHMED16A1…`); feature 001 only decodes the textual `CHMED16A1…` payload |
+| eMediplan QR code, eRezept QR code / URL | implemented (feature 003) | transmission forms of CHMED16A, not formats of their own: QR images (PNG/JPEG) and signed eRezept URLs (`https://eprescription.hin.ch/#CHMED16A1…`) are read, the signature data is returned raw and unverified beside the document; QR payloads and, for medication plans, QR images are written (option `outputForm`); prescriptions only as unsigned payload for the HIN erxproxy |
 | CH EMED EPR | planned | feature 001 targets the general CH EMED IG; the EPR variant would be a separate feature |
 
 Out of scope for now: the CHMED16A PolymedicationCheck document type.

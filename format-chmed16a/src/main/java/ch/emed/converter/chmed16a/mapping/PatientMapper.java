@@ -38,6 +38,7 @@ public final class PatientMapper {
     Optional<PatientIdentifier> option = scope.options().patientIdentifier();
     if (!hasId && option.isPresent()) {
       patient.addIdentifier().setSystem(option.get().system()).setValue(option.get().value());
+      scope.suppliedByOption("/Patient/Ids");
       hasId = true;
     }
     if (!hasId) {

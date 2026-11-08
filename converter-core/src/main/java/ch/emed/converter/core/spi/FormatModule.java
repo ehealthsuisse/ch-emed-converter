@@ -1,6 +1,8 @@
 package ch.emed.converter.core.spi;
 
 import ch.emed.converter.core.api.FormatId;
+import ch.emed.converter.core.api.OutputForm;
+import java.util.List;
 import org.hl7.fhir.r4.model.Bundle;
 
 /**
@@ -9,6 +11,24 @@ import org.hl7.fhir.r4.model.Bundle;
  * thread-safe and MUST NOT access the network.
  */
 public interface FormatModule {
+
+  /**
+   * Names of the accepted input forms, e.g. {@code json}, {@code qr-payload}, {@code qr-image}.
+   *
+   * @return input forms
+   */
+  default List<String> inputForms() {
+    return List.of("json");
+  }
+
+  /**
+   * Offered output forms; {@code fromChEmed} reads the requested one from the options.
+   *
+   * @return output forms
+   */
+  default List<OutputForm> outputForms() {
+    return List.of(OutputForm.DOCUMENT);
+  }
 
   FormatId format();
 

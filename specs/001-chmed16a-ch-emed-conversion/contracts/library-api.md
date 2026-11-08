@@ -3,6 +3,11 @@
 Public, framework-free API used by the CLI, the REST service (feature 002) and embedding
 systems. Entity semantics: [data-model.md](../data-model.md) §1.
 
+Extended by feature 003 (additive): output forms (`ConversionOptions.outputForm`, enum `OutputForm`),
+signature data (`ConversionResult.signature`, record `SignatureData`), `Converter.formats()` and the
+SPI defaults `FormatModule.inputForms()` / `outputForms()`; see
+[specs/003-qr-erezept/contracts/library-api.md](../../003-qr-erezept/contracts/library-api.md).
+
 ## Entry point
 
 ```java
