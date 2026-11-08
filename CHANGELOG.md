@@ -5,6 +5,8 @@ All notable changes to the converter are recorded here, following
 [Semantic Versioning](https://semver.org/). Changes to the output structure, to reason codes or to
 the report format MUST be recorded here (constitution, "Development Workflow").
 
+## [Unreleased]
+
 ## [1.0.0] — 2026-11-08
 
 ### Changed

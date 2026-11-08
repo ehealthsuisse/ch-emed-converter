@@ -82,8 +82,8 @@ distribution archive `converter-rest/target/ch-emed-converter-rest-<version>-dis
 | `LICENSE`, `NOTICE`, `THIRD-PARTY.txt`, `third-party-licenses.md`, `README.md` | licences and overview |
 
 ```bash
-unzip ch-emed-converter-rest-1.0.0-dist.zip
-cd ch-emed-converter-rest-1.0.0
+unzip ch-emed-converter-rest-<version>-dist.zip
+cd ch-emed-converter-rest-<version>
 JAVA_OPTS="-Xmx2g" ./ch-emed-converter-rest.sh --server.port=8080
 ```
 
@@ -101,7 +101,7 @@ Container image (Paketo buildpacks, Java 21; needs a running Docker daemon at bu
 ```bash
 ./mvnw -pl converter-rest -am install -DskipTests
 ./mvnw -pl converter-rest spring-boot:build-image
-docker run --rm -p 8080:8080 ch-emed-converter-rest:1.0.0
+docker run --rm -p 8080:8080 ch-emed-converter-rest:<version>
 ```
 
 The image build itself downloads the buildpacks and the JRE; the running container needs no network
