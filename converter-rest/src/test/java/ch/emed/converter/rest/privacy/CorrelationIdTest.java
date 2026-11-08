@@ -46,6 +46,7 @@ class CorrelationIdTest {
     Converter converter = mock(Converter.class);
     when(converter.supportedConversions())
         .thenReturn(Set.of(new ConversionPair(FormatId.CH_EMED, FormatId.CHMED16A)));
+    when(converter.formats()).thenReturn(RestTestSupport.documentFormats());
     when(holder.converter()).thenReturn(Optional.of(converter));
     when(executor.execute(any()))
         .thenThrow(new IllegalStateException("Patient Hans Muster, born 1950-03-21"));

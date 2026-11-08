@@ -489,7 +489,7 @@ forms.
 
 ### Tests (write first, must fail)
 
-- [ ] T046 [P] [US5] In `converter-cli/src/test/java/ch/emed/converter/cli/QrCliTest.java`, test
+- [X] T046 [P] [US5] In `converter-cli/src/test/java/ch/emed/converter/cli/QrCliTest.java`, test
   the CLI (contracts/cli.md):
   - `--output-form qr-payload|qr-image` writes the same bytes as the library, and PNG to stdout
     unchanged;
@@ -501,7 +501,10 @@ forms.
     file;
   - failures (`QR_NOT_FOUND`, `QR_CAPACITY_EXCEEDED`, `QR_IMAGE_NOT_ALLOWED`) exit 1 and write
     neither output nor signature file.
-- [ ] T047 [P] [US5] Add tests for the new parts of the contract to
+  - *Done 2026-11-08 without the capacity case: it needs a very large CH EMED document and is
+    covered through the library by `QrOutputIT`; the CLI only passes the outcome on. An unknown
+    `--output-form` is a usage error too.*
+- [X] T047 [P] [US5] Add tests for the new parts of the contract to
   `converter-rest/src/test/java/ch/emed/converter/rest/contract/` (new `QrConversionContractTest.java`):
   - `outputForm` values accepted, and an unknown value → 400;
   - `outputForm=qr-image` with target `ch-emed` → 400 `MALFORMED_REQUEST` without a report;
@@ -510,26 +513,28 @@ forms.
   - the error cases of contracts/rest-api.md give the listed status and `errorType`, with a
     report;
   - capabilities contain `formats` and `limits.maxImagePixels`.
-- [ ] T048 [US5] Extend `converter-rest/src/test/java/ch/emed/converter/rest/parity/ServiceLibraryParityTest.java` (the
+- [X] T048 [US5] Extend `converter-rest/src/test/java/ch/emed/converter/rest/parity/ServiceLibraryParityTest.java` (the
   library/CLI/REST parity test) to the input forms image and eRezept URL and the output forms
   `qr-payload` and `qr-image`. The decoded outputs, the reports and the signature data must be
   identical across the three interfaces (SC-008).
+  - *Done 2026-11-08: all files of `fixtures/qr` and `fixtures/erezept` as input, the CH EMED
+    corpus as `qr-payload` and `qr-image`; 120 cases in total, including failures.*
 
 ### Implementation
 
-- [ ] T049 [US5] Add `--output-form` (picocli enum converter on the external names) and
+- [X] T049 [US5] Add `--output-form` (picocli enum converter on the external names) and
   `--signature-output` to `converter-cli/src/main/java/ch/emed/converter/cli/ConvertCommand.java`:
   - write the binary output unchanged;
   - write the signature JSON (`identity`, `timestamp`, `signature`, `verified`, in this order,
     UTF-8, pretty-printed) only on success;
   - default path `<output>.signature.json`; stderr note when the output is stdout;
   - usage error (exit 2) for `qr-*` with `--to ch-emed`.
-- [ ] T050 [US5] Apply contracts/rest-api.md to
+- [X] T050 [US5] Apply contracts/rest-api.md to
   `specs/002-rest-conversion-service/contracts/openapi.yaml`: `info.version` 1.1.0, `outputForm`,
   `SignatureData`, `signature`, `outputMediaType` examples, `formats`, `maxImagePixels`, and
   `document` descriptions naming image and URL input. Check that the generated client
   (`GeneratedClientIT`) still compiles.
-- [ ] T051 [US5] Change the REST model and controller in
+- [X] T051 [US5] Change the REST model and controller in
   `converter-rest/src/main/java/ch/emed/converter/rest/`:
   - `model/RequestOptions` + `outputForm`; `api/RequestOptionsMapper` maps it to
     `OutputForm`;
@@ -541,7 +546,7 @@ forms.
   - `model/CapabilitiesResponse` + `formats` from `Converter.formats()`, and
     `limits.maxImagePixels` = 40000000;
   - `CapabilitiesController` lists `outputForm` in `options`.
-- [ ] T052 [US5] Map the new codes in
+- [X] T052 [US5] Map the new codes in
   `converter-rest/src/main/java/ch/emed/converter/rest/error/FailureClassifier.java`:
   - `IMAGE_UNREADABLE`, `IMAGE_TOO_LARGE`, `QR_NOT_FOUND`, `QR_MULTIPLE`, `EREZEPT_URL_INVALID` →
     `INVALID_INPUT`;
@@ -549,7 +554,12 @@ forms.
 
   In `GlobalExceptionHandler` and `ProblemFactory`, make sure that no problem detail contains
   payload, URL or signature values.
-- [ ] T053 [US5] Update `specs/001-chmed16a-ch-emed-conversion/contracts/cli.md` (pointer to the
+  - *Done 2026-11-08 without a code change in `FailureClassifier`: it classifies by phase, and all
+    image, QR and URL codes are reported in phase PARSE (→ `INVALID_INPUT`), capacity and
+    prescription image in phase MAP (→ `CONVERSION_FAILED`); `QrConversionContractTest` checks
+    it. `GlobalExceptionHandler` gained `outputForm` in its list of contract property names; the
+    problem details stay fixed texts.*
+- [X] T053 [US5] Update `specs/001-chmed16a-ch-emed-conversion/contracts/cli.md` (pointer to the
   003 delta, new options in the table) and the CLI and REST sections of `README.md` with the
   examples of contracts/cli.md and quickstart.md Scenario 5.
 

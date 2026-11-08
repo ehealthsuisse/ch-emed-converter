@@ -56,13 +56,22 @@ java -jar converter-cli/target/ch-emed-converter.jar convert --from chmed16a --t
 java -jar converter-cli/target/ch-emed-converter.jar convert --from ch-emed --to chmed16a \
   card.json --strict > plan.json
 java -jar converter-cli/target/ch-emed-converter.jar formats
+# feature 003: QR image or signed eRezept URL in, QR payload or QR image out
+java -jar converter-cli/target/ch-emed-converter.jar convert --from chmed16a --to ch-emed \
+  plan-qr.png --author author.json -o card.json
+java -jar converter-cli/target/ch-emed-converter.jar convert --from chmed16a --to ch-emed \
+  erezept-url.txt -o rx.json            # signature data in rx.json.signature.json
+java -jar converter-cli/target/ch-emed-converter.jar convert --from ch-emed --to chmed16a \
+  card.json --output-form qr-image -o plan.png
 ```
 
 | Option | Meaning |
 |--------|---------|
 | `--from`, `--to` | `chmed16a` or `ch-emed` |
-| `<input-file>` / `-` | input file or stdin (CHMED16A also as textual QR payload `CHMED16A1…`) |
+| `<input-file>` / `-` | input file or stdin; CHMED16A also as textual QR payload `CHMED16A1…`, PNG/JPEG QR image or signed eRezept URL (detected by content) |
 | `-o`, `--output` | output file (default: stdout) |
+| `--output-form document\|qr-payload\|qr-image` | output form for `--to chmed16a`; `qr-image` only for medication plans |
+| `--signature-output <file>` | signature data of a signed eRezept (raw, not verified); default `<output>.signature.json` |
 | `--report <file>`, `--report-format json\|text` | JSON report file; report format on stderr |
 | `--strict` | fail if clinically relevant information cannot be represented |
 | `--language`, `--confidentiality` | document language and confidentiality if the source has none |
@@ -70,7 +79,8 @@ java -jar converter-cli/target/ch-emed-converter.jar formats
 
 Exit codes: `0` success or success with warnings, `1` failed (nothing on stdout), `2` usage error,
 `3` internal error or validation not completed under system load (`VALIDATION_INCOMPLETE`; retry).
-Full contract: [contracts/cli.md](specs/001-chmed16a-ch-emed-conversion/contracts/cli.md).
+Full contract: [contracts/cli.md](specs/001-chmed16a-ch-emed-conversion/contracts/cli.md), QR and
+eRezept additions in [specs/003-qr-erezept/contracts/cli.md](specs/003-qr-erezept/contracts/cli.md).
 
 ## Library
 
@@ -107,8 +117,12 @@ document base64-encoded (byte-identical to library and CLI):
                "organization": { "name": "…", "street": "…", "zip": "…", "city": "…", "country": "CH" } } } }
 ```
 
+The document may also be a QR image or a signed eRezept URL; `options.outputForm` (`document`,
+`qr-payload`, `qr-image`) selects the output form, `outputMediaType` names it, and a signed eRezept
+adds the raw, unverified `signature` beside the document (feature 003).
+
 Failures are RFC 9457 problem details with a distinct `errorType`; `GET /api/v1/capabilities` lists
-conversions, options, pinned specifications and limits; `GET /api/v1/openapi.yaml` serves the
+conversions, input and output forms, options, pinned specifications and limits; `GET /api/v1/openapi.yaml` serves the
 contract ([openapi.yaml](specs/002-rest-conversion-service/contracts/openapi.yaml)).
 
 **The service has no authentication and no TLS and must run behind an API gateway or in a protected

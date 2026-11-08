@@ -6,6 +6,8 @@ import ch.emed.converter.core.api.ConversionRequest;
 import ch.emed.converter.core.api.ConversionResult;
 import ch.emed.converter.core.api.Converter;
 import ch.emed.converter.core.api.FormatId;
+import ch.emed.converter.core.api.OutputForm;
+import ch.emed.converter.core.api.SignatureData;
 import ch.emed.converter.core.report.Outcome;
 import ch.emed.converter.core.report.ReportJsonWriter;
 import ch.emed.converter.rest.config.ConverterHolder;
@@ -95,6 +97,11 @@ public class ConversionController {
 
     FormatId source = pair.get().source();
     FormatId target = pair.get().target();
+    if (!offered(converter, target, options.outputForm())) {
+      // checked before the conversion, like any invalid option value (feature 003)
+      throw new MalformedRequestException(
+          "Output form not offered for the target: options.outputForm");
+    }
     ConversionResult result =
         executor.execute(
             () -> converter.convert(new ConversionRequest(source, target, document, options)));
@@ -113,7 +120,8 @@ public class ConversionController {
                 RequestAttributes.correlationId(request),
                 report,
                 Base64.getEncoder().encodeToString(result.output().orElseThrow()),
-                mediaType(target)));
+                mediaType(target, options.outputForm()),
+                result.signature().map(ConversionController::signature).orElse(null)));
   }
 
   /** The pair if both names are valid format names and the conversion is offered. */
@@ -145,8 +153,23 @@ public class ConversionController {
     }
   }
 
-  /** Media type of a document in the given format. */
-  static String mediaType(FormatId format) {
-    return format.isChEmed() ? "application/fhir+json" : MediaType.APPLICATION_JSON_VALUE;
+  private static boolean offered(Converter converter, FormatId target, OutputForm form) {
+    return converter.formats().stream()
+        .anyMatch(f -> f.format().equals(target) && f.outputForms().contains(form));
+  }
+
+  private static ConversionResponse.Signature signature(SignatureData data) {
+    return new ConversionResponse.Signature(
+        data.identity(), data.timestamp(), data.signature(), data.verified());
+  }
+
+  /** Media type of an output in the given format and output form. */
+  static String mediaType(FormatId format, OutputForm form) {
+    return switch (form) {
+      case QR_PAYLOAD -> MediaType.TEXT_PLAIN_VALUE;
+      case QR_IMAGE -> MediaType.IMAGE_PNG_VALUE;
+      case DOCUMENT ->
+          format.isChEmed() ? "application/fhir+json" : MediaType.APPLICATION_JSON_VALUE;
+    };
   }
 }

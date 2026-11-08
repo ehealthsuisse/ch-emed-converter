@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: CH EMED Converter REST API
-  version: 1.0.0
+  version: 1.1.0
   description: |
     Stateless conversion between CH EMED and other Swiss eMedication formats.
     The service has no authentication and no TLS; it MUST be operated behind an API gateway,
@@ -28,8 +28,8 @@ paths:
         required: true
         description: |
           Request message with the base64-encoded input document (CHMED16A JSON, CHMED16A QR
-          payload text `CHMED16A1…`, or FHIR JSON; the library detects the form) and the
-          conversion options. Options with personal data are only accepted here, never in
+          payload text `CHMED16A1…`, signed eRezept URL text, PNG or JPEG image with one QR code,
+          or FHIR JSON; the library detects the form) and the conversion options. Options with personal data are only accepted here, never in
           the URL or in headers.
         content:
           application/json:
@@ -173,6 +173,14 @@ components:
             value: { type: string, minLength: 1 }
         author:
           $ref: '#/components/schemas/AuthorDetails'
+        outputForm:
+          type: string
+          enum: [document, qr-payload, qr-image]
+          default: document
+          description: |
+            Form of the output. qr-payload and qr-image only for target chmed16a; qr-image only for
+            medication plans (a prescription is refused: it is output as unsigned payload only, to be
+            signed by the HIN erxproxy).
     AuthorDetails:
       type: object
       additionalProperties: false
@@ -206,8 +214,22 @@ components:
           description: Output document; after decoding byte-identical to the library result.
         outputMediaType:
           type: string
-          examples: [application/fhir+json, application/json]
-          description: Media type of the decoded output document.
+          examples: [application/fhir+json, application/json, text/plain, image/png]
+          description: Media type of the decoded output (document, QR payload or PNG image).
+        signature:
+          $ref: '#/components/schemas/SignatureData'
+    SignatureData:
+      type: object
+      additionalProperties: false
+      required: [identity, timestamp, signature, verified]
+      description: |
+        Signature data of a signed eRezept, returned unchanged and NOT verified (raw values of the URL
+        parameters i, t, s). Present only for signed input; never part of the report.
+      properties:
+        identity: { type: string }
+        timestamp: { type: string }
+        signature: { type: string }
+        verified: { type: boolean, const: false }
     ErrorType:
       type: string
       enum:
@@ -244,12 +266,27 @@ components:
           items: { $ref: '#/components/schemas/ConversionPair' }
     CapabilitiesResponse:
       type: object
-      required: [converterVersion, conversions, options, specifications, limits]
+      required: [converterVersion, conversions, formats, options, specifications, limits]
       properties:
         converterVersion: { type: string }
         conversions:
           type: array
           items: { $ref: '#/components/schemas/ConversionPair' }
+        formats:
+          type: array
+          description: Input and output forms per format.
+          items:
+            type: object
+            required: [name, inputForms, outputForms]
+            properties:
+              name: { $ref: '#/components/schemas/FormatName' }
+              inputForms:
+                type: array
+                items: { type: string }
+                examples: [[json, qr-payload, erezept-url, qr-image]]
+              outputForms:
+                type: array
+                items: { type: string, enum: [document, qr-payload, qr-image] }
         options:
           type: array
           items:
@@ -265,8 +302,9 @@ components:
           additionalProperties: { type: string }
         limits:
           type: object
-          required: [maxRequestSizeBytes, maxDocumentSizeBytes, timeoutSeconds]
+          required: [maxRequestSizeBytes, maxDocumentSizeBytes, timeoutSeconds, maxImagePixels]
           properties:
             maxRequestSizeBytes: { type: integer }
             maxDocumentSizeBytes: { type: integer }
             timeoutSeconds: { type: integer }
+            maxImagePixels: { type: integer }

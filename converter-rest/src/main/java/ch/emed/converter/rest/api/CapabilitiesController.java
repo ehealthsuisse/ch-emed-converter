@@ -2,11 +2,13 @@ package ch.emed.converter.rest.api;
 
 import ch.emed.converter.core.api.ConversionOptions;
 import ch.emed.converter.core.api.Converter;
+import ch.emed.converter.core.api.OutputForm;
 import ch.emed.converter.rest.config.ConverterHolder;
 import ch.emed.converter.rest.config.ConverterRestProperties;
 import ch.emed.converter.rest.error.ErrorType;
 import ch.emed.converter.rest.error.ProblemFactory;
 import ch.emed.converter.rest.model.CapabilitiesResponse;
+import ch.emed.converter.rest.model.CapabilitiesResponse.Format;
 import ch.emed.converter.rest.model.CapabilitiesResponse.Limits;
 import ch.emed.converter.rest.model.CapabilitiesResponse.Option;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CapabilitiesController {
 
+  /**
+   * Pixel limit of QR images, the library default {@code QrImageReader.DEFAULT_MAX_PIXELS} (feature
+   * 003); fixed, not an operator setting.
+   */
+  static final long MAX_IMAGE_PIXELS = 40_000_000L;
+
   private final ConverterHolder converters;
   private final ProblemFactory problems;
   private final Limits limits;
@@ -39,7 +47,8 @@ public class CapabilitiesController {
             properties.maxRequestSize().toBytes(),
             properties.maxDocumentSize().toBytes(),
             // whole seconds, rounded up so that a sub-second limit is not shown as 0
-            (timeoutMillis + 999) / 1000);
+            (timeoutMillis + 999) / 1000,
+            MAX_IMAGE_PIXELS);
   }
 
   @GetMapping(path = "/api/v1/capabilities", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -54,9 +63,22 @@ public class CapabilitiesController {
         new CapabilitiesResponse(
             converter.version(),
             ConversionController.supported(converter),
+            formats(converter),
             options(),
             converter.pinnedSpecifications(),
             limits));
+  }
+
+  /** Input and output forms per format, from the library (feature 003). */
+  static List<Format> formats(Converter converter) {
+    return converter.formats().stream()
+        .map(
+            f ->
+                new Format(
+                    f.format().externalName(),
+                    f.inputForms(),
+                    f.outputForms().stream().map(OutputForm::externalName).toList()))
+        .toList();
   }
 
   /** The options of {@link RequestOptionsMapper}, with the library defaults. */
@@ -90,6 +112,12 @@ public class CapabilitiesController {
             "object",
             null,
             "Author details {gln, given, family, organization}, used only where the source lacks"
-                + " what CH EMED requires."));
+                + " what CH EMED requires."),
+        new Option(
+            "outputForm",
+            "string",
+            defaults.outputForm().externalName(),
+            "Output form: document, qr-payload or qr-image (qr-* only for target chmed16a,"
+                + " qr-image only for medication plans)."));
   }
 }

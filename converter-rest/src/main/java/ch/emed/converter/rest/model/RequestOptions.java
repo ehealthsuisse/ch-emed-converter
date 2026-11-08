@@ -10,13 +10,15 @@ package ch.emed.converter.rest.model;
  * @param confidentiality normal, restricted or secret
  * @param patientIdentifier used only if the source has no patient identifier
  * @param author used only where the source lacks author details required by CH EMED
+ * @param outputForm document, qr-payload or qr-image (feature 003)
  */
 public record RequestOptions(
     Boolean strict,
     String language,
     String confidentiality,
     PatientIdentifier patientIdentifier,
-    Author author) {
+    Author author,
+    String outputForm) {
 
   /** Patient identifier, e.g. {@code urn:oid:…} and the number. */
   public record PatientIdentifier(String system, String value) {}

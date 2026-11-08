@@ -58,6 +58,7 @@ class ServiceStateStatusContractTest {
     Converter converter = mock(Converter.class);
     when(converter.supportedConversions())
         .thenReturn(Set.of(new ConversionPair(FormatId.CH_EMED, FormatId.CHMED16A)));
+    when(converter.formats()).thenReturn(RestTestSupport.documentFormats());
     when(holder.converter()).thenReturn(Optional.of(converter));
     when(holder.state()).thenReturn(ConverterHolder.State.READY);
   }
