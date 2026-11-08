@@ -41,6 +41,18 @@ pattern for foreign addresses (M-ERX-04) and the treatment of `Rep` above 24 mon
 | M-QR-03 | The content bytes of the code are read as UTF-8 (byte segments without ECI are taken as raw bytes; with an ECI, as declared). Not valid UTF-8 → `PARSE_ERROR`. |
 | M-QR-04 | The content must be a CHMED payload, read as M-IN-02 (a CHMED23A payload → `UNSUPPORTED_VERSION`), or a signed eRezept URL; anything else → `PARSE_ERROR` "QR code does not hold a CHMED payload". The content is never echoed. The resulting document and report equal those of the payload text. |
 
+## QR code output (feature 003)
+
+Target `chmed16a` with the option `outputForm` (`document` default, `qr-payload`, `qr-image`);
+target `ch-emed` offers `document` only (`UNSUPPORTED_OUTPUT_FORM`). The QR parameters are pinned in
+[docs/specifications.md](../specifications.md) (provisional).
+
+| Id | Rule |
+|----|------|
+| M-QR-10 | `qr-payload`: `CHMED16A1` + Base64 (standard alphabet, padding) of GZip (no timestamp) of exactly the bytes of the `document` output; ASCII, no line break. Decoding gives back the `document` output (FR-012); the report equals that of `document`. |
+| M-QR-11 | `qr-image`: PNG of that payload: QR code byte mode without ECI, error correction M, smallest version, quiet zone 4 modules, 8 px per module, 1-bit grayscale, `pHYs` such that the symbol prints 40 mm wide. Equal input gives equal bytes (FR-011). |
+| M-QR-12 | A payload above 2331 bytes (version 40-M) → `QR_CAPACITY_EXCEEDED` naming the limit, no image; nothing is split, shortened or dropped (FR-008). `qr-payload` stays available. |
+
 ## eRezept Schweiz input (feature 003)
 
 Signed eRezept URL `https://eprescription.hin.ch/#CHMED16A1…&i=<identity>&t=<timestamp>&s=<signature>`

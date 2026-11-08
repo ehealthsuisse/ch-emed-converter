@@ -5,6 +5,7 @@ import ch.emed.converter.chmed16a.io.ChEmedDocumentReader.ChEmedDocument;
 import ch.emed.converter.chmed16a.io.ChEmedDocumentReader.DocumentType;
 import ch.emed.converter.chmed16a.io.Chmed16aJsonReader;
 import ch.emed.converter.chmed16a.io.Chmed16aJsonWriter;
+import ch.emed.converter.chmed16a.io.Chmed16aPayloadEncoder;
 import ch.emed.converter.chmed16a.io.ErezeptUrlParser;
 import ch.emed.converter.chmed16a.io.InputFormDetector;
 import ch.emed.converter.chmed16a.mapping.MappingRule;
@@ -18,6 +19,7 @@ import ch.emed.converter.chmed16a.model.Medication;
 import ch.emed.converter.chmed16a.validation.Chmed16aValidator;
 import ch.emed.converter.chmed16a.validation.ErezeptPrescriptionRules;
 import ch.emed.converter.core.api.FormatId;
+import ch.emed.converter.core.api.OutputForm;
 import ch.emed.converter.core.report.Phase;
 import ch.emed.converter.core.report.ReasonCode;
 import ch.emed.converter.core.report.ReportEntry;
@@ -25,6 +27,7 @@ import ch.emed.converter.core.spi.FormatModule;
 import ch.emed.converter.core.spi.MappingContext;
 import ch.emed.converter.qr.QrException;
 import ch.emed.converter.qr.QrImageReader;
+import ch.emed.converter.qr.QrImageWriter;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CodingErrorAction;
@@ -195,6 +198,32 @@ public final class Chmed16aFormatModule implements FormatModule {
       return null;
     }
     Chmed16aValidator.validate(result, ctx.report(), Phase.VALIDATE_OUTPUT);
-    return ctx.report().hasErrors() ? null : Chmed16aJsonWriter.write(result);
+    if (ctx.report().hasErrors()) {
+      return null;
+    }
+    return write(Chmed16aJsonWriter.write(result), ctx);
+  }
+
+  @Override
+  public List<OutputForm> outputForms() {
+    return List.of(OutputForm.DOCUMENT, OutputForm.QR_PAYLOAD, OutputForm.QR_IMAGE);
+  }
+
+  /** Writes the JSON in the requested output form (feature 003); null after an ERROR entry. */
+  @MappingRule({"M-QR-10", "M-QR-11", "M-QR-12"})
+  private static byte[] write(byte[] json, MappingContext ctx) {
+    return switch (ctx.options().outputForm()) {
+      case DOCUMENT -> json;
+      case QR_PAYLOAD -> Chmed16aPayloadEncoder.encode(json);
+      case QR_IMAGE -> {
+        String payload = new String(Chmed16aPayloadEncoder.encode(json), StandardCharsets.US_ASCII);
+        try {
+          yield QrImageWriter.write(payload);
+        } catch (QrException e) {
+          ctx.report().add(ReportEntry.error(reasonCode(e.kind()), Phase.MAP, "/", e.getMessage()));
+          yield null;
+        }
+      }
+    };
   }
 }

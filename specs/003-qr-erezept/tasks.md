@@ -375,7 +375,7 @@ image to exactly the payload, and reading the image back yields the expected pla
 
 ### Tests (write first, must fail)
 
-- [ ] T035 [P] [US3] In `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/io/Chmed16aPayloadEncoderTest.java`,
+- [X] T035 [P] [US3] In `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/io/Chmed16aPayloadEncoderTest.java`,
   test the encoder:
   - the output starts with `CHMED16A1H4sI`;
   - `Chmed16aPayloadDecoder.decode(encode(json))` equals `json` byte for byte (FR-012);
@@ -383,7 +383,7 @@ image to exactly the payload, and reading the image back yields the expected pla
   - two runs give identical bytes;
   - the output is ASCII without a trailing line feed;
   - Base64 uses the standard alphabet with padding.
-- [ ] T036 [P] [US3] In `converter-qr/src/test/java/ch/emed/converter/qr/QrImageWriterTest.java`,
+- [X] T036 [P] [US3] In `converter-qr/src/test/java/ch/emed/converter/qr/QrImageWriterTest.java`,
   test the writer:
   - the PNG is 1-bit grayscale, with no `tEXt`/`tIME` chunks;
   - the quiet zone is 4 modules and the module size 8 px;
@@ -392,7 +392,7 @@ image to exactly the payload, and reading the image back yields the expected pla
   - identical bytes for identical text (FR-011);
   - text above 2331 bytes → `CAPACITY` with the limit in the message;
   - BoofCV decodes every image of the CHMED16A corpus payloads to exactly the payload (SC-002).
-- [ ] T037 [US3] In `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/QrOutputTest.java`,
+- [X] T037 [US3] In `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/QrOutputTest.java`,
   test the output forms end to end:
   - for every Medication Card fixture, `QR_PAYLOAD` decodes to the `DOCUMENT` output and
     `QR_IMAGE` reads back to the same payload;
@@ -402,31 +402,40 @@ image to exactly the payload, and reading the image back yields the expected pla
   - a generated oversized plan (`LargePlanGenerator` in `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/testsupport/`, enough medications to exceed 2331 bytes) →
     `QR_CAPACITY_EXCEEDED` with no output, while `QR_PAYLOAD` of the same plan succeeds;
   - umlauts and accents survive the round trip.
-- [ ] T038 [P] [US3] In `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/it/PerformanceTest.java`,
+  - *Done 2026-11-08 as `it/QrOutputIT.java`. The image round trip is compared with the document
+    round trip, whose differences `RoundTripIT` already checks against `capability-gaps.json`.
+    Generated plans compress well: 100 medicaments still fit, so the oversized case uses 600,
+    converted without the validator (not under test here).*
+- [X] T038 [P] [US3] In `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/it/PerformanceTest.java`,
   add SC-005: the 20-medication plan of `LargePlanGenerator` (`testsupport/`) fits into one image at level M and reads
   back without error. Log the payload length and QR version for the record in quickstart.md.
+  - *Done 2026-11-08: 20 medicaments give a 673-byte payload, QR version 21 (level M), PNG
+    2683 bytes (Windows run; recorded in quickstart.md with T061).*
 
 ### Implementation
 
-- [ ] T039 [P] [US3] Implement `Chmed16aPayloadEncoder.encode(byte[] json)` → `byte[]` (ASCII):
+- [X] T039 [P] [US3] Implement `Chmed16aPayloadEncoder.encode(byte[] json)` → `byte[]` (ASCII):
   `"CHMED16A1"` + `Base64.getEncoder()` of `GZIPOutputStream` (default level, MTIME 0), per
   research R2. File:
   `format-chmed16a/src/main/java/ch/emed/converter/chmed16a/io/Chmed16aPayloadEncoder.java`.
-- [ ] T040 [P] [US3] Implement `QrImageWriter.write(String text)` → PNG bytes, per research R3 and
+- [X] T040 [P] [US3] Implement `QrImageWriter.write(String text)` → PNG bytes, per research R3 and
   data model §2, in `converter-qr/src/main/java/ch/emed/converter/qr/QrImageWriter.java`:
   - ZXing `QRCodeWriter`, `ERROR_CORRECTION=M`, `MARGIN=4`, `CHARACTER_SET=ISO-8859-1`;
   - scale 8 px/module into a `TYPE_BYTE_BINARY` image;
   - ImageIO PNG writer with a `pHYs` node computed from the symbol width;
   - throw `QrException(CAPACITY)` if ZXing reports that the data is too big or the text exceeds
     2331 bytes.
-- [ ] T041 [US3] Implement the output forms in `Chmed16aFormatModule.fromChEmed`
+  - *Done 2026-11-08 with ZXing's `Encoder` and an own rendering, which fixes quiet zone and
+    module size exactly. No `CHARACTER_SET` hint: with one, ZXing adds an ECI segment (12 bits,
+    found by the capacity test); without, it encodes ISO-8859-1 plainly.*
+- [X] T041 [US3] Implement the output forms in `Chmed16aFormatModule.fromChEmed`
   (`format-chmed16a/src/main/java/ch/emed/converter/chmed16a/Chmed16aFormatModule.java`):
   - `QR_PAYLOAD` → encoder on the JSON writer's bytes;
   - `QR_IMAGE` → encoder, then writer; `QrException(CAPACITY)` → `QR_CAPACITY_EXCEEDED` (phase
     MAP, message with the limit in bytes);
   - `outputForms()` = `DOCUMENT`, `QR_PAYLOAD`, `QR_IMAGE`;
   - depends on T039 and T040.
-- [ ] T042 [US3] Add a section "QR code output" (M-QR-10 … M-QR-14: payload construction, symbol
+- [X] T042 [US3] Add a section "QR code output" (M-QR-10 … M-QR-12: payload construction, symbol
   parameters, capacity, determinism) to `docs/mapping/chmed16a-ch-emed.md`.
 
 **Checkpoint**: Medication plans make the round trip CH EMED ↔ QR image through the library.
@@ -458,7 +467,7 @@ passes `erezept-chmed16a-schemav7.json` and the eRezept rules (SC-004).
   `MEDICATION_PRESCRIPTION` with `QR_IMAGE_NOT_ALLOWED` (phase MAP), before building the result.
   `QR_PAYLOAD` reuses T041 after `ErezeptPrescriptionRules`, so the existing refusal on violations
   applies (FR-009).
-- [ ] T045 [US4] Add M-QR-15 (prescription: payload only, no image, eRezept rules) to
+- [ ] T045 [US4] Add M-QR-13 (prescription: payload only, no image, eRezept rules) to
   `docs/mapping/chmed16a-ch-emed.md`. Add a note to `docs/operations/rest-service.md` and to
   `README.md` that the payload is the input of `POST /ePrescription/create` of the erxproxy, and
   that the converter never calls it.
