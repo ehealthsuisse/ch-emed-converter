@@ -130,8 +130,8 @@ public final class Chmed16aJsonReader {
               ReasonCode.PARSE_ERROR,
               Phase.PARSE,
               "/",
-              "Input looks like a URL (e.g. a signed eRezept QR code); signed eRezept URLs and QR"
-                  + " images are handled by the QR/eRezept feature"));
+              "Input looks like a URL but is not a signed eRezept URL"
+                  + " (https://eprescription.hin.ch/#CHMED16A1…)"));
       return null;
     } else {
       report.add(

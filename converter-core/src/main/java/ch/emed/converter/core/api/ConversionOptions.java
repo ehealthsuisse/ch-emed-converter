@@ -15,11 +15,12 @@ import java.util.Set;
  *     the library API
  * @param idStrategy deterministic id generation (research R8)
  * @param clock used only if a timestamp cannot be taken from the source
- * @param maxDecodedSize limit in bytes for decompressed QR payloads
+ * @param maxDecodedSize limit in bytes for decompressed QR payloads, QR images and eRezept URLs
  * @param defaultLanguage document language if the source has none (FR-022)
  * @param confidentiality CH EMED document confidentiality (FR-022)
  * @param patientIdentifier patient identifier if the source has none (FR-023)
  * @param author author details if the source lacks them (FR-023)
+ * @param outputForm form of the output (feature 003); the target must offer it
  */
 public record ConversionOptions(
     boolean strict,
@@ -30,7 +31,8 @@ public record ConversionOptions(
     String defaultLanguage,
     Confidentiality confidentiality,
     Optional<PatientIdentifier> patientIdentifier,
-    Optional<AuthorDetails> author) {
+    Optional<AuthorDetails> author,
+    OutputForm outputForm) {
 
   /** Languages allowed for CH EMED documents. */
   public static final Set<String> LANGUAGES = Set.of("de-CH", "fr-CH", "it-CH", "en-CH");
@@ -43,6 +45,7 @@ public record ConversionOptions(
     Objects.requireNonNull(confidentiality, "confidentiality");
     Objects.requireNonNull(patientIdentifier, "patientIdentifier");
     Objects.requireNonNull(author, "author");
+    Objects.requireNonNull(outputForm, "outputForm");
     if (!LANGUAGES.contains(defaultLanguage)) {
       throw new IllegalArgumentException("Unsupported language: " + defaultLanguage);
     }
@@ -52,8 +55,35 @@ public record ConversionOptions(
   }
 
   /**
+   * Options without an output form (before feature 003); the output form is {@link
+   * OutputForm#DOCUMENT}.
+   */
+  public ConversionOptions(
+      boolean strict,
+      boolean validateOutput,
+      IdStrategy idStrategy,
+      Optional<Clock> clock,
+      long maxDecodedSize,
+      String defaultLanguage,
+      Confidentiality confidentiality,
+      Optional<PatientIdentifier> patientIdentifier,
+      Optional<AuthorDetails> author) {
+    this(
+        strict,
+        validateOutput,
+        idStrategy,
+        clock,
+        maxDecodedSize,
+        defaultLanguage,
+        confidentiality,
+        patientIdentifier,
+        author,
+        OutputForm.DOCUMENT);
+  }
+
+  /**
    * Defaults: strict=false, validateOutput=true, maxDecodedSize=5 MB, defaultLanguage=de-CH,
-   * confidentiality=NORMAL, no patient identifier, no author details.
+   * confidentiality=NORMAL, no patient identifier, no author details, outputForm=DOCUMENT.
    *
    * @return default options
    */
@@ -67,7 +97,8 @@ public record ConversionOptions(
         "de-CH",
         Confidentiality.NORMAL,
         Optional.empty(),
-        Optional.empty());
+        Optional.empty(),
+        OutputForm.DOCUMENT);
   }
 
   public ConversionOptions withStrict(boolean value) {
@@ -80,7 +111,8 @@ public record ConversionOptions(
         defaultLanguage,
         confidentiality,
         patientIdentifier,
-        author);
+        author,
+        outputForm);
   }
 
   public ConversionOptions withValidateOutput(boolean value) {
@@ -93,7 +125,8 @@ public record ConversionOptions(
         defaultLanguage,
         confidentiality,
         patientIdentifier,
-        author);
+        author,
+        outputForm);
   }
 
   public ConversionOptions withDefaultLanguage(String value) {
@@ -106,7 +139,8 @@ public record ConversionOptions(
         value,
         confidentiality,
         patientIdentifier,
-        author);
+        author,
+        outputForm);
   }
 
   public ConversionOptions withConfidentiality(Confidentiality value) {
@@ -119,7 +153,8 @@ public record ConversionOptions(
         defaultLanguage,
         value,
         patientIdentifier,
-        author);
+        author,
+        outputForm);
   }
 
   public ConversionOptions withMaxDecodedSize(long value) {
@@ -132,7 +167,8 @@ public record ConversionOptions(
         defaultLanguage,
         confidentiality,
         patientIdentifier,
-        author);
+        author,
+        outputForm);
   }
 
   public ConversionOptions withClock(Clock value) {
@@ -145,7 +181,8 @@ public record ConversionOptions(
         defaultLanguage,
         confidentiality,
         patientIdentifier,
-        author);
+        author,
+        outputForm);
   }
 
   public ConversionOptions withPatientIdentifier(PatientIdentifier value) {
@@ -158,7 +195,8 @@ public record ConversionOptions(
         defaultLanguage,
         confidentiality,
         Optional.of(value),
-        author);
+        author,
+        outputForm);
   }
 
   public ConversionOptions withAuthor(AuthorDetails value) {
@@ -171,6 +209,21 @@ public record ConversionOptions(
         defaultLanguage,
         confidentiality,
         patientIdentifier,
-        Optional.of(value));
+        Optional.of(value),
+        outputForm);
+  }
+
+  public ConversionOptions withOutputForm(OutputForm value) {
+    return new ConversionOptions(
+        strict,
+        validateOutput,
+        idStrategy,
+        clock,
+        maxDecodedSize,
+        defaultLanguage,
+        confidentiality,
+        patientIdentifier,
+        author,
+        value);
   }
 }

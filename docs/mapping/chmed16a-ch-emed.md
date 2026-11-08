@@ -26,10 +26,20 @@ pattern for foreign addresses (M-ERX-04) and the treatment of `Rep` above 24 mon
 |----|------|
 | M-IN-01 | Input starting with `{` is plain CHMED16A JSON. |
 | M-IN-02 | Input starting with `CHMED` (case-insensitive) is the textual QR payload (ChTransmissionFormat ReleaseYear 16): `CHMED16A`, compression flag `1` = Base64 GZip JSON, `0` = plain JSON. Decompressed size is limited by `maxDecodedSize` (default 5 MB). Corrupt payload → `PARSE_ERROR`; the payload is never echoed. Another release year/sub-version → `UNSUPPORTED_VERSION`. |
-| M-IN-03 | Input starting with `http` (e.g. signed eRezept URL) → `PARSE_ERROR` pointing to the QR/eRezept feature. |
+| M-IN-03 | Input starting with `http` that is not a signed eRezept URL (`https://eprescription.hin.ch/…`, feature 003) → `PARSE_ERROR`. |
 | M-IN-04 | JSON with camelCase CHMED23A keys (`patient`, `meds`, `medType`) and without `Patient` → `UNSUPPORTED_VERSION`. |
 | M-IN-05 | Medication plans carry no revision marker. Prescriptions carry `rev` (absent = 1, pinned = 3); a field required only by a later revision than the declared one and missing → WARNING `CHMED_REVISION_FIELD_MISSING`. Output always conforms to the latest revision (prescriptions `rev` = 3). |
 | M-IN-06 | Unknown fields → INFORMATION `UNKNOWN_FIELD_IGNORED` (CHMED16A: parsers MUST ignore unknown fields); non-empty `PFields` → INFORMATION, not mapped. |
+| M-IN-07 | The input form is detected by content before reading (feature 003, FR-013), in this order: PNG (`89 50 4E 47 0D 0A 1A 0A`) or JPEG (`FF D8 FF`) → QR code image (M-QR-01); GIF, BMP, TIFF, WebP → `IMAGE_UNREADABLE` "unsupported image format"; `https://eprescription.hin.ch/` → signed eRezept URL; `CHMED` → payload (M-IN-02); a JSON object with a top-level `resourceType` → `PARSE_ERROR` "Input is a FHIR resource; use source ch-emed"; anything else → JSON (M-IN-01, M-IN-03). Conversely, source `ch-emed` refuses an image, eRezept URL or payload with `PARSE_ERROR` naming the detected form. |
+
+## QR code input (feature 003)
+
+| Id | Rule |
+|----|------|
+| M-QR-01 | A PNG or JPEG image is read in memory (no temp files). It must not exceed `maxDecodedSize` bytes nor 40 megapixels (read from the header before decoding) → otherwise `IMAGE_TOO_LARGE`, naming the limit. An image that cannot be decoded → `IMAGE_UNREADABLE`. |
+| M-QR-02 | The image must hold exactly one QR code: none → `QR_NOT_FOUND`; several → `QR_MULTIPLE` (the converter does not choose). |
+| M-QR-03 | The content bytes of the code are read as UTF-8 (byte segments without ECI are taken as raw bytes; with an ECI, as declared). Not valid UTF-8 → `PARSE_ERROR`. |
+| M-QR-04 | The content must be a CHMED payload, read as M-IN-02 (a CHMED23A payload → `UNSUPPORTED_VERSION`), or a signed eRezept URL; anything else → `PARSE_ERROR` "QR code does not hold a CHMED payload". The content is never echoed. The resulting document and report equal those of the payload text. |
 
 ## Document metadata (Medication Card)
 
@@ -217,6 +227,17 @@ cross-check, `format-chmed16a/src/test/resources/schemas/`).
 | `FHIR_VALIDATION` | per validator | CH EMED validation message (terminology limitations as INFORMATION) |
 | `EREZEPT_REQUIREMENT` | ERROR / WARNING | produced prescription violates eRezept data requirements (ERROR); a prescription read as input does (WARNING) |
 | `VALIDATION_INCOMPLETE` | ERROR | the CH EMED validation could not be completed under system load: the HL7 validator's pattern checks have a fixed time limit of 500 ms wall-clock time; the run is repeated twice (after 0.2 s and 1 s) and only if every run hits the limit, this single entry replaces the unreliable validation messages. Not a statement about the document; retry later (CLI exit 3, REST 503 `SERVICE_BUSY`). Added 2026-10-29 |
+| `IMAGE_UNREADABLE` | ERROR | unsupported image format, or a PNG/JPEG that cannot be decoded (M-IN-07, M-QR-01; feature 003) |
+| `IMAGE_TOO_LARGE` | ERROR | image above the byte or pixel limit (M-QR-01) |
+| `QR_NOT_FOUND` | ERROR | no readable QR code in the image (M-QR-02) |
+| `QR_MULTIPLE` | ERROR | more than one QR code in the image (M-QR-02) |
+| `EREZEPT_URL_INVALID` | ERROR | not a valid signed eRezept URL (feature 003, US2) |
+| `SIGNATURE_NOT_VERIFIED` | INFORMATION | signature and prescription status of a signed eRezept were not checked (feature 003, US2) |
+| `SIGNATURE_FORM_UNRECOGNISED` | INFORMATION | a signature parameter does not have the expected form; passed on unchanged (feature 003, US2) |
+| `NOT_COVERED_BY_SIGNATURE` | INFORMATION | an option supplied data that the signature does not cover (feature 003, US2) |
+| `QR_CAPACITY_EXCEEDED` | ERROR | payload larger than one QR code holds (feature 003, US3) |
+| `QR_IMAGE_NOT_ALLOWED` | ERROR | QR image requested for a prescription (feature 003, US4) |
+| `UNSUPPORTED_OUTPUT_FORM` | ERROR | output form not offered for the target format (feature 003) |
 
 ## Capability gaps
 

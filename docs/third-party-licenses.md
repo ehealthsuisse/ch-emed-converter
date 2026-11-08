@@ -18,7 +18,9 @@ with the Apache-2.0/MIT/EPL policy of the project (constitution, technology gate
 | Apache-2.0 (REST service, feature 002) | Spring Framework 7.0, Spring Boot 4.1, Apache Tomcat Embed 11.0, Hibernate Validator 9.1, Jakarta Validation API, JBoss Logging, Micrometer, Jackson 3.1, log4j-to-slf4j | only in `converter-rest` |
 | BSD-2-Clause / CC0 | HdrHistogram (transitive of Micrometer, `converter-rest`) | permissive |
 | MIT (REST service) | jul-to-slf4j (`converter-rest`) | |
-| project modules | `converter-core`, `converter-validation`, `format-chmed16a`, `converter-cli`, `converter-rest` | Apache-2.0 (see `LICENSE`, `<licenses>` in the parent POM) |
+| Apache-2.0 (QR codec, feature 003) | ZXing core 3.5.4 | in `converter-qr`; shipped in the CLI and REST distributions |
+| Apache-2.0 (tests only, feature 003) | BoofCV 1.6.0 and its dependencies (DDogleg, EJML, GeoRegression) | independent QR reader/encoder in the tests of `converter-qr`; not shipped. Its transitive `trove4j` (LGPL-2.1) is excluded in `converter-qr/pom.xml` |
+| project modules | `converter-core`, `converter-qr`, `converter-validation`, `format-chmed16a`, `converter-cli`, `converter-rest` | Apache-2.0 (see `LICENSE`, `<licenses>` in the parent POM) |
 
 Reviewed again 2026-10-29 for the REST service (feature 002): the runtime dependencies of
 `converter-rest` (`converter-rest/target/licenses/THIRD-PARTY.txt`, 130 entries) add only

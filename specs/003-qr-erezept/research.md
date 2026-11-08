@@ -117,11 +117,14 @@ Alternatives considered. Sources read on 2026-11-08: eMediplan specification at 
     is met by the configurable byte limit.
   - **Decoding:** ZXing with `TRY_HARDER`, `PURE_BARCODE` off, and a binarizer fallback
     (`HybridBinarizer`, then `GlobalHistogramBinarizer`).
-  - **Content bytes:** The content is taken from ZXing's raw byte segments
-    (`ResultMetadataType.BYTE_SEGMENTS`) and decoded as UTF-8, as ChTransmissionFormat requires.
-    The text ZXing guesses from a character-set hint is not used. A plain-JSON payload (`CHMED16A0`)
-    with umlauts therefore arrives unchanged. Content that is not valid UTF-8 fails with
-    `PARSE_ERROR`.
+  - **Content bytes:** The raw content bytes are recovered and decoded as UTF-8, as
+    ChTransmissionFormat requires; ZXing's charset guess is not used. Without an ECI, ZXing decodes
+    with the hint `CHARACTER_SET=ISO-8859-1`, which maps each byte to one char, so the chars give
+    back the bytes of all segments. `BYTE_SEGMENTS` alone is not enough, because it misses
+    numeric and alphanumeric segments of mixed-mode codes (revised during T025). With an ECI
+    (symbology identifier `]Q2`), the declared charset is used. A plain-JSON payload
+    (`CHMED16A0`) with umlauts therefore arrives unchanged. Content that is not valid UTF-8 fails
+    with `PARSE_ERROR`.
   - **Several codes:** More than one QR code found fails with `QR_MULTIPLE`. Content that is
     neither a CHMED payload nor an eRezept URL fails with `PARSE_ERROR`; the content is never
     echoed.

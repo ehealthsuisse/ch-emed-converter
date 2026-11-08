@@ -1,5 +1,6 @@
 package ch.emed.converter.core.api;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,6 +29,13 @@ public interface Converter {
    * @return pinned specifications
    */
   Map<String, String> pinnedSpecifications();
+
+  /**
+   * Input and output forms per format, including CH EMED, sorted by format id.
+   *
+   * @return format capabilities
+   */
+  List<FormatInfo> formats();
 
   /**
    * Converter version.

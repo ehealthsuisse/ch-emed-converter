@@ -43,19 +43,21 @@ independently.
 
 **Purpose**: New module, dependencies, pinning
 
-- [ ] T001 In `pom.xml`, register the module `converter-qr` between `converter-core` and
+- [X] T001 In `pom.xml`, register the module `converter-qr` between `converter-core` and
   `format-chmed16a`. Add the managed versions `com.google.zxing:core` and
   `org.boofcv:boofcv-recognition` (test scope).
   - Check the latest releases on Maven Central first; the plan assumes ZXing 3.5.3.
   - Record the chosen versions in the task note.
-- [ ] T002 Create `converter-qr/pom.xml`.
+  - *Done 2026-11-08: ZXing core 3.5.4 (released 2025-11), BoofCV 1.6.0 (2026-10), the latest
+    releases on Maven Central.*
+- [X] T002 Create `converter-qr/pom.xml`.
   - Java 21; dependency `com.google.zxing:core` only (no `javase` module).
   - Test dependencies: JUnit 5, AssertJ, BoofCV.
   - The parent's `enforce-framework-free` and license-plugin rules apply.
-- [ ] T003 Add a compile dependency on `converter-qr` to `format-chmed16a/pom.xml`.
-- [ ] T004 [P] Add ZXing (Apache-2.0, `converter-qr`, shipped in both distributions) and BoofCV
+- [X] T003 Add a compile dependency on `converter-qr` to `format-chmed16a/pom.xml`.
+- [X] T004 [P] Add ZXing (Apache-2.0, `converter-qr`, shipped in both distributions) and BoofCV
   (Apache-2.0, test only, not shipped) to `docs/third-party-licenses.md`.
-- [ ] T005 [P] Update `docs/specifications.md` (research R12):
+- [X] T005 [P] Update `docs/specifications.md` (research R12):
   - add `chtransmissionformat/README.md` to the files of the pinned eMediplan commit;
   - add the QR parameters of research R3, marked "provisional, pending IG eMediplan
     confirmation";
@@ -73,7 +75,7 @@ independently.
 
 ### Tests (write first, must fail)
 
-- [ ] T006 [P] In `converter-core/src/test/java/ch/emed/converter/core/api/ConversionApiAdditionsTest.java`,
+- [X] T006 [P] In `converter-core/src/test/java/ch/emed/converter/core/api/ConversionApiAdditionsTest.java`,
   test the API additions:
   - `ConversionOptions.defaults().outputForm() == DOCUMENT`; `withOutputForm` keeps all other
     options;
@@ -81,7 +83,7 @@ independently.
   - `ConversionResult` with 3 arguments has an empty `signature`;
   - a `signature` without `output` throws ("`signature` is present only if `output` is present");
   - `SignatureData.verified()` is always false.
-- [ ] T007 [P] In `converter-core/src/test/java/ch/emed/converter/core/api/OutputFormPipelineTest.java`,
+- [X] T007 [P] In `converter-core/src/test/java/ch/emed/converter/core/api/OutputFormPipelineTest.java`,
   test the pipeline with a stub `FormatModule`:
   - an output form that the target module does not list → FAILED with ERROR
     `UNSUPPORTED_OUTPUT_FORM` (phase PARSE), before any mapping;
@@ -90,11 +92,11 @@ independently.
   - `Converter.formats()` lists input and output forms per format, sorted by format id;
   - FR-010: `CH_EMED → CHMED23A` (no module registered) → `UNSUPPORTED_CONVERSION`, and the
     message lists the supported pairs.
-- [ ] T008 [P] In `converter-core/src/test/java/ch/emed/converter/core/api/ChEmedSourceFormHintTest.java`
+- [X] T008 [P] In `converter-core/src/test/java/ch/emed/converter/core/api/ChEmedSourceFormHintTest.java`
   (FR-013), test source `CH_EMED` with a PNG, a JPEG, an eRezept URL and a `CHMED16A1` payload.
   Each gives FAILED with `PARSE_ERROR` and the message "Input is a CHMED16A QR image | eRezept URL
   | QR payload; use source chmed16a", and the message never contains input content.
-- [ ] T009 [P] In `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/io/InputFormDetectorTest.java`,
+- [X] T009 [P] In `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/io/InputFormDetectorTest.java`,
   test the detection order of data model §1:
   - PNG magic `89 50 4E 47 0D 0A 1A 0A` → IMAGE; JPEG `FF D8 FF` → IMAGE;
   - text starting with `https://eprescription.hin.ch/` (scheme and host case-insensitive, leading
@@ -109,38 +111,38 @@ independently.
 
 ### Implementation
 
-- [ ] T010 [P] Create the enum `OutputForm` (`DOCUMENT`, `QR_PAYLOAD`, `QR_IMAGE`) with external
+- [X] T010 [P] Create the enum `OutputForm` (`DOCUMENT`, `QR_PAYLOAD`, `QR_IMAGE`) with external
   names `document`, `qr-payload`, `qr-image` in
   `converter-core/src/main/java/ch/emed/converter/core/api/OutputForm.java`.
-- [ ] T011 [P] Create the record `SignatureData(String identity, String timestamp, String
+- [X] T011 [P] Create the record `SignatureData(String identity, String timestamp, String
   signature)`, all non-null, with `verified()` returning `false`, in
   `converter-core/src/main/java/ch/emed/converter/core/api/SignatureData.java`.
-- [ ] T012 Add the component `outputForm` (default `DOCUMENT`) and `withOutputForm` to
+- [X] T012 Add the component `outputForm` (default `DOCUMENT`) and `withOutputForm` to
   `converter-core/src/main/java/ch/emed/converter/core/api/ConversionOptions.java`.
   - Keep the previous canonical constructor as an overload.
   - Pass `outputForm` through every existing `with…` method.
   - Depends on T010.
-- [ ] T013 Add the component `signature` (`Optional<SignatureData>`) to
+- [X] T013 Add the component `signature` (`Optional<SignatureData>`) to
   `converter-core/src/main/java/ch/emed/converter/core/api/ConversionResult.java`.
   - Invariant: present only if `output` is present.
   - Keep the 3-argument constructor (sets it empty).
   - Depends on T011.
-- [ ] T014 [P] Add the codes of data model §4 to
+- [X] T014 [P] Add the codes of data model §4 to
   `converter-core/src/main/java/ch/emed/converter/core/report/ReasonCode.java`, each with a
   one-line Javadoc: `IMAGE_UNREADABLE`, `IMAGE_TOO_LARGE`, `QR_NOT_FOUND`, `QR_MULTIPLE`,
   `EREZEPT_URL_INVALID`, `SIGNATURE_NOT_VERIFIED`, `SIGNATURE_FORM_UNRECOGNISED`,
   `NOT_COVERED_BY_SIGNATURE`, `QR_CAPACITY_EXCEEDED`, `QR_IMAGE_NOT_ALLOWED`,
   `UNSUPPORTED_OUTPUT_FORM`.
-- [ ] T015 Add the format SPI and capability additions in `converter-core`:
+- [X] T015 Add the format SPI and capability additions in `converter-core`:
   - `FormatModule`: `default List<String> inputForms()` (`["json"]`) and
     `default List<OutputForm> outputForms()` (`[DOCUMENT]`);
   - a new record `FormatInfo(FormatId format, List<String> inputForms, List<OutputForm>
     outputForms)` in `api/FormatInfo.java`;
   - `Converter.formats()`.
-- [ ] T016 Add `setSignature(SignatureData)` (at most once; a second call throws
+- [X] T016 Add `setSignature(SignatureData)` (at most once; a second call throws
   `IllegalStateException`) and `signature()` to
   `converter-core/src/main/java/ch/emed/converter/core/spi/MappingContext.java`.
-- [ ] T017 Change `converter-core/src/main/java/ch/emed/converter/core/api/DefaultConverter.java`
+- [X] T017 Change `converter-core/src/main/java/ch/emed/converter/core/api/DefaultConverter.java`
   (depends on T012–T016):
   - check the output form against the target's `outputForms()` (`CH_EMED`: `DOCUMENT` only), with
     `UNSUPPORTED_OUTPUT_FORM`, before parsing;
@@ -148,7 +150,7 @@ independently.
   - add the form hint of T008 in `parseChEmed` (check the magic bytes and prefixes; never echo the
     input);
   - implement `formats()` (`CH_EMED`: `["json"]`, `[DOCUMENT]`).
-- [ ] T018 Implement `InputFormDetector` (enum `InputForm { JSON, FHIR_JSON, PAYLOAD,
+- [X] T018 Implement `InputFormDetector` (enum `InputForm { JSON, FHIR_JSON, PAYLOAD,
   EREZEPT_URL, IMAGE, UNSUPPORTED_IMAGE }`) per data model §1 in
   `format-chmed16a/src/main/java/ch/emed/converter/chmed16a/io/InputFormDetector.java`.
   - Route JSON and PAYLOAD through the existing readers in `Chmed16aFormatModule.toChEmed`;
@@ -159,7 +161,7 @@ independently.
     existing test that expected them, and list the change in T060.
   - Remove the old `http` rule M-IN-03 from `Chmed16aJsonReader` and replace it with
     `PARSE_ERROR` for an `http(s)` text that is not an eRezept URL.
-- [ ] T019 Update `specs/001-chmed16a-ch-emed-conversion/contracts/library-api.md`: add a pointer
+- [X] T019 Update `specs/001-chmed16a-ch-emed-conversion/contracts/library-api.md`: add a pointer
   to `specs/003-qr-erezept/contracts/library-api.md` and the new components. Update the
   reason-code catalogue in `docs/mapping/chmed16a-ch-emed.md` with the new codes, and replace
   M-IN-03 by the detection order of data model §1.
@@ -180,7 +182,7 @@ fixture subset).
 
 ### Tests (write first, must fail)
 
-- [ ] T020 [P] [US1] Create independent image fixtures in
+- [X] T020 [P] [US1] Create independent image fixtures in
   `format-chmed16a/src/test/resources/fixtures/qr/` and a `README.md` there with the exact
   generation commands. Generate them once with `qrencode` from the existing synthetic payloads:
   - `plan-basic.png` (from `chmed16a/plan-basic.qr.txt`);
@@ -195,7 +197,11 @@ fixture subset).
   - `url-code.png` (QR code with `https://example.org/`);
   - `chmed23a.png` (from `chmed16a/chmed23a-plan.json` as a CHMED23A payload);
   - `not-an-image.gif`.
-- [ ] T021 [P] [US1] In `converter-qr/src/test/java/ch/emed/converter/qr/QrImageReaderTest.java`,
+  - *Done 2026-11-08: `qrencode` is not installed on the build machines; the images were made
+    with BoofCV, an encoder independent of ZXing, by
+    `converter-qr/src/test/java/ch/emed/converter/qr/QrFixtureGenerator.java` (runs only with
+    `-Dqr.fixtures=generate`). The command is in `fixtures/qr/README.md`.*
+- [X] T021 [P] [US1] In `converter-qr/src/test/java/ch/emed/converter/qr/QrImageReaderTest.java`,
   test the reader:
   - PNG and JPEG decode to the exact content bytes;
   - `plan-non-ascii-plain.png` gives exactly the UTF-8 bytes of its payload, umlauts included;
@@ -205,12 +211,12 @@ fixture subset).
     and the message names the pixel limit;
   - no file appears in `java.io.tmpdir` during reading (FR-017);
   - exception messages never contain the decoded text.
-- [ ] T022 [P] [US1] Create the test helper `DegradedImages` (rotate 8°, scale 60 %, JPEG quality
+- [X] T022 [P] [US1] Create the test helper `DegradedImages` (rotate 8°, scale 60 %, JPEG quality
   60, gaussian noise σ=8, each with a fixed seed) in
   `converter-qr/src/test/java/ch/emed/converter/qr/DegradedImages.java`, and a test in
   `QrImageReaderDegradedTest.java` that reads every variant of `plan-basic.png`. This is best
   effort, but these four variants must pass.
-- [ ] T023 [US1] In `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/ImageInputTest.java`,
+- [X] T023 [US1] In `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/ImageInputTest.java`,
   test image input end to end:
   - each image of T020 that holds a plan, converted to CH EMED, gives a document and report equal
     to the JSON fixture's conversion with the same options;
@@ -225,13 +231,15 @@ fixture subset).
   - an image above `maxDecodedSize` bytes (option set low in the test) → `IMAGE_TOO_LARGE`, and
     the message names the byte limit;
   - none of these failures returns output.
+  - *Done 2026-11-08 as `it/ImageInputIT.java`: it uses the CH EMED validator, like the other
+    end-to-end tests of the module.*
 
 ### Implementation
 
-- [ ] T024 [P] [US1] Create `QrException` with `enum Kind { UNREADABLE, TOO_LARGE, NOT_FOUND,
+- [X] T024 [P] [US1] Create `QrException` with `enum Kind { UNREADABLE, TOO_LARGE, NOT_FOUND,
   MULTIPLE, CAPACITY }` and a message that never contains content, in
   `converter-qr/src/main/java/ch/emed/converter/qr/QrException.java`.
-- [ ] T025 [US1] Implement `QrImageReader.read(byte[] image, long maxPixels)` → `byte[]` (the raw content bytes), per
+- [X] T025 [US1] Implement `QrImageReader.read(byte[] image, long maxPixels)` → `byte[]` (the raw content bytes), per
   research R5, in `converter-qr/src/main/java/ch/emed/converter/qr/QrImageReader.java`:
   - accept PNG and JPEG by magic bytes;
   - read via `ImageIO` with `MemoryCacheImageInputStream`; check width × height from the header
@@ -244,7 +252,13 @@ fixture subset).
   - binarizer fallback `HybridBinarizer` → `GlobalHistogramBinarizer`;
   - default `maxPixels` = 40 000 000;
   - depends on T024.
-- [ ] T026 [US1] Wire IMAGE in `format-chmed16a/src/main/java/ch/emed/converter/chmed16a/Chmed16aFormatModule.java`:
+  - *Done 2026-11-08 with a change: ZXing fills `BYTE_SEGMENTS` only for byte-mode segments, so
+    a code with mixed modes (e.g. `CHMED16A1` alphanumeric) would lose content. The reader
+    therefore decodes with the hint `CHARACTER_SET=ISO-8859-1`, which maps every byte to one
+    char, and returns the chars as bytes. If an ECI is present (symbology identifier `]Q2`), the
+    text is decoded as declared and returned as UTF-8. Both cases are covered by tests in
+    `QrImageReaderTest`.*
+- [X] T026 [US1] Wire IMAGE in `format-chmed16a/src/main/java/ch/emed/converter/chmed16a/Chmed16aFormatModule.java`:
   - read the image with `QrImageReader` and map `QrException` kinds to `IMAGE_UNREADABLE`,
     `IMAGE_TOO_LARGE`, `QR_NOT_FOUND` and `QR_MULTIPLE` (phase PARSE);
   - reject an image larger than `maxDecodedSize` bytes with `IMAGE_TOO_LARGE`, naming the byte
@@ -255,8 +269,9 @@ fixture subset).
     hold a CHMED payload";
   - list `qr-payload` and `qr-image` in `inputForms()`;
   - depends on T025.
-- [ ] T027 [US1] Add a section "QR code input" (M-QR-01 … M-QR-04: image forms, limits, one code
+- [X] T027 [US1] Add a section "QR code input" (M-QR-01 … M-QR-04: image forms, limits, one code
   only, content check) to `docs/mapping/chmed16a-ch-emed.md`.
+  - *Done 2026-11-08, together with the new rule M-IN-07 (input-form detection, T018).*
 
 **Checkpoint**: US1 works through the library. CLI and REST already pass the bytes through, and
 their parity is checked in US5.
@@ -333,7 +348,7 @@ conversion of the embedded prescription, and the signature values come back unch
   element) wherever an option fills data, when `ctx.signature()` is present. The places are in
   `format-chmed16a/src/main/java/ch/emed/converter/chmed16a/mapping/PatientMapper.java`
   (`patientIdentifier`) and `AuthorMapper.java` / `MedicationPrescriptionBuilder.java` (`author`).
-- [ ] T034 [US2] Add a section "eRezept Schweiz input" (M-ERX-01 … M-ERX-05: host, parameters,
+- [ ] T034 [US2] Add a section "eRezept Schweiz input" (M-URL-01 … M-URL-05, because M-ERX-* is taken by the eRezept readiness rules: host, parameters,
   raw signature data, prescription only, options not covered by the signature) to
   `docs/mapping/chmed16a-ch-emed.md`. Note the open question about the host of the integration
   environment (research R6).

@@ -15,14 +15,19 @@ import ch.emed.converter.core.spi.FormatRegistry;
 import ch.emed.converter.core.spi.MappingContext;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 import org.hl7.fhir.r4.model.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +39,9 @@ import org.slf4j.LoggerFactory;
 public final class DefaultConverter implements Converter {
 
   private static final Logger LOG = LoggerFactory.getLogger(DefaultConverter.class);
+
+  /** Start of a signed eRezept URL (feature 003), recognised for the CH EMED source hint. */
+  private static final String EREZEPT_URL_PREFIX = "https://eprescription.hin.ch/";
 
   private final FormatRegistry registry;
   private final ChEmedValidator validator;
@@ -73,7 +81,8 @@ public final class DefaultConverter implements Converter {
                 request.target(),
                 specificationsFor(request.source(), request.target()),
                 outcome,
-                entries));
+                entries),
+            outcome == Outcome.FAILED || output == null ? Optional.empty() : ctx.signature());
     LOG.info(
         "conversion {}->{} outcome={} entries={} inputBytes={} durationMs={}",
         request.source().id(),
@@ -101,7 +110,28 @@ public final class DefaultConverter implements Converter {
                   ReasonCode.UNSUPPORTED_CONVERSION,
                   Phase.PARSE,
                   "/",
-                  "Conversion " + source.id() + " -> " + target.id() + " is not supported"));
+                  "Conversion "
+                      + source.id()
+                      + " -> "
+                      + target.id()
+                      + " is not supported; supported: "
+                      + supportedList()));
+      return null;
+    }
+    OutputForm form = request.options().outputForm();
+    List<OutputForm> offered =
+        target.isChEmed() ? List.of(OutputForm.DOCUMENT) : targetModule.get().outputForms();
+    if (!offered.contains(form)) {
+      ctx.report()
+          .add(
+              ReportEntry.error(
+                  ReasonCode.UNSUPPORTED_OUTPUT_FORM,
+                  Phase.PARSE,
+                  "/",
+                  "Output form "
+                      + form.externalName()
+                      + " is not offered for target "
+                      + target.id()));
       return null;
     }
     boolean validate = request.options().validateOutput();
@@ -135,6 +165,17 @@ public final class DefaultConverter implements Converter {
   }
 
   private static Bundle parseChEmed(byte[] input, MappingContext ctx) {
+    String otherForm = otherInputForm(input);
+    if (otherForm != null) {
+      ctx.report()
+          .add(
+              ReportEntry.error(
+                  ReasonCode.PARSE_ERROR,
+                  Phase.PARSE,
+                  "/",
+                  "Input is a " + otherForm + ", not a FHIR JSON Bundle; use source chmed16a"));
+      return null;
+    }
     try {
       return ChEmedJson.parse(input);
     } catch (DataFormatException | ClassCastException e) {
@@ -144,6 +185,60 @@ public final class DefaultConverter implements Converter {
                   ReasonCode.PARSE_ERROR, Phase.PARSE, "/", "Input is not a FHIR JSON Bundle"));
       return null;
     }
+  }
+
+  /**
+   * Recognises the transmission forms of CHMED (feature 003, FR-013) by their first bytes, so that
+   * a wrongly declared source gets a hint instead of a FHIR parse error. Never returns content.
+   */
+  private static String otherInputForm(byte[] input) {
+    if (startsWith(input, 0x89, 'P', 'N', 'G') || startsWith(input, 0xFF, 0xD8, 0xFF)) {
+      return "QR code image";
+    }
+    int from = 0;
+    while (from < input.length && Character.isWhitespace(input[from])) {
+      from++;
+    }
+    String head =
+        new String(input, from, Math.min(input.length - from, 32), StandardCharsets.ISO_8859_1)
+            .toLowerCase(Locale.ROOT);
+    if (head.startsWith(EREZEPT_URL_PREFIX)) {
+      return "eRezept URL";
+    }
+    if (head.startsWith("chmed")) {
+      return "QR payload";
+    }
+    return null;
+  }
+
+  private static boolean startsWith(byte[] input, int... prefix) {
+    if (input.length < prefix.length) {
+      return false;
+    }
+    for (int i = 0; i < prefix.length; i++) {
+      if ((input[i] & 0xFF) != prefix[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private String supportedList() {
+    return supportedConversions().stream()
+        .map(p -> p.source().id() + " -> " + p.target().id())
+        .sorted()
+        .collect(Collectors.joining(", "));
+  }
+
+  @Override
+  public List<FormatInfo> formats() {
+    List<FormatInfo> formats = new ArrayList<>();
+    formats.add(new FormatInfo(FormatId.CH_EMED, List.of("json"), List.of(OutputForm.DOCUMENT)));
+    for (FormatModule module : registry.modules()) {
+      formats.add(new FormatInfo(module.format(), module.inputForms(), module.outputForms()));
+    }
+    formats.sort(Comparator.comparing(f -> f.format().id()));
+    return List.copyOf(formats);
   }
 
   @Override
