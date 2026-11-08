@@ -1,0 +1,287 @@
+# Research: CH EMED EPR (CARA EMED)
+
+Phase 0 of [plan.md](plan.md). Each item: decision, rationale, alternatives considered.
+
+Sources: CH EMED EPR 3.0.0 (<https://fhir.ch/ig/ch-emed-epr/3.0.0/>, published 2026-02-11,
+repository <https://github.com/CARA-ch/ch-emed-epr>), constitution 1.5.0, the code of features
+001–003.
+
+## R1 — CH EMED EPR as a format module of its own
+
+**Decision**: New module `format-ch-emed-epr` with the format id `CH_EMED_EPR` (external name
+`ch-emed-epr`). It implements `FormatModule`: `toChEmed` turns a CH EMED EPR document into a general
+CH EMED document, `fromChEmed` the reverse. The converter core and its pipeline stay as they are.
+
+**Rationale**:
+- The constitution lists CH EMED EPR as a row of its own in the Conversion Scope, converted to and
+  from the CH EMED hub (FR-001).
+- `DefaultConverter` already offers exactly the pairs "format ↔ CH EMED". A direct
+  `chmed16a → ch-emed-epr` pair is therefore refused without new code (FR-004); only the message
+  must name the path through CH EMED (R11).
+- Capabilities, CLI and REST pick up a new format module automatically (`Converter.formats()`).
+
+**Alternatives considered**:
+- *A profile option on CH EMED* (for example `profile=epr` for source and target `ch-emed`):
+  rejected. One name would stand for two specifications with different validation; capabilities
+  and reports could not tell them apart.
+- *Extending `format-chmed16a`*: rejected. CH EMED EPR has nothing to do with CHMED16A, and the
+  decision against composed conversions (clarification 2026-11-08) keeps them apart.
+
+## R2 — Pinning and vendoring
+
+**Decision**: Pin `ch.fhir.ig.ch-emed-epr#3.0.0`. Its dependencies are the ones already vendored
+(CH EMED 6.0.0, CH Core 6.0.0, HL7 Terminology 7.0.1 and 6.5.0, Extensions 5.2.0 and
+5.3.0-ballot-tc1) plus `hl7.fhir.uv.tools.r4#0.9.0`, which the IG declares "for example
+references".
+- Both new packages are fetched by `tools/fetch-packages.sh` and recorded with SHA-256 in
+  `converter-validation/src/main/resources/packages/manifest.json`.
+- `ch.fhir.ig.ch-emed-epr` is loaded into the validator.
+- `hl7.fhir.uv.tools.r4` is vendored but loaded only if the official examples need it to validate
+  (checked in the first implementation task).
+- The format module reports `ch.fhir.ig.ch-emed-epr#3.0.0` as its pinned specification;
+  `docs/specifications.md` gains a CH EMED EPR section.
+
+**Rationale**: Constitution I requires pinned IG packages and local validation. 3.0.0 is the
+current published version and builds on exactly the CH EMED and CH Core versions of features
+001–003, so no existing pin changes.
+
+**Alternatives considered**:
+- *2.0.0* (2025-01-21): rejected. It is superseded and builds on older CH EMED versions; mixing
+  versions of CH EMED in one validator is not possible (one definition per canonical URL).
+- *CI build 3.0.1*: rejected. Not a published version.
+
+## R3 — Validation of CH EMED EPR input and output
+
+**Decision**:
+- `MappingContext` gains access to the `ChEmedValidator` of the converter.
+- The EPR module validates its input (`VALIDATE_INPUT`) before mapping and its output
+  (`VALIDATE_OUTPUT`) after mapping.
+- It uses the same validator instance, with the EPR package loaded. The validator checks each
+  resource against the profiles declared in `meta.profile`, so EPR documents are checked against
+  the EPR profiles and general CH EMED documents against the CH EMED profiles, as before.
+- Input is always validated (FR-007). Output follows the existing option for output validation
+  (`validateOutput`, default on), as for CH EMED output.
+- A regression test runs the whole corpus of features 001–003 with the EPR package loaded. Output
+  and reports must stay byte-identical.
+
+**Rationale**: FR-006/FR-007 need the official validator (constitution I); a second validator
+instance would double the start-up time and memory of the validation context.
+
+**Alternatives considered**:
+- *Validation in `DefaultConverter` for "FHIR-based" target modules*: rejected. It needs a new
+  SPI concept just for one module; the module knows best which phase it is in.
+- *The module loading its own validator through `ServiceLoader`*: rejected. A second context
+  costs start-up time and memory, and it bypasses the converter's choice of validator.
+
+## R4 — Profile mapping
+
+**Decision**: The mapping is a change of the declared profiles plus the rules of R5–R9.
+
+| CH EMED 6.0.0 | CH EMED EPR 3.0.0 |
+|---------------|-------------------|
+| Medication Card document, composition, MedicationStatement (card) | PMLC document, composition, MedicationStatement |
+| Medication Prescription document, composition, MedicationRequest | PRE document, composition, MedicationRequest |
+| Medication Treatment Plan document, composition, MedicationStatement (treatment plan) | MTP document, composition, MedicationStatement |
+| Patient, Practitioner, PractitionerRole, Organization, RelatedPerson, Medication | CH EMED EPR Patient, Practitioner, PractitionerRole, Organization, RelatedPerson, Medication |
+
+- Profiles of other resources (for example Observation for body weight) are mapped where the EPR
+  IG defines them.
+- Data-type profiles (Dosage, Quantity, Ratio) are not declared in `meta.profile`; they are checked
+  through the resource profiles.
+
+The table and every rule get rule ids `M-EPR-*` in the new mapping specification
+`docs/mapping/ch-emed-epr.md` (constitution II, FR-012).
+
+**Rationale**: CH EMED EPR profiles CH EMED. A conforming CH EMED EPR document is therefore a CH
+EMED document with stricter constraints. The direction EPR → CH EMED only changes declarations.
+The direction CH EMED → EPR must also remove what EPR does not support (R5), fill what EPR requires
+(R9) and, for treatment plans, split the card (R6/R7).
+
+**To verify in the first implementation task**: all official PMLC, PRE and MTP examples of the IG
+validate as CH EMED after the profile change, without clinical changes (spec assumption,
+SC-001). If an example needs more than the profile change, the extra rule is added to the mapping
+specification with its reason.
+
+## R5 — Elements not supported by CH EMED EPR
+
+**Decision**: An element is "not supported" when the CH EMED EPR snapshot marks it with the
+standards-status *draft* extension (shown as ✕ "This element is not supported" in the IG). The
+elements marked "will be removed in PML(C) documents" (for example `Patient.identifier.assigner`)
+are treated as unsupported for PMLC output only.
+- The list per profile is extracted once from the vendored package by a test utility and stored in
+  the module as a pinned resource. A test fails when the resource and the package disagree.
+- `docs/mapping/ch-emed-epr.md` lists each element with its clinical relevance.
+- On CH EMED → EPR, present elements of the list are removed and reported as `UNMAPPABLE_ELEMENT`
+  with path and reason. For clinically relevant elements the entry carries the clinical-loss flag,
+  so strict mode fails (FR-008).
+- On EPR → CH EMED, nothing is removed.
+
+**Rationale**:
+- These elements are allowed by the validator (cardinality unchanged) but have "no clear use
+  case" in CH EMED EPR, and implementers should not set them.
+- Leaving them in would pass validation but break the IG's intent.
+- Removing them silently would break constitution II.
+- A pinned list makes the behaviour reviewable and stable.
+
+**Alternatives considered**:
+- *Reading the flags from the package at run time*: rejected. The mapping would be invisible in
+  the mapping specification, and a package change would change behaviour without review.
+- *Keeping the elements*: rejected for the reason above.
+
+## R6 — Treatment plans from a medication card
+
+**Decision**:
+- A new output form `TREATMENT_PLANS` (external name `treatment-plans`), offered by `ch-emed-epr`
+  for a CH EMED Medication Card as input.
+- The output is one FHIR Bundle of type `collection`. Its entries are the MTP document Bundles,
+  one per MedicationStatement of the card, in the order of the card's section entries.
+- Each MTP document is validated on its own against the MTP document profile. The collection
+  itself is validated against FHIR R4 core.
+- An input that is not a Medication Card is refused with `UNSUPPORTED_DOCUMENT_TYPE`. A card
+  without treatments is refused with a new code `NO_TREATMENTS` (spec US3.3).
+- Without `treatment-plans`, a card becomes a PMLC document (FR-003).
+
+**Rationale**:
+- `outputForm` already exists in the library, CLI and REST (feature 003). It is validated against
+  the forms a target offers and appears in the capabilities, so the request of FR-003 needs no new
+  option.
+- A `collection` Bundle is the standard FHIR way to deliver several resources as one; library,
+  CLI and REST keep a single output document, and the result stays byte-deterministic.
+- The primary system splits the collection into documents before submitting each through IHE MHD,
+  which is outside the converter's scope.
+
+**Alternatives considered**:
+- *Several outputs in `ConversionResult`*: rejected. It changes the result type in all three
+  interfaces (REST array, CLI output directory), and only one conversion needs it.
+- *One call per treatment with an index option*: rejected. The caller would need to know the
+  number of treatments first, and there would be n reports for one plan.
+- *A new option `eprDocumentType`*: rejected. It duplicates what `outputForm` already does and is
+  checked for.
+
+## R7 — Building an MTP document from a card entry
+
+**Decision**: For entry *i* of the card:
+- **Composition**: MTP type (SNOMED `761931002`, LOINC `77603-9` as in CH EMED), localized title
+  as the existing titles (M-DOC-08), and one `treatmentPlan` section with the single
+  MedicationStatement mapped to the MTP profile.
+- **Copied from the card**: `language`, `confidentiality` and its EPR extension, the patient,
+  `author` and `date`.
+- **Identifiers**: Composition and Bundle identifiers are UUID v5 from the card's Composition
+  identifier and *i* (existing `IdStrategy`, FR-011). Resource ids are deterministic in the same
+  way.
+- **Existing treatment plan**: a card entry that already references a treatment plan (CH EMED
+  treatment-plan extension) still yields an MTP, and the report gets a WARNING with the path. Such
+  an MTP would record the treatment decision a second time in the EPR. The new reason code is
+  `TREATMENT_PLAN_EXISTS` (data model §3).
+- **No original representation** is generated for the MTP documents (it is optional in MTP; R8).
+
+**Rationale**: The MTP holds exactly one treatment decision (spec key entity). Copying the
+document-level data of the card is the only source available, and it applies no new defaults
+(constitution II).
+
+**Alternatives considered**:
+- *Skipping entries with an existing treatment plan*: rejected. That would silently drop
+  treatments; the caller decides with the report.
+
+## R8 — Original representation (PDF)
+
+**Decision**:
+- **CH EMED → EPR**: an original representation is kept only if the PDF declares PDF/A-1 or
+  PDF/A-2 conformance (XMP `pdfaid:part` 1 or 2). Otherwise the section is left out and reported
+  as INFORMATION `UNMAPPABLE_ELEMENT` with the reason "EPR requires PDF/A". The PDFs produced by
+  feature 001 are not PDF/A, so they are left out.
+- **EPR → CH EMED**: the section is kept unchanged.
+- Whether an EPR document type requires the section is checked against the profiles. If PMLC or
+  PRE require it, a document without a PDF/A representation is refused with
+  `MISSING_REQUIRED_DATA` rather than given a generated PDF.
+
+**Rationale**: The EPR ordinance requires PDF/A for the original representation, as stated in the
+EPR profiles. The validator does not check PDF/A. Generating a PDF/A rendering would be a new
+feature of the renderer with its own conformance checks (fonts, colour profile, XMP).
+
+**Alternatives considered**:
+- *Rendering a new PDF/A with PDFBox*: deferred. It is possible, but outside the spec. It can
+  follow when an EPR document type needs it.
+
+## R9 — Data the EPR requires
+
+**Decision**: The EPR profiles require data that a general CH EMED document may lack:
+- the patient with an identifier (system and value), name and the data of CH Core Patient EPR;
+- the author as PractitionerRole, Patient, RelatedPerson or Device, with a person author;
+- the EPR confidentiality extension.
+
+Missing data is filled only from the existing options of feature 001 (`patientIdentifier`,
+`author`, `confidentiality`), as INFORMATION `DERIVED_VALUE`. Otherwise the conversion fails with
+`MISSING_REQUIRED_DATA` naming the element path (FR-009). A Practitioner author without a role
+needs the option `author`; the converter never invents an organisation.
+
+**Rationale**: Feature 001 already produces these elements from CHMED16A, with the options
+(mapping M-DOC-09, M-AUT-02). This reuses the same options and codes, so callers see one
+behaviour.
+
+## R10 — Determinism
+
+**Decision**: All generated ids use the existing `NameBasedIdStrategy` (UUID v5). No wall-clock
+time: dates are copied from the source. Entries keep the order of the source. A JSON
+serialisation through `ChEmedJson` gives byte-identical output for identical input and options
+(FR-011).
+
+## R11 — Interfaces and messages
+
+**Decision**:
+- **Library**: `FormatId.CH_EMED_EPR` and `OutputForm.TREATMENT_PLANS`. `Converter.formats()`
+  lists `ch-emed-epr` with input form `json` and output forms `document` and `treatment-plans`.
+- **CLI**: `--from ch-emed-epr`, `--to ch-emed-epr` and `--output-form treatment-plans`. No new
+  options.
+- **REST**: the existing route `POST /api/v1/conversions/{from}/{to}` with the new names. OpenAPI
+  1.1.0 → 1.2.0 is additive: the `outputForm` enum gains `treatment-plans`, plus examples and
+  description. The capabilities list the format through `formats`.
+- **Unsupported pairs**: `chmed16a ↔ ch-emed-epr` is refused with `UNSUPPORTED_CONVERSION`. The
+  message lists the supported pairs and adds "convert through ch-emed: chmed16a → ch-emed →
+  ch-emed-epr" (FR-004).
+- **Wrong declaration**: input declared as `ch-emed-epr` whose Bundle does not declare an EPR
+  document profile fails with the validation findings plus the hint "probably general CH EMED;
+  use source ch-emed" (edge case). Input declared as `ch-emed` that is an EPR document is accepted
+  (spec edge case: every EPR document is a CH EMED document).
+- **Parity**: the parity test of feature 002 is extended to the new pairs and the
+  `treatment-plans` form (SC-006).
+
+## R12 — Test corpus and tests
+
+**Decision**:
+- **Official examples**: the PMLC, PRE and MTP Bundle examples of the vendored package
+  (`package/example/`), copied as fixtures with a README naming their source. They are officially
+  published example data; the patient "CARAPMP004" is a test patient of CARA (constitution IV).
+- **Feature corpus**: the CH EMED reference documents of feature 001 and the CH EMED documents
+  produced from its CHMED16A reference plans and prescriptions (SC-002).
+- **Tests**, written before the code (constitution III):
+  - one fixture test per `M-EPR-*` rule;
+  - corpus tests in both directions;
+  - round trips in both directions, with the differences checked against the documented changes
+    (FR-010);
+  - MTP count and determinism (SC-004, FR-011);
+  - refusal of the unsupported pairs and forms;
+  - the regression test of R3;
+  - extended privacy and no-network tests (SC-007, SC-008);
+  - a time test for SC-005.
+- **Mapping traceability**: `MappingTraceabilityTest` gains the new mapping specification.
+
+## R13 — Documentation
+
+**Decision**:
+- `docs/specifications.md`: CH EMED EPR section (package, date, dependencies, source).
+- `docs/mapping/ch-emed-epr.md` (new).
+- `docs/architecture.md`: module diagram, and the planned items "CARA EMED" and "CH EMED EPR"
+  merged into one implemented item.
+- `docs/third-party-licenses.md`: the IG packages are CC0-1.0.
+- `README.md`, `CHANGELOG.md` and `docs/operations/rest-service.md`: new names and form.
+- The contracts of features 001–003 point to the deltas of this feature.
+
+## R14 — Performance
+
+**Decision**: Measure the build time of the validation context with the EPR package loaded, and
+the conversion time of a card with 20 medications to PMLC and to `treatment-plans`, on the
+reference hardware with 4 vCPU (SC-005). The limits of feature 001 (SC-005b: validation < 30 s
+warm; SC-005c: 20 medications converted and validated < 5 s) apply. Twenty MTP documents mean
+twenty document validations, so this case is measured separately. If the limit is missed,
+validation of the MTP documents in parallel is considered before relaxing the criterion.
