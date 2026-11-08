@@ -3,6 +3,7 @@ package ch.emed.converter.chmed16a.it;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import ch.emed.converter.chmed16a.Chmed16aFormatModule;
+import ch.emed.converter.chmed16a.io.Chmed16aPayloadEncoder;
 import ch.emed.converter.chmed16a.testsupport.ChEmedAssertions;
 import ch.emed.converter.chmed16a.testsupport.Fixtures;
 import ch.emed.converter.chmed16a.testsupport.LargePlanGenerator;
@@ -19,9 +20,11 @@ import ch.emed.converter.core.report.Outcome;
 import ch.emed.converter.core.report.ReportCollector;
 import ch.emed.converter.core.spi.MappingContext;
 import ch.emed.converter.qr.QrImageReader;
+import ch.emed.converter.qr.QrImageWriter;
 import ch.emed.converter.validation.HapiChEmedValidator;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -131,6 +134,32 @@ class PerformanceTest {
 
     assertThat(result[0].outcome()).isNotEqualTo(Outcome.FAILED);
     assertThat(typicalValidated).as("SC-005c: typical plan").isLessThan(TYPICAL_LIMIT_MILLIS);
+  }
+
+  @Test
+  void readingAQrImageAddsLessThanOneSecond() throws Exception {
+    // feature 003, SC-006: the 20-medicament plan as image vs. as JSON, warm, best of three runs
+    Converter converter = Converters.create(ChEmedAssertions.validator());
+    byte[] json = LargePlanGenerator.plan(TYPICAL_MEDICAMENTS);
+    byte[] image =
+        QrImageWriter.write(
+            new String(Chmed16aPayloadEncoder.encode(json), StandardCharsets.US_ASCII));
+    ConversionRequest fromJson =
+        new ConversionRequest(FormatId.CHMED16A, FormatId.CH_EMED, json, TestOptions.withAuthor());
+    ConversionRequest fromImage =
+        new ConversionRequest(FormatId.CHMED16A, FormatId.CH_EMED, image, TestOptions.withAuthor());
+    assertThat(converter.convert(fromImage).outcome()).as("warm-up").isNotEqualTo(Outcome.FAILED);
+    converter.convert(fromJson);
+
+    long jsonMillis = repeat(() -> converter.convert(fromJson)).stream().min(Long::compare).get();
+    long imageMillis = repeat(() -> converter.convert(fromImage)).stream().min(Long::compare).get();
+    LOG.info(
+        "20 medicaments, CHMED16A -> CH EMED with validation: JSON {} ms, QR image {} ms (+{} ms)",
+        jsonMillis,
+        imageMillis,
+        imageMillis - jsonMillis);
+
+    assertThat(imageMillis - jsonMillis).as("SC-006: image reading overhead").isLessThan(1_000);
   }
 
   @Test

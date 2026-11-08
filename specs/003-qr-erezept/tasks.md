@@ -569,38 +569,47 @@ forms.
 
 ## Phase 8: Polish & Cross-Cutting Concerns
 
-- [ ] T054 [P] In `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/CorpusImageTest.java`,
+- [X] T054 [P] In `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/CorpusImageTest.java`,
   cover SC-001 for the full corpus: for every reference plan and prescription of feature 001,
   generate the image in the test (encoder + writer) and read it back. The resulting CH EMED
   document and report must equal the plain JSON conversion with the same options, including the
   failures for missing required data. Prescriptions go through `QrImageWriter` directly, because
   the library refuses images for them.
-- [ ] T055 [P] Add SC-006 to `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/it/PerformanceTest.java`:
+  - *Done 2026-11-08 as `it/CorpusImageIT.java`: 23 JSON fixtures, each with default options and
+    with author and patient identifier.*
+- [X] T055 [P] Add SC-006 to `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/it/PerformanceTest.java`:
   reading the image of the 20-medication plan adds less than 1 s, warm, compared with its JSON.
-- [ ] T056 [P] Extend `LogLeakTest` and `error/ProblemLeakTest` in
+- [X] T056 [P] Extend `LogLeakTest` and `error/ProblemLeakTest` in
   `converter-rest/src/test/java/ch/emed/converter/rest/privacy/` (and the CLI stderr capture) to
   every new input and output form. They must find zero occurrences of `CHMED16A1`,
   `eprescription.hin.ch`, the fixture `i`/`t`/`s` values and fixture patient names in logs,
   reports and problem details (SC-007).
-- [ ] T057 [P] Extend `converter-rest/src/test/java/ch/emed/converter/rest/privacy/NoOutboundNetworkTest.java`
+  - *Done 2026-11-08: `LogLeakTest` and `NoOutboundNetworkTest` run all `qr/` and `erezept/`
+    fixtures and the CH EMED corpus as `qr-payload`/`qr-image`; `ProblemLeakTest` checks failed QR
+    and URL inputs; `PhiLeakTest` (format module) scans reports and logs of all new forms. The CLI
+    stderr is checked by `QrCliTest`. The fixed host name `eprescription.hin.ch` may appear in
+    report messages (no data); the JSON reader's URL message no longer contains `https://…`.*
+- [X] T057 [P] Extend `converter-rest/src/test/java/ch/emed/converter/rest/privacy/NoOutboundNetworkTest.java`
   to the QR image and eRezept fixtures, and expect zero outbound attempts (SC-009).
-- [ ] T058 [P] Update `docs/architecture.md`:
+- [X] T058 [P] Update `docs/architecture.md`:
   - module diagram with `converter-qr`;
   - QR/eRezept from "planned" to "implemented (feature 003)";
   - the table row for the eRezept QR code / URL.
-- [ ] T059 [P] Update `docs/operations/rest-service.md`: image input and its limits
+- [X] T059 [P] Update `docs/operations/rest-service.md`: image input and its limits
   (`max-document-size`, 40 MP), new 422 cases, signature data in responses (treat as sensitive, it
   is never logged), and that the service never contacts HIN.
-- [ ] T060 Add a MINOR entry to `CHANGELOG.md`:
+- [X] T060 Add a MINOR entry to `CHANGELOG.md`:
   - library API additions, CLI options, OpenAPI 1.1.0, new reason codes;
   - changed behaviour of existing inputs: eRezept URLs are accepted (M-IN-03 removed); FHIR JSON
     with source `chmed16a` now fails with `PARSE_ERROR` instead of schema errors; GIF/BMP/TIFF/WebP
     input fails with `IMAGE_UNREADABLE`.
-- [ ] T061 Run the full build and the time tests without asking first (user approval 2026-11-08; build machine `andromeda`
+- [X] T061 Run the full build and the time tests without asking first (user approval 2026-11-08; build machine `andromeda`
   in homeoffice, otherwise Windows): `sh ./mvnw -B clean verify` and the `taskset -c 0-3` time
   tests. Record the measured values, payload length and QR version of the 20-medication plan in
   `specs/003-qr-erezept/quickstart.md`.
-- [ ] T062 Record the open items in `specs/003-qr-erezept/research.md` (R1, R6) and as a note in
+  - *Done 2026-11-08 on `andromeda`: build 3:20 min, time tests 1:12 min, all green; values in
+    quickstart.md, "Validation run 2026-11-08".*
+- [X] T062 Record the open items in `specs/003-qr-erezept/research.md` (R1, R6) and as a note in
   `docs/specifications.md`:
   - error-correction level M, to be confirmed by IG eMediplan or a domain reviewer;
   - host of the erxproxy integration environment, to be checked with a test URL;
@@ -609,7 +618,9 @@ forms.
 
   Optional and manual, with an HIN test account: sign one unsigned payload with the erxproxy
   (quickstart Scenario 4). This part does not block T063.
-- [ ] T063 Set `**Status**` in `specs/003-qr-erezept/spec.md` to `Implemented` once T001–T061
+  - *Done 2026-11-08: research R1/R6 and `docs/specifications.md`, "Open items (feature 003)". The
+    manual signing run is not done (no HIN test account).*
+- [X] T063 Set `**Status**` in `specs/003-qr-erezept/spec.md` to `Implemented` once T001–T061
   and the recording part of T062 are done.
 
 ---

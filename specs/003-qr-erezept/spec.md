@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-01
 
-**Status**: Draft
+**Status**: Implemented
 
 **Input**: User description: "eMediplan-QR-Code und eRezept Schweiz: Der Converter soll eMediplan-QR-Codes (Bild und textuelle Payload) und signierte eRezept-QR-Codes/URLs als Eingabe lesen und nach CH EMED konvertieren, und aus CH EMED CHMED-QR-Payloads, QR-Bilder und unsignierte CHMED16A-Rezept-Payloads für die Signierung via HIN erxproxy erzeugen, gemäss Conversion Scope der Constitution; verfügbar über Library, CLI und REST."
 

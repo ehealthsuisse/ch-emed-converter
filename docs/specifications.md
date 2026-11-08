@@ -60,6 +60,16 @@ reviewer**.
 | Signed URL (feature 003) | `https://eprescription.hin.ch/#CHMED16A1…&i=<identity>&t=<timestamp>&s=<signature>`, parameters in the fragment (`rezbsp.html`, `vernoa.html`); `i`, `t`, `s` returned raw and unverified. Open: host of the erxproxy integration environment |
 | Signing input (feature 003) | the unsigned `CHMED16A1…` payload, `POST /ePrescription/create` of the local erxproxy (`rezbsp.html`); never called by the converter |
 
+### Open items (feature 003)
+
+- QR error-correction level M and the other symbol parameters above: to be confirmed by IG
+  eMediplan or a domain reviewer (research R1).
+- Host of the erxproxy integration environment (`--env int`): not documented; check with a test URL
+  whether a second host must be accepted (research R6).
+- Signability of the unsigned payload "without modification": shown by the eRezept schema v7, the
+  eRezept rules and the payload form named as erxproxy input; a real signing run needs an HIN
+  test account (quickstart Scenario 4).
+
 ## Libraries
 
 | Library | Version |

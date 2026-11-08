@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import ch.emed.converter.rest.AbstractRestTest;
 import ch.emed.converter.rest.RestTestSupport;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -72,6 +73,34 @@ class ProblemLeakTest extends AbstractRestTest {
             .getContentAsByteArray();
     String detail = RestTestSupport.json(response).get("detail").asText();
     assertThat(detail).doesNotContain(SECRETS);
+  }
+
+  @Test
+  void failedQrAndErezeptInputsEchoNoContent() throws Exception {
+    // feature 003, FR-016: neither the URL, its payload nor the signature values come back
+    // (the fixed host name eprescription.hin.ch may appear in messages; it is no data)
+    String[] content = {"CHMED16A1H4sI", "emust1", "1767225600", "3066023100"};
+    for (String fixture :
+        List.of(
+            "erezept/rx-missing-s.url.txt",
+            "erezept/rx-duplicate-t.url.txt",
+            "erezept/rx-foreign-host.url.txt",
+            "erezept/plan-signed.url.txt",
+            "qr/two-codes.png",
+            "qr/url-code.png")) {
+      String body =
+          mvc.perform(
+                  convert(
+                      "chmed16a",
+                      "ch-emed",
+                      RestTestSupport.read(RestTestSupport.FIXTURES.resolve(fixture)),
+                      RestTestSupport.withAuthor("")))
+              .andReturn()
+              .getResponse()
+              .getContentAsString(StandardCharsets.UTF_8);
+      assertThat(body).as(fixture).contains("\"errorType\"").doesNotContain(SECRETS);
+      assertThat(body).as(fixture).doesNotContain(content);
+    }
   }
 
   private void assertNoLeak(MockHttpServletRequestBuilder request) throws Exception {

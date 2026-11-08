@@ -125,3 +125,23 @@ taskset -c 0-3 sh ./mvnw -B -pl format-chmed16a -am test -Dtest=PerformanceTest 
 **Expected**: Reading a QR image adds less than 1 s to the conversion of the same plan from JSON.
 The measured values and the payload size of the 20-medication plan go into this file after
 implementation.
+
+## Validation run 2026-11-08 (T061)
+
+Build machine `andromeda` (openSUSE Leap 16, JDK 21): `clean verify` without the time tests green
+in 3:20 min (all 7 modules); time tests with `taskset -c 0-3` (4 vCPUs) green in 1:12 min.
+
+| Criterion | Measured | Limit |
+|-----------|----------|-------|
+| SC-005: 20 medications in one QR code | payload 673 bytes, QR version 21 (level M), PNG 2683 bytes; read back without error | fits one code |
+| SC-006: overhead of reading a QR image (20 medications, with validation, best of 3) | JSON 580 ms, image 558 ms (no measurable overhead) | < 1 s |
+| Feature 002 limits, unchanged | 20 medications 535 ms (library), 400–406 ms (REST); 100 medications 2718 ms; 20 parallel requests answered in 2.8–8.2 s | 5 s, 30 s, p95 40 s |
+
+The module size at 4 cm print width is about 0.4 mm for version 21 (101 modules), so the
+20-medication plan is far from the robustness limit of research R3. On Windows (local run during
+implementation) the same SC-006 measurement gave 2663 ms for JSON and 2582 ms for the image.
+
+Scenarios 1–6 are covered by the automated tests: `ImageInputIT`, `ErezeptInputIT`, `QrOutputIT`,
+`PrescriptionPayloadIT`, `CorpusImageIT`, `QrCliTest`, `QrConversionContractTest`,
+`ServiceLibraryParityTest` (120 cases), `PhiLeakTest`, `LogLeakTest`, `ProblemLeakTest` and
+`NoOutboundNetworkTest`. Not run: the manual signing with an HIN test account (Scenario 4).

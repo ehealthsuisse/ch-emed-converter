@@ -58,6 +58,27 @@ class NoOutboundNetworkTest extends AbstractRestTest {
     for (var input : RestTestSupport.corpus(RestTestSupport.CH_EMED)) {
       mvc.perform(convert("ch-emed", "chmed16a", RestTestSupport.read(input), null));
     }
+    // feature 003: QR images, signed eRezept URLs and both QR output forms (SC-009)
+    for (String directory : List.of("qr", "erezept")) {
+      for (var input : RestTestSupport.corpus(RestTestSupport.FIXTURES.resolve(directory))) {
+        mvc.perform(
+            convert(
+                "chmed16a",
+                "ch-emed",
+                RestTestSupport.read(input),
+                RestTestSupport.withAuthor("")));
+      }
+    }
+    for (var input : RestTestSupport.corpus(RestTestSupport.CH_EMED)) {
+      for (String form : List.of("qr-payload", "qr-image")) {
+        mvc.perform(
+            convert(
+                "ch-emed",
+                "chmed16a",
+                RestTestSupport.read(input),
+                RestTestSupport.json("{\"outputForm\":\"" + form + "\"}")));
+      }
+    }
 
     assertThat(attempts).as("outbound connection attempts").isEmpty();
   }

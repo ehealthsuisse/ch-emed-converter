@@ -130,8 +130,7 @@ public final class Chmed16aJsonReader {
               ReasonCode.PARSE_ERROR,
               Phase.PARSE,
               "/",
-              "Input looks like a URL but is not a signed eRezept URL"
-                  + " (https://eprescription.hin.ch/#CHMED16A1…)"));
+              "Input looks like a URL but is not a signed eRezept URL (host eprescription.hin.ch)"));
       return null;
     } else {
       report.add(

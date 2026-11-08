@@ -13,6 +13,12 @@ the report format MUST be recorded here (constitution, "Development Workflow").
   `converter-cli/target/lib/` instead of a shaded fat JAR; ship both together. The REST service
   uses the same layout (`converter-rest/target/ch-emed-converter-rest.jar` + `lib/`) instead of a
   Spring Boot fat JAR.
+- Feature 003 changes the behaviour of existing inputs: signed eRezept URLs are converted (before:
+  `PARSE_ERROR`, rule M-IN-03); FHIR JSON declared as `chmed16a` fails with `PARSE_ERROR` "use
+  source ch-emed" instead of schema errors; GIF, BMP, TIFF and WebP input fails with
+  `IMAGE_UNREADABLE`; a QR payload, eRezept URL or image declared as `ch-emed` fails with a
+  `PARSE_ERROR` naming the detected form. The unsupported-conversion message lists the supported
+  pairs.
 - The build produces a distribution archive `converter-cli/target/ch-emed-converter-<version>-dist.zip`
   (JAR, `lib/`, start scripts for Linux/macOS and Windows, `LICENSE`, `NOTICE`, `THIRD-PARTY.txt`,
   README, third-party licence overview). The REST service has its own archive
@@ -25,7 +31,7 @@ the report format MUST be recorded here (constitution, "Development Workflow").
   Card document) and **prescriptions** (`MedType` 3 ↔ Medication Prescription document), via
   library (`converter-core`, `format-chmed16a`, `converter-validation`) and CLI (`converter-cli`).
 - Accepted CHMED16A input forms: plain JSON and the textual QR payload (`CHMED16A1…`, Base64
-  GZip). Signed eRezept URLs and QR images are out of scope (QR/eRezept feature).
+  GZip); QR images and signed eRezept URLs since feature 003 (below).
 - Output of CH EMED documents validated offline with the official HL7 validator wrapper (HAPI FHIR)
   against the vendored IG packages; cross-check with `tools/validate-outputs.sh`.
 - Conversion report (schema version 1.0.0) with severities, reason codes, paths, clinical-loss
@@ -56,6 +62,25 @@ the report format MUST be recorded here (constitution, "Development Workflow").
   instead of declaring the document invalid.
 
 - Licence: Apache License 2.0 (`LICENSE`, `<licenses>` in the parent POM).
+
+- **QR code and eRezept Schweiz** (feature 003):
+  - new module `converter-qr` (ZXing 3.5.4) reading one QR code from PNG/JPEG in memory and
+    writing deterministic PNGs (error correction M, 4 × 4 cm via `pHYs`; parameters provisional,
+    see `docs/specifications.md`);
+  - source `chmed16a` detects its input form by content: JSON, QR payload, QR image, signed eRezept
+    URL `https://eprescription.hin.ch/#CHMED16A1…&i=&t=&s=`;
+  - library: option `ConversionOptions.outputForm` (`DOCUMENT`, `QR_PAYLOAD`, `QR_IMAGE`), result
+    field `ConversionResult.signature` (raw, never verified), `Converter.formats()`, SPI defaults
+    `FormatModule.inputForms()`/`outputForms()`; existing constructors kept;
+  - CLI: `--output-form`, `--signature-output` (default `<output>.signature.json`);
+  - REST (OpenAPI 1.1.0): `options.outputForm`, media types `text/plain` and `image/png`, response
+    field `signature`, capabilities `formats` and `limits.maxImagePixels`;
+  - prescriptions are output as unsigned payload only (input of the HIN erxproxy); a QR image of
+    a prescription is refused;
+  - reason codes `IMAGE_UNREADABLE`, `IMAGE_TOO_LARGE`, `QR_NOT_FOUND`, `QR_MULTIPLE`,
+    `EREZEPT_URL_INVALID`, `SIGNATURE_NOT_VERIFIED`, `SIGNATURE_FORM_UNRECOGNISED`,
+    `NOT_COVERED_BY_SIGNATURE`, `QR_CAPACITY_EXCEEDED`, `QR_IMAGE_NOT_ALLOWED`,
+    `UNSUPPORTED_OUTPUT_FORM`; mapping rules `M-IN-07`, `M-QR-*`, `M-URL-*`.
 
 ### Pinned specifications
 
