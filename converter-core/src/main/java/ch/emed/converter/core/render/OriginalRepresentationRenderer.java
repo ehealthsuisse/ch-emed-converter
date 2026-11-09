@@ -4,8 +4,10 @@ import ch.emed.converter.core.report.Phase;
 import ch.emed.converter.core.report.ReasonCode;
 import ch.emed.converter.core.report.ReportCollector;
 import ch.emed.converter.core.report.ReportEntry;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -16,16 +18,27 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import javax.xml.transform.TransformerException;
 import org.apache.pdfbox.cos.COSArray;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.cos.COSString;
+import org.apache.pdfbox.pdfwriter.compress.CompressParameters;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+import org.apache.pdfbox.pdmodel.graphics.color.PDOutputIntent;
+import org.apache.xmpbox.XMPMetadata;
+import org.apache.xmpbox.schema.PDFAIdentificationSchema;
+import org.apache.xmpbox.schema.XMPBasicSchema;
+import org.apache.xmpbox.type.BadFieldValueException;
+import org.apache.xmpbox.xml.XmpSerializer;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Composition;
 import org.hl7.fhir.r4.model.Device;
@@ -52,7 +65,10 @@ public final class OriginalRepresentationRenderer {
   private static final float LEADING = 14;
   private static final float FONT_SIZE = 10;
   private static final float TITLE_SIZE = 16;
+  private static final float HEADING_SIZE = 11.5f;
   private static final int WRAP = 95;
+  private static final String LIBERATION_SANS =
+      "/org/apache/pdfbox/resources/ttf/LiberationSans-Regular.ttf";
 
   private static final Map<String, String[]> LABELS =
       Map.of(
@@ -73,6 +89,25 @@ public final class OriginalRepresentationRenderer {
    */
   public static byte[] render(Bundle bundle, ReportCollector report) {
     Composition composition = (Composition) bundle.getEntryFirstRep().getResource();
+    return write(bundle, composition, lines(bundle, composition), report);
+  }
+
+  /**
+   * Renders the original representation as PDF/A-1b for CH EMED EPR (feature 004, research R16):
+   * the layout of {@link #render}, Liberation Sans embedded as subset (headings in a larger size
+   * instead of a bold face), an sRGB output intent and XMP metadata. Deterministic: dates from the
+   * Composition {@code date}, document id from the content.
+   *
+   * @param bundle finished document (without the Binary of the original representation)
+   * @param report receives a {@code PDF_CHARACTER_REPLACED} entry if characters were replaced
+   * @return PDF/A-1b bytes
+   */
+  public static byte[] renderPdfA(Bundle bundle, ReportCollector report) {
+    Composition composition = (Composition) bundle.getEntryFirstRep().getResource();
+    return writePdfA(bundle, composition, lines(bundle, composition), report);
+  }
+
+  private static List<String[]> lines(Bundle bundle, Composition composition) {
     String language = composition.hasLanguage() ? composition.getLanguage().substring(0, 2) : "de";
     String[] labels = LABELS.getOrDefault(language.toLowerCase(Locale.ROOT), LABELS.get("de"));
 
@@ -121,7 +156,7 @@ public final class OriginalRepresentationRenderer {
             new String[] {"N", labels[5] + ": " + stripTags(section.getText().getDivAsString())});
       }
     }
-    return write(bundle, composition, lines, report);
+    return lines;
   }
 
   private static void addMedication(
@@ -271,20 +306,150 @@ public final class OriginalRepresentationRenderer {
       idArray.add(new COSString(id));
       doc.getDocument().getTrailer().setItem(COSName.ID, idArray);
       doc.save(out);
-      if (replaced[0] > 0) {
-        report.add(
-            ReportEntry.information(
-                    ReasonCode.PDF_CHARACTER_REPLACED,
-                    Phase.MAP,
-                    "Bundle",
-                    replaced[0]
-                        + " character(s) not supported by the PDF font were replaced in the"
-                        + " original representation only")
-                .withTargetPath("Binary.data"));
-      }
+      reportReplaced(replaced[0], report);
       return out.toByteArray();
     } catch (IOException e) {
       throw new UncheckedIOException("Cannot render original representation", e);
+    }
+  }
+
+  private static void reportReplaced(int replaced, ReportCollector report) {
+    if (replaced > 0) {
+      report.add(
+          ReportEntry.information(
+                  ReasonCode.PDF_CHARACTER_REPLACED,
+                  Phase.MAP,
+                  "Bundle",
+                  replaced
+                      + " character(s) not supported by the PDF font were replaced in the"
+                      + " original representation only")
+              .withTargetPath("Binary.data"));
+    }
+  }
+
+  private static byte[] writePdfA(
+      Bundle bundle, Composition composition, List<String[]> lines, ReportCollector report) {
+    int[] replaced = {0};
+    try (PDDocument doc = new PDDocument();
+        ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+      doc.setVersion(1.4f);
+      PDType0Font font;
+      try (InputStream ttf = PDFont.class.getResourceAsStream(LIBERATION_SANS)) {
+        if (ttf == null) {
+          throw new IllegalStateException("Font missing in PDFBox: " + LIBERATION_SANS);
+        }
+        font = PDType0Font.load(doc, ttf, true);
+      }
+
+      List<String[]> encoded = new ArrayList<>(lines.size());
+      for (String[] line : lines) {
+        encoded.add(new String[] {line[0], encodable(font, line[1], replaced)});
+      }
+      // the title is the first line; its replacements are already counted
+      String title = encodable(font, composition.getTitle(), new int[1]);
+
+      PDPageContentStream content = null;
+      float y = 0;
+      for (String[] line : encoded) {
+        float size =
+            switch (line[0]) {
+              case "T" -> TITLE_SIZE;
+              case "B" -> HEADING_SIZE;
+              default -> FONT_SIZE;
+            };
+        for (String part : wrap(line[1])) {
+          if (content == null || y < MARGIN + LEADING) {
+            if (content != null) {
+              content.close();
+            }
+            PDPage page = new PDPage(PDRectangle.A4);
+            doc.addPage(page);
+            content = new PDPageContentStream(doc, page);
+            y = page.getMediaBox().getHeight() - MARGIN;
+          }
+          content.beginText();
+          content.setFont(font, size);
+          content.newLineAtOffset(MARGIN, y);
+          content.showText(part);
+          content.endText();
+          y -= line[0].equals("T") ? LEADING * 2 : LEADING;
+        }
+      }
+      if (content != null) {
+        content.close();
+      }
+
+      Calendar date = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.ROOT);
+      date.setTime(composition.getDate());
+      PDDocumentInformation info = new PDDocumentInformation();
+      info.setTitle(title);
+      info.setCreationDate(date);
+      info.setModificationDate(date);
+      doc.setDocumentInformation(info);
+
+      XMPMetadata xmp = XMPMetadata.createXMPMetadata();
+      xmp.createAndAddDublinCoreSchema().setTitle(title);
+      XMPBasicSchema basic = xmp.createAndAddXMPBasicSchema();
+      basic.setCreateDate(date);
+      basic.setModifyDate(date);
+      PDFAIdentificationSchema pdfa = xmp.createAndAddPDFAIdentificationSchema();
+      pdfa.setPart(1);
+      pdfa.setConformance("B");
+      ByteArrayOutputStream xmpBytes = new ByteArrayOutputStream();
+      new XmpSerializer().serialize(xmp, xmpBytes, true);
+      PDMetadata metadata = new PDMetadata(doc);
+      metadata.importXMPMetadata(xmpBytes.toByteArray());
+      doc.getDocumentCatalog().setMetadata(metadata);
+
+      PDOutputIntent intent =
+          new PDOutputIntent(doc, new ByteArrayInputStream(SrgbProfile.bytes()));
+      intent.setInfo(SrgbProfile.IDENTIFIER);
+      intent.setOutputCondition(SrgbProfile.IDENTIFIER);
+      intent.setOutputConditionIdentifier(SrgbProfile.IDENTIFIER);
+      intent.setRegistryName("http://www.color.org");
+      doc.getDocumentCatalog().addOutputIntent(intent);
+
+      byte[] id = contentId(bundle, encoded);
+      COSArray idArray = new COSArray();
+      idArray.add(new COSString(id));
+      idArray.add(new COSString(id));
+      doc.getDocument().getTrailer().setItem(COSName.ID, idArray);
+      // PDF/A-1 is based on PDF 1.4: no object or cross-reference streams
+      doc.save(out, CompressParameters.NO_COMPRESSION);
+      reportReplaced(replaced[0], report);
+      return out.toByteArray();
+    } catch (IOException | TransformerException | BadFieldValueException e) {
+      throw new IllegalStateException("Cannot render PDF/A original representation", e);
+    }
+  }
+
+  private static String encodable(PDType0Font font, String text, int[] replaced)
+      throws IOException {
+    if (text == null) {
+      return "";
+    }
+    StringBuilder sb = new StringBuilder(text.length());
+    for (int cp : text.codePoints().toArray()) {
+      if (cp == ' ' || font.hasGlyph(cp)) {
+        sb.appendCodePoint(cp);
+      } else {
+        sb.append('?');
+        replaced[0]++;
+      }
+    }
+    return sb.toString();
+  }
+
+  private static byte[] contentId(Bundle bundle, List<String[]> lines) {
+    try {
+      MessageDigest md5 = MessageDigest.getInstance("MD5");
+      md5.update(bundle.getIdentifier().getValue().getBytes(StandardCharsets.UTF_8));
+      for (String[] line : lines) {
+        md5.update((line[0] + line[1] + '\n').getBytes(StandardCharsets.UTF_8));
+      }
+      return md5.digest();
+    } catch (NoSuchAlgorithmException e) {
+      throw new IllegalStateException(e);
     }
   }
 

@@ -370,12 +370,12 @@ against CH EMED EPR or fails only for documented missing data (SC-002).
 
 ### Added 2026-11-09: PDF/A renderer (research R16)
 
-- [ ] T064 [US2] Vendor an sRGB ICC profile version 2 (for example `sRGB2014.icc` of the ICC,
+- [X] T064 [US2] Vendor an sRGB ICC profile version 2 (for example `sRGB2014.icc` of the ICC,
   color.org) as `converter-core/src/main/resources/render/srgb.icc`. Check that its licence allows
   embedding and redistribution, record source, licence and SHA-256 in
   `docs/third-party-licenses.md` and `docs/specifications.md`, and verify the checksum when the
   renderer loads it. Ask Stefan before downloading.
-- [ ] T065 [US2] Test first, in
+- [X] T065 [US2] Test first, in
   `converter-core/src/test/java/ch/emed/converter/core/render/OriginalRepresentationRendererPdfATest.java`:
   - `renderPdfA` for the CH EMED card and prescription examples passes PDFBox Preflight as
     PDF/A-1b;

@@ -40,6 +40,12 @@ The EPR package is appended to the manifest after the CH EMED closure, so the or
 flags of the existing packages stay as they are and existing conversions are unchanged. The
 format module `ch-emed-epr` reports `ch.fhir.ig.ch-emed-epr#3.0.0` as its pinned specification.
 
+### Colour profile of the PDF/A original representation
+
+| Artefact | Pinned version | Notes |
+|----------|----------------|-------|
+| sRGB ICC profile | `sRGB2014.icc`, ICC version 2.0.0, class `mntr`, 3024 bytes, SHA-256 `384b832de3412066743b52a75ee906b6fb9fb8d9e09e936fc2c43223815c6e0a` | International Color Consortium, downloaded 2026-11-09 from <https://registry.color.org/rgb-registry/profiles/sRGB2014.icc> (linked from <https://registry.color.org/rgb-registry/srgbprofiles>); vendored unchanged as `converter-core/src/main/resources/render/srgb.icc`. The renderer checks the SHA-256 when it loads the profile. Version 2 because PDF/A-1 does not allow later ICC versions (research R16, task T064) |
+
 ## eMediplan CHMED16A
 
 | Artefact | Pinned version |
