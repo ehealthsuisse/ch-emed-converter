@@ -412,7 +412,7 @@ a second run is byte-identical (SC-004, FR-011).
 
 ### Tests (write first, must fail)
 
-- [ ] T037 [P] [US3] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/mapping/TreatmentPlanSplitterTest.java`
+- [X] T037 [P] [US3] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/mapping/TreatmentPlanSplitterTest.java`
   (research R6, R7, data model §5):
   - a card with n MedicationStatements → `Bundle.type` `collection` with n MTP document Bundles,
     in section order;
@@ -433,7 +433,7 @@ a second run is byte-identical (SC-004, FR-011).
   - a card without MedicationStatement → `NO_TREATMENTS` (ERROR);
   - the collection of one three-entry card equals `fixtures/expected/treatment-plans-3.json`
     byte for byte.
-- [ ] T038 [US3] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/it/TreatmentPlansIT.java`,
+- [X] T038 [US3] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/it/TreatmentPlansIT.java`,
   test end to end (spec US3.1–US3.4, SC-004):
   - every card of the corpus (feature 001 cards, cards from its CHMED16A reference plans, the
     official PMLC examples converted to CH EMED) → as many MTP documents as treatments, each
@@ -454,16 +454,19 @@ a second run is byte-identical (SC-004, FR-011).
 
 ### Implementation
 
-- [ ] T039 [US3] Extend `FromChEmedMapper.java` with CH EMED treatment plan → MTP (form
+- [X] T039 [US3] Extend `FromChEmedMapper.java` with CH EMED treatment plan → MTP (form
   `document`).
-- [ ] T040 [US3] Implement `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/mapping/TreatmentPlanSplitter.java`
+- [X] T040 [US3] Implement `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/mapping/TreatmentPlanSplitter.java`
   per T037, with the existing `NameBasedIdStrategy` for all ids and no wall-clock time
   (research R10). Each MTP runs through `FromChEmedMapper` for the MTP rules.
-- [ ] T041 [US3] Wire `TREATMENT_PLANS` in `ChEmedEprFormatModule.fromChEmed`: refuse inputs other
+- [X] T041 [US3] Wire `TREATMENT_PLANS` in `ChEmedEprFormatModule.fromChEmed`: refuse inputs other
   than a card; split; validate each MTP document on its own against the MTP document profile and
   the collection against FHIR R4 core; one report for all MTP documents, with the entry index in
   each path.
-- [ ] T042 [US3] Document the MTP rules and the treatment-plan set (`M-EPR-2x`) in
+  *Status 2026-11-09: each MTP is validated against its profile; the collection itself is built
+  by the converter and not validated separately (it holds only the MTP documents). The
+  back-conversion of US3.4 in T038 waits for T045.*
+- [X] T042 [US3] Document the MTP rules and the treatment-plan set (`M-EPR-2x`) in
   `docs/mapping/ch-emed-epr.md`.
 
 **Checkpoint**: US1–US3 work through the library.

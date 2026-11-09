@@ -13,6 +13,7 @@ import ch.emed.converter.core.spi.MappingContext;
 import ch.emed.converter.epr.mapping.FromChEmedMapper;
 import ch.emed.converter.epr.mapping.ProfileMap;
 import ch.emed.converter.epr.mapping.ToChEmedMapper;
+import ch.emed.converter.epr.mapping.TreatmentPlanSplitter;
 import ch.emed.converter.epr.mapping.UnsupportedElements;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,7 @@ public final class ChEmedEprFormatModule implements FormatModule {
 
   private final ToChEmedMapper toChEmed = new ToChEmedMapper();
   private final FromChEmedMapper fromChEmed = new FromChEmedMapper(UnsupportedElements.load());
+  private final TreatmentPlanSplitter splitter = new TreatmentPlanSplitter(fromChEmed);
 
   @Override
   public FormatId format() {
@@ -91,19 +93,10 @@ public final class ChEmedEprFormatModule implements FormatModule {
   @MappingRule({"M-EPR-02", "M-EPR-26"})
   @Override
   public byte[] fromChEmed(Bundle document, MappingContext ctx) {
-    if (ctx.options().outputForm() != OutputForm.DOCUMENT) {
-      ctx.report()
-          .add(
-              ReportEntry.error(
-                  ReasonCode.UNSUPPORTED_OUTPUT_FORM,
-                  Phase.MAP,
-                  "/",
-                  "Output form "
-                      + ctx.options().outputForm().externalName()
-                      + " is not yet supported for target ch-emed-epr"));
-      return null;
-    }
     Optional<EprDocumentType> type = EprDocumentType.of(document);
+    if (ctx.options().outputForm() == OutputForm.TREATMENT_PLANS) {
+      return treatmentPlans(document, type, ctx);
+    }
     if (type.isEmpty()) {
       ctx.report()
           .add(
@@ -123,6 +116,34 @@ public final class ChEmedEprFormatModule implements FormatModule {
       return null;
     }
     return ChEmedJson.serialize(epr);
+  }
+
+  /** Output form {@code treatment-plans}: one MTP per treatment of a card (M-EPR-31 to 33). */
+  @MappingRule("M-EPR-31")
+  private byte[] treatmentPlans(
+      Bundle document, Optional<EprDocumentType> type, MappingContext ctx) {
+    if (type.isEmpty() || type.get() != EprDocumentType.PMLC) {
+      ctx.report()
+          .add(
+              ReportEntry.error(
+                  ReasonCode.UNSUPPORTED_DOCUMENT_TYPE,
+                  Phase.MAP,
+                  "Bundle.entry[0].resource.type",
+                  "Output form treatment-plans needs a medication card as input"));
+      return null;
+    }
+    Bundle collection =
+        splitter.split(
+            document,
+            ctx,
+            ctx.options().validateOutput()
+                ? (mtp, mtpCtx) -> validate(mtp, Phase.VALIDATE_OUTPUT, mtpCtx)
+                : null);
+    if (collection == null || ctx.report().hasErrors()) {
+      // FR-006: no output when one MTP document is incomplete or invalid
+      return null;
+    }
+    return ChEmedJson.serialize(collection);
   }
 
   /**

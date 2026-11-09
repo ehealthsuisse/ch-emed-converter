@@ -500,3 +500,17 @@ CH EMED EPR fixes `MedicationRequest.substitution.allowedCodeableConcept.coding`
 value is fixed to none"). CH EMED allows `E` (equivalent), as in the CH EMED prescription example
 and feature 001 output. The converter leaves an "allowed" statement out (same meaning) and writes
 `allowedBoolean` false as code `N` (mapping rule M-EPR-27).
+
+### F10 — MTP documents from a card (found by T038, 2026-11-09)
+
+- CH EMED EPR requires that an MTP Bundle and its Composition have the same identifier
+  (`bundle-composition-same-id`), and the `treatmentPlan` section needs a text. Both get the UUID
+  v5 of the card's Composition identifier and `/treatment-plans/<i>/Composition`; the section text
+  names the medication and its dosage text.
+- The MTP needs a person author (PractitionerRole, Patient or RelatedPerson). A card from the EPR
+  is authored by the aggregation service (F8); its MTPs get the `informationSource` of their entry
+  as author, the person who recorded the treatment (`DERIVED_VALUE`). In the EPR cards this
+  PractitionerRole is contained in the statement; it moves into the MTP document as an entry with
+  a deterministic `urn:uuid`, since an author cannot reference a contained resource.
+- References inside an MTP point to the full URL of their target, because the new Composition has
+  a `urn:uuid` full URL against which the relative references of the card would not resolve.
