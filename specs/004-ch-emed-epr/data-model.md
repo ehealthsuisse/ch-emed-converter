@@ -34,6 +34,7 @@ New:
 | `NO_TREATMENTS` | ERROR | `treatment-plans` requested for a card without MedicationStatement (spec US3.3) |
 | `TREATMENT_PLAN_EXISTS` | WARNING | a card entry already references a treatment plan; its MTP records the decision again (R7) |
 | `TREATMENT_PLAN_REFERENCES_MISMATCH` | ERROR | the number of treatment-plan references differs from the number of entries without one (R15) |
+| `PROFILE_CHANGED` | INFORMATION | declared profiles of a resource replaced (M-EPR-01); defined in the module (`EprReasonCode`), not in the core |
 
 Reused, with the uses of this feature:
 

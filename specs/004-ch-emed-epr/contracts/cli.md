@@ -30,6 +30,9 @@ java -jar ch-emed-converter.jar convert --from ch-emed --to ch-emed-epr card.jso
 java -jar ch-emed-converter.jar convert --from ch-emed --to ch-emed-epr rx.json -o pre.json \n  --treatment-plan urn:uuid:<mtp-1>,urn:uuid:<statement-1> --treatment-plan urn:uuid:<mtp-2>,urn:uuid:<statement-2>
 ```
 
+The second example works for cards with a person author; for a PMLC, whose author is the
+aggregation service without GLN, it exits `1` with `MISSING_REQUIRED_DATA` (spec US1.2).
+
 `--from chmed16a --to ch-emed-epr` exits `1` with `UNSUPPORTED_CONVERSION`; the message names the
 two steps through `ch-emed`.
 

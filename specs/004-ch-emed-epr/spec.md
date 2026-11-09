@@ -16,22 +16,23 @@
 
 ### Session 2026-11-09
 
+- Q: The author of a PMLC is the aggregation service of the EPR (a device without GLN), while CHMED16A requires the GLN of the author. Should the existing author option fill it on the way to an eMediplan? → A: No. The conversion to CHMED16A reports the missing author GLN; this capability gap is documented (US1.2).
 - Q: CH EMED EPR requires every prescription item and every card entry to reference its treatment plan (MTP) in the EPR, every card entry to name the last considered document, and prescriptions and cards to carry an original representation as PDF/A; general CH EMED documents, for example from an eMediplan, have none of this. How are PRE and PMLC produced from them? → A: The caller supplies the treatment-plan references as an option (FR-017); the caller may supply the original representation as PDF/A, and the converter renders one as PDF/A when neither the caller nor the source provides one (FR-018).
 
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Read a medication card from the EPR (Priority: P1)
 
-A primary system (practice software, pharmacy system) has retrieved the patient's medication card (PMLC) from the EPR of the CARA community. It converts the card to a general CH EMED Medication Card; from there the existing conversion produces an eMediplan, to print the plan with its QR code or import it.
+A primary system (practice software, pharmacy system) has retrieved the patient's medication card (PMLC) from the EPR of the CARA community. It converts the card to a general CH EMED Medication Card, to use it in the system or pass it on. An eMediplan needs the GLN of a person as author; the author of a PMLC is the community's aggregation service, so the existing conversion to CHMED16A reports the missing author GLN (documented capability gap, clarification 2026-11-09).
 
 **Why this priority**: The medication card is the document the EPR offers every care provider; turning it into an eMediplan is the most direct use of the EPR data in daily practice, and it needs nothing beyond reading.
 
-**Independent Test**: Convert the official PMLC examples of CH EMED EPR 3.0.0 to CH EMED and the results on to CHMED16A; the CH EMED documents validate against the pinned CH EMED profiles, and the CHMED16A plans pass the eMediplan checks of feature 001.
+**Independent Test**: Convert the official PMLC examples of CH EMED EPR 3.0.0 to CH EMED; the CH EMED documents validate against the pinned CH EMED profiles. Converting them on to CHMED16A fails with `MISSING_REQUIRED_DATA` naming the author.
 
 **Acceptance Scenarios**:
 
 1. **Given** a valid PMLC document, **When** it is converted to CH EMED, **Then** the result is a valid CH EMED Medication Card with the same treatments, and the report lists every element that was changed.
-2. **Given** the CH EMED Medication Card of step 1, **When** it is converted to CHMED16A with the existing conversion, optionally as QR payload or QR image, **Then** the result is a valid eMediplan with the same treatments.
+2. **Given** the CH EMED Medication Card of step 1, whose author is the aggregation service of the EPR, **When** it is converted to CHMED16A with the existing conversion, in any output form, **Then** the conversion fails with `MISSING_REQUIRED_DATA` naming the author, because CHMED16A requires the GLN of the author.
 3. **Given** a PMLC document with no treatments, **When** it is converted to CH EMED, **Then** the result is a valid Medication Card without medications.
 4. **Given** a document that does not conform to CH EMED EPR, **When** it is converted from CH EMED EPR, **Then** the conversion fails with the validation findings and produces no output.
 

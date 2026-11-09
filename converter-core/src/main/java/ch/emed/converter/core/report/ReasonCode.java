@@ -74,5 +74,12 @@ public final class ReasonCode {
    */
   public static final String TREATMENT_PLAN_EXISTS = "TREATMENT_PLAN_EXISTS";
 
+  /**
+   * The number of treatment-plan references supplied as option differs from the number of entries
+   * without one (ERROR, research R15).
+   */
+  public static final String TREATMENT_PLAN_REFERENCES_MISMATCH =
+      "TREATMENT_PLAN_REFERENCES_MISMATCH";
+
   private ReasonCode() {}
 }

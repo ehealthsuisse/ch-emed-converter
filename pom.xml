@@ -115,6 +115,18 @@
         <version>${pdfbox.version}</version>
       </dependency>
       <dependency>
+        <!-- PDF/A metadata of the original representation (feature 004, research R16) -->
+        <groupId>org.apache.pdfbox</groupId>
+        <artifactId>xmpbox</artifactId>
+        <version>${pdfbox.version}</version>
+      </dependency>
+      <dependency>
+        <!-- PDF/A-1b validation in tests only (feature 004, research R16) -->
+        <groupId>org.apache.pdfbox</groupId>
+        <artifactId>preflight</artifactId>
+        <version>${pdfbox.version}</version>
+      </dependency>
+      <dependency>
         <groupId>info.picocli</groupId>
         <artifactId>picocli</artifactId>
         <version>${picocli.version}</version>

@@ -134,7 +134,7 @@ contracts/library-api.md)
   - `api/DefaultConverter.java`: pass its validator to every `MappingContext`; for a pair of two
     non-hub formats, add the hint "convert through ch-emed" of research R11 to the
     `UNSUPPORTED_CONVERSION` message.
-- [ ] T014 Verify the open points of research R2, R4, R8 and R9 against the vendored package,
+- [X] T014 Verify the open points of research R2, R4, R8 and R9 against the vendored package,
   before any mapping code. Record the results in the task note and in
   `docs/mapping/ch-emed-epr.md` (T018):
   - **Profile change only?** Copy the PMLC, PRE and MTP Bundle examples of `package/example/` to
@@ -154,15 +154,15 @@ contracts/library-api.md)
   - *Decision on F4 (Stefan, 2026-11-09): option for the treatment-plan references and PDF/A
     rendering (research R15, R16; tasks T061–T067). Open: validation of the examples as CH EMED
     (T021).*
-- [ ] T015 Load the EPR package in `converter-validation` (depends on T003, T014): the manifest
+- [X] T015 Load the EPR package in `converter-validation` (depends on T003, T014): the manifest
   load flags drive `PackageLoader`; no other code change is expected. T009 passes.
-- [ ] T016 [P] Create `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/EprDocumentType.java`:
+- [X] T016 [P] Create `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/EprDocumentType.java`:
   enum `PMLC`, `PRE`, `MTP` with the CH EMED Composition codes (SNOMED and LOINC) and the CH EMED
   and EPR document and Composition profile URLs from T014; recognition per data model §2.
-- [ ] T017 [P] Create `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/mapping/ProfileMap.java`:
+- [X] T017 [P] Create `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/mapping/ProfileMap.java`:
   the bidirectional map of the R4 table per resource type and document type, built from the URLs
   of T014. `meta.profile` entries not in the map are kept unchanged.
-- [ ] T018 Create the mapping specification `docs/mapping/ch-emed-epr.md`:
+- [X] T018 Create the mapping specification `docs/mapping/ch-emed-epr.md`:
   - scope, pinned versions and the document types of data model §2;
   - the profile table (R4) as `M-EPR-01`, and the rules found in T014;
   - placeholders for the rules of the stories: unsupported elements (R5), required data (R9),
@@ -172,7 +172,9 @@ contracts/library-api.md)
   `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/it/MappingTraceabilityTest.java`, or
   move that test to a place both modules reach, so that every rule id has a test and every test
   id a rule.
-- [ ] T019 Create `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/ChEmedEprFormatModule.java`
+  - *Done 2026-11-09: the module has its own `@MappingRule` and `MappingTraceabilityTest`, because
+    the annotation of feature 001 is in the main code of `format-chmed16a`.*
+- [X] T019 Create `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/ChEmedEprFormatModule.java`
   (depends on T013, T016, T017):
   - the declarations of T010 and the service file
     `src/main/resources/META-INF/services/ch.emed.converter.core.spi.FormatModule`;
@@ -185,7 +187,7 @@ contracts/library-api.md)
 
 ### Added 2026-11-09 (research R15, R16; decision on F4)
 
-- [ ] T061 [P] In `converter-core/src/test/java/ch/emed/converter/core/api/EprApiAdditionsTest.java`,
+- [X] T061 [P] In `converter-core/src/test/java/ch/emed/converter/core/api/EprApiAdditionsTest.java`,
   test the option of contracts/library-api.md:
   - `TreatmentPlanReference` accepts `urn:uuid:<uuid>` for both values and throws
     `IllegalArgumentException` for anything else, without the value in the message;
@@ -194,13 +196,13 @@ contracts/library-api.md)
   - `ConversionOptions.defaults().originalRepresentation()` is empty; `withOriginalRepresentation`
     keeps every other option and copies the bytes;
   - `ReasonCode.TREATMENT_PLAN_REFERENCES_MISMATCH` exists.
-- [ ] T062 Implement the record
+- [X] T062 Implement the record
   `converter-core/src/main/java/ch/emed/converter/core/api/TreatmentPlanReference.java` and the
   component `treatmentPlanReferences` (default empty, unmodifiable copy) with
   `withTreatmentPlanReferences` in `ConversionOptions.java`; keep the existing constructors
   working. Add the component `originalRepresentation` (`Optional<byte[]>`, defensive copies)
   with `withOriginalRepresentation`. Add `TREATMENT_PLAN_REFERENCES_MISMATCH` to `report/ReasonCode.java`.
-- [ ] T063 [P] Add `org.apache.pdfbox:xmpbox` (compile, `converter-core`) and
+- [X] T063 [P] Add `org.apache.pdfbox:xmpbox` (compile, `converter-core`) and
   `org.apache.pdfbox:preflight` (test scope, `converter-core` and `format-ch-emed-epr`), both
   3.0.8 via `pdfbox.version`, to the parent `pom.xml` and the module POMs. Record them in
   `docs/third-party-licenses.md` (Apache-2.0; preflight not shipped), with Liberation Sans (SIL OFL
@@ -227,7 +229,7 @@ US1).
   test `M-EPR-01` and the rules of T014 for PMLC: every EPR profile in `meta.profile` becomes the
   CH EMED profile; everything else is unchanged; each change is reported as INFORMATION.
   Compare the output byte for byte with `fixtures/expected/<fixture>.json`.
-- [ ] T021 [US1] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/it/PmlcToChEmedIT.java`,
+- [X] T021 [US1] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/it/PmlcToChEmedIT.java`,
   test end to end through `Converters.create()` (spec US1.1–US1.4):
   - every official PMLC example → a CH EMED Medication Card without validation errors, with the
     same MedicationStatements (`ClinicalEquivalence`), outcome SUCCESS or SUCCESS_WITH_WARNINGS;
@@ -240,16 +242,21 @@ US1).
   - a general CH EMED card declared as `ch-emed-epr` → FAILED with the findings and the hint
     "probably general CH EMED; use source ch-emed" (research R11);
   - an official PMLC example declared as `ch-emed` → converted as CH EMED (edge case).
+  - *Done 2026-11-09 in `OfficialExamplesToChEmedIT` and `PmlcToChmed16aIT`. The second step to
+    CHMED16A fails with `MISSING_REQUIRED_DATA` at `Composition.author`: the PMLC author is the
+    aggregation service without GLN; documented capability gap (decision 2026-11-09, spec US1.2).
+    Feature 001 recognised the card only by its LOINC code; fixed with a regression test
+    (`ChEmedDocumentReaderTest`, M-REV-01).*
 
 ### Implementation
 
-- [ ] T022 [US1] Implement `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/mapping/ToChEmedMapper.java`
+- [X] T022 [US1] Implement `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/mapping/ToChEmedMapper.java`
   for PMLC: copy of the Bundle, profile change through `ProfileMap`, the rules of T014, report
   entries per change (paths only).
-- [ ] T023 [US1] Wire `toChEmed` in `ChEmedEprFormatModule.java`: validate the input
+- [X] T023 [US1] Wire `toChEmed` in `ChEmedEprFormatModule.java`: validate the input
   (`VALIDATE_INPUT`, always, FR-007), refuse with the findings on errors, add the hint of T021
   when the Bundle declares no EPR document profile, then map with `ToChEmedMapper`.
-- [ ] T024 [US1] Document the PMLC → Medication Card rules (`M-EPR-1x`) in
+- [X] T024 [US1] Document the PMLC → Medication Card rules (`M-EPR-1x`) in
   `docs/mapping/ch-emed-epr.md`.
 
 **Checkpoint**: US1 works through the library. CLI and REST pick up the format through

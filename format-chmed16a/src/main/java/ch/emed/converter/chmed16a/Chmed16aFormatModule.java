@@ -245,6 +245,8 @@ public final class Chmed16aFormatModule implements FormatModule {
           yield null;
         }
       }
+      // not offered by CHMED16A; DefaultConverter refuses it before mapping (feature 004)
+      case TREATMENT_PLANS -> throw new IllegalStateException("Output form not offered");
     };
   }
 }

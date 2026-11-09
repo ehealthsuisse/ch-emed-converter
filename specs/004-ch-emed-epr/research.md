@@ -450,3 +450,15 @@ PDF/A (R16, FR-018).
 supported"), between 17 and 50 per profile, mostly meta, identifier details, extensions on codings
 and `encounter`. The pinned list of R5 is therefore generated, not written by hand; the `clinical`
 flags need a review.
+
+### F6 — Results of US1 (2026-11-09)
+
+- All 17 official PMLC, PRE and MTP examples convert to valid CH EMED by the profile change alone
+  (`OfficialExamplesToChEmedIT`); F3 is confirmed, and the assumption of the spec holds.
+- Feature 001 recognised a CH EMED Medication Card only by LOINC `56445-0`, but CH EMED fixes only
+  the SNOMED CT code `736378000`; the PMLC examples carry SNOMED only. Fixed in
+  `ChEmedDocumentReader` with a regression test (M-REV-01). The prescription requires LOINC
+  `57833-6` in CH EMED, so nothing changes there.
+- The author of a PMLC is the aggregation service (Device without GLN). CHMED16A requires the
+  author's GLN, so a PMLC cannot become an eMediplan without a person author. **Decision (Stefan,
+  2026-11-09)**: documented as capability gap; the author option is not used for it (spec US1.2).

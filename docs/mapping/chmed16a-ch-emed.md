@@ -147,7 +147,7 @@ never materialised.
 
 | Id | CH EMED | CHMED16A | Notes |
 |----|---------|----------|-------|
-| M-REV-01 | `Composition.type` LOINC `56445-0` | `/MedType` 1 | LOINC `57833-6` is a prescription (M-REV-30); every other type → `UNSUPPORTED_DOCUMENT_TYPE` ERROR naming the code (FR-007) |
+| M-REV-01 | `Composition.type` LOINC `56445-0` or SNOMED CT `736378000` (CH EMED fixes only the SNOMED code; feature 004) | `/MedType` 1 | LOINC `57833-6` (required by CH EMED) or SNOMED CT `761938008` is a prescription (M-REV-30); every other type → `UNSUPPORTED_DOCUMENT_TYPE` ERROR naming the code (FR-007) |
 | M-REV-02 | `Bundle.identifier` (`urn:uuid:<uuid>`) | `/Id` | else `Composition.identifier`; neither → `MISSING_REQUIRED_DATA` |
 | M-REV-03 | `Composition.date` | `/Dt` | string preserved; a value that is not an ISO 8601 date-time with offset fails the output validation |
 | M-REV-04 | `Composition.author` → PractitionerRole → Practitioner identifier GLN (`urn:oid:2.51.1.3`) | `/Auth` | author = Patient → `Auth` `patient`; no GLN → `MISSING_REQUIRED_DATA`; further authors → INFORMATION `UNMAPPABLE_ELEMENT`; Organization identifier ZSR (`urn:oid:2.16.756.5.30.1.123.100.2.1.1`) of exactly 7 characters → `/Zsr`, otherwise INFORMATION |

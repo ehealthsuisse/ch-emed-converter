@@ -168,8 +168,12 @@ public class ConversionController {
     return switch (form) {
       case QR_PAYLOAD -> MediaType.TEXT_PLAIN_VALUE;
       case QR_IMAGE -> MediaType.IMAGE_PNG_VALUE;
+      // feature 004: CH EMED EPR documents and the treatment-plan collection are FHIR JSON
+      case TREATMENT_PLANS -> "application/fhir+json";
       case DOCUMENT ->
-          format.isChEmed() ? "application/fhir+json" : MediaType.APPLICATION_JSON_VALUE;
+          format.isChEmed() || format.equals(FormatId.CH_EMED_EPR)
+              ? "application/fhir+json"
+              : MediaType.APPLICATION_JSON_VALUE;
     };
   }
 }

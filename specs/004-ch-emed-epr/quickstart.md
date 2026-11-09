@@ -28,9 +28,9 @@ java -jar converter-cli/target/ch-emed-converter.jar convert --from ch-emed --to
 ```
 
 Expected:
-- exit `0` for both commands;
-- `card.json` validates as a CH EMED Medication Card;
-- `plan.png` holds the eMediplan of the same treatments;
+- exit `0` for the first command; `card.json` validates as a CH EMED Medication Card;
+- exit `1` for the second command with `MISSING_REQUIRED_DATA` at `Composition.author`: the author
+  of a PMLC is the aggregation service, without GLN (documented capability gap);
 - `report.json` lists the profile changes as INFORMATION only.
 
 ## Scenario 2 — Create an EPR prescription and card (US2, SC-002)

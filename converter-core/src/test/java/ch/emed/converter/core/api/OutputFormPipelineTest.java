@@ -22,6 +22,10 @@ class OutputFormPipelineTest {
   private static final FormatId QR = FormatId.of("QR");
   private static final SignatureData SIGNATURE = new SignatureData("i", "1767225600", "3066");
 
+  /** Minimal CH EMED input; pairs of two other formats are refused since feature 004 (FR-004). */
+  private static final String CH_EMED_DOCUMENT =
+      "{\"resourceType\":\"Bundle\",\"type\":\"document\"}";
+
   /** Module with configurable output forms; input "signed" sets signature data, "bad" fails. */
   private static final class StubModule implements FormatModule {
     private final FormatId format;
@@ -94,7 +98,9 @@ class OutputFormPipelineTest {
 
   @Test
   void outputFormNotOfferedByTargetFailsBeforeMapping() {
-    ConversionResult result = converter.convert(request(QR, PLAIN, "x", OutputForm.QR_PAYLOAD));
+    ConversionResult result =
+        converter.convert(
+            request(FormatId.CH_EMED, PLAIN, CH_EMED_DOCUMENT, OutputForm.QR_PAYLOAD));
 
     assertThat(result.outcome()).isEqualTo(Outcome.FAILED);
     assertThat(result.report().entries())
@@ -121,7 +127,8 @@ class OutputFormPipelineTest {
 
   @Test
   void offeredOutputFormReachesTheModule() {
-    ConversionResult result = converter.convert(request(PLAIN, QR, "x", OutputForm.QR_IMAGE));
+    ConversionResult result =
+        converter.convert(request(FormatId.CH_EMED, QR, CH_EMED_DOCUMENT, OutputForm.QR_IMAGE));
 
     assertThat(result.outcome()).isEqualTo(Outcome.SUCCESS);
     assertThat(new String(result.output().orElseThrow(), StandardCharsets.UTF_8))
