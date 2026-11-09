@@ -17,11 +17,16 @@ No new routes. `POST /api/v1/conversions/{from}/{to}` accepts `ch-emed-epr` for 
 
 - `RequestOptions.outputForm`: enum `[document, qr-payload, qr-image, treatment-plans]`;
   description: "`treatment-plans` only for target `ch-emed-epr` and a Medication Card".
+- `RequestOptions.treatmentPlanReferences` (new, optional): array of `{documentId, statementId}`,
+  both strings with pattern `^urn:uuid:[0-9a-fA-F-]{36}$`; description per research R15.
+- `RequestOptions.originalRepresentation` (new, optional): string, `format: byte`, a PDF/A in
+  base64; description per research R16, including that it is not used with `treatment-plans`.
 - `CapabilitiesResponse.formats[].outputForms.items`: same enum.
 - Examples of `from`/`to` and `formats` include `ch-emed-epr`.
 - The output of `ch-emed-epr` and `treatment-plans` is FHIR JSON with media type
   `application/fhir+json`, base64-encoded as all documents.
-- Report codes `NO_TREATMENTS` and `TREATMENT_PLAN_EXISTS` are listed in the report description.
+- Report codes `NO_TREATMENTS`, `TREATMENT_PLAN_EXISTS` and `TREATMENT_PLAN_REFERENCES_MISMATCH`
+  are listed in the report description.
 
 ## Errors
 
@@ -29,5 +34,6 @@ No new routes. `POST /api/v1/conversions/{from}/{to}` accepts `ch-emed-epr` for 
 |------|--------|-------------|
 | direct pair with `chmed16a` | 404 | `UNSUPPORTED_CONVERSION` (existing) |
 | `treatment-plans` with another target | 400 | `MALFORMED_REQUEST`, as for the other forms (existing check) |
+| malformed `treatmentPlanReferences` (not `urn:uuid:`) | 400 | `MALFORMED_REQUEST` |
 | EPR input not parseable or failing input validation, unsupported document type | 422 | `INVALID_INPUT`, with report (existing) |
-| missing required data, no treatments, output validation error, strict-mode loss | 422 | `CONVERSION_FAILED`, with report (existing) |
+| missing required data, wrong number of treatment-plan references, no treatments, output validation error, strict-mode loss | 422 | `CONVERSION_FAILED`, with report (existing) |

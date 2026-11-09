@@ -25,6 +25,21 @@ into the validator are listed in
 but not loaded, because HAPI keeps one definition per canonical URL; the version declared closest
 to CH EMED wins.
 
+## FHIR / CH EMED EPR (feature 004)
+
+| Artefact | Pinned version | Notes |
+|----------|----------------|-------|
+| CH EMED EPR IG | `ch.fhir.ig.ch-emed-epr#3.0.0` (2026-02-11, publisher CARA, CC0-1.0) | second root package; source <https://fhir.ch/ig/ch-emed-epr/3.0.0/>, repository <https://github.com/CARA-ch/ch-emed-epr> |
+| Dependencies | `ch.fhir.ig.ch-emed#6.0.0`, `ch.fhir.ig.ch-core#6.0.0`, `hl7.terminology.r4#7.0.1`, `hl7.fhir.uv.extensions.r4#5.2.0` | all already pinned above; nothing new is loaded beside the EPR package |
+
+The IG also names `hl7.fhir.uv.tools.r4#0.9.0`, but only as an `ig-internal-dependency` of the
+IG publisher, not in `package.json`. It is not needed for validation and is not vendored
+(feature 004, task T003).
+
+The EPR package is appended to the manifest after the CH EMED closure, so the order and load
+flags of the existing packages stay as they are and existing conversions are unchanged. The
+format module `ch-emed-epr` reports `ch.fhir.ig.ch-emed-epr#3.0.0` as its pinned specification.
+
 ## eMediplan CHMED16A
 
 | Artefact | Pinned version |

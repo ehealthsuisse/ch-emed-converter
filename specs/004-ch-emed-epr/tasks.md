@@ -46,13 +46,13 @@ independently.
 
 **Purpose**: New module, vendored packages, licences
 
-- [ ] T001 In `pom.xml`, register the module `format-ch-emed-epr` after `format-chmed16a`.
-- [ ] T002 Create `format-ch-emed-epr/pom.xml`.
+- [X] T001 In `pom.xml`, register the module `format-ch-emed-epr` after `format-chmed16a`.
+- [X] T002 Create `format-ch-emed-epr/pom.xml`.
   - Java 21; compile dependency `converter-core` only (HAPI structures come through it).
   - Test dependencies: JUnit 5, AssertJ, `converter-validation`, and `format-chmed16a` with its
     test jar (T004).
   - The parent's `enforce-framework-free` and license-plugin rules apply.
-- [ ] T003 Vendor the packages (research R2). This is the only task that needs network access.
+- [X] T003 Vendor the packages (research R2). This is the only task that needs network access.
   - Run `tools/fetch-packages.sh ch.fhir.ig.ch-emed-epr#3.0.0`. Check that the closure adds only
     `ch.fhir.ig.ch-emed-epr#3.0.0` and `hl7.fhir.uv.tools.r4#0.9.0`, and that every existing entry
     of `converter-validation/src/main/resources/packages/manifest.json` keeps its version and
@@ -61,12 +61,15 @@ independently.
     stays recorded as before. Keep the load flag of `hl7.fhir.uv.tools.r4` off until T014
     decides.
   - Change the script's usage comment to mention both root packages.
-- [ ] T004 Add the goal `test-jar` of `maven-jar-plugin` to `format-chmed16a/pom.xml`, if it is not
+  - *Done 2026-11-09: only `ch.fhir.ig.ch-emed-epr#3.0.0` is new and vendored; the tools package
+    is an `ig-internal-dependency` of the IG publisher and is not vendored (research F2). The
+    script takes several root packages and processes them one after another.*
+- [X] T004 Add the goal `test-jar` of `maven-jar-plugin` to `format-chmed16a/pom.xml`, if it is not
   there yet, so the EPR tests can read the feature 001 fixtures and `testsupport` classes
   (`Fixtures`, `PhiScanner`, `LargePlanGenerator`). It is not shipped.
-- [ ] T005 [P] Add the two IG packages (CC0-1.0, vendored in `converter-validation`, shipped in
+- [X] T005 [P] Add the two IG packages (CC0-1.0, vendored in `converter-validation`, shipped in
   both distributions) to `docs/third-party-licenses.md`.
-- [ ] T006 [P] Add a CH EMED EPR section to `docs/specifications.md`: package
+- [X] T006 [P] Add a CH EMED EPR section to `docs/specifications.md`: package
   `ch.fhir.ig.ch-emed-epr#3.0.0`, publication date 2026-02-11, publisher CARA, dependencies,
   source <https://fhir.ch/ig/ch-emed-epr/3.0.0/>, and `hl7.fhir.uv.tools.r4#0.9.0` with its load
   flag (research R2, R13).
@@ -83,14 +86,14 @@ contracts/library-api.md)
 
 ### Tests (write first, must fail)
 
-- [ ] T007 [P] In `converter-core/src/test/java/ch/emed/converter/core/api/ConversionApiAdditionsTest.java`,
+- [X] T007 [P] In `converter-core/src/test/java/ch/emed/converter/core/api/ConversionApiAdditionsTest.java`,
   test the additions of contracts/library-api.md:
   - `FormatId.CH_EMED_EPR` has the external name `ch-emed-epr`;
   - `OutputForm.TREATMENT_PLANS` has the external name `treatment-plans` and parses from it;
   - `ReasonCode.NO_TREATMENTS` and `ReasonCode.TREATMENT_PLAN_EXISTS` exist;
   - `ConversionRequest`, `ConversionOptions` and `ConversionResult` are unchanged (existing
     assertions still pass).
-- [ ] T008 [P] In `converter-core/src/test/java/ch/emed/converter/core/api/DefaultConverterTest.java`,
+- [X] T008 [P] In `converter-core/src/test/java/ch/emed/converter/core/api/DefaultConverterTest.java`,
   with two stub modules (`TestFormatModule`) for formats A and B:
   - `MappingContext.validator()` holds the converter's validator in `toChEmed` and `fromChEmed`,
     and is empty for a converter built without a validator;
@@ -98,18 +101,18 @@ contracts/library-api.md)
     "convert through ch-emed: a → ch-emed → b" (research R11, FR-004);
   - `TREATMENT_PLANS` with a target that does not offer it fails with `UNSUPPORTED_OUTPUT_FORM`
     (existing check).
-- [ ] T009 [P] In `converter-validation/src/test/java/ch/emed/converter/validation/EprPackageRegressionTest.java`
+- [X] T009 [P] In `converter-validation/src/test/java/ch/emed/converter/validation/EprPackageRegressionTest.java`
   (research R3, FR-013):
   - the package loader loads `ch.fhir.ig.ch-emed-epr#3.0.0` and the manifest checksums match;
   - every CH EMED document of the feature 001 corpus gives the same validation messages, in the
     same order, as with a validator built without the EPR package. If `PackageLoader` cannot
     leave one package out, add a package filter for tests to it.
-- [ ] T010 [P] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/ChEmedEprFormatModuleTest.java`,
+- [X] T010 [P] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/ChEmedEprFormatModuleTest.java`,
   test the module's declarations (data model §1):
   - `format()` is `CH_EMED_EPR`; `pinnedSpecification()` is `ch.fhir.ig.ch-emed-epr#3.0.0`;
   - `inputForms()` is `[json]`; `outputForms()` is `[DOCUMENT, TREATMENT_PLANS]`;
   - the module is found through `ServiceLoader`, and `Converter.formats()` lists it.
-- [ ] T011 [P] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/EprDocumentTypeTest.java`,
+- [X] T011 [P] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/EprDocumentTypeTest.java`,
   test the recognition of data model §2:
   - CH EMED Medication Card, Prescription and Treatment Plan map to PMLC, PRE and MTP by
     Composition `type`;
@@ -119,12 +122,14 @@ contracts/library-api.md)
 
 ### Implementation
 
-- [ ] T012 [P] Add the core values in `converter-core`:
+- [X] T012 [P] Add the core values in `converter-core`:
   - `CH_EMED_EPR` ("ch-emed-epr") in `api/FormatId.java`;
   - `TREATMENT_PLANS` ("treatment-plans") in `api/OutputForm.java`;
   - `NO_TREATMENTS` (ERROR) and `TREATMENT_PLAN_EXISTS` (WARNING) in `report/ReasonCode.java`,
     each with a one-line Javadoc.
-- [ ] T013 Change `converter-core` (depends on T012):
+- [X] T013 Change `converter-core` (depends on T012):
+  - *Done 2026-11-09: pairs of two formats other than CH EMED are no longer offered or composed
+    (research F1, decided by Stefan); `DefaultConverterTest` asserts the refusal.*
   - `spi/MappingContext.java`: `Optional<ChEmedValidator> validator()`, set at construction;
   - `api/DefaultConverter.java`: pass its validator to every `MappingContext`; for a pair of two
     non-hub formats, add the hint "convert through ch-emed" of research R11 to the
@@ -143,6 +148,12 @@ contracts/library-api.md)
     profiles require beyond CH EMED (patient elements, author types, confidentiality, original
     representation).
   - **Profile URLs**: list every EPR profile URL that the R4 table needs.
+  - *In progress 2026-11-09: examples copied, tools package not needed, profile map and required
+    data found (research F2–F5). Open: the decision on F4 (PRE and PMLC need EPR references and
+    PDF/A) and the validation of the examples as CH EMED.*
+  - *Decision on F4 (Stefan, 2026-11-09): option for the treatment-plan references and PDF/A
+    rendering (research R15, R16; tasks T061–T067). Open: validation of the examples as CH EMED
+    (T021).*
 - [ ] T015 Load the EPR package in `converter-validation` (depends on T003, T014): the manifest
   load flags drive `PackageLoader`; no other code change is expected. T009 passes.
 - [ ] T016 [P] Create `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/EprDocumentType.java`:
@@ -171,6 +182,29 @@ contracts/library-api.md)
   - a helper that validates a Bundle through `ctx.validator()` in phase `VALIDATE_INPUT` or
     `VALIDATE_OUTPUT` and adds the findings as `FHIR_VALIDATION`. Without a validator, the
     module fails with the existing "validation incomplete" outcome.
+
+### Added 2026-11-09 (research R15, R16; decision on F4)
+
+- [ ] T061 [P] In `converter-core/src/test/java/ch/emed/converter/core/api/EprApiAdditionsTest.java`,
+  test the option of contracts/library-api.md:
+  - `TreatmentPlanReference` accepts `urn:uuid:<uuid>` for both values and throws
+    `IllegalArgumentException` for anything else, without the value in the message;
+  - `ConversionOptions.defaults().treatmentPlanReferences()` is empty;
+    `withTreatmentPlanReferences` keeps every other option and copies the list;
+  - `ConversionOptions.defaults().originalRepresentation()` is empty; `withOriginalRepresentation`
+    keeps every other option and copies the bytes;
+  - `ReasonCode.TREATMENT_PLAN_REFERENCES_MISMATCH` exists.
+- [ ] T062 Implement the record
+  `converter-core/src/main/java/ch/emed/converter/core/api/TreatmentPlanReference.java` and the
+  component `treatmentPlanReferences` (default empty, unmodifiable copy) with
+  `withTreatmentPlanReferences` in `ConversionOptions.java`; keep the existing constructors
+  working. Add the component `originalRepresentation` (`Optional<byte[]>`, defensive copies)
+  with `withOriginalRepresentation`. Add `TREATMENT_PLAN_REFERENCES_MISMATCH` to `report/ReasonCode.java`.
+- [ ] T063 [P] Add `org.apache.pdfbox:xmpbox` (compile, `converter-core`) and
+  `org.apache.pdfbox:preflight` (test scope, `converter-core` and `format-ch-emed-epr`), both
+  3.0.8 via `pdfbox.version`, to the parent `pom.xml` and the module POMs. Record them in
+  `docs/third-party-licenses.md` (Apache-2.0; preflight not shipped), with Liberation Sans (SIL OFL
+  1.1, inside PDFBox) and the sRGB ICC profile of T064.
 
 **Checkpoint**: The existing suite is still green with the EPR package loaded, and its expected
 outputs under `format-chmed16a/src/test/resources/fixtures/expected/` are unchanged (FR-013).
@@ -255,24 +289,41 @@ against CH EMED EPR or fails only for documented missing data (SC-002).
     no organisation is invented;
   - confidentiality missing → filled from the option (default `NORMAL`), reported as
     `DERIVED_VALUE`; never `MISSING_REQUIRED_DATA`.
+  - treatment-plan references (R15): PRE and PMLC entries without the extension and no option →
+    `MISSING_REQUIRED_DATA` naming the entry paths; n references for n such entries → each entry
+    gets `ch-emed-ext-treatmentplan` in order; a different count → `TREATMENT_PLAN_REFERENCES_MISMATCH`
+    naming both counts; references already in the source are kept;
+  - last considered document (PMLC): missing → the `documentId` of the entry's reference,
+    `DERIVED_VALUE`; present → kept.
 - [ ] T027 [P] [US2] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/mapping/OriginalRepresentationTest.java`
-  (research R8):
-  - a PDF with XMP `pdfaid:part` 1 or 2 is kept;
-  - a PDF without it, a PDF/A-3 and a PDF produced by feature 001 are left out, reported as
-    INFORMATION `UNMAPPABLE_ELEMENT` with the reason "EPR requires PDF/A";
-  - if T014 found a document type that requires the section, a document without a PDF/A
-    representation fails with `MISSING_REQUIRED_DATA`.
+  (research R8, R16):
+  - a PDF/A supplied with the option `originalRepresentation` takes precedence over the source,
+    for PRE, PMLC and MTP, reported as `DERIVED_VALUE`; a supplied PDF that is not PDF/A (or no
+    PDF) is not used, reported as WARNING, and the next rule applies;
+  - a PDF with XMP `pdfaid:part` 1 or 2 is kept, for PRE, PMLC and MTP;
+  - PRE and PMLC: a PDF without it, a PDF/A-3, a PDF produced by feature 001, a placeholder that is
+    no PDF, and a missing section → replaced by a PDF/A-1b rendered from the document, with the
+    section and `textLink` as in feature 001, reported as `DERIVED_VALUE`;
+  - MTP: a non-PDF/A original representation is left out, reported as INFORMATION
+    `UNMAPPABLE_ELEMENT` with the reason "EPR requires PDF/A"; none is rendered.
   Create the PDF fixtures with PDFBox in a test helper; they hold no patient data.
 - [ ] T028 [P] [US2] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/mapping/FromChEmedMapperTest.java`,
   test the CH EMED → EPR rules (`M-EPR-0x`) for PRE and PMLC: profile change, then R5, R8 and R9
   in this order, with one fixture per rule. Compare the output byte for byte with
   `fixtures/expected/<fixture>.json`.
 - [ ] T029 [US2] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/it/ChEmedToEprIT.java`,
-  test end to end (spec US2.1–US2.5, SC-002):
+  test end to end (spec US2.1–US2.8, SC-002):
   - every CH EMED Prescription and Card of the feature 001 corpus, and every CH EMED document
-    produced from its CHMED16A reference plans and prescriptions, → PRE or PMLC without
-    validation errors, or FAILED with `MISSING_REQUIRED_DATA` only; with the options of
-    `TestOptions` all succeed;
+    produced from its CHMED16A reference plans and prescriptions: without options → FAILED with
+    `MISSING_REQUIRED_DATA` only; with the options of `TestOptions` and one treatment-plan
+    reference per entry → PRE or PMLC without validation errors, each with a PDF/A original
+    representation that passes Preflight;
+  - a card converted first with `treatment-plans`, then to PMLC with the identifiers of these MTP
+    documents as references → valid PMLC whose entries reference those MTPs (US2.7);
+  - a wrong number of references → `TREATMENT_PLAN_REFERENCES_MISMATCH` (US2.6);
+  - a prescription with a PDF/A supplied by `originalRepresentation` (a PDF/A rendered by T065
+    saved as fixture) → the PRE carries exactly these bytes; a supplied PDF that is not PDF/A →
+    WARNING, and a rendered PDF/A is used; strict mode does not fail on it (US2.9);
   - `fixtures/chemed/card-epr-elements.json` of feature 001 keeps its EPR elements;
   - in strict mode a document with a clinical unsupported element fails;
   - a direct `chmed16a → ch-emed-epr` request fails with `UNSUPPORTED_CONVERSION` naming the
@@ -291,10 +342,14 @@ against CH EMED EPR or fails only for documented missing data (SC-002).
   report as in T025.
 - [ ] T032 [P] [US2] Implement `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/mapping/RequiredData.java`
   per data model §6, reusing the option handling of feature 001 (`patientIdentifier`, `author`,
-  `confidentiality`; mapping M-DOC-09, M-AUT-02) so the results match.
+  `confidentiality`; mapping M-DOC-09, M-AUT-02) so the results match, and the treatment-plan
+  references and last considered document of R15.
 - [ ] T033 [P] [US2] Implement `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/mapping/OriginalRepresentation.java`:
-  PDF/A detection from the XMP metadata (`pdfaid:part` 1 or 2) without rendering. Read the XMP
-  metadata with PDFBox, which `converter-core` already ships.
+  PDF/A detection from the XMP metadata (`pdfaid:part` 1 or 2) with PDFBox, which `converter-core`
+  already ships, and the order of research R16: the PDF/A of the option `originalRepresentation`,
+  then a PDF/A of the source, then for PRE and PMLC `OriginalRepresentationRenderer.renderPdfA`
+  (T065); for MTP, removal. The section with `Binary` and `textLink` is created when the source
+  has none, for a supplied PDF/A as for a rendered one (R8, R16).
 - [ ] T034 [US2] Implement `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/mapping/FromChEmedMapper.java`
   for PRE and PMLC (depends on T031–T033): copy, profile change, unsupported elements, original
   representation, required data.
@@ -305,6 +360,27 @@ against CH EMED EPR or fails only for documented missing data (SC-002).
   clinical relevance, the required data per document type and the original representation in
   `docs/mapping/ch-emed-epr.md`. The `clinical` flags are reviewed by someone with domain
   knowledge; record the review in the PR description.
+
+### Added 2026-11-09: PDF/A renderer (research R16)
+
+- [ ] T064 [US2] Vendor an sRGB ICC profile version 2 (for example `sRGB2014.icc` of the ICC,
+  color.org) as `converter-core/src/main/resources/render/srgb.icc`. Check that its licence allows
+  embedding and redistribution, record source, licence and SHA-256 in
+  `docs/third-party-licenses.md` and `docs/specifications.md`, and verify the checksum when the
+  renderer loads it. Ask Stefan before downloading.
+- [ ] T065 [US2] Test first, in
+  `converter-core/src/test/java/ch/emed/converter/core/render/OriginalRepresentationRendererPdfATest.java`:
+  - `renderPdfA` for the CH EMED card and prescription examples passes PDFBox Preflight as
+    PDF/A-1b;
+  - XMP: `pdfaid:part=1`, `conformance=B`, dates from the Composition `date`;
+  - Liberation Sans embedded, no Standard 14 font, sRGB output intent;
+  - umlauts and French and Italian accents are kept; a character missing in the font is replaced
+    and reported as `PDF_CHARACTER_REPLACED`;
+  - two runs give byte-identical PDFs;
+  - `render` of feature 001 gives the same bytes as before (existing expected outputs).
+  Then implement `renderPdfA` in
+  `converter-core/src/main/java/ch/emed/converter/core/render/OriginalRepresentationRenderer.java`
+  per research R16, sharing the layout with `render`.
 
 **Checkpoint**: US1 and US2 work through the library; PRE and PMLC are offered in both
 directions.
@@ -335,6 +411,9 @@ a second run is byte-identical (SC-004, FR-011).
     `author`, `date`;
   - each MTP has the MTP type (SNOMED `761931002`, LOINC `77603-9`), the localized title and one
     `treatmentPlan` section with exactly one MedicationStatement; no original representation;
+  - with the option `originalRepresentation` → the MTP documents still have no original
+    representation, and one WARNING `UNMAPPABLE_ELEMENT` "original representation not used for
+    treatment-plans" is reported (R16);
   - the collection holds no other resources;
   - a card entry that references a treatment plan → its MTP is still built, and a WARNING
     `TREATMENT_PLAN_EXISTS` with the path is reported;
@@ -351,6 +430,9 @@ a second run is byte-identical (SC-004, FR-011).
   - `treatment-plans` with a Prescription or a Treatment Plan as input →
     `UNSUPPORTED_DOCUMENT_TYPE`;
   - `treatment-plans` with target `chmed16a` → `UNSUPPORTED_OUTPUT_FORM`;
+  - `treatment-plans` with `originalRepresentation` → output as without the option, plus the
+    WARNING of R16; a single treatment plan with form `document` and a supplied PDF/A → the MTP
+    carries it;
   - a single CH EMED treatment plan with form `document` → one valid MTP, and back to CH EMED
     the original apart from the documented changes (US3.4). The reverse direction needs T045;
     until then the test is disabled with a reference to T045;
@@ -428,6 +510,10 @@ identical (SC-006).
   - `--output-form treatment-plans --to chmed16a` fails as the other forms do;
   - `formats` lists `ch-emed-epr` with its forms and pinned specification
     (`FormatsCommandTest.java` extended).
+  - `--treatment-plan <documentId>,<statementId>` repeated gives the same PRE as the library with
+    the same references; a malformed value exits `2` without echoing it (T066).
+  - `--original-representation <file>` gives the same PRE as the library with the same bytes;
+    a missing file exits `2` (T066).
 - [ ] T047 [P] [US5] In `converter-rest/src/test/java/ch/emed/converter/rest/contract/EprConversionContractTest.java`
   (contracts/rest-api.md):
   - the routes `ch-emed-epr/ch-emed` and `ch-emed/ch-emed-epr`, also with `outputForm`
@@ -439,6 +525,11 @@ identical (SC-006).
   - invalid EPR input or an unsupported document type → `422` `INVALID_INPUT`; missing required
     data and `NO_TREATMENTS` → `422` `CONVERSION_FAILED`, each with report.
   Extend `CapabilitiesContractTest.java`: `ch-emed-epr` with `document` and `treatment-plans`.
+  Also: `options.treatmentPlanReferences` gives the same PRE as the library; a value that is not
+  `urn:uuid:` → `400 MALFORMED_REQUEST`; a wrong count → `422 CONVERSION_FAILED` with
+  `TREATMENT_PLAN_REFERENCES_MISMATCH` (T067).
+  `options.originalRepresentation` (base64) gives the same PRE as the library; invalid base64 →
+  `400 MALFORMED_REQUEST` (T067).
 - [ ] T048 [P] [US5] Extend `converter-rest/src/test/java/ch/emed/converter/rest/parity/ServiceLibraryParityTest.java`
   and the CLI parity check with the EPR inputs of T021, T029, T038 and T044, including
   `treatment-plans` (SC-006).
@@ -457,6 +548,12 @@ identical (SC-006).
   contracts/rest-api.md: `outputForm` enum and description, capabilities enum, examples with
   `ch-emed-epr`, the new report codes. Regenerate and compile the generated client test
   (`GeneratedClientIT`).
+- [ ] T066 [US5] Add the repeatable option `--treatment-plan <documentId>,<statementId>` to
+  `converter-cli/src/main/java/ch/emed/converter/cli/ConvertCommand.java` (contracts/cli.md),
+  mapped to `withTreatmentPlanReferences` in the given order. Add `--original-representation <file>`, mapped to
+  `withOriginalRepresentation`.
+- [ ] T067 [US5] Add `treatmentPlanReferences` and `originalRepresentation` (base64) to the REST request options in `converter-rest`
+  (DTO, mapping to `ConversionOptions`, `400` for malformed values) and to `openapi.yaml` (T051).
 - [ ] T052 [US5] Adjust CLI and REST only where T046–T049 fail. Expected: help texts listing the
   new form, and nothing else, since names come from `Converter.formats()`.
 
@@ -497,7 +594,9 @@ identical (SC-006).
   `specs/001-chmed16a-ch-emed-conversion/contracts/cli.md` and
   `specs/003-qr-erezept/contracts/{library-api,cli}.md`.
 - [ ] T059 Record the feature in `CHANGELOG.md` under `## [Unreleased]`: new format `ch-emed-epr`,
-  output form `treatment-plans`, reason codes `NO_TREATMENTS` and `TREATMENT_PLAN_EXISTS`,
+  output form `treatment-plans`, option `treatmentPlanReferences`, PDF/A original representation,
+  composition of two formats removed, reason codes `NO_TREATMENTS`, `TREATMENT_PLAN_EXISTS` and
+  `TREATMENT_PLAN_REFERENCES_MISMATCH`,
   OpenAPI 1.2.0, vendored packages, and any change to existing behaviour found in T009 or T052.
 - [ ] T060 Run `./mvnw -B clean verify` on andromeda and the scenarios of
   `specs/004-ch-emed-epr/quickstart.md`; record deviations in the task note.
@@ -511,7 +610,8 @@ identical (SC-006).
 - **Setup (Phase 1)**: no dependencies. T003 needs network access, once.
 - **Foundational (Phase 2)**: depends on Setup. T014 depends on T003 and decides the URLs for
   T016/T017 and the rules of all stories. Blocks all stories.
-- **US1 (Phase 3)** and **US2 (Phase 4)**: depend on Foundational; independent of each other.
+- **US1 (Phase 3)** and **US2 (Phase 4)**: depend on Foundational; independent of each other. US2
+  also needs T061–T065 (option, libraries, PDF/A renderer).
 - **US3 (Phase 5)**: depends on US2 (`FromChEmedMapper`, R5/R8/R9 for the MTP documents). The
   US3.4 round trip needs T045 (US4).
 - **US4 (Phase 6)**: depends on US1 (`ToChEmedMapper`).

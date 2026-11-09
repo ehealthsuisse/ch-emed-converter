@@ -35,10 +35,14 @@ Expected:
 
 ## Scenario 2 — Create an EPR prescription and card (US2, SC-002)
 
-Convert the CH EMED reference prescriptions and cards of feature 001 with `--to ch-emed-epr`.
+Convert the CH EMED reference prescriptions and cards of feature 001 with `--to ch-emed-epr`, first
+without options, then with `--patient-id`, `--author` and one `--treatment-plan` per entry (for a
+card, the identifiers of the MTP documents of scenario 3).
 
 Expected:
-- every result validates against the PRE or PMLC document profile;
+- without options: `MISSING_REQUIRED_DATA` naming the treatment-plan references;
+- with options: every result validates against the PRE or PMLC document profile and carries a
+  PDF/A-1b original representation;
 - unsupported elements are reported with their paths;
 - a document without an author role fails with `MISSING_REQUIRED_DATA` until `--author` is given.
 

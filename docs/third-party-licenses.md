@@ -20,7 +20,8 @@ with the Apache-2.0/MIT/EPL policy of the project (constitution, technology gate
 | MIT (REST service) | jul-to-slf4j (`converter-rest`) | |
 | Apache-2.0 (QR codec, feature 003) | ZXing core 3.5.4 | in `converter-qr`; shipped in the CLI and REST distributions |
 | Apache-2.0 (tests only, feature 003) | BoofCV 1.6.0 and its dependencies (DDogleg, EJML, GeoRegression) | independent QR reader/encoder in the tests of `converter-qr`; not shipped. Its transitive `trove4j` (LGPL-2.1) is excluded in `converter-qr/pom.xml` |
-| project modules | `converter-core`, `converter-qr`, `converter-validation`, `format-chmed16a`, `converter-cli`, `converter-rest` | Apache-2.0 (see `LICENSE`, `<licenses>` in the parent POM) |
+| CC0-1.0 (FHIR IG package, feature 004) | `ch.fhir.ig.ch-emed-epr#3.0.0` (CH EMED EPR, CARA) | vendored data package in `converter-validation`, shipped in the CLI and REST distributions like the other IG packages (see `docs/specifications.md`); not a library |
+| project modules | `converter-core`, `converter-qr`, `converter-validation`, `format-chmed16a`, `format-ch-emed-epr`, `converter-cli`, `converter-rest` | Apache-2.0 (see `LICENSE`, `<licenses>` in the parent POM) |
 
 Reviewed again 2026-10-29 for the REST service (feature 002): the runtime dependencies of
 `converter-rest` (`converter-rest/target/licenses/THIRD-PARTY.txt`, 130 entries) add only

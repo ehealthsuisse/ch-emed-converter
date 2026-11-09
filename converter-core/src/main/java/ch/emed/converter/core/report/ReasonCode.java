@@ -63,5 +63,16 @@ public final class ReasonCode {
   /** Output form not offered for the target format. */
   public static final String UNSUPPORTED_OUTPUT_FORM = "UNSUPPORTED_OUTPUT_FORM";
 
+  // Feature 004 (CH EMED EPR), data-model.md §3.
+
+  /** Treatment plans requested for a medication card without treatments (ERROR). */
+  public static final String NO_TREATMENTS = "NO_TREATMENTS";
+
+  /**
+   * A card entry already references a treatment plan; its treatment plan document records the
+   * decision again (WARNING).
+   */
+  public static final String TREATMENT_PLAN_EXISTS = "TREATMENT_PLAN_EXISTS";
+
   private ReasonCode() {}
 }

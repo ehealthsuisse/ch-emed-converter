@@ -12,7 +12,12 @@ public enum OutputForm {
   /** The textual QR payload, e.g. {@code CHMED16A1…}. */
   QR_PAYLOAD,
   /** A PNG image of the QR code. */
-  QR_IMAGE;
+  QR_IMAGE,
+  /**
+   * A FHIR {@code collection} Bundle with one medication treatment plan document per treatment of a
+   * medication card (feature 004, CH EMED EPR only).
+   */
+  TREATMENT_PLANS;
 
   /**
    * External (CLI/REST) name, e.g. {@code qr-payload}.

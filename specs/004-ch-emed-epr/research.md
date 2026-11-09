@@ -185,6 +185,9 @@ document-level data of the card is the only source available, and it applies no 
 
 ## R8 — Original representation (PDF)
 
+*Superseded in part by R16 (2026-11-09): a missing or non-PDF/A original representation of a PRE
+or PMLC is rendered anew as PDF/A instead of being left out.*
+
 **Decision**:
 - **CH EMED → EPR**: an original representation is kept only if the PDF declares PDF/A-1 or
   PDF/A-2 conformance (XMP `pdfaid:part` 1 or 2). Otherwise the section is left out and reported
@@ -204,6 +207,8 @@ feature of the renderer with its own conformance checks (fonts, colour profile, 
   follow when an EPR document type needs it.
 
 ## R9 — Data the EPR requires
+
+*Extended by R15 (2026-11-09): the treatment-plan references are a further option.*
 
 **Decision**: The EPR profiles require data that a general CH EMED document may lack:
 - the patient with an identifier (system and value), name and the data of CH Core Patient EPR;
@@ -289,3 +294,159 @@ reference hardware with 4 vCPU (SC-005). The limits of feature 001 (SC-005b: val
 warm; SC-005c: 20 medications converted and validated < 5 s) apply. Twenty MTP documents mean
 twenty document validations, so this case is measured separately. If the limit is missed,
 validation of the MTP documents in parallel is considered before relaxing the criterion.
+
+## R15 — Treatment-plan references as an option (FR-017, added 2026-11-09)
+
+**Decision**: A new conversion option `treatmentPlanReferences`, an ordered list of
+`TreatmentPlanReference(documentId, statementId)`.
+- Both values are URIs of the form `urn:uuid:<uuid>`, written as `Identifier` with system
+  `urn:ietf:rfc:3986` into the extension `ch-emed-ext-treatmentplan` (`externalDocumentId` and
+  `id`). Other forms are a malformed option (CLI exit 2, REST `400 MALFORMED_REQUEST`).
+- **PRE**: one reference per MedicationRequest without the extension, in section order.
+- **PMLC**: one reference per card MedicationStatement without the extension, in section order. A
+  card entry without `ch-emed-ext-last-considered-document` gets the reference's `documentId`,
+  reported as INFORMATION `DERIVED_VALUE`.
+- References already in the source are kept and never overwritten.
+- Entries without a reference and no option → `MISSING_REQUIRED_DATA` with the entry paths. A
+  list whose length differs from the number of entries without a reference → new ERROR
+  `TREATMENT_PLAN_REFERENCES_MISMATCH`, naming both counts, never the values.
+- MTP and `treatment-plans` do not use the option. Other targets ignore it, as they ignore the
+  other options they do not need.
+- The MTP documents of `treatment-plans` (R7) have stable identifiers, so a caller can create the
+  MTPs first and pass their identifiers for the PRE or PMLC. The order of the MTP collection
+  matches the order of the card entries.
+
+**Interfaces**: library `ConversionOptions.withTreatmentPlanReferences(List)`; CLI
+`--treatment-plan <documentId>,<statementId>`, repeatable, in order; REST
+`options.treatmentPlanReferences: [{documentId, statementId}]`.
+
+**Rationale**: The references identify documents in the EPR that only the caller knows
+(constitution II: no invented data). One flat ordered list keeps the option the same in all three
+interfaces.
+
+**Alternatives considered**:
+- *Deriving the references from the MTPs the converter would produce from the same card*:
+  rejected. It works only for cards, not for prescriptions, and states that MTPs exist in the EPR
+  which the converter cannot know.
+- *Matching references to entries by medication code*: rejected. A card may hold the same
+  medication twice; the order is unambiguous.
+
+## R16 — Original representation as PDF/A (FR-018, added 2026-11-09)
+
+**Decision**:
+- **Detection**: a source PDF is PDF/A if its XMP metadata declares `pdfaid:part` 1 or 2 (R8).
+- **Option** (added 2026-11-09): `originalRepresentation`, the bytes of a PDF supplied by the caller
+  (library `withOriginalRepresentation(byte[])`, CLI `--original-representation <file>`, REST
+  `options.originalRepresentation` in base64). Order: a supplied PDF/A, then a PDF/A of the source,
+  then a rendered PDF/A. A supplied PDF that is not PDF/A (no `pdfaid:part` 1 or 2, or not a PDF)
+  is not used: WARNING `UNMAPPABLE_ELEMENT` "supplied original representation is not PDF/A",
+  without clinical loss (strict mode does not fail on it), then the next step applies. A used supplied PDF is reported as INFORMATION `DERIVED_VALUE`. The
+  converter checks only the PDF/A claim in the XMP, not full conformance; the request size limit
+  of feature 002 applies.
+- **With `treatment-plans`**: the option is not used, because one PDF would be attached to every
+  MTP of the card; WARNING `UNMAPPABLE_ELEMENT` "original representation not used for
+  treatment-plans", without clinical loss. The MTP documents get no original representation (R7).
+- **Section**: when the source has no `originalRepresentation` section, the module creates it with
+  its `Binary` and `textLink` as feature 001 does, for a supplied PDF/A as for a rendered one.
+- **PRE and PMLC**: a supplied PDF/A, else a PDF/A of the source is used. Otherwise, and when the section is missing, the
+  module renders the converted EPR document with `OriginalRepresentationRenderer.renderPdfA`, sets
+  it as the `Binary` of the `originalRepresentation` section (creating the section with its
+  `textLink` as feature 001 does), and reports INFORMATION `DERIVED_VALUE` "original representation
+  rendered as PDF/A". A non-PDF/A source PDF is reported as replaced.
+- **MTP**: a supplied PDF/A, else a PDF/A of the source is used; a non-PDF/A one is left out and
+  reported (R8); none is rendered (the section is optional).
+- **Renderer**: a second entry point beside `render` in `converter-core`:
+  - PDF/A-1b (ISO 19005-1, level B), which the EPR accepts and which PDF 1.4 tools read;
+  - font Liberation Sans Regular, shipped inside PDFBox (SIL OFL 1.1), embedded as subset;
+    headings in a larger size instead of a bold face;
+  - output intent with a vendored sRGB ICC profile (version 2, as PDF/A-1 requires), checked by
+    SHA-256 like the IG packages; source and licence are verified in T064 and recorded in
+    `docs/third-party-licenses.md`;
+  - XMP metadata with `xmpbox` (Apache PDFBox, Apache-2.0): `pdfaid:part=1`, `conformance=B`,
+    title, and creation and modification dates from the Composition `date`;
+  - document id from the content hash, no clock (FR-011);
+  - characters missing in the font are replaced and reported as `PDF_CHARACTER_REPLACED`, as in
+    feature 001.
+  - `render` of feature 001 stays unchanged, so existing PDFs stay byte-identical (FR-013).
+- **Tests**: PDFBox Preflight (`org.apache.pdfbox:preflight`, Apache-2.0, test scope only)
+  validates every rendered PDF/A-1b.
+
+**Rationale**: The EPR ordinance requires PDF/A for the original representation, and PRE and
+PMLC require the section. Rendering from the converted document is what feature 001 does for
+CH EMED, so the PDF shows the same content as the structured data.
+
+**Alternatives considered**:
+- *PDF/A-2b*: possible, but Preflight checks only PDF/A-1b; veraPDF would add a large test
+  dependency under MPL-2.0/GPL. PDF/A-1b is enough for the EPR.
+- *Switching feature 001 to PDF/A as well*: rejected for now. It changes existing output; it can
+  follow as its own change.
+- *Leaving the section out*: not possible, PRE and PMLC require it.
+
+## Findings of the first implementation task (T014, 2026-11-09)
+
+Checked against the vendored package `ch.fhir.ig.ch-emed-epr#3.0.0` (SHA-256 `6fb0c9dc…a9508c78`).
+
+### F1 — The core composed pairs of two formats (R1 corrected)
+
+R1 assumed that `DefaultConverter` offers only "format ↔ CH EMED". In fact it offered and
+composed every pair of two format modules through CH EMED (feature 001, test
+`pairWithoutChEmedIsComposedViaChEmed`). With only one module this never showed.
+
+**Decision (Stefan, 2026-11-09)**: composition removed. `DefaultConverter` offers only
+"format ↔ CH EMED"; a pair of two other formats fails with `UNSUPPORTED_CONVERSION`, and the
+message adds "convert through ch-emed: a -> ch-emed -> b" (FR-004). The feature 001 test now
+asserts the refusal; the library contract of feature 001 gets a pointer (T058).
+
+### F2 — Tools package not needed (R2 corrected)
+
+`hl7.fhir.uv.tools.r4#0.9.0` is not in the `package.json` dependencies of the EPR package. The IG
+names it only as an `ig-internal-dependency` for the IG publisher. It is not vendored. All
+dependencies of the EPR package were already vendored; only the EPR package itself is new. It is
+appended to `manifest.json` after the CH EMED closure, so the manifest root (reported as pinned
+specification of CH EMED) and the load flags of the existing packages stay unchanged.
+`tools/fetch-packages.sh` now takes several root packages and processes them one after another.
+
+### F3 — Profile map (R4 confirmed)
+
+Every EPR profile names its CH EMED (or CH Core) base in `baseDefinition`:
+- document, Composition, MedicationStatement (card, list, changed), MedicationRequest,
+  MedicationDispense, Medication, Observation, Organization, Practitioner, PractitionerRole,
+  Dosage → the CH EMED profile of the same name;
+- `ch-emed-epr-medicationstatement-treatmentplan` → `ch-emed-medicationstatement`;
+- `ch-emed-epr-patient` → `ch-core-patient-epr` (the profile feature 001 already declares);
+- `ch-emed-epr-related-person` → `ch-core-relatedperson`;
+- `ch-emed-epr-device` and `ch-emed-epr-observation-body-weight` → FHIR core (no CH EMED profile).
+
+Official examples copied to `format-ch-emed-epr/src/test/resources/fixtures/official/`: 6 PMLC,
+5 PRE, 6 MTP, and one each of DIS, PADV and PML for the refusal tests. Whether EPR → CH EMED needs
+more than the profile change is still to be shown by validation (T021).
+
+### F4 — Data CH EMED EPR requires beyond CH EMED (R8, R9: open decision)
+
+From the differentials of the EPR profiles:
+
+| Document | Requirement | In general CH EMED |
+|----------|-------------|--------------------|
+| PRE | `MedicationRequest.extension:treatmentplan` 1..1: reference to the MTP document and its MedicationStatement in the EPR | 0..1; documents from CHMED16A never have it |
+| PRE | section `originalRepresentation` 1..1 with `Binary` 1..* (PDF/A by the EPR ordinance) | optional; feature 001 renders a PDF that is not PDF/A |
+| PMLC | `MedicationStatement.extension:treatmentPlan` 1..1 and `extension:lastConsideredDocument` 1..1 per card entry | optional; documents from CHMED16A never have them |
+| PMLC | section `originalRepresentation` 1..1 (`Binary` 0..*) | optional |
+| MTP | none beyond CH EMED; `originalRepresentation` 0..1 | — |
+| all | elements that are optional but must have text when present (`reasonCode.text`, `Dosage.route.text`, `Medication.form.text`, …), and `max = 0` on `implicitRules`, `modifierExtension`, `section:card.author` | — |
+
+Consequence: a PRE or PMLC can be produced only from a CH EMED document that already carries
+these EPR references (for example a document read from the EPR), never from eMediplan data. The
+converter must not invent the references (constitution II). Towards the EPR, the MTP is the only
+document type the converter can produce from eMediplan data; in the EPR workflow the MTPs come
+first, the PRE references them, and the community's aggregator produces the PMLC.
+
+**Decision (Stefan, 2026-11-09)**: the spec is extended: the references come from a new option
+(R15, FR-017), and the original representation is rendered as PDF/A when the source has none in
+PDF/A (R16, FR-018).
+
+### F5 — Elements not supported by CH EMED EPR (R5 confirmed, larger than expected)
+
+956 snapshot elements carry the standards-status `draft` flag (shown as "✕ This element is not
+supported"), between 17 and 50 per profile, mostly meta, identifier details, extensions on codings
+and `encounter`. The pinned list of R5 is therefore generated, not written by hand; the `clinical`
+flags need a review.

@@ -63,6 +63,13 @@
       "file": "hl7.terminology.r4-6.3.0.tgz",
       "sha256": "5e080e5343406f964022b086da713df374e410245c518166c5b1b93a800cdd71",
       "load": false
+    },
+    {
+      "name": "ch.fhir.ig.ch-emed-epr",
+      "version": "3.0.0",
+      "file": "ch.fhir.ig.ch-emed-epr-3.0.0.tgz",
+      "sha256": "6fb0c9dcca151e82b2ba8551786fc72a6cfc7fce8ae1a806c1c30ceaa9508c78",
+      "load": true
     }
   ]
 }
