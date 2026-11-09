@@ -88,7 +88,7 @@ other resources, and the report covers all MTP documents.
 | Patient identifier with `system` and `value` | Patient | `patientIdentifier` | `MISSING_REQUIRED_DATA` |
 | Patient data of CH Core Patient EPR (name and further required elements) | Patient | — | `MISSING_REQUIRED_DATA` |
 | Person author as PractitionerRole, Patient or RelatedPerson | Composition author | `author` | `MISSING_REQUIRED_DATA` |
-| EPR confidentiality extension | Composition | `confidentiality` | `MISSING_REQUIRED_DATA` |
+| EPR confidentiality extension | Composition | `confidentiality` (default `NORMAL`) | — (always filled; `DERIVED_VALUE` as M-DOC-09) |
 | Original representation as PDF/A, where the document type requires it | section LOINC `55108-5` | — | left out (optional) or `MISSING_REQUIRED_DATA` (required) |
 
 The exact list per document type is taken from the profiles in the first implementation task and

@@ -110,7 +110,7 @@ Integrators use the library, the command line or the REST service and get the sa
 - Original representation (PDF) in the source → kept only if it meets the CH EMED EPR requirement (PDF/A); otherwise left out and reported.
 - Patient without an identifier with system and value, or without the data the EPR patient requires → missing-data error unless supplied by options.
 - Author that is a person without a role in an organisation → missing-data error unless supplied by options; the converter does not invent organisations.
-- Confidentiality not given → taken from the existing confidentiality option; never defaulted silently.
+- Confidentiality not given → taken from the existing confidentiality option (default `normal`), reported as derived value as in the existing conversions; never set without a report entry.
 - Very large card (for example 100 treatments) → 100 MTP documents within the time limits of the existing conversions.
 - Non-ASCII content (umlauts, accents, French and Italian texts) → preserved.
 

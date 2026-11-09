@@ -36,6 +36,8 @@ independently.
   - `official/` holds the PMLC, PRE and MTP examples copied from the vendored package.
   - `chemed/` holds synthetic CH EMED inputs written for single rules.
   - The corpus of feature 001 is read from `format-chmed16a` (T004), not copied.
+  - `expected/` holds the exact expected output per rule fixture; rule tests compare byte for
+    byte (constitution III), as in feature 001.
 - **Never in logs, reports or problem details**: patient data or document content (FR-015).
 
 ---
@@ -190,6 +192,7 @@ US1).
 - [ ] T020 [P] [US1] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/mapping/ToChEmedMapperTest.java`,
   test `M-EPR-01` and the rules of T014 for PMLC: every EPR profile in `meta.profile` becomes the
   CH EMED profile; everything else is unchanged; each change is reported as INFORMATION.
+  Compare the output byte for byte with `fixtures/expected/<fixture>.json`.
 - [ ] T021 [US1] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/it/PmlcToChEmedIT.java`,
   test end to end through `Converters.create()` (spec US1.1–US1.4):
   - every official PMLC example → a CH EMED Medication Card without validation errors, with the
@@ -249,7 +252,9 @@ against CH EMED EPR or fails only for documented missing data (SC-002).
     reported as `DERIVED_VALUE`;
   - missing, no option → `MISSING_REQUIRED_DATA` naming the element path, never a value;
   - a Practitioner author without a role and without the option `author` → `MISSING_REQUIRED_DATA`;
-    no organisation is invented.
+    no organisation is invented;
+  - confidentiality missing → filled from the option (default `NORMAL`), reported as
+    `DERIVED_VALUE`; never `MISSING_REQUIRED_DATA`.
 - [ ] T027 [P] [US2] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/mapping/OriginalRepresentationTest.java`
   (research R8):
   - a PDF with XMP `pdfaid:part` 1 or 2 is kept;
@@ -260,7 +265,8 @@ against CH EMED EPR or fails only for documented missing data (SC-002).
   Create the PDF fixtures with PDFBox in a test helper; they hold no patient data.
 - [ ] T028 [P] [US2] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/mapping/FromChEmedMapperTest.java`,
   test the CH EMED → EPR rules (`M-EPR-0x`) for PRE and PMLC: profile change, then R5, R8 and R9
-  in this order, with one fixture per rule.
+  in this order, with one fixture per rule. Compare the output byte for byte with
+  `fixtures/expected/<fixture>.json`.
 - [ ] T029 [US2] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/it/ChEmedToEprIT.java`,
   test end to end (spec US2.1–US2.5, SC-002):
   - every CH EMED Prescription and Card of the feature 001 corpus, and every CH EMED document
@@ -287,8 +293,8 @@ against CH EMED EPR or fails only for documented missing data (SC-002).
   per data model §6, reusing the option handling of feature 001 (`patientIdentifier`, `author`,
   `confidentiality`; mapping M-DOC-09, M-AUT-02) so the results match.
 - [ ] T033 [P] [US2] Implement `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/mapping/OriginalRepresentation.java`:
-  PDF/A detection from the XMP metadata (`pdfaid:part` 1 or 2) without rendering. Use PDFBox only
-  if `converter-core` already ships it; otherwise parse the XMP packet directly.
+  PDF/A detection from the XMP metadata (`pdfaid:part` 1 or 2) without rendering. Read the XMP
+  metadata with PDFBox, which `converter-core` already ships.
 - [ ] T034 [US2] Implement `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/mapping/FromChEmedMapper.java`
   for PRE and PMLC (depends on T031–T033): copy, profile change, unsupported elements, original
   representation, required data.
@@ -297,7 +303,8 @@ against CH EMED EPR or fails only for documented missing data (SC-002).
   output with errors.
 - [ ] T036 [US2] Document the CH EMED → EPR rules (`M-EPR-0x`), the unsupported elements with their
   clinical relevance, the required data per document type and the original representation in
-  `docs/mapping/ch-emed-epr.md`.
+  `docs/mapping/ch-emed-epr.md`. The `clinical` flags are reviewed by someone with domain
+  knowledge; record the review in the PR description.
 
 **Checkpoint**: US1 and US2 work through the library; PRE and PMLC are offered in both
 directions.
@@ -331,7 +338,9 @@ a second run is byte-identical (SC-004, FR-011).
   - the collection holds no other resources;
   - a card entry that references a treatment plan → its MTP is still built, and a WARNING
     `TREATMENT_PLAN_EXISTS` with the path is reported;
-  - a card without MedicationStatement → `NO_TREATMENTS` (ERROR).
+  - a card without MedicationStatement → `NO_TREATMENTS` (ERROR);
+  - the collection of one three-entry card equals `fixtures/expected/treatment-plans-3.json`
+    byte for byte.
 - [ ] T038 [US3] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/it/TreatmentPlansIT.java`,
   test end to end (spec US3.1–US3.4, SC-004):
   - every card of the corpus (feature 001 cards, cards from its CHMED16A reference plans, the
@@ -343,14 +352,15 @@ a second run is byte-identical (SC-004, FR-011).
     `UNSUPPORTED_DOCUMENT_TYPE`;
   - `treatment-plans` with target `chmed16a` → `UNSUPPORTED_OUTPUT_FORM`;
   - a single CH EMED treatment plan with form `document` → one valid MTP, and back to CH EMED
-    the original apart from the documented changes (US3.4);
+    the original apart from the documented changes (US3.4). The reverse direction needs T045;
+    until then the test is disabled with a reference to T045;
   - a card with 100 treatments (`LargePlanGenerator`) → 100 MTP documents (edge case); the time
     is measured in T055.
 
 ### Implementation
 
-- [ ] T039 [US3] Extend `FromChEmedMapper.java` and `ToChEmedMapper.java` with MTP ↔ CH EMED
-  treatment plan (form `document`).
+- [ ] T039 [US3] Extend `FromChEmedMapper.java` with CH EMED treatment plan → MTP (form
+  `document`).
 - [ ] T040 [US3] Implement `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/mapping/TreatmentPlanSplitter.java`
   per T037, with the existing `NameBasedIdStrategy` for all ids and no wall-clock time
   (research R10). Each MTP runs through `FromChEmedMapper` for the MTP rules.
@@ -376,7 +386,8 @@ to CHMED16A (spec US4).
 ### Tests (write first, must fail)
 
 - [ ] T043 [P] [US4] Extend `ToChEmedMapperTest.java` with PRE and MTP: profile change and the
-  rules of T014 for both types.
+  rules of T014 for both types. Compare the output byte for byte with
+  `fixtures/expected/<fixture>.json`.
 - [ ] T044 [US4] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/it/PreMtpToChEmedIT.java`
   (spec US4.1–US4.4):
   - every official PRE example → a valid CH EMED Medication Prescription, and on to CHMED16A a
@@ -390,8 +401,8 @@ to CHMED16A (spec US4).
 
 ### Implementation
 
-- [ ] T045 [US4] Extend `ToChEmedMapper.java` with PRE and MTP, if T039 did not already cover the
-  EPR → CH EMED direction of MTP, and document the rules in `docs/mapping/ch-emed-epr.md`.
+- [ ] T045 [US4] Extend `ToChEmedMapper.java` with PRE and MTP → CH EMED, and document the rules
+  in `docs/mapping/ch-emed-epr.md`.
 
 **Checkpoint**: All three document types work in both directions through the library.
 
@@ -471,6 +482,8 @@ identical (SC-006).
   (SC-005, research R14), tagged like the existing time test:
   - start-up time of the validation context with the EPR package, recorded;
   - a card with 20 medications → PMLC, including validation, < 5 s warm (feature 001 SC-005c);
+  - a card with 100 treatments → `treatment-plans`, including the validation of all MTP
+    documents, < 30 s warm (feature 001 SC-005b);
   - the same card → `treatment-plans`, measured and recorded; if it misses 5 s, try validating
     the MTP documents in parallel before relaxing the criterion;
   - run on andromeda with 4 vCPU (`tools/remote-build.sh load`) and record the numbers in
@@ -499,8 +512,9 @@ identical (SC-006).
 - **Foundational (Phase 2)**: depends on Setup. T014 depends on T003 and decides the URLs for
   T016/T017 and the rules of all stories. Blocks all stories.
 - **US1 (Phase 3)** and **US2 (Phase 4)**: depend on Foundational; independent of each other.
-- **US3 (Phase 5)**: depends on US2 (`FromChEmedMapper`, R5/R8/R9 for the MTP documents).
-- **US4 (Phase 6)**: depends on US1 (`ToChEmedMapper`); the MTP part shares T039 with US3.
+- **US3 (Phase 5)**: depends on US2 (`FromChEmedMapper`, R5/R8/R9 for the MTP documents). The
+  US3.4 round trip needs T045 (US4).
+- **US4 (Phase 6)**: depends on US1 (`ToChEmedMapper`).
 - **US5 (Phase 7)**: depends on the stories whose conversions it checks; T050 and T051 can start
   after Foundational.
 - **Polish (Phase 8)**: after all stories.

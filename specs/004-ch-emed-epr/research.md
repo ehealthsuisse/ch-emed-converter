@@ -215,6 +215,10 @@ Missing data is filled only from the existing options of feature 001 (`patientId
 `MISSING_REQUIRED_DATA` naming the element path (FR-009). A Practitioner author without a role
 needs the option `author`; the converter never invents an organisation.
 
+The confidentiality is never missing: the option `confidentiality` has the default `NORMAL`, and a
+document without confidentiality gets it with `DERIVED_VALUE`, exactly as M-DOC-09 does for
+CHMED16A.
+
 **Rationale**: Feature 001 already produces these elements from CHMED16A, with the options
 (mapping M-DOC-09, M-AUT-02). This reuses the same options and codes, so callers see one
 behaviour.
