@@ -3,6 +3,9 @@
 Changes to [feature 001 library API](../../001-chmed16a-ch-emed-conversion/contracts/library-api.md).
 Additive, so a MINOR version change. Existing calls compile and behave as before.
 
+Feature 004 adds to these: output form `TREATMENT_PLANS` and the options of
+[specs/004-ch-emed-epr/contracts/library-api.md](../../004-ch-emed-epr/contracts/library-api.md).
+
 ## Request / options
 
 ```java

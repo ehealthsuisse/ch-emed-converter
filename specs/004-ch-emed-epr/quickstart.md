@@ -7,8 +7,8 @@ Runnable scenarios that show the feature works end to end. Contracts:
 ## Prerequisites
 
 - Java 21, and the build of this branch.
-- Vendored packages `ch.fhir.ig.ch-emed-epr#3.0.0` and `hl7.fhir.uv.tools.r4#0.9.0` (fetched by
-  `tools/fetch-packages.sh`, checked against `manifest.json`).
+- Vendored package `ch.fhir.ig.ch-emed-epr#3.0.0` (fetched by `tools/fetch-packages.sh`, checked
+  against `manifest.json`); `hl7.fhir.uv.tools.r4` is not needed (research F2).
 - Fixtures: official examples in `format-ch-emed-epr/src/test/resources/fixtures/official/`, and
   the feature 001 corpus.
 
@@ -23,7 +23,7 @@ Time tests on the build machine, limited to 4 vCPU (`tools/remote-build.sh load`
 ## Scenario 1 — Read a medication card from the EPR (US1, SC-001)
 
 ```bash
-java -jar converter-cli/target/ch-emed-converter.jar convert --from ch-emed-epr --to ch-emed fixtures/official/pmlc-1.json -o card.json --report report.json
+java -jar converter-cli/target/ch-emed-converter.jar convert --from ch-emed-epr --to ch-emed format-ch-emed-epr/src/test/resources/fixtures/official/Bundle-DocumentPmlcCARAPMP004AxapharmParacetamol.json -o card.json --report report.json
 java -jar converter-cli/target/ch-emed-converter.jar convert --from ch-emed --to chmed16a card.json --output-form qr-image -o plan.png
 ```
 
@@ -41,6 +41,9 @@ card, the identifiers of the MTP documents of scenario 3).
 
 Expected:
 - without options: `MISSING_REQUIRED_DATA` naming the treatment-plan references;
+- a card with a person as author (every card from an eMediplan) fails with `MISSING_REQUIRED_DATA`
+  at the author even with options: a PMLC is authored by the aggregation service (research F8);
+  cards read from the EPR convert;
 - with options: every result validates against the PRE or PMLC document profile and carries a
   PDF/A-1b original representation;
 - unsupported elements are reported with their paths;
@@ -93,4 +96,5 @@ Expected:
 Measure on 4 vCPU:
 - the start-up time of the validation context;
 - a card with 20 medications to PMLC (limit of feature 001 SC-005c: < 5 s);
-- the same card to `treatment-plans` (measured and recorded).
+- cards with 20 and 100 treatments to `treatment-plans` (limit < 30 s for 100);
+- results of 2026-11-09 in `docs/operations/rest-service.md` (Capacity).

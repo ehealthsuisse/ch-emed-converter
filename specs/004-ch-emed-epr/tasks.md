@@ -314,7 +314,7 @@ against CH EMED EPR or fails only for documented missing data (SC-002).
   - MTP: a non-PDF/A original representation is left out, reported as INFORMATION
     `UNMAPPABLE_ELEMENT` with the reason "EPR requires PDF/A"; none is rendered.
   Create the PDF fixtures with PDFBox in a test helper; they hold no patient data.
-- [ ] T028 [P] [US2] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/mapping/FromChEmedMapperTest.java`,
+- [X] T028 [P] [US2] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/mapping/FromChEmedMapperTest.java`,
   test the CH EMED → EPR rules (`M-EPR-0x`) for PRE and PMLC: profile change, then R5, R8 and R9
   in this order, with one fixture per rule. Compare the output byte for byte with
   `fixtures/expected/<fixture>.json`.
@@ -581,17 +581,17 @@ identical (SC-006).
 
 **Purpose**: Round trips, determinism, performance, documentation
 
-- [ ] T053 [P] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/it/RoundTripIT.java`
+- [X] T053 [P] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/it/RoundTripIT.java`
   (FR-010, SC-003):
   - EPR → CH EMED → EPR for every official example gives the original apart from the changes
     documented in `docs/mapping/ch-emed-epr.md`;
   - CH EMED → EPR → CH EMED for the feature 001 corpus differs only by the reported elements of
     R5, R8 and R9;
   - the allowed differences are listed per rule id in the test, not as a free diff.
-- [ ] T054 [P] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/it/DeterminismIT.java`
+- [X] T054 [P] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/it/DeterminismIT.java`
   (FR-011): every conversion of the corpus, in both directions and with `treatment-plans`, run
   twice and in a fresh converter, gives byte-identical output and reports.
-- [ ] T055 In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/it/PerformanceTest.java`
+- [X] T055 In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/it/PerformanceTest.java`
   (SC-005, research R14), tagged like the existing time test:
   - start-up time of the validation context with the EPR package, recorded;
   - a card with 20 medications → PMLC, including validation, < 5 s warm (feature 001 SC-005c);
@@ -601,21 +601,27 @@ identical (SC-006).
     the MTP documents in parallel before relaxing the criterion;
   - run on andromeda with 4 vCPU (`tools/remote-build.sh load`) and record the numbers in
     `docs/operations/rest-service.md`.
-- [ ] T056 [P] Update `docs/architecture.md`: module diagram with `format-ch-emed-epr`, and the
+- [X] T056 [P] Update `docs/architecture.md`: module diagram with `format-ch-emed-epr`, and the
   planned items "CARA EMED" and "CH EMED EPR" merged into one implemented item (research R13).
-- [ ] T057 [P] Update `README.md` and `docs/operations/rest-service.md`: format `ch-emed-epr`, form
+- [X] T057 [P] Update `README.md` and `docs/operations/rest-service.md`: format `ch-emed-epr`, form
   `treatment-plans`, the two-step path for CHMED16A, examples of quickstart scenarios 1 and 3.
-- [ ] T058 [P] Add pointers to the deltas of this feature in
+- [X] T058 [P] Add pointers to the deltas of this feature in
   `specs/001-chmed16a-ch-emed-conversion/contracts/library-api.md`,
   `specs/001-chmed16a-ch-emed-conversion/contracts/cli.md` and
   `specs/003-qr-erezept/contracts/{library-api,cli}.md`.
-- [ ] T059 Record the feature in `CHANGELOG.md` under `## [Unreleased]`: new format `ch-emed-epr`,
+- [X] T059 Record the feature in `CHANGELOG.md` under `## [Unreleased]`: new format `ch-emed-epr`,
   output form `treatment-plans`, option `treatmentPlanReferences`, PDF/A original representation,
   composition of two formats removed, reason codes `NO_TREATMENTS`, `TREATMENT_PLAN_EXISTS` and
   `TREATMENT_PLAN_REFERENCES_MISMATCH`,
   OpenAPI 1.2.0, vendored packages, and any change to existing behaviour found in T009 or T052.
-- [ ] T060 Run `./mvnw -B clean verify` on andromeda and the scenarios of
+- [X] T060 Run `./mvnw -B clean verify` on andromeda and the scenarios of
   `specs/004-ch-emed-epr/quickstart.md`; record deviations in the task note.
+  *Status 2026-11-09: clean verify on andromeda green (all 8 modules, time tests separately, T055).
+  Scenario 1: PMLC → CH EMED exit 0, report INFORMATION only; on to CHMED16A exit 1 with
+  `MISSING_REQUIRED_DATA` at the author. Scenario 3: collection, second run byte-identical.
+  Scenario 4: `ch-emed-epr → chmed16a` names the path through `ch-emed`. Scenarios 2, 5, 6 and 7
+  run as tests (`ChEmedToEprIT`, `RoundTripIT`, parity and leak tests). Deviation from the
+  original quickstart: cards with a person author do not become PMLC (F8); quickstart updated.*
 
 ---
 

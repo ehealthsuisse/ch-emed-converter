@@ -45,9 +45,14 @@ flowchart TB
         VAL16["validation<br/>CHMED16A schema + eRezept rules"]
     end
 
+    subgraph epr["format-ch-emed-epr"]
+        EFM["ChEmedEprFormatModule"]
+        EMAP["mapping<br/>EPR ↔ CH EMED, unsupported elements,<br/>required data, PDF/A, treatment plans"]
+    end
+
     subgraph val["converter-validation"]
         HV["HapiChEmedValidator<br/>(HAPI / HL7 validator, offline)"]
-        PKG[("Vendored IG packages<br/>ch-core · ch-emed · ch-term<br/>hl7 extensions")]
+        PKG[("Vendored IG packages<br/>ch-core · ch-emed · ch-term · ch-emed-epr<br/>hl7 extensions")]
     end
 
     CLI --> API
@@ -59,6 +64,8 @@ flowchart TB
     PIPE --> UTIL
     FM -. "implements via ServiceLoader" .-> SPI
     HV -. "implements via ServiceLoader" .-> SPI
+    EFM -. "implements via ServiceLoader" .-> SPI
+    EFM --> EMAP
     FM --> IO
     IO --> QRC
     FM --> FWD
@@ -67,9 +74,11 @@ flowchart TB
     HV --> PKG
 ```
 
-Dependencies in the POMs: `format-chmed16a` and `converter-validation` depend on `converter-core`;
+Dependencies in the POMs: `format-chmed16a`, `format-ch-emed-epr` and `converter-validation` depend
+on `converter-core`; `format-ch-emed-epr` validates through the validator of the mapping context
+and renders the PDF/A with `converter-core` (feature 004);
 `format-chmed16a` also depends on `converter-qr` (feature 003), which depends on ZXing only;
-`converter-cli` depends on all three (the format module at runtime). `converter-rest` depends on
+`converter-cli` depends on all of them (the format modules at runtime). `converter-rest` depends on
 `converter-core` and, at runtime, on the format and validation modules; it is the only module with
 Spring dependencies (Spring Boot BOM imported in its own POM, enforced by the parent's
 `enforce-framework-free` rule for all other modules). `converter-core` depends on neither.
@@ -138,7 +147,8 @@ never patient values (privacy, see README "Logging (privacy)").
 ## Formats and extensions: implemented and planned
 
 CH EMED is the hub; each format is a `FormatModule` of its own. Conversions between two non-CH-EMED
-formats, if ever offered, are composed through CH EMED (constitution, "hub model"). Items marked
+formats are not offered; the caller converts in two steps through CH EMED, and the converter names
+that path when it refuses such a pair (constitution, "hub model"; feature 004 FR-004). Items marked
 *planned* are not implemented; they are named in the constitution and in the feature specs, the
 scope and timing are not decided yet.
 
@@ -147,18 +157,16 @@ flowchart LR
     CHMED16A["CHMED16A<br/>eMediplan plan and prescription<br/>(implemented, feature 001)"]
     HUB(("CH EMED 6.0.0<br/>HL7 FHIR R4<br/>hub model"))
     CHMED23A["CHMED23A<br/>(planned, separate feature)"]
-    CARA["CARA EMED<br/>(planned)"]
     ERX["eMediplan QR code, eRezept Schweiz QR code / URL<br/>(implemented, feature 003)"]
-    EPR["CH EMED EPR<br/>profile variant<br/>(planned)"]
+    EPR["CH EMED EPR 3.0.0 (CARA EMED)<br/>PMLC · PRE · MTP<br/>(implemented, feature 004)"]
 
     CHMED16A <--> HUB
     CHMED23A <-.-> HUB
-    CARA <-.-> HUB
     ERX <--> CHMED16A
-    HUB -.-> EPR
+    HUB <--> EPR
 
     classDef planned stroke-dasharray: 5 5
-    class CHMED23A,CARA,EPR planned
+    class CHMED23A planned
 ```
 
 | Item | Status | Notes |
@@ -166,9 +174,8 @@ flowchart LR
 | CHMED16A ↔ CH EMED | implemented (feature 001) | medication plan (MedType 1) and prescription (MedType 3); the prescription output is eRezept-ready |
 | REST service | implemented (feature 002) | plain REST/JSON API on top of `converter-core` (`converter-rest`); documents base64-encoded, same options as the CLI; no access control or TLS in the service |
 | CHMED23A ↔ CH EMED | planned | separate, later feature; CHMED23A was withdrawn by IG eMediplan but stays in the constitution's scope |
-| CARA EMED | planned | named in the constitution as a format whose official examples join the test corpus |
 | eMediplan QR code, eRezept QR code / URL | implemented (feature 003) | transmission forms of CHMED16A, not formats of their own: QR images (PNG/JPEG) and signed eRezept URLs (`https://eprescription.hin.ch/#CHMED16A1…`) are read, the signature data is returned raw and unverified beside the document; QR payloads and, for medication plans, QR images are written (option `outputForm`); prescriptions only as unsigned payload for the HIN erxproxy |
-| CH EMED EPR | planned | feature 001 targets the general CH EMED IG; the EPR variant would be a separate feature |
+| CH EMED EPR (CARA EMED) ↔ CH EMED | implemented (feature 004) | CH EMED EPR 3.0.0 of CARA, the EPR variant of CH EMED; there is no separate CARA format (constitution 1.5.0). Medication card (PMLC), prescription (PRE) and treatment plan (MTP) in both directions; output form `treatment-plans` makes one MTP per treatment of a card; unsupported elements are removed and reported, the original representation is a PDF/A. Rules: [mapping/ch-emed-epr.md](mapping/ch-emed-epr.md). DIS, PADV and PML follow later |
 
 Out of scope for now: the CHMED16A PolymedicationCheck document type.
 
