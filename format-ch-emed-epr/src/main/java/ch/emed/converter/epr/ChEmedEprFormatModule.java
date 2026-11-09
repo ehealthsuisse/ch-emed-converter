@@ -10,8 +10,10 @@ import ch.emed.converter.core.report.ReportEntry;
 import ch.emed.converter.core.spi.ChEmedValidator;
 import ch.emed.converter.core.spi.FormatModule;
 import ch.emed.converter.core.spi.MappingContext;
+import ch.emed.converter.epr.mapping.FromChEmedMapper;
 import ch.emed.converter.epr.mapping.ProfileMap;
 import ch.emed.converter.epr.mapping.ToChEmedMapper;
+import ch.emed.converter.epr.mapping.UnsupportedElements;
 import java.util.List;
 import java.util.Optional;
 import org.hl7.fhir.r4.model.Bundle;
@@ -27,6 +29,7 @@ public final class ChEmedEprFormatModule implements FormatModule {
   public static final String PINNED_SPECIFICATION = "ch.fhir.ig.ch-emed-epr#3.0.0";
 
   private final ToChEmedMapper toChEmed = new ToChEmedMapper();
+  private final FromChEmedMapper fromChEmed = new FromChEmedMapper(UnsupportedElements.load());
 
   @Override
   public FormatId format() {
@@ -85,16 +88,41 @@ public final class ChEmedEprFormatModule implements FormatModule {
     return toChEmed.map(epr, type.get(), ctx);
   }
 
+  @MappingRule({"M-EPR-02", "M-EPR-26"})
   @Override
   public byte[] fromChEmed(Bundle document, MappingContext ctx) {
-    ctx.report()
-        .add(
-            ReportEntry.error(
-                ReasonCode.UNSUPPORTED_CONVERSION,
-                Phase.MAP,
-                "/",
-                "CH EMED to CH EMED EPR is not yet supported"));
-    return null;
+    if (ctx.options().outputForm() != OutputForm.DOCUMENT) {
+      ctx.report()
+          .add(
+              ReportEntry.error(
+                  ReasonCode.UNSUPPORTED_OUTPUT_FORM,
+                  Phase.MAP,
+                  "/",
+                  "Output form "
+                      + ctx.options().outputForm().externalName()
+                      + " is not yet supported for target ch-emed-epr"));
+      return null;
+    }
+    Optional<EprDocumentType> type = EprDocumentType.of(document);
+    if (type.isEmpty()) {
+      ctx.report()
+          .add(
+              ReportEntry.error(
+                  ReasonCode.UNSUPPORTED_DOCUMENT_TYPE,
+                  Phase.MAP,
+                  "Bundle.entry[0].resource.type",
+                  EprDocumentType.unsupportedMessage(document)));
+      return null;
+    }
+    Bundle epr = fromChEmed.map(document, type.get(), ctx);
+    if (epr == null || ctx.report().hasErrors()) {
+      return null;
+    }
+    if (ctx.options().validateOutput() && !validate(epr, Phase.VALIDATE_OUTPUT, ctx)) {
+      // FR-006: output with validation errors is never returned
+      return null;
+    }
+    return ChEmedJson.serialize(epr);
   }
 
   /**

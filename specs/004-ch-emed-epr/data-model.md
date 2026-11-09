@@ -53,7 +53,9 @@ Reused, with the uses of this feature:
 ## 4. Unsupported element list (R5)
 
 Resource `format-ch-emed-epr/src/main/resources/epr/unsupported-elements.json`, extracted from the
-vendored package and checked against it by a test:
+vendored package and checked against it by a test. An element is listed when it is `draft` and its `short` starts
+with "✕" (research F7); the datatype profiles are resolved into the resource profiles, and each
+profile also lists a `slices` matcher per slice on a listed path:
 
 ```text
 { "package": "ch.fhir.ig.ch-emed-epr#3.0.0",
@@ -91,7 +93,8 @@ other resources, and the report covers all MTP documents.
 |-----------------|--------|--------|-----------|
 | Patient identifier with `system` and `value` | Patient | `patientIdentifier` | `MISSING_REQUIRED_DATA` |
 | Patient data of CH Core Patient EPR (name and further required elements) | Patient | — | `MISSING_REQUIRED_DATA` |
-| Person author as PractitionerRole, Patient or RelatedPerson | Composition author | `author` | `MISSING_REQUIRED_DATA` |
+| Person author as PractitionerRole, Patient or RelatedPerson (PRE, MTP) | Composition author | `author` | `MISSING_REQUIRED_DATA` |
+| Exactly one author, the aggregation service (Device) (PMLC, F8) | Composition author | — | `MISSING_REQUIRED_DATA` |
 | EPR confidentiality extension | Composition | `confidentiality` (default `NORMAL`) | — (always filled; `DERIVED_VALUE` as M-DOC-09) |
 | Treatment-plan reference per MedicationRequest (PRE) and card MedicationStatement (PMLC) | extension `ch-emed-ext-treatmentplan` | `treatmentPlanReferences`, in order | `MISSING_REQUIRED_DATA`; wrong count `TREATMENT_PLAN_REFERENCES_MISMATCH` |
 | Last considered document per card MedicationStatement (PMLC) | extension `ch-emed-ext-last-considered-document` | — | `documentId` of the entry's treatment-plan reference, `DERIVED_VALUE` |

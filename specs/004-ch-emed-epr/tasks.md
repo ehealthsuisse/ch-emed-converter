@@ -276,7 +276,7 @@ against CH EMED EPR or fails only for documented missing data (SC-002).
 
 ### Tests (write first, must fail)
 
-- [ ] T025 [P] [US2] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/mapping/UnsupportedElementsTest.java`
+- [X] T025 [P] [US2] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/mapping/UnsupportedElementsTest.java`
   (research R5, data model §4):
   - the resource `epr/unsupported-elements.json` matches the elements that the vendored package
     marks with the standards-status *draft* extension, per profile, and the elements marked
@@ -286,7 +286,7 @@ against CH EMED EPR or fails only for documented missing data (SC-002).
   - removal from a synthetic document in `fixtures/chemed/` with one element per scope: each
     removed element is reported as `UNMAPPABLE_ELEMENT` with its path; clinical ones carry the
     clinical-loss flag; `pmlc` elements are removed for PMLC only.
-- [ ] T026 [P] [US2] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/mapping/RequiredDataTest.java`
+- [X] T026 [P] [US2] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/mapping/RequiredDataTest.java`
   (research R9, data model §6), for each row of data model §6 and the results of T014:
   - present in the source → unchanged, no report entry;
   - missing, option given → filled from `patientIdentifier`, `author` or `confidentiality`, and
@@ -302,7 +302,7 @@ against CH EMED EPR or fails only for documented missing data (SC-002).
     naming both counts; references already in the source are kept;
   - last considered document (PMLC): missing → the `documentId` of the entry's reference,
     `DERIVED_VALUE`; present → kept.
-- [ ] T027 [P] [US2] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/mapping/OriginalRepresentationTest.java`
+- [X] T027 [P] [US2] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/mapping/OriginalRepresentationTest.java`
   (research R8, R16):
   - a PDF/A supplied with the option `originalRepresentation` takes precedence over the source,
     for PRE, PMLC and MTP, reported as `DERIVED_VALUE`; a supplied PDF that is not PDF/A (or no
@@ -318,7 +318,7 @@ against CH EMED EPR or fails only for documented missing data (SC-002).
   test the CH EMED → EPR rules (`M-EPR-0x`) for PRE and PMLC: profile change, then R5, R8 and R9
   in this order, with one fixture per rule. Compare the output byte for byte with
   `fixtures/expected/<fixture>.json`.
-- [ ] T029 [US2] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/it/ChEmedToEprIT.java`,
+- [X] T029 [US2] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/it/ChEmedToEprIT.java`,
   test end to end (spec US2.1–US2.8, SC-002):
   - every CH EMED Prescription and Card of the feature 001 corpus, and every CH EMED document
     produced from its CHMED16A reference plans and prescriptions: without options → FAILED with
@@ -339,34 +339,40 @@ against CH EMED EPR or fails only for documented missing data (SC-002).
 
 ### Implementation
 
-- [ ] T030 [US2] Write the extraction utility
+- [X] T030 [US2] Write the extraction utility
   `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/testsupport/UnsupportedElementExtractor.java`
   (used by T025) and generate `format-ch-emed-epr/src/main/resources/epr/unsupported-elements.json`
   with it (format of data model §4). Set the `clinical` flags by hand, with the reason for each
   in `docs/mapping/ch-emed-epr.md`.
-- [ ] T031 [P] [US2] Implement `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/mapping/UnsupportedElements.java`:
+- [X] T031 [P] [US2] Implement `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/mapping/UnsupportedElements.java`:
   load the resource once per module instance; remove present elements per profile and scope;
   report as in T025.
-- [ ] T032 [P] [US2] Implement `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/mapping/RequiredData.java`
+- [X] T032 [P] [US2] Implement `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/mapping/RequiredData.java`
   per data model §6, reusing the option handling of feature 001 (`patientIdentifier`, `author`,
   `confidentiality`; mapping M-DOC-09, M-AUT-02) so the results match, and the treatment-plan
   references and last considered document of R15.
-- [ ] T033 [P] [US2] Implement `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/mapping/OriginalRepresentation.java`:
+- [X] T033 [P] [US2] Implement `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/mapping/OriginalRepresentation.java`:
   PDF/A detection from the XMP metadata (`pdfaid:part` 1 or 2) with PDFBox, which `converter-core`
   already ships, and the order of research R16: the PDF/A of the option `originalRepresentation`,
   then a PDF/A of the source, then for PRE and PMLC `OriginalRepresentationRenderer.renderPdfA`
   (T065); for MTP, removal. The section with `Binary` and `textLink` is created when the source
   has none, for a supplied PDF/A as for a rendered one (R8, R16).
-- [ ] T034 [US2] Implement `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/mapping/FromChEmedMapper.java`
+- [X] T034 [US2] Implement `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/mapping/FromChEmedMapper.java`
   for PRE and PMLC (depends on T031–T033): copy, profile change, unsupported elements, original
   representation, required data.
-- [ ] T035 [US2] Wire `fromChEmed` with form `DOCUMENT` in `ChEmedEprFormatModule.java`: map,
+- [X] T035 [US2] Wire `fromChEmed` with form `DOCUMENT` in `ChEmedEprFormatModule.java`: map,
   validate the output (`VALIDATE_OUTPUT`, following the option `validateOutput`), never return
   output with errors.
 - [ ] T036 [US2] Document the CH EMED → EPR rules (`M-EPR-0x`), the unsupported elements with their
   clinical relevance, the required data per document type and the original representation in
   `docs/mapping/ch-emed-epr.md`. The `clinical` flags are reviewed by someone with domain
-  knowledge; record the review in the PR description.
+  knowledge; record the review in the PR description. *Status 2026-11-09: documentation written
+  (M-EPR-21 to M-EPR-27, unsupported elements, required data, capability gaps); the review of the
+  `clinical` flags is open.*
+- [X] T068 [US2] Substitution (research F9, found by T029): CH EMED EPR allows only the code `N`
+  for `MedicationRequest.substitution` and `ch-emed-ext-substitution`; implement M-EPR-27 in
+  `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/mapping/Substitution.java` and
+  document it.
 
 ### Added 2026-11-09: PDF/A renderer (research R16)
 

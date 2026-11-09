@@ -18,6 +18,7 @@
 
 - Q: The author of a PMLC is the aggregation service of the EPR (a device without GLN), while CHMED16A requires the GLN of the author. Should the existing author option fill it on the way to an eMediplan? → A: No. The conversion to CHMED16A reports the missing author GLN; this capability gap is documented (US1.2).
 - Q: CH EMED EPR requires every prescription item and every card entry to reference its treatment plan (MTP) in the EPR, every card entry to name the last considered document, and prescriptions and cards to carry an original representation as PDF/A; general CH EMED documents, for example from an eMediplan, have none of this. How are PRE and PMLC produced from them? → A: The caller supplies the treatment-plan references as an option (FR-017); the caller may supply the original representation as PDF/A, and the converter renders one as PDF/A when neither the caller nor the source provides one (FR-018).
+- Q: A PMLC has exactly one author, the community's aggregation service (a Device); cards from an eMediplan have a person as author. Should the converter create that author? → A: No. A card whose author is not a Device is refused with `MISSING_REQUIRED_DATA` at the author, as a documented capability gap; cards read from the EPR convert (research F8).
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -44,17 +45,17 @@ A primary system holds a prescription or a medication card as CH EMED, possibly 
 
 **Why this priority**: Prescriptions are the documents primary systems most often have to place in the EPR; the converter already produces CH EMED prescriptions and cards, and this makes them EPR-ready.
 
-**Independent Test**: Convert the CH EMED reference documents of feature 001, and the CH EMED documents produced from its CHMED16A reference plans and prescriptions, to CH EMED EPR; every result validates without errors against the pinned CH EMED EPR profiles.
+**Independent Test**: Convert the CH EMED reference documents of feature 001, and the CH EMED documents produced from its CHMED16A reference plans and prescriptions, to CH EMED EPR; every result validates without errors against the pinned CH EMED EPR profiles, or fails only for documented missing data (SC-002).
 
 **Acceptance Scenarios**:
 
 1. **Given** a valid CH EMED Medication Prescription, **When** it is converted to CH EMED EPR, **Then** the result is a valid PRE document with the same prescribed medications.
-2. **Given** a valid CH EMED Medication Card, **When** it is converted to CH EMED EPR, **Then** the result is a valid PMLC document.
+2. **Given** a valid CH EMED Medication Card whose author is the community's aggregation service (a Device), **When** it is converted to CH EMED EPR, **Then** the result is a valid PMLC document; a card with a person as author is refused with `MISSING_REQUIRED_DATA` at the author (documented capability gap, clarification 2026-11-09).
 3. **Given** a CHMED16A prescription, **When** a direct conversion to CH EMED EPR is requested, **Then** it is refused as an unsupported conversion that names the path through CH EMED.
 4. **Given** a CH EMED document holding elements that CH EMED EPR does not support, **When** it is converted, **Then** these elements are left out and each is listed in the report with its path; clinically relevant ones are marked as clinical loss, so that strict mode fails.
 5. **Given** a CH EMED document that lacks data CH EMED EPR requires (for example the treatment-plan references, the patient identifier or an author with a role), **When** it is converted without options supplying that data, **Then** the conversion fails naming the missing data, never its values.
 6. **Given** a CH EMED prescription with n medications and no treatment-plan references, **When** it is converted with n treatment-plan references, **Then** each prescribed medication references its treatment plan in the given order; with a different number of references the conversion fails naming the mismatch.
-7. **Given** a CH EMED card with treatment-plan references, **When** it is converted to PMLC, **Then** each entry names its treatment plan and, as last considered document, that treatment plan document, and the report shows the derived value.
+7. **Given** a CH EMED card authored by the aggregation service, with treatment-plan references, **When** it is converted to PMLC, **Then** each entry names its treatment plan and, as last considered document, that treatment plan document, and the report shows the derived value.
 8. **Given** a CH EMED prescription or card whose original representation is missing or not PDF/A, **When** it is converted to CH EMED EPR, **Then** the result carries an original representation rendered as PDF/A from the document content, and the report shows that it was rendered.
 9. **Given** a CH EMED prescription and a PDF/A supplied by the caller, **When** it is converted to CH EMED EPR, **Then** the supplied PDF/A is the original representation, and the report shows that it was supplied; a supplied PDF that is not PDF/A is not used and is reported.
 
@@ -173,7 +174,7 @@ Integrators use the library, the command line or the REST service and get the sa
 ### Measurable Outcomes
 
 - **SC-001**: 100% of the official PMLC, PRE and MTP examples of CH EMED EPR 3.0.0 are converted to CH EMED documents that validate without errors.
-- **SC-002**: 100% of the CH EMED reference documents of feature 001, and of the CH EMED documents produced from its CHMED16A reference plans and prescriptions, are converted to CH EMED EPR documents that validate without errors when the required data is supplied by options (treatment-plan references, patient identifier, author), and fail only for documented missing data without them; every PRE and PMLC carries a PDF/A original representation.
+- **SC-002**: 100% of the CH EMED reference documents of feature 001, and of the CH EMED documents produced from its CHMED16A reference plans and prescriptions, are converted to CH EMED EPR documents that validate without errors when the required data is supplied by options (treatment-plan references, patient identifier, author), and fail only for documented missing data without them (a card with a person as author never becomes a PMLC, research F8); every PRE and PMLC carries a PDF/A original representation.
 - **SC-003**: 100% of the round trips of FR-010 over the test corpus differ only by documented changes.
 - **SC-004**: For every medication card of the test corpus, the number of MTP documents equals the number of treatments, and every MTP validates without errors.
 - **SC-005**: Converting a realistic medication card with 20 medications into CH EMED EPR, including validation, stays within the time limits that feature 001 sets for a conversion to CH EMED, on the reference hardware.
@@ -188,7 +189,7 @@ Integrators use the library, the command line or the REST service and get the sa
 - CH EMED EPR profiles CH EMED: every valid CH EMED EPR document is also a valid CH EMED document, so the direction CH EMED EPR → CH EMED mainly changes profile declarations and loses no clinical data. This is verified against the official examples during implementation.
 - The treatment plans that a prescription or card references are already in the EPR, or are submitted together with it; the converter does not check this (FR-016). Story 3 produces treatment plans with stable identifiers that the caller can pass as references.
 - PDF/A-1b is sufficient for the original representation (the EPR accepts PDF/A-1 and PDF/A-2).
-- PMLC documents are produced in the EPR by the community's aggregator; the converter can still produce them, for testing and for systems that exchange cards outside the EPR.
+- PMLC documents are produced in the EPR by the community's aggregator; the converter produces them only from cards with that author, for example cards read from the EPR (research F8).
 - DIS, PADV and PML documents follow in a later feature.
 - Submitting documents to the EPR and retrieving them (IHE MHD, CARA's eMedication service, EPR identifiers and metadata of the document registry) are out of scope (constitution 1.5.0).
 - Identifiers of the CARA environments (assigning authorities of patient ids, named in the IG) are not inserted by the converter; patient identifiers come from the source or the existing option.

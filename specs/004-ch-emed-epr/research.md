@@ -462,3 +462,41 @@ flags need a review.
 - The author of a PMLC is the aggregation service (Device without GLN). CHMED16A requires the
   author's GLN, so a PMLC cannot become an eMediplan without a person author. **Decision (Stefan,
   2026-11-09)**: documented as capability gap; the author option is not used for it (spec US1.2).
+
+### F7 — Marker of unsupported elements (R5 refined, 2026-11-09)
+
+Of the 956 elements with the standards-status `draft` extension, 954 have a `short` that starts
+with "✕" ("This element is not supported", "This element will be removed in PML(C) documents",
+"Do not use…", "The note author is ignored…", "This is only meaningful when the dispense was not
+performed"). The other two are `Dosage.text` of the base dosage profiles, which the IG asks for
+("SHOULD be provided"; the official examples set it). An element is therefore unsupported only
+when it is `draft` **and** its `short` starts with "✕". The EPR datatype profiles (dosage,
+quantities, ratios) are resolved into the resource profiles that use them, and every slice gets a
+matcher from its discriminator, so removal works generically on the JSON of a document. Result:
+1750 paths in 34 resource profiles; 271 are flagged clinical. Notable: the base dosage of CH EMED
+EPR supports no structured timing beyond `when` and `boundsPeriod`; frequency, period, weekdays
+and times of day belong to split dosages, so they are lost from a base dosage (clinical loss,
+documented in `docs/mapping/ch-emed-epr.md`).
+
+### F8 — Author of a PMLC (R9 extended, 2026-11-09)
+
+The EPR card Composition allows exactly one author, `ch-emed-epr-device` (the aggregation service
+of the community); CH EMED allows a PractitionerRole, Device, Patient or RelatedPerson. Cards
+made from an eMediplan have a person as author. Patient identifier and EPR confidentiality are
+already required by CH EMED (`ch-core-patient-epr`, `ch-ext-epr-confidentialitycode`), so a valid
+CH EMED input has them; the options remain as fallback. PRE and MTP require a person author
+(PractitionerRole, Patient or RelatedPerson), where CH EMED also allows a Practitioner or an
+Organization.
+
+**Decision (Stefan, 2026-11-09)**: a card whose author is not a Device is refused with
+`MISSING_REQUIRED_DATA` at the author, as a documented capability gap. The converter does not
+create a device (constitution II). Cards read from the EPR convert.
+
+### F9 — Substitution (found by T029, 2026-11-09)
+
+CH EMED EPR fixes `MedicationRequest.substitution.allowedCodeableConcept.coding` and the value of
+`ch-emed-ext-substitution` on card and treatment-plan statements to the pattern
+`v3-substanceAdminSubstitution#N` ("If absent, substitution is assumed allowed. If present, the
+value is fixed to none"). CH EMED allows `E` (equivalent), as in the CH EMED prescription example
+and feature 001 output. The converter leaves an "allowed" statement out (same meaning) and writes
+`allowedBoolean` false as code `N` (mapping rule M-EPR-27).
