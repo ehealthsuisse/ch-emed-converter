@@ -37,6 +37,10 @@ class LogLeakTest extends AbstractRestTest {
     "Wegm",
     "1943-05-15",
     "Wiesenstr",
+    // CARA test patient of the CH EMED EPR examples (feature 004)
+    "Karce",
+    "1973-12-25",
+    "Dupont",
     // option values
     "urn:oid:2.999.1",
     "Geheim-4711",
@@ -105,6 +109,8 @@ class LogLeakTest extends AbstractRestTest {
                 RestTestSupport.json("{\"outputForm\":\"" + form + "\"}")));
       }
     }
+
+    convertEpr();
 
     String log = output.getAll();
     assertThat(log).contains("request timestamp=").doesNotContain(SENSITIVE);

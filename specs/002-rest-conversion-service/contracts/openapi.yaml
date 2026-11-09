@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: CH EMED Converter REST API
-  version: 1.1.0
+  version: 1.2.0
   description: |
     Stateless conversion between CH EMED and other Swiss eMedication formats.
     The service has no authentication and no TLS; it MUST be operated behind an API gateway,
@@ -102,7 +102,7 @@ components:
     FormatName:
       type: string
       description: Format name; the set grows with new format modules (see /capabilities).
-      examples: [chmed16a, ch-emed]
+      examples: [chmed16a, ch-emed, ch-emed-epr]
       pattern: '^[a-z0-9-]{1,32}$'
     Outcome:
       type: string
@@ -127,7 +127,12 @@ components:
             required: [severity, code, phase, path, message, clinicalLoss]
             properties:
               severity: { type: string, enum: [ERROR, WARNING, INFORMATION] }
-              code: { type: string }
+              code:
+                type: string
+                description: |
+                  Reason code, for example MISSING_REQUIRED_DATA, UNMAPPABLE_ELEMENT, DERIVED_VALUE;
+                  for ch-emed-epr also NO_TREATMENTS, TREATMENT_PLAN_EXISTS,
+                  TREATMENT_PLAN_REFERENCES_MISMATCH and PROFILE_CHANGED.
               phase: { type: string, enum: [PARSE, VALIDATE_INPUT, MAP, VALIDATE_OUTPUT] }
               path: { type: string }
               targetPath: { type: string }
@@ -175,12 +180,41 @@ components:
           $ref: '#/components/schemas/AuthorDetails'
         outputForm:
           type: string
-          enum: [document, qr-payload, qr-image]
+          enum: [document, qr-payload, qr-image, treatment-plans]
           default: document
           description: |
             Form of the output. qr-payload and qr-image only for target chmed16a; qr-image only for
             medication plans (a prescription is refused: it is output as unsigned payload only, to be
-            signed by the HIN erxproxy).
+            signed by the HIN erxproxy). treatment-plans only for target ch-emed-epr and a Medication
+            Card: a FHIR Bundle of type collection with one MTP document per treatment
+            (application/fhir+json).
+        treatmentPlanReferences:
+          type: array
+          description: |
+            Target ch-emed-epr: references to the treatment plans (MTP) in the EPR, one per
+            prescribed medication (PRE) or card entry (PMLC) without a reference, in document
+            order. References in the source are kept. A wrong number fails with
+            TREATMENT_PLAN_REFERENCES_MISMATCH. Not used for MTP and treatment-plans.
+          items:
+            type: object
+            additionalProperties: false
+            required: [documentId, statementId]
+            properties:
+              documentId:
+                type: string
+                pattern: '^urn:uuid:[0-9a-fA-F-]{36}$'
+                description: Identifier of the MTP document.
+              statementId:
+                type: string
+                pattern: '^urn:uuid:[0-9a-fA-F-]{36}$'
+                description: Identifier of its MedicationStatement.
+        originalRepresentation:
+          type: string
+          format: byte
+          description: |
+            Target ch-emed-epr: a PDF/A (base64) used as original representation if its XMP
+            declares PDF/A-1 or PDF/A-2; otherwise reported, and a PDF/A of the source or, for
+            PRE and PMLC, a rendered PDF/A-1b is used. Not used with treatment-plans (reported).
     AuthorDetails:
       type: object
       additionalProperties: false
@@ -286,7 +320,7 @@ components:
                 examples: [[json, qr-payload, erezept-url, qr-image]]
               outputForms:
                 type: array
-                items: { type: string, enum: [document, qr-payload, qr-image] }
+                items: { type: string, enum: [document, qr-payload, qr-image, treatment-plans] }
         options:
           type: array
           items:

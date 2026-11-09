@@ -72,6 +72,11 @@
       <artifactId>format-chmed16a</artifactId>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>ch.emed.converter</groupId>
+      <artifactId>format-ch-emed-epr</artifactId>
+      <scope>runtime</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.springframework.boot</groupId>

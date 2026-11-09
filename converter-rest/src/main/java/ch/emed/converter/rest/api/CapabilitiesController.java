@@ -117,7 +117,21 @@ public class CapabilitiesController {
             "outputForm",
             "string",
             defaults.outputForm().externalName(),
-            "Output form: document, qr-payload or qr-image (qr-* only for target chmed16a,"
-                + " qr-image only for medication plans)."));
+            "Output form: document, qr-payload, qr-image (qr-* only for target chmed16a,"
+                + " qr-image only for medication plans) or treatment-plans (only for target"
+                + " ch-emed-epr and a medication card)."),
+        new Option(
+            "treatmentPlanReferences",
+            "array",
+            null,
+            "Target ch-emed-epr: [{documentId, statementId}] (urn:uuid), one per prescribed"
+                + " medication or card entry without a treatment-plan reference, in document"
+                + " order."),
+        new Option(
+            "originalRepresentation",
+            "string",
+            null,
+            "Target ch-emed-epr: PDF/A in base64 used as original representation; not used with"
+                + " treatment-plans."));
   }
 }

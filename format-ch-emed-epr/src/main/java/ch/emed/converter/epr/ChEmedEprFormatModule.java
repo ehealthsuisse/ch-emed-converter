@@ -102,7 +102,7 @@ public final class ChEmedEprFormatModule implements FormatModule {
           .add(
               ReportEntry.error(
                   ReasonCode.UNSUPPORTED_DOCUMENT_TYPE,
-                  Phase.MAP,
+                  Phase.PARSE,
                   "Bundle.entry[0].resource.type",
                   EprDocumentType.unsupportedMessage(document)));
       return null;
@@ -127,7 +127,7 @@ public final class ChEmedEprFormatModule implements FormatModule {
           .add(
               ReportEntry.error(
                   ReasonCode.UNSUPPORTED_DOCUMENT_TYPE,
-                  Phase.MAP,
+                  Phase.PARSE,
                   "Bundle.entry[0].resource.type",
                   "Output form treatment-plans needs a medication card as input"));
       return null;

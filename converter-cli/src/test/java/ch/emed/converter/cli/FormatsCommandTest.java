@@ -16,7 +16,11 @@ class FormatsCommandTest {
         .contains("chmed16a -> ch-emed")
         .contains("ch-emed -> chmed16a")
         .contains("ch.fhir.ig.ch-emed#6.0.0")
-        .contains("CHMED16A1");
+        .contains("CHMED16A1")
+        .contains("ch-emed-epr -> ch-emed")
+        .contains("ch-emed -> ch-emed-epr")
+        .contains("ch.fhir.ig.ch-emed-epr#3.0.0")
+        .contains("treatment-plans");
   }
 
   @Test

@@ -80,6 +80,8 @@ class NoOutboundNetworkTest extends AbstractRestTest {
       }
     }
 
+    convertEpr();
+
     assertThat(attempts).as("outbound connection attempts").isEmpty();
   }
 }

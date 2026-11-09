@@ -32,4 +32,18 @@ public final class ValidationMessageSanitizer {
     text = LONG_DIGITS.matcher(text).replaceAll("…");
     return messageId == null || messageId.isBlank() ? text : messageId + ": " + text;
   }
+
+  private static final Pattern RESOURCE_COMMENT = Pattern.compile("/\\*([A-Za-z]+)/?[^*]*\\*/");
+
+  /**
+   * Sanitizes a validator location. The HL7 validator inserts {@code /*Type/id*}{@code /} after
+   * each resource; resource ids are free text and may contain a name (feature 004, the official CH
+   * EMED EPR example {@code PatientDupont}), so only the type is kept, as {@code /*Type*}{@code /}.
+   *
+   * @param location raw location, may be null
+   * @return location without resource ids, {@code Bundle} if null
+   */
+  public static String location(String location) {
+    return location == null ? "Bundle" : RESOURCE_COMMENT.matcher(location).replaceAll("/*$1*/");
+  }
 }

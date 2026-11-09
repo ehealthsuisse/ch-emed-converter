@@ -171,7 +171,7 @@ public final class HapiChEmedValidator implements ChEmedValidator {
               severity,
               ReasonCode.FHIR_VALIDATION,
               phase,
-              message.getLocationString() == null ? "Bundle" : message.getLocationString(),
+              ValidationMessageSanitizer.location(message.getLocationString()),
               ValidationMessageSanitizer.sanitize(message.getMessageId(), message.getMessage())));
     }
     return entries;

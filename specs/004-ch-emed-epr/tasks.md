@@ -516,7 +516,7 @@ identical (SC-006).
 
 ### Tests (write first, must fail)
 
-- [ ] T046 [P] [US5] In `converter-cli/src/test/java/ch/emed/converter/cli/EprCliTest.java`
+- [X] T046 [P] [US5] In `converter-cli/src/test/java/ch/emed/converter/cli/EprCliTest.java`
   (contracts/cli.md):
   - `--from ch-emed-epr --to ch-emed` and `--from ch-emed --to ch-emed-epr` with exit `0` and the
     same output as the library;
@@ -530,7 +530,7 @@ identical (SC-006).
     the same references; a malformed value exits `2` without echoing it (T066).
   - `--original-representation <file>` gives the same PRE as the library with the same bytes;
     a missing file exits `2` (T066).
-- [ ] T047 [P] [US5] In `converter-rest/src/test/java/ch/emed/converter/rest/contract/EprConversionContractTest.java`
+- [X] T047 [P] [US5] In `converter-rest/src/test/java/ch/emed/converter/rest/contract/EprConversionContractTest.java`
   (contracts/rest-api.md):
   - the routes `ch-emed-epr/ch-emed` and `ch-emed/ch-emed-epr`, also with `outputForm`
     `treatment-plans`, answer `200` with media type `application/fhir+json`, valid against
@@ -546,10 +546,10 @@ identical (SC-006).
   `TREATMENT_PLAN_REFERENCES_MISMATCH` (T067).
   `options.originalRepresentation` (base64) gives the same PRE as the library; invalid base64 →
   `400 MALFORMED_REQUEST` (T067).
-- [ ] T048 [P] [US5] Extend `converter-rest/src/test/java/ch/emed/converter/rest/parity/ServiceLibraryParityTest.java`
+- [X] T048 [P] [US5] Extend `converter-rest/src/test/java/ch/emed/converter/rest/parity/ServiceLibraryParityTest.java`
   and the CLI parity check with the EPR inputs of T021, T029, T038 and T044, including
   `treatment-plans` (SC-006).
-- [ ] T049 [P] [US5] Extend the privacy and network tests with the EPR conversions (SC-007,
+- [X] T049 [P] [US5] Extend the privacy and network tests with the EPR conversions (SC-007,
   SC-008): `converter-rest/src/test/java/ch/emed/converter/rest/privacy/LogLeakTest.java`,
   `NoOutboundNetworkTest.java`, `converter-rest/src/test/java/ch/emed/converter/rest/error/ProblemLeakTest.java`,
   and a `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/it/PhiLeakTest.java` that scans
@@ -557,20 +557,20 @@ identical (SC-006).
 
 ### Implementation
 
-- [ ] T050 [US5] Add `format-ch-emed-epr` as a runtime dependency to `converter-cli/pom.xml` and
+- [X] T050 [US5] Add `format-ch-emed-epr` as a runtime dependency to `converter-cli/pom.xml` and
   `converter-rest/pom.xml`, like `format-chmed16a`, and check that both distributions (CLI ZIP,
   REST JAR and OCI image) contain it.
-- [ ] T051 [US5] Update `specs/002-rest-conversion-service/contracts/openapi.yaml` to 1.2.0 per
+- [X] T051 [US5] Update `specs/002-rest-conversion-service/contracts/openapi.yaml` to 1.2.0 per
   contracts/rest-api.md: `outputForm` enum and description, capabilities enum, examples with
   `ch-emed-epr`, the new report codes. Regenerate and compile the generated client test
   (`GeneratedClientIT`).
-- [ ] T066 [US5] Add the repeatable option `--treatment-plan <documentId>,<statementId>` to
+- [X] T066 [US5] Add the repeatable option `--treatment-plan <documentId>,<statementId>` to
   `converter-cli/src/main/java/ch/emed/converter/cli/ConvertCommand.java` (contracts/cli.md),
   mapped to `withTreatmentPlanReferences` in the given order. Add `--original-representation <file>`, mapped to
   `withOriginalRepresentation`.
-- [ ] T067 [US5] Add `treatmentPlanReferences` and `originalRepresentation` (base64) to the REST request options in `converter-rest`
+- [X] T067 [US5] Add `treatmentPlanReferences` and `originalRepresentation` (base64) to the REST request options in `converter-rest`
   (DTO, mapping to `ConversionOptions`, `400` for malformed values) and to `openapi.yaml` (T051).
-- [ ] T052 [US5] Adjust CLI and REST only where T046–T049 fail. Expected: help texts listing the
+- [X] T052 [US5] Adjust CLI and REST only where T046–T049 fail. Expected: help texts listing the
   new form, and nothing else, since names come from `Converter.formats()`.
 
 **Checkpoint**: All stories work through library, CLI and REST with identical results.

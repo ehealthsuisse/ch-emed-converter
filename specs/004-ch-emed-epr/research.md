@@ -514,3 +514,22 @@ and feature 001 output. The converter leaves an "allowed" statement out (same me
   a deterministic `urn:uuid`, since an author cannot reference a contained resource.
 - References inside an MTP point to the full URL of their target, because the new Composition has
   a `urn:uuid` full URL against which the relative references of the card would not resolve.
+
+### F11 — Resource ids in validator paths (found by T049, 2026-11-09)
+
+The HL7 validator writes each location with the resource type and id in a comment, for example
+`Bundle.entry[1].resource/*Patient/PatientDupont*/.identifier[0].value`. Resource ids are free text;
+in the official CH EMED EPR example `Bundle-DocumentMtp1` the patient's id is built from the name.
+`PhiLeakTest` found the name in a report. `ValidationMessageSanitizer.location` now keeps only the
+type (`/*Patient*/`); the indexed path stays unique. This applies to every validation report, also
+those of feature 001 (to be noted in the CHANGELOG, task T057).
+
+### F12 — Interfaces (T046–T052, 2026-11-09)
+
+- The REST service now names the path through `ch-emed` for a pair of two non-hub formats in the
+  `404` detail, as the library does (FR-004).
+- An unsupported document type is reported in phase `PARSE` in both directions, so REST answers
+  `422 INVALID_INPUT` as the contract says.
+- The CLI `formats` command lists the input and output forms of every format.
+- Both distributions (CLI and REST ZIP) contain `format-ch-emed-epr`; the OCI image was not built
+  here (needs a Docker daemon).

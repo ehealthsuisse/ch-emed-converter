@@ -81,7 +81,8 @@ public class ConversionController {
     Optional<ConversionPair> pair = pair(converter, from, to);
     if (pair.isEmpty()) {
       return problems.unsupported(
-          "The requested conversion is not supported; see supportedConversions.",
+          "The requested conversion is not supported; see supportedConversions."
+              + throughChEmed(converter, from, to),
           supported(converter),
           request);
     }
@@ -133,6 +134,32 @@ public class ConversionController {
       return Optional.empty();
     }
     return converter.supportedConversions().contains(pair) ? Optional.of(pair) : Optional.empty();
+  }
+
+  /**
+   * Hint for a pair of two formats that both convert to and from CH EMED (feature 004, FR-004), as
+   * the library gives it; empty otherwise. Only format names, no content.
+   */
+  private static String throughChEmed(Converter converter, String from, String to) {
+    FormatId source;
+    FormatId target;
+    try {
+      source = FormatId.fromExternalName(from);
+      target = FormatId.fromExternalName(to);
+    } catch (IllegalArgumentException e) {
+      return "";
+    }
+    boolean viaHub =
+        !source.isChEmed()
+            && !target.isChEmed()
+            && !source.equals(target)
+            && converter
+                .supportedConversions()
+                .contains(new ConversionPair(source, FormatId.CH_EMED))
+            && converter
+                .supportedConversions()
+                .contains(new ConversionPair(FormatId.CH_EMED, target));
+    return viaHub ? " Convert through ch-emed: " + from + " -> ch-emed -> " + to + "." : "";
   }
 
   static List<ConversionPairDto> supported(Converter converter) {

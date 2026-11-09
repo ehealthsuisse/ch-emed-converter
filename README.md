@@ -63,24 +63,31 @@ java -jar converter-cli/target/ch-emed-converter.jar convert --from chmed16a --t
   erezept-url.txt -o rx.json            # signature data in rx.json.signature.json
 java -jar converter-cli/target/ch-emed-converter.jar convert --from ch-emed --to chmed16a \
   card.json --output-form qr-image -o plan.png
+# feature 004: CH EMED EPR (CARA EMED), always through ch-emed
+java -jar converter-cli/target/ch-emed-converter.jar convert --from ch-emed-epr --to ch-emed \n  pmlc.json -o card.json
+java -jar converter-cli/target/ch-emed-converter.jar convert --from ch-emed --to ch-emed-epr \n  rx.json -o pre.json --treatment-plan urn:uuid:<mtp>,urn:uuid:<statement>
+java -jar converter-cli/target/ch-emed-converter.jar convert --from ch-emed --to ch-emed-epr \n  card.json --output-form treatment-plans -o mtp-set.json
 ```
 
 | Option | Meaning |
 |--------|---------|
-| `--from`, `--to` | `chmed16a` or `ch-emed` |
+| `--from`, `--to` | `chmed16a`, `ch-emed` or `ch-emed-epr`; every conversion has `ch-emed` on one side (convert `chmed16a` → `ch-emed` → `ch-emed-epr` in two steps) |
 | `<input-file>` / `-` | input file or stdin; CHMED16A also as textual QR payload `CHMED16A1…`, PNG/JPEG QR image or signed eRezept URL (detected by content) |
 | `-o`, `--output` | output file (default: stdout) |
-| `--output-form document\|qr-payload\|qr-image` | output form for `--to chmed16a`; `qr-image` only for medication plans |
+| `--output-form document|qr-payload|qr-image|treatment-plans` | output form; `qr-*` for `--to chmed16a` (`qr-image` only for medication plans), `treatment-plans` for `--to ch-emed-epr` and a medication card (one MTP per treatment) ||qr-payload\|qr-image` | output form for `--to chmed16a`; `qr-image` only for medication plans |
 | `--signature-output <file>` | signature data of a signed eRezept (raw, not verified); default `<output>.signature.json` |
 | `--report <file>`, `--report-format json\|text` | JSON report file; report format on stderr |
 | `--strict` | fail if clinically relevant information cannot be represented |
 | `--language`, `--confidentiality` | document language and confidentiality if the source has none |
-| `--patient-id <system>\|<value>`, `--author <file>` | data CH EMED requires but CHMED16A may lack |
+| `--patient-id <system>\
+| `--treatment-plan <documentId>,<statementId>` | repeatable, `--to ch-emed-epr`: reference to the treatment plan (MTP) in the EPR of each prescribed medication or card entry without one, in document order |
+| `--original-representation <file>` | `--to ch-emed-epr`: PDF/A used as original representation (otherwise one is rendered for PRE and PMLC) ||<value>`, `--author <file>` | data CH EMED requires but CHMED16A may lack |
 
 Exit codes: `0` success or success with warnings, `1` failed (nothing on stdout), `2` usage error,
 `3` internal error or validation not completed under system load (`VALIDATION_INCOMPLETE`; retry).
 Full contract: [contracts/cli.md](specs/001-chmed16a-ch-emed-conversion/contracts/cli.md), QR and
-eRezept additions in [specs/003-qr-erezept/contracts/cli.md](specs/003-qr-erezept/contracts/cli.md).
+eRezept additions in [specs/003-qr-erezept/contracts/cli.md](specs/003-qr-erezept/contracts/cli.md), CH EMED EPR additions in
+[specs/004-ch-emed-epr/contracts/cli.md](specs/004-ch-emed-epr/contracts/cli.md).
 
 ## Library
 
@@ -119,7 +126,9 @@ document base64-encoded (byte-identical to library and CLI):
 
 The document may also be a QR image or a signed eRezept URL; `options.outputForm` (`document`,
 `qr-payload`, `qr-image`) selects the output form, `outputMediaType` names it, and a signed eRezept
-adds the raw, unverified `signature` beside the document (feature 003).
+adds the raw, unverified `signature` beside the document (feature 003). For `ch-emed-epr`, `outputForm`
+`treatment-plans`, `treatmentPlanReferences` (`[{documentId, statementId}]`) and
+`originalRepresentation` (PDF/A, base64) work as the CLI options (feature 004, OpenAPI 1.2.0).
 
 Failures are RFC 9457 problem details with a distinct `errorType`; `GET /api/v1/capabilities` lists
 conversions, input and output forms, options, pinned specifications and limits; `GET /api/v1/openapi.yaml` serves the
