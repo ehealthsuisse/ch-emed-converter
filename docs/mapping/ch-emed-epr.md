@@ -39,7 +39,7 @@ Dispense (DIS, `82291000195104`), pharmaceutical advice (PADV, `419891008`) and 
 | Id | Rule |
 |----|------|
 | M-EPR-11 | The input must be a FHIR JSON document Bundle (else `PARSE_ERROR`) and must declare a CH EMED EPR document profile. A Bundle without one is probably general CH EMED, which the validator would accept against its own profiles → `PARSE_ERROR` "use source ch-emed". |
-| M-EPR-12 | A valid CH EMED EPR document is a CH EMED document with stricter constraints: only the declared profiles change (M-EPR-01); all other content is copied unchanged. Verified for all 17 official PMLC, PRE and MTP examples (research F3). The result is validated as CH EMED output by the converter. |
+| M-EPR-12 | A valid CH EMED EPR document is a CH EMED document with stricter constraints: only the declared profiles change (M-EPR-01), of the Bundle, its entries and their contained resources; all other content is copied unchanged. Verified for all 17 official PMLC, PRE and MTP examples (research F3; `ToChEmedMapperTest` compares one example per type byte for byte). A CH EMED prescription read this way goes on to CHMED16A with the existing conversion, which reports what an eRezept still lacks (spec US4.2). The result is validated as CH EMED output by the converter. |
 
 ## CH EMED → CH EMED EPR
 

@@ -225,7 +225,7 @@ US1).
 
 ### Tests (write first, must fail)
 
-- [ ] T020 [P] [US1] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/mapping/ToChEmedMapperTest.java`,
+- [X] T020 [P] [US1] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/mapping/ToChEmedMapperTest.java`,
   test `M-EPR-01` and the rules of T014 for PMLC: every EPR profile in `meta.profile` becomes the
   CH EMED profile; everything else is unchanged; each change is reported as INFORMATION.
   Compare the output byte for byte with `fixtures/expected/<fixture>.json`.
@@ -483,10 +483,10 @@ to CHMED16A (spec US4).
 
 ### Tests (write first, must fail)
 
-- [ ] T043 [P] [US4] Extend `ToChEmedMapperTest.java` with PRE and MTP: profile change and the
+- [X] T043 [P] [US4] Extend `ToChEmedMapperTest.java` with PRE and MTP: profile change and the
   rules of T014 for both types. Compare the output byte for byte with
   `fixtures/expected/<fixture>.json`.
-- [ ] T044 [US4] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/it/PreMtpToChEmedIT.java`
+- [X] T044 [US4] In `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/it/PreMtpToChEmedIT.java`
   (spec US4.1–US4.4):
   - every official PRE example → a valid CH EMED Medication Prescription, and on to CHMED16A a
     prescription that meets the eRezept data requirements, or the existing report of what is
@@ -499,7 +499,7 @@ to CHMED16A (spec US4).
 
 ### Implementation
 
-- [ ] T045 [US4] Extend `ToChEmedMapper.java` with PRE and MTP → CH EMED, and document the rules
+- [X] T045 [US4] Extend `ToChEmedMapper.java` with PRE and MTP → CH EMED, and document the rules
   in `docs/mapping/ch-emed-epr.md`.
 
 **Checkpoint**: All three document types work in both directions through the library.

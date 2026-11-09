@@ -60,6 +60,14 @@ class OfficialExamplesToChEmedIT {
     return result.report().entries().stream().filter(e -> e.severity() == Severity.ERROR).toList();
   }
 
+  /** Clears meta.profile of a resource and of its contained resources (M-EPR-01). */
+  private static void withoutProfiles(Resource resource) {
+    resource.getMeta().setProfile(List.of());
+    if (resource instanceof org.hl7.fhir.r4.model.DomainResource domain) {
+      domain.getContained().forEach(c -> c.getMeta().setProfile(List.of()));
+    }
+  }
+
   @ParameterizedTest
   @MethodSource("examples")
   void convertsToValidChEmedByTheProfileChangeAlone(String name) {
@@ -75,8 +83,8 @@ class OfficialExamplesToChEmedIT {
     for (int i = 0; i < input.getEntry().size(); i++) {
       Resource in = input.getEntry().get(i).getResource().copy();
       Resource out = output.getEntry().get(i).getResource().copy();
-      in.getMeta().setProfile(List.of());
-      out.getMeta().setProfile(List.of());
+      withoutProfiles(in);
+      withoutProfiles(out);
       assertThat(out.equalsDeep(in)).as(name + " entry " + i).isTrue();
     }
     assertThat(result.report().entries())

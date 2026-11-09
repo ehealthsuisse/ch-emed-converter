@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.CanonicalType;
+import org.hl7.fhir.r4.model.DomainResource;
 import org.hl7.fhir.r4.model.Resource;
 
 /**
@@ -33,7 +34,13 @@ public final class ToChEmedMapper {
     for (int i = 0; i < out.getEntry().size(); i++) {
       Resource resource = out.getEntry().get(i).getResource();
       if (resource != null) {
-        relabel(resource, "Bundle.entry[" + i + "].resource", ctx);
+        String path = "Bundle.entry[" + i + "].resource";
+        relabel(resource, path, ctx);
+        if (resource instanceof DomainResource domain) {
+          for (int j = 0; j < domain.getContained().size(); j++) {
+            relabel(domain.getContained().get(j), path + ".contained[" + j + "]", ctx);
+          }
+        }
       }
     }
     return out;
