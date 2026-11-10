@@ -81,5 +81,11 @@ public final class ReasonCode {
   public static final String TREATMENT_PLAN_REFERENCES_MISMATCH =
       "TREATMENT_PLAN_REFERENCES_MISMATCH";
 
+  /**
+   * References to other documents within one document contradict each other (WARNING, feature 005
+   * research R5); the document is not changed.
+   */
+  public static final String REFERENCE_INCONSISTENT = "REFERENCE_INCONSISTENT";
+
   private ReasonCode() {}
 }

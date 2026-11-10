@@ -47,7 +47,7 @@ and tested independently.
 
 **Purpose**: Test corpus and the new reason code
 
-- [ ] T001 [P] Copy the missing official EPR examples unchanged from `package/example/` of
+- [X] T001 [P] Copy the missing official EPR examples unchanged from `package/example/` of
   `converter-validation/src/main/resources/packages/ch.fhir.ig.ch-emed-epr-3.0.0.tgz` to
   `format-ch-emed-epr/src/test/resources/fixtures/official/` (research R8):
   - `Bundle-DocumentUCSF4CARAPMP004DISDafalganWithoutPrescription.json`;
@@ -58,7 +58,7 @@ and tested independently.
   - `Bundle-BundleUtc6bPml.json`.
 
   Extend `official/README.md`. `Dis1`, `Padv1` and `Pml1` are already there.
-- [ ] T002 [P] Copy the missing CH EMED examples unchanged from `package/example/` of
+- [X] T002 [P] Copy the missing CH EMED examples unchanged from `package/example/` of
   `ch.fhir.ig.ch-emed-6.0.0.tgz` to `fixtures/chemed/`:
   - `Bundle-2-4-MedicationDispense.json`;
   - `Bundle-3-1-MedicationDispense.json`;
@@ -68,7 +68,7 @@ and tested independently.
   In `chemed/README.md`:
   - note that 1-2, 2-2 and 2-1 are no longer refusal cases but inputs of this feature;
   - note that 3-1 and 3-2 have no treatment-plan reference.
-- [ ] T003 [P] Add `REFERENCE_INCONSISTENT` (WARNING, research R5) to
+- [X] T003 [P] Add `REFERENCE_INCONSISTENT` (WARNING, research R5) to
   `converter-core/src/main/java/ch/emed/converter/core/report/ReasonCode.java`, with Javadoc. Extend
   the reason-code tests of `converter-core` that list all codes.
 
@@ -80,7 +80,7 @@ and tested independently.
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T004 Write tests first in
+- [X] T004 Write tests first in
   `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/EprDocumentTypeTest.java`:
   - `Dis1`, `UCSF4`, the four PADV examples and the three PML examples are recognised as
     DIS/PADV/PML;
@@ -90,16 +90,16 @@ and tested independently.
   - an unknown type gives a message naming all six types.
 
   Remove the cases that expected "not yet supported".
-- [ ] T005 Add `DIS`, `PADV` and `PML` with their SNOMED codes and profile suffixes to
+- [X] T005 Add `DIS`, `PADV` and `PML` with their SNOMED codes and profile suffixes to
   `format-ch-emed-epr/src/main/java/ch/emed/converter/epr/EprDocumentType.java` and remove `LATER`.
   The message for other types lists `PMLC, PRE, MTP, DIS, PADV, PML` (research R1, rule M-EPR-02).
-- [ ] T006 Adjust the tests that expected the refusal of these types:
+- [X] T006 Adjust the tests that expected the refusal of these types:
   - `it/EdgeCasesIT.java`: edge case 1 now uses a document of an unknown type, built
     synthetically from a CH EMED example with another Composition type;
   - `ChEmedEprFormatModuleTest.java`;
   - `converter-cli/src/test/java/ch/emed/converter/cli/EprCliTest.java`;
   - `converter-rest/src/test/java/ch/emed/converter/rest/contract/EprConversionContractTest.java`.
-- [ ] T007 Write tests first in `mapping/OriginalRepresentationTest.java` for DIS, PADV and PML:
+- [X] T007 Write tests first in `mapping/OriginalRepresentationTest.java` for DIS, PADV and PML:
   - a supplied PDF/A is used;
   - a source PDF/A is kept;
   - a non-PDF/A is removed and reported;
@@ -121,7 +121,7 @@ EMED documents validate.
 
 ### Tests for User Story 1 ⚠️
 
-- [ ] T008 [P] [US1] Extend `it/OfficialExamplesToChEmedIT.java` to the types `DIS`, `PADV`,
+- [X] T008 [P] [US1] Extend `it/OfficialExamplesToChEmedIT.java` to the types `DIS`, `PADV`,
   `PML` (`EprFixtures.official`). For every example:
   - the outcome is not FAILED;
   - the output validates against CH EMED;
@@ -130,21 +130,23 @@ EMED documents validate.
 
   Add one case for the empty list `Bundle-BundleUtc1Pml.json`: a valid Medication List without
   entries (US1.4).
-- [ ] T009 [P] [US1] Extend `mapping/ToChEmedMapperTest.java` with one example per type
+- [X] T009 [P] [US1] Extend `mapping/ToChEmedMapperTest.java` with one example per type
   (`Dis1`, `PadvChange…`, `Pml1`), compared byte for byte against new files in
   `fixtures/expected/`. Only the profiles may change, including contained resources and the
   changed statement or request of the advice (rules M-EPR-01, M-EPR-12).
-- [ ] T010 [P] [US1] Extend `EdgeCasesIT` or `OfficialExamplesToChEmedIT` with US1.5: a PADV with
+- [X] T010 [P] [US1] Extend `EdgeCasesIT` or `OfficialExamplesToChEmedIT` with US1.5: a PADV with
   one element that violates the EPR profile fails with the validation findings and has no output.
 
 ### Implementation for User Story 1
 
-- [ ] T011 [US1] Make T008–T010 pass. Expected changes:
+- [X] T011 [US1] Make T008–T010 pass. Expected changes:
   - none in `mapping/ToChEmedMapper.java` and `mapping/ProfileMap.java` (research R2);
   - any profile the examples show missing is added to `ProfileMap` and recorded as a finding in
     `research.md`.
 
   Generate the expected files with `-Depr.regenerate=true` and review them.
+  - *Done 2026-11-10: no code change needed; all 9 official DIS, PADV and PML examples convert by
+    the profile change alone (research R2 confirmed).*
 
 **Checkpoint**: US1 is complete; the EPR documents of the three types are readable.
 

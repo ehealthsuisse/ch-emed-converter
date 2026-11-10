@@ -50,6 +50,9 @@ public final class RestTestSupport {
   public static final Path EPR =
       Path.of("..", "format-ch-emed-epr", "src", "test", "resources", "fixtures", "official");
 
+  /** Synthetic CH EMED EPR fixtures of feature 005, e.g. a document of an unknown type. */
+  public static final Path EPR_SYNTHETIC = EPR.resolveSibling("synthetic");
+
   /** Contract of feature 002, the source of truth of the API (research R8). */
   public static final String OPENAPI =
       Path.of("..", "specs", "002-rest-conversion-service", "contracts", "openapi.yaml")

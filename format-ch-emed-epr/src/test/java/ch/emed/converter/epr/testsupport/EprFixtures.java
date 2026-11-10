@@ -49,7 +49,7 @@ public final class EprFixtures {
     }
   }
 
-  /** The official examples of one document type: PMLC, PRE or MTP. */
+  /** The official examples of one document type: PMLC, PRE, MTP, DIS, PADV or PML. */
   public static List<String> official(String type) {
     return switch (type) {
       case "PMLC" ->
@@ -75,6 +75,40 @@ public final class EprFixtures {
               "Bundle-DocumentMtpParacetamolDafalganCARAPMP004.json",
               "Bundle-DocumentUCSF2CARAPMP004MTPParacetamol.json",
               "Bundle-DocumentUCSF6CARAPMP004MTPIbuprofen.json");
+      case "DIS" ->
+          List.of(
+              "Bundle-DocumentDis1.json",
+              "Bundle-DocumentUCSF4CARAPMP004DISDafalganWithoutPrescription.json");
+      case "PADV" ->
+          List.of(
+              "Bundle-DocumentPadv1.json",
+              "Bundle-DocumentPadv2.json",
+              "Bundle-DocumentPadvCancelParacetamolCARAPMP004.json",
+              "Bundle-DocumentPadvChangeParacetamolCARAPMP004.json");
+      case "PML" ->
+          List.of(
+              "Bundle-BundlePml1.json", "Bundle-BundleUtc1Pml.json", "Bundle-BundleUtc6bPml.json");
+      default -> throw new IllegalArgumentException(type);
+    };
+  }
+
+  /**
+   * The official CH EMED 6.0.0 examples of one document type in {@code fixtures/chemed/} (feature
+   * 005): DIS, PADV or PML.
+   */
+  public static List<String> chEmed(String type) {
+    return switch (type) {
+      case "DIS" ->
+          List.of(
+              "Bundle-1-2-MedicationDispense.json",
+              "Bundle-2-4-MedicationDispense.json",
+              "Bundle-3-1-MedicationDispense.json",
+              "Bundle-3-2-MedicationDispense.json");
+      case "PADV" ->
+          List.of(
+              "Bundle-2-2-PharmaceuticalAdvice.json",
+              "Bundle-PharmaceuticalAdvice-ChangeDosage.json");
+      case "PML" -> List.of("Bundle-2-1-MedicationList.json");
       default -> throw new IllegalArgumentException(type);
     };
   }

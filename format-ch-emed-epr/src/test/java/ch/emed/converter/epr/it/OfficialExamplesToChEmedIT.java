@@ -27,7 +27,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * T014/T021/T044 (feature 004): the official PMLC, PRE and MTP examples convert to CH EMED by the
@@ -43,7 +42,8 @@ class OfficialExamplesToChEmedIT {
   }
 
   static Stream<String> examples() {
-    return Stream.of("PMLC", "PRE", "MTP").flatMap(t -> EprFixtures.official(t).stream());
+    return Stream.of("PMLC", "PRE", "MTP", "DIS", "PADV", "PML")
+        .flatMap(t -> EprFixtures.official(t).stream());
   }
 
   private static ConversionResult convert(byte[] input) {
@@ -91,6 +91,54 @@ class OfficialExamplesToChEmedIT {
         .filteredOn(e -> e.code().equals(EprReasonCode.PROFILE_CHANGED))
         .isNotEmpty()
         .allMatch(e -> e.severity() == Severity.INFORMATION);
+    // feature 005 (T008): no clinical loss and no contradicting references in official examples
+    assertThat(result.report().entries()).as(name).noneMatch(ReportEntry::clinicalLoss);
+    assertThat(result.report().entries())
+        .as(name)
+        .extracting(ReportEntry::code)
+        .doesNotContain(ReasonCode.REFERENCE_INCONSISTENT);
+  }
+
+  /** Feature 005, US1.4: an empty medication list becomes a list without entries. */
+  @Test
+  void emptyListBecomesAListWithoutEntries() {
+    ConversionResult result = convert("Bundle-BundleUtc1Pml.json");
+
+    assertThat(errors(result)).isEmpty();
+    Bundle output = ChEmedJson.parse(result.output().orElseThrow());
+    assertThat(output.getEntry())
+        .noneMatch(
+            e ->
+                switch (e.getResource().getResourceType()) {
+                  case MedicationStatement, MedicationRequest, MedicationDispense, Observation ->
+                      true;
+                  default -> false;
+                });
+  }
+
+  /** Feature 005, US1.5: a PADV violating the EPR profile is refused with the findings. */
+  @Test
+  void aPadvViolatingTheEprProfileIsRefused() {
+    Bundle padv =
+        ChEmedJson.parse(
+            EprFixtures.bytes("official/Bundle-DocumentPadvChangeParacetamolCARAPMP004.json"));
+    padv.getEntry().stream()
+        .map(Bundle.BundleEntryComponent::getResource)
+        .filter(org.hl7.fhir.r4.model.Observation.class::isInstance)
+        .map(org.hl7.fhir.r4.model.Observation.class::cast)
+        .findFirst()
+        .orElseThrow()
+        .addModifierExtension()
+        .setUrl("http://example.org/fhir/StructureDefinition/not-allowed-in-epr")
+        .setValue(new org.hl7.fhir.r4.model.BooleanType(true));
+
+    ConversionResult result = convert(ChEmedJson.serialize(padv));
+
+    assertThat(result.outcome()).isEqualTo(Outcome.FAILED);
+    assertThat(result.output()).isEmpty();
+    assertThat(errors(result))
+        .isNotEmpty()
+        .allMatch(e -> e.code().equals(ReasonCode.FHIR_VALIDATION));
   }
 
   @Test
@@ -103,11 +151,15 @@ class OfficialExamplesToChEmedIT {
         .noneMatch(e -> e.getResource().getResourceType() == ResourceType.MedicationStatement);
   }
 
-  @ParameterizedTest
-  @ValueSource(
-      strings = {"Bundle-DocumentDis1.json", "Bundle-DocumentPadv1.json", "Bundle-BundlePml1.json"})
-  void laterDocumentTypesAreRefused(String name) {
-    ConversionResult result = convert(name);
+  @Test
+  void documentsOfOtherTypesAreRefused() {
+    ConversionResult result =
+        converter.convert(
+            new ConversionRequest(
+                FormatId.CH_EMED_EPR,
+                FormatId.CH_EMED,
+                EprFixtures.bytes("synthetic/Bundle-UnknownDocumentType.json"),
+                ConversionOptions.defaults()));
 
     assertThat(result.outcome()).isEqualTo(Outcome.FAILED);
     assertThat(result.report().entries())

@@ -159,7 +159,13 @@ class EprConversionContractTest extends AbstractRestTest {
         .andExpect(openApi().isValid(RestTestSupport.OPENAPI))
         .andExpect(jsonPath("$.errorType").value("INVALID_INPUT"))
         .andExpect(jsonPath("$.report").exists());
-    mvc.perform(convert("ch-emed-epr", "ch-emed", epr("Bundle-DocumentDis1.json"), null))
+    mvc.perform(
+            convert(
+                "ch-emed-epr",
+                "ch-emed",
+                RestTestSupport.read(
+                    RestTestSupport.EPR_SYNTHETIC.resolve("Bundle-UnknownDocumentType.json")),
+                null))
         .andExpect(status().isUnprocessableEntity())
         .andExpect(jsonPath("$.errorType").value("INVALID_INPUT"));
   }

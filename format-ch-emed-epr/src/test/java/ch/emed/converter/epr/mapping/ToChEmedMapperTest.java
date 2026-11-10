@@ -24,8 +24,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * T020 and T043 (feature 004, M-EPR-01, M-EPR-12): CH EMED EPR → CH EMED changes the declared
- * profiles only, for PMLC, PRE and MTP. Regenerate the expected files with {@code
- * -Depr.regenerate=true}.
+ * profiles only, for PMLC, PRE and MTP, and since feature 005 (T009) DIS, PADV and PML. Regenerate
+ * the expected files with {@code -Depr.regenerate=true}.
  */
 class ToChEmedMapperTest {
 
@@ -76,7 +76,10 @@ class ToChEmedMapperTest {
   @CsvSource({
     "PMLC, Bundle-DocumentPmlcCARAPMP004AxapharmParacetamol",
     "PRE, Bundle-DocumentPreParacetamolAxapharmCARAPMP004",
-    "MTP, Bundle-DocumentMtpParacetamolCARAPMP004"
+    "MTP, Bundle-DocumentMtpParacetamolCARAPMP004",
+    "DIS, Bundle-DocumentDis1",
+    "PADV, Bundle-DocumentPadvChangeParacetamolCARAPMP004",
+    "PML, Bundle-BundlePml1"
   })
   void onlyTheProfilesChange(EprDocumentType type, String name) throws IOException {
     byte[] input = EprFixtures.bytes("official/" + name + ".json");

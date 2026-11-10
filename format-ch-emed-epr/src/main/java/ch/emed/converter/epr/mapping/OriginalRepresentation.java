@@ -36,9 +36,9 @@ import org.hl7.fhir.r4.model.UriType;
 /**
  * The original representation of a CH EMED EPR document as PDF/A (mapping rule M-EPR-25, research
  * R8 and R16). Order: a PDF/A supplied with the option {@code originalRepresentation}, then a PDF/A
- * of the source, then for PRE and PMLC a PDF/A-1b rendered from the converted document. An MTP gets
- * none rendered; a non-PDF/A one is left out. The converter checks only the PDF/A claim in the XMP
- * metadata ({@code pdfaid:part} 1 or 2), not full conformance.
+ * of the source, then for PRE and PMLC a PDF/A-1b rendered from the converted document. MTP, DIS,
+ * PADV and PML (feature 005) get none rendered; a non-PDF/A one is left out. The converter checks
+ * only the PDF/A claim in the XMP metadata ({@code pdfaid:part} 1 or 2), not full conformance.
  */
 public final class OriginalRepresentation {
 
@@ -89,7 +89,8 @@ public final class OriginalRepresentation {
       return;
     }
 
-    if (type == EprDocumentType.MTP) {
+    if (type != EprDocumentType.PRE && type != EprDocumentType.PMLC) {
+      // MTP, DIS, PADV and PML: the section is optional; nothing is rendered (feature 005, R6)
       if (section != null) {
         removeBinaries(epr, source);
         composition.getSection().remove(section);

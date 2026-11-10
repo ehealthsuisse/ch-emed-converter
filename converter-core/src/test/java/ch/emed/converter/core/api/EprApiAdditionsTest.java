@@ -95,4 +95,9 @@ class EprApiAdditionsTest {
     assertThat(ReasonCode.TREATMENT_PLAN_REFERENCES_MISMATCH)
         .isEqualTo("TREATMENT_PLAN_REFERENCES_MISMATCH");
   }
+
+  @Test
+  void referenceInconsistentReasonCodeExists() {
+    assertThat(ReasonCode.REFERENCE_INCONSISTENT).isEqualTo("REFERENCE_INCONSISTENT");
+  }
 }

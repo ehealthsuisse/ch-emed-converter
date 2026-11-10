@@ -7,7 +7,7 @@ import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Composition;
 
 /**
- * Document types of feature 004 (data-model.md §2), recognised by the SNOMED CT code of the
+ * Document types of features 004 and 005 (data-model.md), recognised by the SNOMED CT code of the
  * Composition {@code type}, which CH EMED fixes per document profile.
  */
 public enum EprDocumentType {
@@ -16,14 +16,13 @@ public enum EprDocumentType {
   /** Medication Prescription ↔ PRE. */
   PRE("761938008", "medicationprescription"),
   /** Medication Treatment Plan ↔ MTP. */
-  MTP("761931002", "medicationtreatmentplan");
-
-  /** SNOMED CT codes of the CH EMED document types not covered by this feature. */
-  private static final java.util.Map<String, String> LATER =
-      java.util.Map.of(
-          "82291000195104", "medication dispense (DIS)",
-          "419891008", "pharmaceutical advice (PADV)",
-          "721912009", "medication list (PML)");
+  MTP("761931002", "medicationtreatmentplan"),
+  /** Medication Dispense ↔ DIS (feature 005). */
+  DIS("82291000195104", "medicationdispense"),
+  /** Pharmaceutical Advice ↔ PADV (feature 005). */
+  PADV("419891008", "pharmaceuticaladvice"),
+  /** Medication List ↔ PML (feature 005). */
+  PML("721912009", "medicationlist");
 
   private static final String SNOMED = "http://snomed.info/sct";
 
@@ -76,18 +75,15 @@ public enum EprDocumentType {
   }
 
   /**
-   * Message for a document outside this feature, naming the supported types; without content.
+   * Message for a document of another type, naming the supported types; without content.
    *
    * @param bundle document Bundle
    * @return message
    */
   public static String unsupportedMessage(Bundle bundle) {
-    String later = snomedType(bundle).map(LATER::get).orElse(null);
-    String supported =
-        "supported: medication card (PMLC), prescription (PRE), treatment plan (MTP)";
-    return later != null
-        ? "Document type " + later + " is not yet supported; " + supported
-        : "Document type not recognised; " + supported;
+    return "Document type not recognised; supported: medication card (PMLC), prescription (PRE),"
+        + " treatment plan (MTP), dispense (DIS), pharmaceutical advice (PADV), medication list"
+        + " (PML)";
   }
 
   private static Optional<String> snomedType(Bundle bundle) {

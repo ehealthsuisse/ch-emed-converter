@@ -112,7 +112,8 @@ class ProblemLeakTest extends AbstractRestTest {
             convert(
                 "ch-emed-epr",
                 "ch-emed",
-                RestTestSupport.read(RestTestSupport.EPR.resolve("Bundle-DocumentDis1.json")),
+                RestTestSupport.read(
+                    RestTestSupport.EPR_SYNTHETIC.resolve("Bundle-UnknownDocumentType.json")),
                 null),
             convert("ch-emed-epr", "ch-emed", CARD, null),
             convert("ch-emed", "ch-emed-epr", CARD, null),
