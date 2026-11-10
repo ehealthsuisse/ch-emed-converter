@@ -134,7 +134,10 @@ access. Verified on 2026-10-29 (Rancher Desktop, Docker Engine 29.5.3): image ab
 BellSoft Liberica JRE 21.0.13, no shell in the image; started in an internal Docker network without
 internet access, it was ready after about 15 s (validation context 12 s), converted, answered
 failures and capabilities, and logged no patient data. The image creation date shows 1980 on
-purpose (reproducible builds).
+purpose (reproducible builds). Checked again on 2026-11-10 for version 1.1.0-SNAPSHOT (Docker
+Engine 29.7.2, Linux): image about 455 MB with `format-ch-emed-epr` in `BOOT-INF/lib`; ready after
+about 10 s, capabilities list `ch-emed-epr` with the document types PMLC, PRE and MTP, and an
+official CH EMED EPR medication card converted to CH EMED with `SUCCESS`.
 
 Configure the container with environment variables, e.g.
 `docker run -e CONVERTER_REST_TIMEOUT=30s -e CONVERTER_REST_MAXCONCURRENT=4 …` (Spring Boot drops
