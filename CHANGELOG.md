@@ -42,6 +42,12 @@ the report format MUST be recorded here (constitution, "Development Workflow").
   (`/*Patient*/` instead of `/*Patient/<id>*/`); ids may be built from a patient's name. Affects
   the paths of every `FHIR_VALIDATION` entry.
 
+### Known limitations
+
+- CH EMED EPR: the `clinical` flags in `epr/unsupported-elements.json` (which removed elements
+  count as clinical loss, WARNING instead of INFORMATION) still need the review of a person with
+  CH EMED domain knowledge (feature 004, task T036).
+
 ## [1.0.0] — 2026-11-08
 
 ### Changed
