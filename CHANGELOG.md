@@ -5,6 +5,43 @@ All notable changes to the converter are recorded here, following
 [Semantic Versioning](https://semver.org/). Changes to the output structure, to reason codes or to
 the report format MUST be recorded here (constitution, "Development Workflow").
 
+## [Unreleased]
+
+### Added
+
+- **CH EMED EPR (CARA EMED)**, feature 004: new format `ch-emed-epr` (module `format-ch-emed-epr`)
+  for CH EMED EPR 3.0.0, in both directions with CH EMED, for the medication card (PMLC),
+  prescription (PRE) and treatment plan (MTP). Input and output are validated against the vendored
+  package `ch.fhir.ig.ch-emed-epr#3.0.0` (CC0-1.0). Elements CH EMED EPR does not support are
+  removed and reported (`UNMAPPABLE_ELEMENT`, clinical loss where relevant). Rules:
+  `docs/mapping/ch-emed-epr.md`, glossary `docs/mapping/ch-emed-epr-glossary.md`.
+- Output form `treatment-plans` (`OutputForm.TREATMENT_PLANS`): a CH EMED medication card becomes
+  a FHIR `collection` with one MTP document per treatment.
+- Options `treatmentPlanReferences` (library `withTreatmentPlanReferences`, CLI repeatable
+  `--treatment-plan <documentId>,<statementId>`, REST) and `originalRepresentation` (library
+  `withOriginalRepresentation`, CLI `--original-representation <file>`, REST base64).
+- Original representation as PDF/A-1b (`OriginalRepresentationRenderer.renderPdfA`): Liberation
+  Sans embedded, vendored sRGB ICC profile (`sRGB2014.icc`, International Color Consortium), XMP;
+  used for PRE and PMLC when neither the caller nor the source supplies a PDF/A.
+- Reason codes `NO_TREATMENTS`, `TREATMENT_PLAN_EXISTS`, `TREATMENT_PLAN_REFERENCES_MISMATCH` and,
+  in the EPR module, `PROFILE_CHANGED`.
+- OpenAPI 1.2.0 (additive): `outputForm` `treatment-plans`, `treatmentPlanReferences`,
+  `originalRepresentation`; capabilities list them and, per format, `documentTypes` (`PMLC`,
+  `PRE`, `MTP` for `ch-emed-epr`; library `FormatInfo.documentTypes()`, SPI
+  `FormatModule.documentTypes()`).
+- CLI `formats` lists the input and output forms and the document types of every format.
+
+### Changed
+
+- Pairs of two non-CH-EMED formats are no longer composed through CH EMED; they are refused with
+  `UNSUPPORTED_CONVERSION` and the hint to convert in two steps through `ch-emed` (library, CLI,
+  REST `404` detail).
+- A CH EMED Medication Card is also recognised by the SNOMED CT code `736378000` of its
+  Composition type alone (before: only LOINC `56445-0`); cards from the EPR carry SNOMED only.
+- Privacy: validator paths no longer contain resource ids, only the resource type
+  (`/*Patient*/` instead of `/*Patient/<id>*/`); ids may be built from a patient's name. Affects
+  the paths of every `FHIR_VALIDATION` entry.
+
 ## [1.0.0] — 2026-11-08
 
 ### Changed

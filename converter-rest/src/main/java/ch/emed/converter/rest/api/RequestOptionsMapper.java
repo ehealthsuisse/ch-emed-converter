@@ -6,8 +6,12 @@ import ch.emed.converter.core.api.ConversionOptions;
 import ch.emed.converter.core.api.OrganizationDetails;
 import ch.emed.converter.core.api.OutputForm;
 import ch.emed.converter.core.api.PatientIdentifier;
+import ch.emed.converter.core.api.TreatmentPlanReference;
 import ch.emed.converter.rest.error.MalformedRequestException;
 import ch.emed.converter.rest.model.RequestOptions;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
 import java.util.Locale;
 import org.springframework.stereotype.Component;
 
@@ -53,7 +57,33 @@ public class RequestOptionsMapper {
         throw invalid("options.outputForm");
       }
     }
+    if (request.treatmentPlanReferences() != null) {
+      options = options.withTreatmentPlanReferences(references(request.treatmentPlanReferences()));
+    }
+    if (request.originalRepresentation() != null) {
+      try {
+        options =
+            options.withOriginalRepresentation(
+                Base64.getDecoder().decode(request.originalRepresentation()));
+      } catch (IllegalArgumentException e) {
+        throw invalid("options.originalRepresentation");
+      }
+    }
     return options;
+  }
+
+  private static List<TreatmentPlanReference> references(
+      List<RequestOptions.TreatmentPlanReference> list) {
+    List<TreatmentPlanReference> references = new ArrayList<>();
+    for (int i = 0; i < list.size(); i++) {
+      RequestOptions.TreatmentPlanReference r = list.get(i);
+      try {
+        references.add(new TreatmentPlanReference(r.documentId(), r.statementId()));
+      } catch (IllegalArgumentException | NullPointerException e) {
+        throw invalid("options.treatmentPlanReferences[" + i + "]");
+      }
+    }
+    return references;
   }
 
   private static Confidentiality confidentiality(String value) {

@@ -33,8 +33,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Hub pipeline: source → CH EMED → target (constitution V). Stateless and thread-safe; logs only
- * phase, outcome, entry counts, duration and input size (data-model.md §5).
+ * Hub pipeline: format → CH EMED or CH EMED → format (constitution V); pairs of two other formats
+ * are refused, not composed (feature 004, FR-004). Stateless and thread-safe; logs only phase,
+ * outcome, entry counts, duration and input size (data-model.md §5).
  */
 public final class DefaultConverter implements Converter {
 
@@ -65,7 +66,7 @@ public final class DefaultConverter implements Converter {
     Objects.requireNonNull(request, "request");
     long start = System.nanoTime();
     ReportCollector report = new ReportCollector();
-    MappingContext ctx = new MappingContext(request.options(), report);
+    MappingContext ctx = new MappingContext(request.options(), report, validator);
 
     byte[] output = run(request, ctx);
 
@@ -116,6 +117,24 @@ public final class DefaultConverter implements Converter {
                       + target.id()
                       + " is not supported; supported: "
                       + supportedList()));
+      return null;
+    }
+    if (!source.isChEmed() && !target.isChEmed()) {
+      // Feature 004, FR-004: no composed conversions; the caller converts in two steps.
+      ctx.report()
+          .add(
+              ReportEntry.error(
+                  ReasonCode.UNSUPPORTED_CONVERSION,
+                  Phase.PARSE,
+                  "/",
+                  "Conversion "
+                      + source.id()
+                      + " -> "
+                      + target.id()
+                      + " is not supported; supported: "
+                      + supportedList()
+                      + "; "
+                      + throughChEmedHint(source, target)));
       return null;
     }
     OutputForm form = request.options().outputForm();
@@ -223,6 +242,23 @@ public final class DefaultConverter implements Converter {
     return true;
   }
 
+  /**
+   * Hint for a pair of two formats other than CH EMED (feature 004, research R11), e.g. {@code
+   * convert through ch-emed: chmed16a -> ch-emed -> ch-emed-epr}.
+   *
+   * @param source source format
+   * @param target target format
+   * @return the hint
+   */
+  public static String throughChEmedHint(FormatId source, FormatId target) {
+    return "convert through ch-emed: "
+        + source.externalName()
+        + " -> "
+        + FormatId.CH_EMED.externalName()
+        + " -> "
+        + target.externalName();
+  }
+
   private String supportedList() {
     return supportedConversions().stream()
         .map(p -> p.source().id() + " -> " + p.target().id())
@@ -235,7 +271,9 @@ public final class DefaultConverter implements Converter {
     List<FormatInfo> formats = new ArrayList<>();
     formats.add(new FormatInfo(FormatId.CH_EMED, List.of("json"), List.of(OutputForm.DOCUMENT)));
     for (FormatModule module : registry.modules()) {
-      formats.add(new FormatInfo(module.format(), module.inputForms(), module.outputForms()));
+      formats.add(
+          new FormatInfo(
+              module.format(), module.inputForms(), module.outputForms(), module.documentTypes()));
     }
     formats.sort(Comparator.comparing(f -> f.format().id()));
     return List.copyOf(formats);
@@ -244,17 +282,9 @@ public final class DefaultConverter implements Converter {
   @Override
   public Set<ConversionPair> supportedConversions() {
     Set<ConversionPair> pairs = new LinkedHashSet<>();
-    List<FormatModule> modules = registry.modules();
-    for (FormatModule module : modules) {
+    for (FormatModule module : registry.modules()) {
       pairs.add(new ConversionPair(module.format(), FormatId.CH_EMED));
       pairs.add(new ConversionPair(FormatId.CH_EMED, module.format()));
-    }
-    for (FormatModule from : modules) {
-      for (FormatModule to : modules) {
-        if (!from.format().equals(to.format())) {
-          pairs.add(new ConversionPair(from.format(), to.format()));
-        }
-      }
     }
     return Set.copyOf(pairs);
   }

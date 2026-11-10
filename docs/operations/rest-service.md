@@ -61,13 +61,38 @@ data, but it does show when which conversions ran.
 ## No outbound connections
 
 The service makes no network calls during conversion (FR-015). Validation runs locally with the IG
-packages vendored in the JAR (`ch.fhir.ig.ch-emed#6.0.0`, `ch.fhir.ig.ch-core#6.0.0`); no terminology
+packages vendored in the JAR (`ch.fhir.ig.ch-emed#6.0.0`, `ch.fhir.ig.ch-core#6.0.0`,
+`ch.fhir.ig.ch-emed-epr#3.0.0`); no terminology
 server is used. It needs no internet access and can run in a network without egress.
 
 The service never contacts HIN or eRezept Schweiz either (feature 003). A prescription converted
 with `outputForm` `qr-payload` is the unsigned `CHMED16A1…` payload; the primary system has it
 signed by its local HIN erxproxy (`POST /ePrescription/create`), which returns the signed URL or its
 QR code. Signed eRezepte are read without verifying the signature.
+
+## CH EMED EPR (CARA EMED)
+
+Since feature 004 the service converts between CH EMED and CH EMED EPR 3.0.0, the EPR variant of
+CARA: `POST /api/v1/conversions/ch-emed-epr/ch-emed` and `.../ch-emed/ch-emed-epr`. Every
+conversion has `ch-emed` on one side; a request `chmed16a` → `ch-emed-epr` (or back) gets `404
+UNSUPPORTED_CONVERSION` naming the two steps through `ch-emed`. Options for the target
+`ch-emed-epr` (OpenAPI 1.2.0):
+
+- `outputForm` `treatment-plans`: a medication card becomes a FHIR `collection` with one MTP
+  document per treatment (`application/fhir+json`);
+- `treatmentPlanReferences` `[{documentId, statementId}]` (both `urn:uuid:`): the treatment plans
+  in the EPR that the entries of a prescription (PRE) or card (PMLC) belong to, in document order;
+- `originalRepresentation`: a PDF/A in base64 as original representation; without it the service
+  renders a PDF/A-1b for PRE and PMLC.
+
+The service does not submit documents to the EPR (IHE MHD) and does not fetch them; the primary
+system does. A medication card with a person as author does not become a PMLC (the community's
+aggregation service authors PMLC documents); create treatment plans from it instead. Rules and
+limits: [docs/mapping/ch-emed-epr.md](../mapping/ch-emed-epr.md).
+
+```json
+{ "document": "<CH EMED card, base64>", "options": { "outputForm": "treatment-plans" } }
+```
 
 ## Running
 
@@ -82,8 +107,8 @@ distribution archive `converter-rest/target/ch-emed-converter-rest-<version>-dis
 | `LICENSE`, `NOTICE`, `THIRD-PARTY.txt`, `third-party-licenses.md`, `README.md` | licences and overview |
 
 ```bash
-unzip ch-emed-converter-rest-1.0.0-dist.zip
-cd ch-emed-converter-rest-1.0.0
+unzip ch-emed-converter-rest-<version>-dist.zip
+cd ch-emed-converter-rest-<version>
 JAVA_OPTS="-Xmx2g" ./ch-emed-converter-rest.sh --server.port=8080
 ```
 
@@ -101,7 +126,7 @@ Container image (Paketo buildpacks, Java 21; needs a running Docker daemon at bu
 ```bash
 ./mvnw -pl converter-rest -am install -DskipTests
 ./mvnw -pl converter-rest spring-boot:build-image
-docker run --rm -p 8080:8080 ch-emed-converter-rest:1.0.0
+docker run --rm -p 8080:8080 ch-emed-converter-rest:<version>
 ```
 
 The image build itself downloads the buildpacks and the JRE; the running container needs no network
@@ -199,6 +224,18 @@ Data is never mixed between requests. Concurrency, measured on the workstation o
 simultaneous plans took about 24 s in total, whether 4, 8 or 16 ran at the same time; more than
 four only made each conversion slower (with 4 the answers arrived after 7–24 s, with 16 after
 18–23 s). Measure on your own hardware before relying on these numbers.
+
+CH EMED EPR (feature 004, measured 2026-11-09 with the library on the Linux server, 4 vCPUs,
+warm context, output validation included; `format-ch-emed-epr` `PerformanceTest`):
+
+| Case | Time |
+|------|------|
+| validation context with the CH EMED EPR package (cold start) | 6.5 s |
+| card with 20 medications → PMLC | 2.1 s |
+| card with 20 treatments → `treatment-plans` (20 MTP documents, each validated) | 2.0 s |
+| card with 100 treatments → `treatment-plans` (100 MTP documents) | 9.8 s |
+
+Targets (feature 004 SC-005): 20 medications under 5 s, 100 under 30 s, as for CH EMED.
 
 Targets of the spec (revised 2026-11-01): 20 different medications under 5 s and 100 under 30 s end
 to end, with less than 1 s added by the service (SC-002); 20 simultaneous requests with 20

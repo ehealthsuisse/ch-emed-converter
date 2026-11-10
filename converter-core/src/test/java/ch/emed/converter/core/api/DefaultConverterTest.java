@@ -17,6 +17,7 @@ import ch.emed.converter.core.spi.MappingContext;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Identifier;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,7 @@ class DefaultConverterTest {
   /** Fake format: input "bad" fails, anything else becomes a tiny document Bundle. */
   private static final class FakeModule implements FormatModule {
     private final FormatId format;
+    final List<Optional<ChEmedValidator>> seenValidators = new ArrayList<>();
 
     FakeModule(FormatId format) {
       this.format = format;
@@ -47,6 +49,7 @@ class DefaultConverterTest {
 
     @Override
     public Bundle toChEmed(byte[] input, MappingContext ctx) {
+      seenValidators.add(ctx.validator());
       String text = new String(input, StandardCharsets.UTF_8);
       if (text.equals("bad")) {
         ctx.report()
@@ -72,6 +75,7 @@ class DefaultConverterTest {
 
     @Override
     public byte[] fromChEmed(Bundle document, MappingContext ctx) {
+      seenValidators.add(ctx.validator());
       ctx.report()
           .add(
               ReportEntry.of(
@@ -102,9 +106,10 @@ class DefaultConverterTest {
   }
 
   private final FakeValidator validator = new FakeValidator();
+  private final FakeModule moduleA = new FakeModule(FAKE_A);
+  private final FakeModule moduleB = new FakeModule(FAKE_B);
   private final Converter converter =
-      new DefaultConverter(
-          FormatRegistry.of(List.of(new FakeModule(FAKE_A), new FakeModule(FAKE_B))), validator);
+      new DefaultConverter(FormatRegistry.of(List.of(moduleA, moduleB)), validator);
 
   private static ConversionRequest request(FormatId from, FormatId to, String input) {
     return new ConversionRequest(
@@ -150,16 +155,62 @@ class DefaultConverterTest {
     }
   }
 
+  /** Feature 004, FR-004: pairs of two formats other than CH EMED are refused, not composed. */
   @Test
-  void pairWithoutChEmedIsComposedViaChEmed() {
+  void pairWithoutChEmedIsRefusedWithThePathThroughChEmed() {
     ConversionResult result = converter.convert(request(FAKE_A, FAKE_B, "42"));
 
-    assertThat(result.outcome()).isEqualTo(Outcome.SUCCESS_WITH_WARNINGS);
-    assertThat(new String(result.output().orElseThrow(), StandardCharsets.UTF_8))
-        .isEqualTo("converted:urn:uuid:42");
+    assertThat(result.outcome()).isEqualTo(Outcome.FAILED);
+    assertThat(result.output()).isEmpty();
     assertThat(result.report().entries())
-        .extracting(ReportEntry::message)
-        .contains("leg FAKE_A", "leg to FAKE_B");
+        .extracting(ReportEntry::code)
+        .containsExactly(ReasonCode.UNSUPPORTED_CONVERSION);
+    assertThat(result.report().entries().get(0).message())
+        .contains("FAKE_A -> CH_EMED, ", "CH_EMED -> FAKE_B")
+        .contains("convert through ch-emed: fake-a -> ch-emed -> fake-b");
+    assertThat(moduleA.seenValidators).isEmpty();
+    assertThat(converter.supportedConversions())
+        .doesNotContain(new ConversionPair(FAKE_A, FAKE_B), new ConversionPair(FAKE_B, FAKE_A));
+  }
+
+  /** Feature 004, R3: format modules reach the converter's validator through the context. */
+  @Test
+  void mappingContextCarriesTheValidator() {
+    converter.convert(request(FAKE_A, FormatId.CH_EMED, "1"));
+    byte[] chEmed =
+        converter.convert(request(FAKE_A, FormatId.CH_EMED, "2")).output().orElseThrow();
+    converter.convert(
+        new ConversionRequest(FormatId.CH_EMED, FAKE_B, chEmed, ConversionOptions.defaults()));
+
+    assertThat(moduleA.seenValidators).isNotEmpty().allMatch(v -> v.orElseThrow() == validator);
+    assertThat(moduleB.seenValidators).hasSize(1).allMatch(v -> v.orElseThrow() == validator);
+
+    FakeModule alone = new FakeModule(FAKE_A);
+    Converter withoutValidator = new DefaultConverter(FormatRegistry.of(List.of(alone)), null);
+    withoutValidator.convert(
+        new ConversionRequest(
+            FAKE_A,
+            FormatId.CH_EMED,
+            "3".getBytes(StandardCharsets.UTF_8),
+            ConversionOptions.defaults().withValidateOutput(false)));
+    assertThat(alone.seenValidators).containsExactly(Optional.empty());
+  }
+
+  /** Feature 004: treatment-plans is refused for a target that does not offer it. */
+  @Test
+  void treatmentPlansForATargetWithoutItIsAnUnsupportedOutputForm() {
+    ConversionResult result =
+        converter.convert(
+            new ConversionRequest(
+                FAKE_A,
+                FormatId.CH_EMED,
+                "1".getBytes(StandardCharsets.UTF_8),
+                ConversionOptions.defaults().withOutputForm(OutputForm.TREATMENT_PLANS)));
+
+    assertThat(result.outcome()).isEqualTo(Outcome.FAILED);
+    assertThat(result.report().entries())
+        .extracting(ReportEntry::code)
+        .containsExactly(ReasonCode.UNSUPPORTED_OUTPUT_FORM);
   }
 
   @Test
@@ -214,8 +265,7 @@ class DefaultConverterTest {
     assertThat(converter.supportedConversions())
         .contains(
             new ConversionPair(FAKE_A, FormatId.CH_EMED),
-            new ConversionPair(FormatId.CH_EMED, FAKE_B),
-            new ConversionPair(FAKE_A, FAKE_B));
+            new ConversionPair(FormatId.CH_EMED, FAKE_B));
   }
 
   @Test

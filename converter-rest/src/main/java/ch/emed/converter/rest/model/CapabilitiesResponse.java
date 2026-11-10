@@ -46,7 +46,8 @@ public record CapabilitiesResponse(
 
   /** Input and output forms of one format, external names (feature 003). */
   @JsonPropertyOrder({"name", "inputForms", "outputForms"})
-  public record Format(String name, List<String> inputForms, List<String> outputForms) {}
+  public record Format(
+      String name, List<String> inputForms, List<String> outputForms, List<String> documentTypes) {}
 
   /** Operator limits, {@code converter.rest.*}, and the fixed image pixel limit. */
   public record Limits(

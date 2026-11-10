@@ -103,6 +103,40 @@ class ProblemLeakTest extends AbstractRestTest {
     }
   }
 
+  @Test
+  void failedEprConversionsEchoNoContent() throws Exception {
+    // feature 004: refused document types, invalid input, missing data, wrong references
+    String[] patient = {"Karce", "1973-12-25", "Michaël", "secret-doc"};
+    List<MockHttpServletRequestBuilder> requests =
+        List.of(
+            convert(
+                "ch-emed-epr",
+                "ch-emed",
+                RestTestSupport.read(RestTestSupport.EPR.resolve("Bundle-DocumentDis1.json")),
+                null),
+            convert("ch-emed-epr", "ch-emed", CARD, null),
+            convert("ch-emed", "ch-emed-epr", CARD, null),
+            convert(
+                "ch-emed",
+                "ch-emed-epr",
+                CARD,
+                RestTestSupport.json(
+                    "{\"treatmentPlanReferences\":[{\"documentId\":\"secret-doc\","
+                        + "\"statementId\":\"secret-doc\"}]}")),
+            convert(
+                "chmed16a",
+                "ch-emed-epr",
+                RestTestSupport.read(
+                    RestTestSupport.EPR.resolve(
+                        "Bundle-DocumentPmlcCARAPMP004AxapharmParacetamol.json")),
+                null));
+    for (MockHttpServletRequestBuilder request : requests) {
+      String body =
+          mvc.perform(request).andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+      assertThat(body).contains("\"errorType\"").doesNotContain(SECRETS).doesNotContain(patient);
+    }
+  }
+
   private void assertNoLeak(MockHttpServletRequestBuilder request) throws Exception {
     String body =
         mvc.perform(request).andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);

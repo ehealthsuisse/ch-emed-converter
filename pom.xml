@@ -6,7 +6,7 @@
 
   <groupId>ch.emed.converter</groupId>
   <artifactId>ch-emed-converter-parent</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>CH EMED Converter</name>
   <description>Conversion between Swiss eMedication formats and CH EMED (HL7 FHIR R4)</description>
@@ -24,6 +24,7 @@
     <module>converter-qr</module>
     <module>converter-validation</module>
     <module>format-chmed16a</module>
+    <module>format-ch-emed-epr</module>
     <module>converter-cli</module>
     <module>converter-rest</module>
   </modules>
@@ -93,6 +94,17 @@
       </dependency>
       <dependency>
         <groupId>ch.emed.converter</groupId>
+        <artifactId>format-chmed16a</artifactId>
+        <version>${project.version}</version>
+        <type>test-jar</type>
+      </dependency>
+      <dependency>
+        <groupId>ch.emed.converter</groupId>
+        <artifactId>format-ch-emed-epr</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.emed.converter</groupId>
         <artifactId>converter-cli</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -100,6 +112,18 @@
       <dependency>
         <groupId>org.apache.pdfbox</groupId>
         <artifactId>pdfbox</artifactId>
+        <version>${pdfbox.version}</version>
+      </dependency>
+      <dependency>
+        <!-- PDF/A metadata of the original representation (feature 004, research R16) -->
+        <groupId>org.apache.pdfbox</groupId>
+        <artifactId>xmpbox</artifactId>
+        <version>${pdfbox.version}</version>
+      </dependency>
+      <dependency>
+        <!-- PDF/A-1b validation in tests only (feature 004, research R16) -->
+        <groupId>org.apache.pdfbox</groupId>
+        <artifactId>preflight</artifactId>
         <version>${pdfbox.version}</version>
       </dependency>
       <dependency>

@@ -29,6 +29,12 @@ public final class ChEmedDocumentReader {
   static final String LOINC = "http://loinc.org";
   static final String CARD_CODE = "56445-0";
   static final String PRESCRIPTION_CODE = "57833-6";
+  static final String SNOMED = "http://snomed.info/sct";
+
+  /** SNOMED CT codes that CH EMED fixes for the document types; the LOINC codes are optional. */
+  static final String CARD_SNOMED = "736378000";
+
+  static final String PRESCRIPTION_SNOMED = "761938008";
   private static final String ORIGINAL_REPRESENTATION_CODE = "55108-5";
 
   /** Supported CH EMED document types. */
@@ -182,18 +188,22 @@ public final class ChEmedDocumentReader {
   }
 
   private static DocumentType type(CodeableConcept type) {
-    if (hasCode(type, CARD_CODE)) {
+    if (hasCode(type, CARD_CODE) || hasCode(type, SNOMED, CARD_SNOMED)) {
       return DocumentType.MEDICATION_CARD;
     }
-    if (hasCode(type, PRESCRIPTION_CODE)) {
+    if (hasCode(type, PRESCRIPTION_CODE) || hasCode(type, SNOMED, PRESCRIPTION_SNOMED)) {
       return DocumentType.MEDICATION_PRESCRIPTION;
     }
     return null;
   }
 
   private static boolean hasCode(CodeableConcept concept, String code) {
+    return hasCode(concept, LOINC, code);
+  }
+
+  private static boolean hasCode(CodeableConcept concept, String system, String code) {
     return concept.getCoding().stream()
-        .anyMatch(c -> LOINC.equals(c.getSystem()) && code.equals(c.getCode()));
+        .anyMatch(c -> system.equals(c.getSystem()) && code.equals(c.getCode()));
   }
 
   private static String typeName(CodeableConcept type) {

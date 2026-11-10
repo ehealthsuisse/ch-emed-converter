@@ -7,7 +7,7 @@
   <parent>
     <groupId>ch.emed.converter</groupId>
     <artifactId>ch-emed-converter-parent</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>converter-core</artifactId>
@@ -27,10 +27,19 @@
       <groupId>org.apache.pdfbox</groupId>
       <artifactId>pdfbox</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.pdfbox</groupId>
+      <artifactId>xmpbox</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>com.networknt</groupId>
       <artifactId>json-schema-validator</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.pdfbox</groupId>
+      <artifactId>preflight</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

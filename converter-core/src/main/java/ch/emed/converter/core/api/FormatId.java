@@ -19,6 +19,9 @@ public record FormatId(String id) {
   /** eMediplan CHMED16A. */
   public static final FormatId CHMED16A = new FormatId("CHMED16A");
 
+  /** CH EMED EPR (CARA EMED), the CH EMED profiles of the Swiss EPR (feature 004). */
+  public static final FormatId CH_EMED_EPR = new FormatId("CH_EMED_EPR");
+
   public FormatId {
     Objects.requireNonNull(id, "id");
     if (!ID.matcher(id).matches()) {

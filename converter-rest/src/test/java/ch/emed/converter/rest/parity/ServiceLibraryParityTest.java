@@ -150,6 +150,56 @@ class ServiceLibraryParityTest extends AbstractRestTest {
         DEFAULTS.withOutputForm(form));
   }
 
+  /** Feature 004: every official CH EMED EPR example to CH EMED, including the refused types. */
+  static Stream<Path> eprExamples() {
+    return RestTestSupport.corpus(RestTestSupport.EPR).stream();
+  }
+
+  @ParameterizedTest(name = "ch-emed-epr -> ch-emed: {0}")
+  @MethodSource("eprExamples")
+  void eprToChEmed(Path input) throws Exception {
+    assertParity(input, "ch-emed-epr", "ch-emed", null, List.of(), DEFAULTS);
+  }
+
+  /**
+   * Feature 004: CH EMED back to CH EMED EPR (the CH EMED form of each official example), and the
+   * CH EMED cards as treatment-plans.
+   */
+  @ParameterizedTest(name = "ch-emed -> ch-emed-epr: {0}")
+  @MethodSource("eprExamples")
+  void chEmedToEpr(Path example) throws Exception {
+    ConversionResult chEmed =
+        converter()
+            .convert(
+                new ConversionRequest(
+                    FormatId.CH_EMED_EPR,
+                    FormatId.CH_EMED,
+                    RestTestSupport.read(example),
+                    DEFAULTS));
+    if (chEmed.output().isEmpty()) {
+      return; // refused document types, covered by eprToChEmed
+    }
+    Path input = temp.resolve("chemed-" + example.getFileName());
+    Files.write(input, chEmed.output().get());
+    assertParity(input, "ch-emed", "ch-emed-epr", null, List.of(), DEFAULTS);
+  }
+
+  @ParameterizedTest(name = "ch-emed -> ch-emed-epr as treatment-plans: {0}")
+  @MethodSource("chEmedCorpus")
+  void treatmentPlans(Path input) throws Exception {
+    assertParity(
+        input,
+        "ch-emed",
+        "ch-emed-epr",
+        RestTestSupport.json("{\"outputForm\":\"treatment-plans\"}"),
+        List.of("--output-form", "treatment-plans"),
+        DEFAULTS.withOutputForm(OutputForm.TREATMENT_PLANS));
+  }
+
+  static Stream<Path> chEmedCorpus() {
+    return RestTestSupport.corpus(RestTestSupport.CH_EMED).stream();
+  }
+
   private void assertParity(
       Path input,
       String from,

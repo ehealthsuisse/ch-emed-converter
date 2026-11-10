@@ -46,6 +46,10 @@ public final class RestTestSupport {
   public static final Path CHMED16A = FIXTURES.resolve("chmed16a");
   public static final Path CH_EMED = FIXTURES.resolve("chemed");
 
+  /** Official CH EMED EPR examples (module {@code format-ch-emed-epr}, feature 004). */
+  public static final Path EPR =
+      Path.of("..", "format-ch-emed-epr", "src", "test", "resources", "fixtures", "official");
+
   /** Contract of feature 002, the source of truth of the API (research R8). */
   public static final String OPENAPI =
       Path.of("..", "specs", "002-rest-conversion-service", "contracts", "openapi.yaml")

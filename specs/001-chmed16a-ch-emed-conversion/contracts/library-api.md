@@ -8,6 +8,12 @@ signature data (`ConversionResult.signature`, record `SignatureData`), `Converte
 SPI defaults `FormatModule.inputForms()` / `outputForms()`; see
 [specs/003-qr-erezept/contracts/library-api.md](../../003-qr-erezept/contracts/library-api.md).
 
+Extended by feature 004: format `CH_EMED_EPR`, output form `TREATMENT_PLANS`, options
+`treatmentPlanReferences` (`TreatmentPlanReference`) and `originalRepresentation`, the validator in
+the `MappingContext`, new reason codes; pairs of two non-CH-EMED formats are no longer composed but
+refused with the path through CH EMED. See
+[specs/004-ch-emed-epr/contracts/library-api.md](../../004-ch-emed-epr/contracts/library-api.md).
+
 ## Entry point
 
 ```java

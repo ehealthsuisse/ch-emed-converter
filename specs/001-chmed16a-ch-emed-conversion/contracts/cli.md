@@ -6,6 +6,10 @@ Extended by feature 003: `--output-form document|qr-payload|qr-image` and `--sig
 <file>`; inputs may also be QR images and signed eRezept URLs. See
 [specs/003-qr-erezept/contracts/cli.md](../../003-qr-erezept/contracts/cli.md).
 
+Extended by feature 004: format `ch-emed-epr`, `--output-form treatment-plans`, `--treatment-plan
+<documentId>,<statementId>` and `--original-representation <file>`. See
+[specs/004-ch-emed-epr/contracts/cli.md](../../004-ch-emed-epr/contracts/cli.md).
+
 ## Synopsis
 
 ```text

@@ -46,4 +46,14 @@ class ValidationMessageSanitizerTest {
         .isEqualTo(
             "Reference_REF_CantMatchChoice: Unable to find a match for profile among choices");
   }
+
+  @Test
+  void removesResourceIdsFromLocations() {
+    assertThat(
+            ValidationMessageSanitizer.location(
+                "Bundle.entry[1].resource/*Patient/PatientDupont*/.identifier[0].value"))
+        .isEqualTo("Bundle.entry[1].resource/*Patient*/.identifier[0].value");
+    assertThat(ValidationMessageSanitizer.location(null)).isEqualTo("Bundle");
+    assertThat(ValidationMessageSanitizer.location("Bundle.entry[0]")).isEqualTo("Bundle.entry[0]");
+  }
 }

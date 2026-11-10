@@ -2,6 +2,8 @@ package ch.emed.converter.cli;
 
 import ch.emed.converter.core.api.ConversionPair;
 import ch.emed.converter.core.api.Converter;
+import ch.emed.converter.core.api.FormatInfo;
+import ch.emed.converter.core.api.OutputForm;
 import java.util.Comparator;
 import java.util.concurrent.Callable;
 import picocli.CommandLine.Command;
@@ -28,6 +30,22 @@ final class FormatsCommand implements Callable<Integer> {
             p ->
                 context.out.println(
                     "  " + p.source().externalName() + " -> " + p.target().externalName()));
+    context.out.println("Forms:");
+    converter.formats().stream()
+        .sorted(Comparator.comparing((FormatInfo f) -> f.format().externalName()))
+        .forEach(
+            f ->
+                context.out.println(
+                    "  "
+                        + f.format().externalName()
+                        + ": input "
+                        + String.join(", ", f.inputForms())
+                        + "; output "
+                        + String.join(
+                            ", ", f.outputForms().stream().map(OutputForm::externalName).toList())
+                        + (f.documentTypes().isEmpty()
+                            ? ""
+                            : "; document types " + String.join(", ", f.documentTypes()))));
     context.out.println("Specifications:");
     converter
         .pinnedSpecifications()

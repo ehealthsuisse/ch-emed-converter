@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import org.hl7.fhir.common.hapi.validation.support.CachingValidationSupport;
 import org.hl7.fhir.common.hapi.validation.support.CommonCodeSystemsTerminologyService;
@@ -60,10 +61,23 @@ public final class HapiChEmedValidator implements ChEmedValidator {
   private final String rootPackage;
 
   public HapiChEmedValidator() {
+    this(ref -> true);
+  }
+
+  /**
+   * Creates a validator with a subset of the packages marked for loading; for tests that compare
+   * results with and without a package (feature 004, T009).
+   *
+   * @param include packages to load among those marked {@code "load": true}
+   */
+  HapiChEmedValidator(Predicate<PackageLoader.PackageRef> include) {
     long start = System.nanoTime();
     FhirContext ctx = ChEmedJson.context();
     NpmPackageValidationSupport npm = new NpmPackageValidationSupport(ctx);
     for (PackageLoader.PackageRef ref : PackageLoader.loadManifest(PACKAGE_DIRECTORY)) {
+      if (!include.test(ref)) {
+        continue;
+      }
       try {
         npm.loadPackageFromClasspath("classpath:" + PACKAGE_DIRECTORY + "/" + ref.file());
       } catch (IOException e) {
@@ -157,7 +171,7 @@ public final class HapiChEmedValidator implements ChEmedValidator {
               severity,
               ReasonCode.FHIR_VALIDATION,
               phase,
-              message.getLocationString() == null ? "Bundle" : message.getLocationString(),
+              ValidationMessageSanitizer.location(message.getLocationString()),
               ValidationMessageSanitizer.sanitize(message.getMessageId(), message.getMessage())));
     }
     return entries;

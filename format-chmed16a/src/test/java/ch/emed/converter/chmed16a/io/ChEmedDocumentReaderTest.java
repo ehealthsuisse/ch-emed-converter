@@ -81,6 +81,28 @@ class ChEmedDocumentReaderTest {
     assertThat(doc.composition().getTitle()).isEqualTo("Medikationsplan");
   }
 
+  /**
+   * Regression (feature 004): for the Medication Card, CH EMED fixes only the SNOMED CT code of the
+   * document type; the LOINC code is optional (the prescription requires LOINC 57833-6). The
+   * official PMLC examples of CH EMED EPR carry SNOMED only.
+   */
+  @Test
+  void medicationCardIsRecognisedBySnomedAlone() {
+    for (String[] c : new String[][] {{"chemed/medication-card-example.json", "MEDICATION_CARD"}}) {
+      org.hl7.fhir.r4.model.Bundle bundle =
+          ch.emed.converter.core.fhir.ChEmedJson.parse(Fixtures.bytes(c[0]));
+      ((org.hl7.fhir.r4.model.Composition) bundle.getEntryFirstRep().getResource())
+          .getType()
+          .getCoding()
+          .removeIf(coding -> "http://loinc.org".equals(coding.getSystem()));
+
+      ChEmedDocument doc = read(ch.emed.converter.core.fhir.ChEmedJson.serialize(bundle));
+
+      assertThat(errors()).as(c[0]).isEmpty();
+      assertThat(doc.type()).isEqualTo(DocumentType.valueOf(c[1]));
+    }
+  }
+
   @Test
   void officialMedicationPrescriptionIsDetectedAsPrescription() {
     ChEmedDocument doc = read(Fixtures.bytes("chemed/medication-prescription-example.json"));

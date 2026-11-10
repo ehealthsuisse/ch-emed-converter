@@ -13,6 +13,7 @@ import ch.emed.converter.core.api.OrganizationDetails;
 import ch.emed.converter.core.api.OutputForm;
 import ch.emed.converter.core.api.PatientIdentifier;
 import ch.emed.converter.core.api.SignatureData;
+import ch.emed.converter.core.api.TreatmentPlanReference;
 import ch.emed.converter.core.report.Outcome;
 import ch.emed.converter.core.report.ReasonCode;
 import ch.emed.converter.core.report.ReportJsonWriter;
@@ -22,7 +23,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -60,7 +63,9 @@ final class ConvertCommand implements Callable<Integer> {
   @Option(
       names = "--output-form",
       defaultValue = "document",
-      description = "Output form: document, qr-payload or qr-image (qr-* only with --to chmed16a)")
+      description =
+          "Output form: document, qr-payload, qr-image (qr-* only with --to chmed16a) or"
+              + " treatment-plans (only with --to ch-emed-epr and a medication card)")
   String outputForm;
 
   @Option(
@@ -101,6 +106,22 @@ final class ConvertCommand implements Callable<Integer> {
       names = "--strict",
       description = "Fail if clinically relevant information cannot be represented (FR-016)")
   boolean strict;
+
+  @Option(
+      names = "--treatment-plan",
+      paramLabel = "<documentId>,<statementId>",
+      description =
+          "Treatment-plan reference for --to ch-emed-epr, repeatable, in document order: one per"
+              + " prescribed medication or card entry without one; both urn:uuid:<uuid>")
+  List<String> treatmentPlans = new ArrayList<>();
+
+  @Option(
+      names = "--original-representation",
+      paramLabel = "<file>",
+      description =
+          "PDF/A used as original representation for --to ch-emed-epr (not with"
+              + " treatment-plans)")
+  Path originalRepresentation;
 
   ConvertCommand(CliContext context) {
     this.context = context;
@@ -156,7 +177,7 @@ final class ConvertCommand implements Callable<Integer> {
     try {
       form = OutputForm.fromExternalName(outputForm);
     } catch (IllegalArgumentException e) {
-      throw usage("--output-form must be document, qr-payload or qr-image");
+      throw usage("--output-form must be document, qr-payload, qr-image or treatment-plans");
     }
     boolean offered =
         converter.formats().stream()
@@ -240,6 +261,29 @@ final class ConvertCommand implements Callable<Integer> {
     }
     if (author != null) {
       options = options.withAuthor(readAuthor(author));
+    }
+    if (!treatmentPlans.isEmpty()) {
+      List<TreatmentPlanReference> references = new ArrayList<>();
+      for (String value : treatmentPlans) {
+        int sep = value.indexOf(',');
+        try {
+          if (sep < 0) {
+            throw new IllegalArgumentException();
+          }
+          references.add(
+              new TreatmentPlanReference(value.substring(0, sep), value.substring(sep + 1)));
+        } catch (IllegalArgumentException e) {
+          // the value is not echoed: it may identify a patient's document
+          throw usage("--treatment-plan must be <documentId>,<statementId>, both urn:uuid:<uuid>");
+        }
+      }
+      options = options.withTreatmentPlanReferences(references);
+    }
+    if (originalRepresentation != null) {
+      if (!Files.isRegularFile(originalRepresentation)) {
+        throw usage("--original-representation file not found");
+      }
+      options = options.withOriginalRepresentation(Files.readAllBytes(originalRepresentation));
     }
     return options;
   }

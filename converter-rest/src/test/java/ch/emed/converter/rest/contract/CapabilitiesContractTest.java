@@ -45,11 +45,31 @@ class CapabilitiesContractTest extends AbstractRestTest {
             converter().supportedConversions().stream()
                 .map(CapabilitiesContractTest::external)
                 .toList())
-        .contains("chmed16a->ch-emed", "ch-emed->chmed16a");
+        .contains("chmed16a->ch-emed", "ch-emed->chmed16a")
+        .contains("ch-emed-epr->ch-emed", "ch-emed->ch-emed-epr")
+        .doesNotContain("chmed16a->ch-emed-epr", "ch-emed-epr->chmed16a");
+    JsonNode epr =
+        stream(body.get("formats"))
+            .filter(f -> f.get("name").asText().equals("ch-emed-epr"))
+            .findFirst()
+            .orElseThrow();
+    assertThat(stream(epr.get("outputForms")).map(JsonNode::asText))
+        .containsExactly("document", "treatment-plans");
+    assertThat(stream(epr.get("documentTypes")).map(JsonNode::asText))
+        .containsExactly("PMLC", "PRE", "MTP");
+    assertThat(body.get("specifications").get("CH_EMED_EPR").asText())
+        .isEqualTo("ch.fhir.ig.ch-emed-epr#3.0.0");
 
     assertThat(stream(body.get("options")).map(o -> o.get("name").asText()))
         .containsExactly(
-            "strict", "language", "confidentiality", "patientIdentifier", "author", "outputForm");
+            "strict",
+            "language",
+            "confidentiality",
+            "patientIdentifier",
+            "author",
+            "outputForm",
+            "treatmentPlanReferences",
+            "originalRepresentation");
     JsonNode strict = stream(body.get("options")).findFirst().orElseThrow();
     assertThat(strict.get("type").asText()).isEqualTo("boolean");
     assertThat(strict.get("default").asBoolean()).isFalse();

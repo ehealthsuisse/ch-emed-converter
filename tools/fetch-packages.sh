@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Downloads the pinned CH EMED IG package and its full dependency closure from the FHIR package
-# registry into converter-validation/src/main/resources/packages/ and writes manifest.json
-# (name, version, sha256, load flag per package).
+# Downloads the pinned IG packages (CH EMED, CH EMED EPR) and their full dependency closure from the
+# FHIR package registry into converter-validation/src/main/resources/packages/ and writes
+# manifest.json (name, version, sha256, load flag per package).
 #
 # This is the ONLY step of the build that needs network access (research R2/R4). Run it once
 # when the pinned versions in docs/specifications.md change, review the result and commit it.
@@ -10,7 +10,15 @@
 # definitions.
 set -euo pipefail
 
-ROOT_PACKAGE="${1:-ch.fhir.ig.ch-emed#6.0.0}"
+# Root packages: CH EMED first (the manifest root, reported as pinned specification), then
+# CH EMED EPR (feature 004). Packages already reached from an earlier root keep their place and
+# load flag, so adding a root only appends packages to the manifest.
+if (($# > 0)); then
+  ROOTS=("$@")
+else
+  ROOTS=("ch.fhir.ig.ch-emed#6.0.0" "ch.fhir.ig.ch-emed-epr#3.0.0")
+fi
+ROOT_PACKAGE="${ROOTS[0]}"
 REGISTRY="${FHIR_REGISTRY:-https://packages.fhir.org}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET="${SCRIPT_DIR}/../converter-validation/src/main/resources/packages"
@@ -20,9 +28,11 @@ work="$(mktemp -d)"
 trap 'rm -rf "${work}"' EXIT
 : > "${work}/order.txt"
 
-queue=("${ROOT_PACKAGE}")
 declare -A seen=()
 
+# Breadth-first per root, roots one after another.
+for root in "${ROOTS[@]}"; do
+queue=("${root}")
 while ((${#queue[@]} > 0)); do
   spec="${queue[0]}"
   queue=("${queue[@]:1}")
@@ -60,6 +70,7 @@ print(sorted(vs, key=key)[-1])' "${prefix}")"
   for dep in ${deps}; do
     queue+=("${dep}")
   done
+done
 done
 
 python3 "${SCRIPT_DIR}/write-package-manifest.py" "${TARGET}" "${work}/order.txt" "${ROOT_PACKAGE}"

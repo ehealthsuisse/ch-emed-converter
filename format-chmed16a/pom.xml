@@ -7,7 +7,7 @@
   <parent>
     <groupId>ch.emed.converter</groupId>
     <artifactId>ch-emed-converter-parent</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>format-chmed16a</artifactId>
@@ -49,4 +49,22 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <!-- test jar for the tests of format-ch-emed-epr (feature 004): fixtures and testsupport;
+             not shipped -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

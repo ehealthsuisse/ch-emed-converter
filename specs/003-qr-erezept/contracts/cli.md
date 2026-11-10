@@ -3,6 +3,9 @@
 Changes to the [feature 001 CLI contract](../../001-chmed16a-ch-emed-conversion/contracts/cli.md).
 Existing options, streams and exit codes are unchanged.
 
+Feature 004 adds `--output-form treatment-plans` and two options for `--to ch-emed-epr`:
+[specs/004-ch-emed-epr/contracts/cli.md](../../004-ch-emed-epr/contracts/cli.md).
+
 ## New options
 
 | Option | Meaning | Default |

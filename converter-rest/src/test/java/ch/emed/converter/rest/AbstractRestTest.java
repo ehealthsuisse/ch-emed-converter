@@ -35,4 +35,25 @@ public abstract class AbstractRestTest {
         .contentType(MediaType.APPLICATION_JSON)
         .content(RestTestSupport.requestMessage(document, options));
   }
+
+  /**
+   * Feature 004: runs CH EMED EPR in both directions through the service, also as treatment-plans
+   * and with treatment-plan references (privacy and network tests, SC-007, SC-008).
+   */
+  protected void convertEpr() throws Exception {
+    for (java.nio.file.Path input : RestTestSupport.corpus(RestTestSupport.EPR)) {
+      mvc.perform(convert("ch-emed-epr", "ch-emed", RestTestSupport.read(input), null));
+    }
+    JsonNode references =
+        RestTestSupport.json(
+            "{\"treatmentPlanReferences\":[{\"documentId\":"
+                + "\"urn:uuid:11111111-1111-4111-8111-111111111111\",\"statementId\":"
+                + "\"urn:uuid:22222222-2222-4222-8222-222222222222\"}]}");
+    JsonNode plans = RestTestSupport.json("{\"outputForm\":\"treatment-plans\"}");
+    for (java.nio.file.Path input : RestTestSupport.corpus(RestTestSupport.CH_EMED)) {
+      byte[] document = RestTestSupport.read(input);
+      mvc.perform(convert("ch-emed", "ch-emed-epr", document, references));
+      mvc.perform(convert("ch-emed", "ch-emed-epr", document, plans));
+    }
+  }
 }

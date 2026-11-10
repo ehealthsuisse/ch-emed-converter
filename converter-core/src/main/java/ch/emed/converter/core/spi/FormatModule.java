@@ -30,6 +30,16 @@ public interface FormatModule {
     return List.of(OutputForm.DOCUMENT);
   }
 
+  /**
+   * Names of the document types the format converts, listed in the capabilities (feature 004,
+   * FR-014); empty by default.
+   *
+   * @return document types
+   */
+  default List<String> documentTypes() {
+    return List.of();
+  }
+
   FormatId format();
 
   /**
