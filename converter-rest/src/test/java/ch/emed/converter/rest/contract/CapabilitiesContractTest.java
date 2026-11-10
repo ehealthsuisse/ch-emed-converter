@@ -55,6 +55,8 @@ class CapabilitiesContractTest extends AbstractRestTest {
             .orElseThrow();
     assertThat(stream(epr.get("outputForms")).map(JsonNode::asText))
         .containsExactly("document", "treatment-plans");
+    assertThat(stream(epr.get("documentTypes")).map(JsonNode::asText))
+        .containsExactly("PMLC", "PRE", "MTP");
     assertThat(body.get("specifications").get("CH_EMED_EPR").asText())
         .isEqualTo("ch.fhir.ig.ch-emed-epr#3.0.0");
 

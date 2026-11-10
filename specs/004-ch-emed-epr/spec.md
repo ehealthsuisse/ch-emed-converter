@@ -19,6 +19,8 @@
 - Q: The author of a PMLC is the aggregation service of the EPR (a device without GLN), while CHMED16A requires the GLN of the author. Should the existing author option fill it on the way to an eMediplan? → A: No. The conversion to CHMED16A reports the missing author GLN; this capability gap is documented (US1.2).
 - Q: CH EMED EPR requires every prescription item and every card entry to reference its treatment plan (MTP) in the EPR, every card entry to name the last considered document, and prescriptions and cards to carry an original representation as PDF/A; general CH EMED documents, for example from an eMediplan, have none of this. How are PRE and PMLC produced from them? → A: The caller supplies the treatment-plan references as an option (FR-017); the caller may supply the original representation as PDF/A, and the converter renders one as PDF/A when neither the caller nor the source provides one (FR-018).
 - Q: A PMLC has exactly one author, the community's aggregation service (a Device); cards from an eMediplan have a person as author. Should the converter create that author? → A: No. A card whose author is not a Device is refused with `MISSING_REQUIRED_DATA` at the author, as a documented capability gap; cards read from the EPR convert (research F8).
+- Q: A card from the EPR is authored by the aggregation service, but a treatment plan (MTP) needs a person as author. Where does the author of its MTPs come from? → A: From the information source of each card entry, the person who recorded the treatment; a contained one moves into the MTP document. Data of the source, not invented, reported as derived value (research F10).
+- Q: The validator writes resource ids into its paths, and ids may be built from a patient's name. May reports keep them? → A: No. Paths keep the resource type, not the id, also for the existing conversions; this is recorded in the changelog (research F11).
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -143,7 +145,7 @@ Integrators use the library, the command line or the REST service and get the sa
 - **FR-006**: Every CH EMED EPR output MUST validate without errors against the pinned CH EMED EPR profiles and the CH EMED and CH Core profiles they depend on; output failing validation MUST NOT be returned.
 - **FR-007**: Every CH EMED EPR input MUST be validated against the pinned CH EMED EPR profiles before conversion; an input with errors MUST be refused with the validation findings.
 - **FR-008**: Elements that CH EMED EPR does not support MUST be left out of CH EMED EPR output and listed in the report with path and reason; clinically relevant elements MUST be marked as clinical loss.
-- **FR-009**: Data required by CH EMED EPR but missing in the source MUST come from options: the existing patient identifier, author and confidentiality, and the treatment-plan references of FR-017; otherwise the conversion MUST fail with `MISSING_REQUIRED_DATA` naming the missing data, never its values. No other defaults may be applied to clinically relevant data.
+- **FR-009**: Data required by CH EMED EPR but missing in the source MUST come from options: the existing patient identifier, author and confidentiality, and the treatment-plan references of FR-017; otherwise the conversion MUST fail with `MISSING_REQUIRED_DATA` naming the missing data, never its values. Data taken from elsewhere in the source document is reported as derived value (for example the author of a treatment plan, research F10). No other defaults may be applied to clinically relevant data.
 - **FR-010**: A round trip CH EMED EPR → CH EMED → CH EMED EPR MUST give the original document apart from the changes documented in the mapping specification; a round trip CH EMED → CH EMED EPR → CH EMED MUST differ only by the documented elements of FR-008.
 - **FR-011**: For identical input and options, output MUST be byte-identical, including the identifiers of generated MTP documents.
 - **FR-012**: The rules of every conversion direction MUST be documented in the mapping specification and covered by fixture tests, including the official examples of CH EMED EPR for the three document types.
@@ -152,12 +154,12 @@ Integrators use the library, the command line or the REST service and get the sa
 
 **Interfaces**
 
-- **FR-013**: All conversions, options and the treatment-plan request MUST be available through library, CLI and REST with identical behaviour and report, without changing the behaviour of existing operations.
+- **FR-013**: All conversions, options and the treatment-plan request MUST be available through library, CLI and REST with identical behaviour and report, without changing the behaviour of existing operations, except the privacy correction of FR-015 to the report paths.
 - **FR-014**: The capability information of the service MUST list CH EMED EPR, its conversions and document types, and the API description MUST cover them, including results with several documents.
 
 **Data protection**
 
-- **FR-015**: Logs, error messages and reports MUST NOT contain patient-identifying data; they reference element paths and resource ids, as for the existing conversions.
+- **FR-015**: Logs, error messages and reports MUST NOT contain patient-identifying data; they reference element paths and resource types, never resource ids, which may contain names (clarification 2026-11-09, research F11).
 - **FR-016**: The system MUST NOT contact the EPR, CARA's eMedication service or any other external service; submitting and retrieving documents stays with the primary system.
 
 ### Key Entities

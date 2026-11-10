@@ -26,8 +26,10 @@ the report format MUST be recorded here (constitution, "Development Workflow").
 - Reason codes `NO_TREATMENTS`, `TREATMENT_PLAN_EXISTS`, `TREATMENT_PLAN_REFERENCES_MISMATCH` and,
   in the EPR module, `PROFILE_CHANGED`.
 - OpenAPI 1.2.0 (additive): `outputForm` `treatment-plans`, `treatmentPlanReferences`,
-  `originalRepresentation`; capabilities list them.
-- CLI `formats` lists the input and output forms of every format.
+  `originalRepresentation`; capabilities list them and, per format, `documentTypes` (`PMLC`,
+  `PRE`, `MTP` for `ch-emed-epr`; library `FormatInfo.documentTypes()`, SPI
+  `FormatModule.documentTypes()`).
+- CLI `formats` lists the input and output forms and the document types of every format.
 
 ### Changed
 

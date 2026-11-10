@@ -48,6 +48,12 @@ public final class ChEmedEprFormatModule implements FormatModule {
     return List.of("json");
   }
 
+  /** PMLC, PRE and MTP (FR-002, FR-014). */
+  @Override
+  public List<String> documentTypes() {
+    return java.util.Arrays.stream(EprDocumentType.values()).map(Enum::name).toList();
+  }
+
   @Override
   public List<OutputForm> outputForms() {
     return List.of(OutputForm.DOCUMENT, OutputForm.TREATMENT_PLANS);

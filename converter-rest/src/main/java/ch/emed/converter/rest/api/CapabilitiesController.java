@@ -77,7 +77,8 @@ public class CapabilitiesController {
                 new Format(
                     f.format().externalName(),
                     f.inputForms(),
-                    f.outputForms().stream().map(OutputForm::externalName).toList()))
+                    f.outputForms().stream().map(OutputForm::externalName).toList(),
+                    f.documentTypes()))
         .toList();
   }
 

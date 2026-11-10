@@ -704,3 +704,12 @@ Each step leaves the existing conversions byte-identical (FR-013).
 - [P] tasks touch different files and have no dependencies on incomplete tasks.
 - Every finding of T014 that changes a decision of research.md is recorded there too.
 - Commit after each task or logical group, on Stefan's yes.
+
+## Phase 9: Convergence
+
+- [X] T069 Reconcile FR-015 and FR-013 with research F11 (validator paths keep the resource type, not the resource id; reports of existing conversions change): record the decision as a clarification in `spec.md` and adjust the FR-015 wording, or revert `ValidationMessageSanitizer.location` per FR-015, FR-013 (contradicts)
+- [X] T070 Confirm the MTP author taken from the entry's `informationSource`, and the contained PractitionerRole moved into the MTP document (research F10, `TreatmentPlanSplitter`), as a clarification in `spec.md`, or replace it with `MISSING_REQUIRED_DATA` at the author per FR-009, plan R7 (unrequested)
+- [X] T071 List the document types of `ch-emed-epr` (PMLC, PRE, MTP) in the capabilities (`CapabilitiesResponse`, `openapi.yaml`) and in CLI `formats`, with a contract test per FR-014 (partial)
+- [X] T072 Add a test in `format-ch-emed-epr/src/test/java/ch/emed/converter/epr/it/ChEmedToEprIT.java`: a CH EMED dispense, pharmaceutical advice and medication list example of `ch.fhir.ig.ch-emed#6.0.0` sent to `ch-emed-epr` fails with `UNSUPPORTED_DOCUMENT_TYPE` naming the supported types per spec edge case 1 (partial)
+- [X] T073 Add a test: an official CH EMED EPR example sent as source `ch-emed` converts as CH EMED (to `ch-emed-epr` and to `chmed16a`) without errors caused by its EPR profiles per spec edge case 4 (partial)
+- [ ] T074 Build the OCI image (`./mvnw -pl converter-rest spring-boot:build-image`, needs Docker) and check that it contains `format-ch-emed-epr` per T050 (partial)

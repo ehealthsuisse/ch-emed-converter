@@ -321,6 +321,11 @@ components:
               outputForms:
                 type: array
                 items: { type: string, enum: [document, qr-payload, qr-image, treatment-plans] }
+              documentTypes:
+                type: array
+                description: Document types the format converts (feature 004), e.g. PMLC, PRE, MTP; empty if the format does not name them.
+                items: { type: string }
+                examples: [[PMLC, PRE, MTP]]
         options:
           type: array
           items:

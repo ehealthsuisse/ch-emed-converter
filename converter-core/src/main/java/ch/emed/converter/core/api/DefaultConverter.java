@@ -271,7 +271,9 @@ public final class DefaultConverter implements Converter {
     List<FormatInfo> formats = new ArrayList<>();
     formats.add(new FormatInfo(FormatId.CH_EMED, List.of("json"), List.of(OutputForm.DOCUMENT)));
     for (FormatModule module : registry.modules()) {
-      formats.add(new FormatInfo(module.format(), module.inputForms(), module.outputForms()));
+      formats.add(
+          new FormatInfo(
+              module.format(), module.inputForms(), module.outputForms(), module.documentTypes()));
     }
     formats.sort(Comparator.comparing(f -> f.format().id()));
     return List.copyOf(formats);
