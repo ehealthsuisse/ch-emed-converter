@@ -82,8 +82,8 @@ The conversions of stories 1 and 2 and the options they need are available throu
 - Original representation: optional for DIS, PADV and PML; a PDF/A of the source or supplied by the caller is kept, none is rendered, and every case is reported.
 - Very large medication list (for example 100 entries of each kind) → converted within the time limits of feature 004.
 - CH EMED dispense, pharmaceutical advice or medication list converted to CHMED16A → refused as
-  before (eMediplan knows only medication plans and prescriptions); the existing refusal stays
-  (clarification 2026-11-10).
+  before (eMediplan knows only medication plans and prescriptions); the existing refusal stays and
+  its message now names the supported types (clarification 2026-11-10).
 - Non-ASCII content (umlauts, accents, French and Italian texts) → preserved.
 
 ## Requirements *(mandatory)*
