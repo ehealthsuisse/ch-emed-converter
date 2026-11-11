@@ -23,10 +23,12 @@ import org.hl7.fhir.r4.model.Composition;
 import org.hl7.fhir.r4.model.DomainResource;
 import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.MedicationDispense;
 import org.hl7.fhir.r4.model.MedicationRequest;
 import org.hl7.fhir.r4.model.MedicationStatement;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.PractitionerRole;
+import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
 import org.junit.jupiter.api.Test;
 
@@ -322,5 +324,199 @@ class RequiredDataTest {
     ReportCollector report = run(bundle, EprDocumentType.MTP, ConversionOptions.defaults());
 
     assertThat(errors(report)).isEmpty();
+  }
+
+  // ---- feature 005 (T012, research R4, F1; rules M-EPR-28, M-EPR-29) --------------------------
+
+  private static Bundle module(String fixture) {
+    return ChEmedJson.parse(EprFixtures.bytes(fixture));
+  }
+
+  /** The dispense 1-2 without its treatment-plan reference (3-1 and 3-2 are administrations). */
+  private static Bundle dispenseWithoutPlan() {
+    Bundle dis = module("chemed/Bundle-1-2-MedicationDispense.json");
+    resources(dis, MedicationDispense.class)
+        .forEach(
+            d ->
+                d.getExtension().removeIf(e -> e.getUrl().equals(RequiredData.EXT_TREATMENT_PLAN)));
+    return dis;
+  }
+
+  private static List<ReportEntry> missingExtensions(ReportCollector report) {
+    return errors(report).stream()
+        .filter(e -> e.code().equals(ReasonCode.MISSING_REQUIRED_DATA))
+        .filter(e -> e.path().endsWith(".extension"))
+        .toList();
+  }
+
+  @Test
+  void aDispenseWithItsTreatmentPlanIsKept() {
+    Bundle dis = module("chemed/Bundle-1-2-MedicationDispense.json");
+    MedicationDispense dispense = resources(dis, MedicationDispense.class).get(0);
+    Extension before = dispense.getExtensionByUrl(RequiredData.EXT_TREATMENT_PLAN).copy();
+
+    ReportCollector report = run(dis, EprDocumentType.DIS, ConversionOptions.defaults());
+
+    assertThat(missingExtensions(report)).isEmpty();
+    assertThat(dispense.getExtensionByUrl(RequiredData.EXT_TREATMENT_PLAN).equalsDeep(before))
+        .isTrue();
+    assertThat(report.entries())
+        .noneMatch(
+            e -> e.code().equals(ReasonCode.DERIVED_VALUE) && e.path().endsWith(".extension"));
+  }
+
+  @Test
+  void aDispenseWithoutTreatmentPlanNeedsExactlyOneReference() {
+    // without option: missing, no identifier in the message
+    Bundle dis = dispenseWithoutPlan();
+    ReportCollector report = run(dis, EprDocumentType.DIS, ConversionOptions.defaults());
+    assertThat(missingExtensions(report))
+        .singleElement()
+        .satisfies(
+            e -> {
+              assertThat(e.path()).matches("Bundle\\.entry\\[\\d+]\\.resource\\.extension");
+              assertThat(e.message()).doesNotContain("urn:uuid");
+            });
+
+    // one reference: added and reported as derived value
+    dis = dispenseWithoutPlan();
+    report = run(dis, EprDocumentType.DIS, references(1));
+    assertThat(missingExtensions(report)).isEmpty();
+    Extension plan =
+        resources(dis, MedicationDispense.class)
+            .get(0)
+            .getExtensionByUrl(RequiredData.EXT_TREATMENT_PLAN);
+    assertThat(value(plan, "externalDocumentId")).isEqualTo(DOC1);
+    assertThat(value(plan, "id")).isEqualTo(MS1);
+    assertThat(report.entries())
+        .filteredOn(
+            e -> e.code().equals(ReasonCode.DERIVED_VALUE) && e.path().endsWith(".extension"))
+        .hasSize(1);
+
+    // two references for one dispense
+    dis = dispenseWithoutPlan();
+    report = run(dis, EprDocumentType.DIS, references(2));
+    assertThat(errors(report))
+        .extracting(ReportEntry::code)
+        .contains(ReasonCode.TREATMENT_PLAN_REFERENCES_MISMATCH);
+  }
+
+  /** Research F3: CH EMED EPR has no administration; such a dispense document has no DIS. */
+  @Test
+  void aDispenseDocumentRecordingAnAdministrationIsRefused() {
+    for (String name :
+        List.of("Bundle-3-1-MedicationDispense.json", "Bundle-3-2-MedicationDispense.json")) {
+      Bundle dis = module("chemed/" + name);
+
+      ReportCollector report = run(dis, EprDocumentType.DIS, references(1));
+
+      assertThat(errors(report))
+          .as(name)
+          .extracting(ReportEntry::code, ReportEntry::path)
+          .contains(tuple(ReasonCode.MISSING_REQUIRED_DATA, "Bundle.entry[0].resource.section"));
+    }
+  }
+
+  @Test
+  void aReferenceForADispenseThatHasOneIsAMismatch() {
+    Bundle dis = module("chemed/Bundle-1-2-MedicationDispense.json");
+
+    ReportCollector report = run(dis, EprDocumentType.DIS, references(1));
+
+    assertThat(errors(report))
+        .extracting(ReportEntry::code)
+        .contains(ReasonCode.TREATMENT_PLAN_REFERENCES_MISMATCH);
+  }
+
+  @Test
+  void anAdviceObservationNeedsNoTreatmentPlan() {
+    Bundle padv = module("chemed/Bundle-2-2-PharmaceuticalAdvice.json");
+    for (DomainResource r : resources(padv, DomainResource.class)) {
+      r.getExtension().removeIf(e -> e.getUrl().equals(RequiredData.EXT_TREATMENT_PLAN));
+    }
+
+    ReportCollector report = run(padv, EprDocumentType.PADV, ConversionOptions.defaults());
+
+    assertThat(missingExtensions(report)).isEmpty();
+  }
+
+  /**
+   * Research F1: the changed MedicationRequest of an advice needs its treatment plan (EPR 1..1).
+   */
+  @Test
+  void theChangedRequestOfAnAdviceTakesItsTreatmentPlanFromTheOption() {
+    Bundle padv = module("official/Bundle-DocumentPadv2.json");
+    MedicationRequest changed = resources(padv, MedicationRequest.class).get(0);
+    changed.getExtension().removeIf(e -> e.getUrl().equals(RequiredData.EXT_TREATMENT_PLAN));
+
+    ReportCollector report = run(padv, EprDocumentType.PADV, ConversionOptions.defaults());
+    assertThat(missingExtensions(report)).hasSize(1);
+
+    padv = module("official/Bundle-DocumentPadv2.json");
+    changed = resources(padv, MedicationRequest.class).get(0);
+    changed.getExtension().removeIf(e -> e.getUrl().equals(RequiredData.EXT_TREATMENT_PLAN));
+    report = run(padv, EprDocumentType.PADV, references(1));
+    assertThat(missingExtensions(report)).isEmpty();
+    assertThat(value(changed.getExtensionByUrl(RequiredData.EXT_TREATMENT_PLAN), "id"))
+        .isEqualTo(MS1);
+  }
+
+  @Test
+  void aListWithADeviceAuthorIsComplete() {
+    Bundle pml = module("chemed/Bundle-2-1-MedicationList.json");
+
+    ReportCollector report = run(pml, EprDocumentType.PML, ConversionOptions.defaults());
+
+    assertThat(errors(report)).noneMatch(e -> e.path().equals("Bundle.entry[0].resource.author"));
+  }
+
+  @Test
+  void aListNeedsTheAggregationServiceAsAuthor() {
+    Bundle pml = module("chemed/Bundle-2-1-MedicationList.json");
+    Composition composition = (Composition) pml.getEntryFirstRep().getResource();
+    PractitionerRole role = resources(pml, PractitionerRole.class).get(0);
+    String url =
+        pml.getEntry().stream()
+            .filter(e -> e.getResource() == role)
+            .findFirst()
+            .orElseThrow()
+            .getFullUrl();
+    composition.getAuthor().clear();
+    composition.addAuthor(new Reference(url));
+
+    ReportCollector report = run(pml, EprDocumentType.PML, ConversionOptions.defaults());
+
+    assertThat(errors(report))
+        .extracting(ReportEntry::code, ReportEntry::path)
+        .containsExactly(
+            tuple(ReasonCode.MISSING_REQUIRED_DATA, "Bundle.entry[0].resource.author"));
+  }
+
+  @Test
+  void treatmentPlanReferencesAreNotUsedForAList() {
+    Bundle pml = module("chemed/Bundle-2-1-MedicationList.json");
+    List<String> before =
+        resources(pml, DomainResource.class).stream()
+            .filter(r -> !(r instanceof Composition))
+            .map(r -> r.getExtension().stream().map(Extension::getUrl).toList().toString())
+            .toList();
+
+    ReportCollector report = run(pml, EprDocumentType.PML, references(1));
+
+    assertThat(errors(report)).isEmpty();
+    assertThat(
+            resources(pml, DomainResource.class).stream()
+                .filter(r -> !(r instanceof Composition))
+                .map(r -> r.getExtension().stream().map(Extension::getUrl).toList().toString())
+                .toList())
+        .isEqualTo(before);
+    assertThat(report.entries())
+        .filteredOn(e -> e.severity() == Severity.WARNING)
+        .singleElement()
+        .satisfies(
+            e -> {
+              assertThat(e.path()).isEqualTo("options.treatmentPlanReferences");
+              assertThat(e.message()).contains("not used");
+            });
   }
 }

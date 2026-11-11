@@ -23,6 +23,7 @@ import org.hl7.fhir.r4.model.Device;
 import org.hl7.fhir.r4.model.DomainResource;
 import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.MedicationDispense;
 import org.hl7.fhir.r4.model.MedicationRequest;
 import org.hl7.fhir.r4.model.MedicationStatement;
 import org.hl7.fhir.r4.model.Organization;
@@ -59,14 +60,27 @@ public final class RequiredData {
    * @param ctx mapping context with options and report
    * @return false if required data is missing (ERROR entries added)
    */
-  @MappingRule({"M-EPR-23", "M-EPR-24"})
+  @MappingRule({"M-EPR-23", "M-EPR-24", "M-EPR-28", "M-EPR-29"})
   public boolean complete(Bundle epr, EprDocumentType type, MappingContext ctx) {
     Composition composition = (Composition) epr.getEntryFirstRep().getResource();
     boolean ok = patient(epr, composition, ctx);
     ok &= author(epr, composition, type, ctx);
     confidentiality(composition, ctx);
-    if (type != EprDocumentType.MTP) {
-      ok &= treatmentPlans(epr, composition, type, ctx);
+    switch (type) {
+      case MTP -> {}
+      case PML -> {
+        // feature 005, research R4: a list comes from the EPR with its references; no option
+        if (!ctx.options().treatmentPlanReferences().isEmpty()) {
+          ctx.report()
+              .add(
+                  ReportEntry.warning(
+                      ReasonCode.UNMAPPABLE_ELEMENT,
+                      Phase.MAP,
+                      "options.treatmentPlanReferences",
+                      "Treatment-plan references not used for a medication list (PML)"));
+        }
+      }
+      default -> ok &= treatmentPlans(epr, composition, type, ctx);
     }
     return ok;
   }
@@ -100,8 +114,9 @@ public final class RequiredData {
   private static boolean author(
       Bundle epr, Composition composition, EprDocumentType type, MappingContext ctx) {
     String path = "Bundle.entry[0].resource.author";
-    if (type == EprDocumentType.PMLC) {
-      // F8 (decision 2026-11-09): the author of a PMLC is the community's aggregation service
+    if (type == EprDocumentType.PMLC || type == EprDocumentType.PML) {
+      // F8 (decision 2026-11-09) and feature 005 (clarification 2026-11-10, M-EPR-29): the author
+      // of a PMLC or PML is the community's aggregation service
       boolean device =
           composition.getAuthor().size() == 1
               && resource(epr, composition.getAuthorFirstRep()) instanceof Device;
@@ -109,8 +124,12 @@ public final class RequiredData {
         missing(
             ctx,
             path,
-            "The author of a CH EMED EPR medication card (PMLC) is the aggregation service of the"
-                + " community, a Device; the converter does not create it");
+            "The author of a CH EMED EPR "
+                + (type == EprDocumentType.PMLC
+                    ? "medication card (PMLC)"
+                    : "medication list (PML)")
+                + " is the aggregation service of the community, a Device; the converter does not"
+                + " create it");
       }
       return device;
     }
@@ -261,24 +280,58 @@ public final class RequiredData {
     }
   }
 
-  /** R15: treatment-plan references and, for PMLC, the last considered document. */
+  /**
+   * R15: treatment-plan references and, for PMLC, the last considered document; feature 005: the
+   * dispense of a DIS (M-EPR-28) and the changed MedicationRequest of a PADV (research F1).
+   */
   private static boolean treatmentPlans(
       Bundle epr, Composition composition, EprDocumentType type, MappingContext ctx) {
     List<DomainResource> entries = new ArrayList<>();
     List<String> paths = new ArrayList<>();
-    for (Composition.SectionComponent section : composition.getSection()) {
-      for (Reference ref : section.getEntry()) {
-        int index = index(epr, ref);
-        Resource r = index < 0 ? null : epr.getEntry().get(index).getResource();
-        boolean entry =
-            type == EprDocumentType.PRE
-                ? r instanceof MedicationRequest
-                : r instanceof MedicationStatement;
-        if (entry) {
-          entries.add((DomainResource) r);
-          paths.add("Bundle.entry[" + index + "].resource");
+    if (type == EprDocumentType.PADV) {
+      // research F1 (feature 005): the changed MedicationRequest of an advice, as Bundle entry or
+      // contained in the observation, needs its treatment plan (EPR 1..1); the observation does not
+      for (int i = 0; i < epr.getEntry().size(); i++) {
+        Resource r = epr.getEntry().get(i).getResource();
+        if (r instanceof MedicationRequest request) {
+          entries.add(request);
+          paths.add("Bundle.entry[" + i + "].resource");
+        } else if (r instanceof DomainResource domain) {
+          for (int j = 0; j < domain.getContained().size(); j++) {
+            if (domain.getContained().get(j) instanceof MedicationRequest request) {
+              entries.add(request);
+              paths.add("Bundle.entry[" + i + "].resource.contained[" + j + "]");
+            }
+          }
         }
       }
+    } else {
+      for (Composition.SectionComponent section : composition.getSection()) {
+        for (Reference ref : section.getEntry()) {
+          int index = index(epr, ref);
+          Resource r = index < 0 ? null : epr.getEntry().get(index).getResource();
+          boolean entry =
+              switch (type) {
+                case PRE -> r instanceof MedicationRequest;
+                case DIS -> r instanceof MedicationDispense;
+                default -> r instanceof MedicationStatement;
+              };
+          if (entry) {
+            entries.add((DomainResource) r);
+            paths.add("Bundle.entry[" + index + "].resource");
+          }
+        }
+      }
+    }
+    if (type == EprDocumentType.DIS && entries.isEmpty()) {
+      // research F3 (feature 005): CH EMED also allows an administration in a dispense document;
+      // CH EMED EPR requires a MedicationDispense and has no administration
+      missing(
+          ctx,
+          "Bundle.entry[0].resource.section",
+          "CH EMED EPR requires a MedicationDispense in a dispense document (DIS); a medication"
+              + " administration is not supported");
+      return false;
     }
     List<Integer> without = new ArrayList<>();
     for (int i = 0; i < entries.size(); i++) {

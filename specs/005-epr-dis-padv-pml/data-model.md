@@ -23,10 +23,16 @@ Any other type: `UNSUPPORTED_DOCUMENT_TYPE`, message lists the six types (FR-003
 | Type | Author (EPR) | Treatment-plan reference | Option used |
 |------|--------------|--------------------------|-------------|
 | DIS | PractitionerRole, Patient, RelatedPerson or Device | MedicationDispense: required | `treatmentPlanReferences`, exactly one when the dispense has none |
-| PADV | as DIS | Observation: optional, kept | – |
+| PADV | as DIS | Observation: optional, kept; changed MedicationRequest: required (research F1) | `treatmentPlanReferences` for the changed request without one |
 | PML | Device only | as the `-list` profiles require, from the source | – |
 
 Patient identifier, author details and confidentiality are handled as in feature 004.
+
+A CH EMED dispense document that records a MedicationAdministration has no DIS (research F3):
+`MISSING_REQUIRED_DATA` at `Bundle.entry[0].resource.section`.
+
+Full URLs that are not `urn:uuid` are replaced on the way to CH EMED EPR (rule M-EPR-05, research F5),
+each reported as `DERIVED_VALUE`.
 
 Failure: `MISSING_REQUIRED_DATA` naming the path, never values. A wrong number of references gives
 `TREATMENT_PLAN_REFERENCES_MISMATCH`.

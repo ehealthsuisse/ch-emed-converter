@@ -163,7 +163,7 @@ options; every output validates against CH EMED EPR.
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T012 [P] [US2] Write tests first in `mapping/RequiredDataTest.java` (research R4, rules
+- [X] T012 [P] [US2] Write tests first in `mapping/RequiredDataTest.java` (research R4, rules
   M-EPR-23, M-EPR-28, M-EPR-29):
   - **Dispense with a treatment-plan reference**: unchanged.
   - **Dispense without a reference (3-1)**:
@@ -178,16 +178,16 @@ options; every output validates against CH EMED EPR.
     - with a PractitionerRole author (synthetic `fixtures/chemed/MedicationList-PersonAuthor.json`):
       `MISSING_REQUIRED_DATA` at `Composition.author`;
     - the option is ignored for lists and reported as not used.
-- [ ] T013 [P] [US2] Extend `mapping/UnsupportedElementsTest.java`:
+- [X] T013 [P] [US2] Extend `mapping/UnsupportedElementsTest.java`:
   - one unsupported element in the changed MedicationStatement of a PADV, contained and as a
     Bundle entry;
   - one in a MedicationDispense and its contained Medication.
 
   Each is removed and reported with its path; clinical ones carry the clinical-loss flag (FR-006).
-- [ ] T014 [P] [US2] Extend `mapping/FromChEmedMapperTest.java` with one fixture per new rule
+- [X] T014 [P] [US2] Extend `mapping/FromChEmedMapperTest.java` with one fixture per new rule
   (M-EPR-28, M-EPR-29) and per type (1-2 → DIS, ChangeDosage → PADV, 2-1 → PML). Compare byte for
   byte against new files in `fixtures/expected/`.
-- [ ] T015 [P] [US2] Write tests first in a new `mapping/ReferenceConsistencyTest.java` (research
+- [X] T015 [P] [US2] Write tests first in a new `mapping/ReferenceConsistencyTest.java` (research
   R5, data-model §3, rule M-EPR-04). Add synthetic CH EMED and EPR inputs in `fixtures/chemed/`,
   one contradiction each:
   - C1: the same entry `id` with two document ids;
@@ -198,7 +198,7 @@ options; every output validates against CH EMED EPR.
   For each case: exactly one WARNING `REFERENCE_INCONSISTENT`, with the paths of both extensions,
   no identifier in the message, output byte-identical to the run without the check, and no
   clinical loss. Also: no entry for any official example of both IGs (SC-008).
-- [ ] T016 [US2] Extend `it/ChEmedToEprIT.java` (SC-002) over 1-2, 2-4, 3-1 and 3-2 (with option),
+- [X] T016 [US2] Extend `it/ChEmedToEprIT.java` (SC-002) over 1-2, 2-4, 3-1 and 3-2 (with option),
   2-2, ChangeDosage and 2-1:
   - every output validates against the EPR profiles;
   - the report lists every removed element;
@@ -209,25 +209,25 @@ options; every output validates against CH EMED EPR.
 
 ### Implementation for User Story 2
 
-- [ ] T017 [US2] Extend `mapping/RequiredData.java` per data-model §2 (research R4):
+- [X] T017 [US2] Extend `mapping/RequiredData.java` per data-model §2 (research R4):
   - `treatmentPlans` selects the MedicationDispense for DIS;
   - PADV skips the treatment-plan step;
   - PML checks the Device author, like the PMLC check of F8, and does not use the option.
 
   Rules M-EPR-23, -28 and -29 are annotated with `@MappingRule`. Make T012 pass.
-- [ ] T018 [US2] Make T013 and T014 pass. Expected changes:
+- [X] T018 [US2] Make T013 and T014 pass. Expected changes:
   - none in `mapping/UnsupportedElements.java` (research R3);
   - in `mapping/FromChEmedMapper.java`, only the type-dependent branches, if any.
 
   Record any deviation as a finding in `research.md`.
-- [ ] T019 [US2] Implement `mapping/ReferenceConsistency.java` (rules C1–C4, `@MappingRule`
+- [X] T019 [US2] Implement `mapping/ReferenceConsistency.java` (rules C1–C4, `@MappingRule`
   M-EPR-04).
   - Call it in `ChEmedEprFormatModule` after mapping, in both directions, before output
     validation.
   - Before fixing the rules, run them over all official examples. A rule that reports an official
     example is narrowed, and the narrowing is recorded as a finding in `research.md`.
   - Make T015 pass.
-- [ ] T020 [US2] Make T016 pass. For any official CH EMED example that cannot become an EPR
+- [X] T020 [US2] Make T016 pass. For any official CH EMED example that cannot become an EPR
   document even with options, document the reason in `docs/mapping/ch-emed-epr.md` and test it
   as a documented failure.
 

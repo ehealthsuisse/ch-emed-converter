@@ -203,3 +203,47 @@ in `docs/operations/rest-service.md`. The limit is that of feature 004 (SC-005b 
 
 **Rationale**: Lists are the largest documents of the EPR. Feature 004 measured 9.8 s for 100 MTPs,
 which is 100 validations; one list is a single validation of a larger document.
+
+## Findings of the implementation (US1, US2, 2026-11-10)
+
+### F1 — The changed request of an advice needs its treatment plan (R4 extended)
+
+The EPR profile `ch-emed-epr-medicationrequest-changed` requires `ch-emed-ext-treatmentplan` (1..1);
+the CH EMED profile does not. The option `treatmentPlanReferences` therefore also serves the changed
+MedicationRequest of a PADV (Bundle entry or contained in the observation), as it serves the
+dispense of a DIS (rule M-EPR-28). The observation itself needs none.
+
+### F2 — The advice reference of a dispense is not supported
+
+`MedicationDispense.extension:pharmaceuticalAdvice` is marked "✕" in `ch-emed-epr-medicationdispense`.
+It is removed and reported like every unsupported element (M-EPR-22), so FR-007 ("references kept")
+applies to the references CH EMED EPR supports.
+
+### F3 — Dispense documents with an administration
+
+CH EMED allows a MedicationAdministration instead of a MedicationDispense in a dispense document (IG
+examples 3-1 and 3-2); CH EMED EPR requires a MedicationDispense and has no administration. Such a
+document fails with `MISSING_REQUIRED_DATA` at `Bundle.entry[0].resource.section` (M-EPR-28), a
+documented capability gap; SC-002 holds for the other dispense examples.
+
+### F4 — Marker against pattern (R3 corrected)
+
+The DIS composition marks `Composition.type.coding.version` "✕" but its `patternCodeableConcept`
+requires the version; removing it made every DIS invalid, including the official ones on the round
+trip. The extractor now keeps an element whose value a `pattern[x]` or `fixed[x]` of an ancestor in
+the same profile sets; the pinned list loses this one entry.
+
+### F5 — Full URLs (decision 2026-11-10)
+
+CH EMED EPR requires `urn:uuid` full URLs (PMLC and PML documents by invariant; a PADV through its
+invariants on the changed statement); the CH EMED IG examples use RESTful URLs. Decision: the
+conversion CH EMED → CH EMED EPR replaces them deterministically and reports each (rule M-EPR-05);
+the changed resource of a PADV gets the `urn:uuid` of its identifier. This also changes the full URLs
+in the feature 004 outputs from such sources (the expected files of `FromChEmedMapperTest` and
+`TreatmentPlanSplitterTest` differ only there).
+
+### F6 — Reference check against the examples (R5 confirmed)
+
+The rules C1–C4 report nothing for any official example of either IG, so none had to be narrowed.
+C2 needs no code of its own: a list entry carries its own reference, so C1 covers it.
+

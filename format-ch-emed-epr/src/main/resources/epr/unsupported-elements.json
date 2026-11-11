@@ -257,10 +257,6 @@
       "scope" : "all",
       "clinical" : false
     }, {
-      "path" : "Composition.type.coding.version",
-      "scope" : "all",
-      "clinical" : false
-    }, {
       "path" : "Composition.type.coding.userSelected",
       "scope" : "all",
       "clinical" : false

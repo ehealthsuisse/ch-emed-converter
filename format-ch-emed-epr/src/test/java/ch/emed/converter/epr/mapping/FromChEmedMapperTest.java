@@ -6,6 +6,7 @@ import ch.emed.converter.chmed16a.testsupport.Fixtures;
 import ch.emed.converter.core.api.ConversionOptions;
 import ch.emed.converter.core.api.TreatmentPlanReference;
 import ch.emed.converter.core.fhir.ChEmedJson;
+import ch.emed.converter.core.report.ReasonCode;
 import ch.emed.converter.core.report.ReportCollector;
 import ch.emed.converter.core.report.ReportEntry;
 import ch.emed.converter.core.spi.MappingContext;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.Test;
  * per rule, byte for byte against {@code fixtures/expected/from-chemed-prescription.json} (the
  * rules that leave this prescription as the base output) or {@code from-chemed-M-EPR-24.json} and
  * with the report entries of the rule. Without a validator; {@code ChEmedToEprIT} validates.
+ * Feature 005 (T014): one fixture per document type DIS, PADV, PML and per rule M-EPR-28/-29.
  * Regenerate the expected files with {@code -Depr.regenerate=true}.
  */
 class FromChEmedMapperTest {
@@ -137,5 +139,102 @@ class FromChEmedMapperTest {
     ReportCollector report = map("M-EPR-27", "prescription", b -> {}, ConversionOptions.defaults());
 
     assertThat(report.entries()).anyMatch(e -> e.path().endsWith(".substitution"));
+  }
+
+  // ---- feature 005 (T014) ----------------------------------------------------------------------
+
+  private static ReportCollector mapType(
+      EprDocumentType type, String fixture, String expectedName, ConversionOptions options)
+      throws IOException {
+    return mapType(type, fixture, expectedName, b -> {}, options);
+  }
+
+  private static ReportCollector mapType(
+      EprDocumentType type,
+      String fixture,
+      String expectedName,
+      Consumer<Bundle> change,
+      ConversionOptions options)
+      throws IOException {
+    Bundle input = ChEmedJson.parse(EprFixtures.bytes("chemed/" + fixture));
+    change.accept(input);
+    ReportCollector report = new ReportCollector();
+
+    Bundle epr = MAPPER.map(input, type, new MappingContext(options, report));
+
+    assertThat(epr).as(expectedName + " " + report.entries()).isNotNull();
+    byte[] output = ChEmedJson.serialize(epr);
+    String expected = "expected/from-chemed-" + expectedName + ".json";
+    if (Boolean.getBoolean("epr.regenerate")) {
+      Path file = Path.of("src/test/resources/fixtures/" + expected);
+      Files.createDirectories(file.getParent());
+      Files.write(file, output);
+    }
+    assertThat(new String(output, StandardCharsets.UTF_8))
+        .as(expectedName)
+        .isEqualTo(new String(EprFixtures.bytes(expected), StandardCharsets.UTF_8));
+    return report;
+  }
+
+  @Test
+  void aDispenseBecomesADis() throws IOException {
+    ReportCollector report =
+        mapType(
+            EprDocumentType.DIS,
+            "Bundle-1-2-MedicationDispense.json",
+            "dis-1-2",
+            ConversionOptions.defaults());
+
+    assertThat(messages(report, "M-EPR-01")).isNotEmpty();
+  }
+
+  @Test
+  void anAdviceBecomesAPadv() throws IOException {
+    ReportCollector report =
+        mapType(
+            EprDocumentType.PADV,
+            "Bundle-PharmaceuticalAdvice-ChangeDosage.json",
+            "padv-changedosage",
+            ConversionOptions.defaults());
+
+    assertThat(messages(report, "M-EPR-01")).isNotEmpty();
+  }
+
+  @Test
+  void m29AListWithADeviceAuthorBecomesAPml() throws IOException {
+    ReportCollector report =
+        mapType(
+            EprDocumentType.PML,
+            "Bundle-2-1-MedicationList.json",
+            "pml-2-1",
+            ConversionOptions.defaults());
+
+    assertThat(report.entries()).noneMatch(e -> e.code().equals(ReasonCode.MISSING_REQUIRED_DATA));
+  }
+
+  @Test
+  void m28TheTreatmentPlanOfADispenseComesFromTheOption() throws IOException {
+    ReportCollector report =
+        mapType(
+            EprDocumentType.DIS,
+            "Bundle-1-2-MedicationDispense.json",
+            "M-EPR-28",
+            b ->
+                b.getEntry().stream()
+                    .map(Bundle.BundleEntryComponent::getResource)
+                    .filter(DomainResource.class::isInstance)
+                    .map(DomainResource.class::cast)
+                    .forEach(
+                        r ->
+                            r.getExtension()
+                                .removeIf(e -> e.getUrl().equals(RequiredData.EXT_TREATMENT_PLAN))),
+            ConversionOptions.defaults()
+                .withTreatmentPlanReferences(List.of(new TreatmentPlanReference(DOC, MS))));
+
+    assertThat(report.entries())
+        .anyMatch(
+            e ->
+                e.code().equals(ReasonCode.DERIVED_VALUE)
+                    && e.message().startsWith("Treatment-plan reference taken from the"));
   }
 }
