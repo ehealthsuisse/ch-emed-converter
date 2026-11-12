@@ -35,6 +35,11 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <hapi.version>8.12.1</hapi.version>
+    <!-- HL7 core (org.hl7.fhir.*) newer than the one of HAPI 8.12.1 (6.9.12): from 6.10.2 its
+         RegexTimeout no longer starts a thread per pattern check, which made validation 2-3 times
+         slower. Same reports and outputs as with 6.9.12 (checked 2026-11-12). Remove this override
+         and the entries below once a HAPI release ships core 6.10.4 or later. -->
+    <fhir.core.version>6.10.4</fhir.core.version>
     <jackson.version>2.21.6</jackson.version>
     <picocli.version>4.7.7</picocli.version>
     <pdfbox.version>3.0.8</pdfbox.version>
@@ -50,6 +55,66 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>ca.uhn.hapi.fhir</groupId>
+        <artifactId>org.hl7.fhir.utilities</artifactId>
+        <version>${fhir.core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ca.uhn.hapi.fhir</groupId>
+        <artifactId>org.hl7.fhir.r4</artifactId>
+        <version>${fhir.core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ca.uhn.hapi.fhir</groupId>
+        <artifactId>org.hl7.fhir.r4b</artifactId>
+        <version>${fhir.core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ca.uhn.hapi.fhir</groupId>
+        <artifactId>org.hl7.fhir.r5</artifactId>
+        <version>${fhir.core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ca.uhn.hapi.fhir</groupId>
+        <artifactId>org.hl7.fhir.validation</artifactId>
+        <version>${fhir.core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ca.uhn.hapi.fhir</groupId>
+        <artifactId>org.hl7.fhir.convertors</artifactId>
+        <version>${fhir.core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ca.uhn.hapi.fhir</groupId>
+        <artifactId>org.hl7.fhir.dstu2</artifactId>
+        <version>${fhir.core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ca.uhn.hapi.fhir</groupId>
+        <artifactId>org.hl7.fhir.dstu2016may</artifactId>
+        <version>${fhir.core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ca.uhn.hapi.fhir</groupId>
+        <artifactId>org.hl7.fhir.dstu3</artifactId>
+        <version>${fhir.core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ca.uhn.hapi.fhir</groupId>
+        <artifactId>org.hl7.fhir.dstu3.support</artifactId>
+        <version>${fhir.core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ca.uhn.hapi.fhir</groupId>
+        <artifactId>org.hl7.fhir.model</artifactId>
+        <version>${fhir.core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ca.uhn.hapi.fhir</groupId>
+        <artifactId>org.hl7.fhir.support</artifactId>
+        <version>${fhir.core.version}</version>
+      </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson</groupId>
         <artifactId>jackson-bom</artifactId>

@@ -46,6 +46,10 @@ the report format MUST be recorded here (constitution, "Development Workflow").
   REST `404` detail).
 - A CH EMED Medication Card is also recognised by the SNOMED CT code `736378000` of its
   Composition type alone (before: only LOINC `56445-0`); cards from the EPR carry SNOMED only.
+- HL7 FHIR core (`org.hl7.fhir.*`, the official validator) 6.10.4 instead of the 6.9.12 of HAPI
+  8.12.1: its pattern checks no longer start a thread each, so validation is 2–3 times faster
+  (medication list of 311 entries 15.6 s instead of 44.6 s on 4 vCPUs); reports and outputs are
+  unchanged. `okio` 3.18.1 (transitive).
 - Conversion to CH EMED EPR (all document types): full URLs that are not `urn:uuid` become
   deterministic `urn:uuid`, every reference follows, each change is reported as `DERIVED_VALUE`
   (rule M-EPR-05); before, CH EMED input with RESTful URLs kept them.
@@ -66,8 +70,9 @@ the report format MUST be recorded here (constitution, "Development Workflow").
   profiles of feature 005.
 - CH EMED EPR: a CH EMED dispense document that records a MedicationAdministration has no DIS
   (`MISSING_REQUIRED_DATA`); CH EMED EPR does not support the advice reference of a dispense.
-- Performance: conversions of medication lists grow linearly, about 0.14 s per entry on 4 vCPUs;
-  100 entries take about 15 s, lists of more than about 200 entries exceed 30 s.
+- Performance: conversions of medication lists grow linearly, about 0.05 s per entry on 4 vCPUs
+  with the HL7 core 6.10.4; 100 entries take about 5 s, lists of more than about 600 entries exceed
+  30 s (extrapolated).
 
 ## [1.0.0] — 2026-11-08
 
