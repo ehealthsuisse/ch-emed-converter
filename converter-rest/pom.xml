@@ -17,7 +17,7 @@
   <properties>
     <!-- research R1; the Spring Boot BOM is imported here only, so the versions of the other
          modules stay untouched (constitution V: Spring confined to converter-rest) -->
-    <spring-boot.version>4.1.1</spring-boot.version>
+    <spring-boot.version>4.1.2</spring-boot.version>
     <!-- formerly swagger-request-validator-mockmvc (relocated with 3.0.0) -->
     <openapi-request-validator.version>3.0.0</openapi-request-validator.version>
     <openapi-generator.version>7.26.0</openapi-generator.version>
@@ -34,6 +34,13 @@
         <version>${jackson.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <!-- Spring Boot 4.1.2 manages the OpenTelemetry API 1.62.0 (CVE-2026-118259); the parent's
+           version wins when declared before the Boot BOM -->
+      <dependency>
+        <groupId>io.opentelemetry</groupId>
+        <artifactId>opentelemetry-api</artifactId>
+        <version>${opentelemetry.version}</version>
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
