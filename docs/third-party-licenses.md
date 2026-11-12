@@ -7,7 +7,7 @@ with the Apache-2.0/MIT/EPL policy of the project (constitution, technology gate
 
 | Licence | Dependencies (from the report) | Note |
 |---------|-------------------------------|------|
-| Apache-2.0 (many spellings) | HAPI FHIR 8.12.1 and HL7 core artifacts 6.9.12, Jackson 2.21, Apache PDFBox 3.0.8, picocli 4.7.7, Guava, Caffeine, Apache Commons, Gson, Woodstox, OpenTelemetry API, Apache HttpClient/HttpCore, OkHttp, Nimbus JOSE+JWT, SQLite JDBC, Thymeleaf | the majority; the HTTP, JWT, SQLite and Thymeleaf libraries are transitive dependencies of the HL7 validator and are not used by the converter (offline) |
+| Apache-2.0 (many spellings) | HAPI FHIR 8.12.1 and HL7 core artifacts 6.10.4, Jackson 2.21, Apache PDFBox 3.0.8, picocli 4.7.7, Guava, Caffeine, Apache Commons, Gson, Woodstox, OpenTelemetry API, Apache HttpClient/HttpCore, OkHttp, Nimbus JOSE+JWT, SQLite JDBC, Thymeleaf | the majority; the HTTP, JWT, SQLite and Thymeleaf libraries are transitive dependencies of the HL7 validator and are not used by the converter (offline) |
 | EPL-2.0 | JUnit 5 (test scope), Jakarta Annotations API | |
 | EPL-1.0 / LGPL-2.1 dual | Logback (`logback-classic`, `logback-core`) | used under EPL-1.0; only the CLI configures it |
 | MPL-2.0 | Saxon-HE (transitive of the HL7 validator); Javassist (Apache-2.0 / MPL-1.1 dual) | used unmodified as libraries; file-level copyleft only |

@@ -249,6 +249,21 @@ PML → CH EMED and 14.6 s CH EMED → PML, each with input and output validatio
 within the limits of feature 004). The time grows linearly with the list, about 0.14 s per entry:
 85 entries 11.6 s, 161 entries 22.2 s, 311 entries 44.6 s; larger lists exceed 30 s.
 
+With the HL7 core 6.10.4 (from 2026-11-12; the core of HAPI 8.12.1, 6.9.12, started a thread for
+every pattern check of the validator), same setup, reports and outputs unchanged:
+
+| Case | Core 6.9.12 | Core 6.10.4 |
+|------|-------------|-------------|
+| medication list, 109 Bundle entries, PML → CH EMED | 14.7 s | 5.4 s |
+| medication list, 311 Bundle entries, PML → CH EMED | 44.6 s | 15.6 s |
+| card with 20 medications → PMLC | 2.1 s | 1.1 s |
+| card with 100 treatments → `treatment-plans` | 9.8 s | 4.6 s |
+| CHMED16A → CH EMED, 100 medicaments, with validation | 2.6 s | 1.0 s |
+| 20 parallel REST requests of 20 medications, slowest answer | 8.9 s | 2.6 s |
+
+Lists grow by about 0.05 s per entry; about 600 entries stay under 30 s (extrapolated, not
+measured).
+
 Targets (feature 004 SC-005): 20 medications under 5 s, 100 under 30 s, as for CH EMED.
 
 Targets of the spec (revised 2026-11-01): 20 different medications under 5 s and 100 under 30 s end
