@@ -7,6 +7,19 @@ the report format MUST be recorded here (constitution, "Development Workflow").
 
 ## [Unreleased]
 
+### Security
+
+- Dependencies raised for known vulnerabilities (OSV check of all 313 dependencies, 2026-11-12):
+  Spring Boot 4.1.1 → 4.1.2 (REST service: Apache Tomcat 11.0.24 → 11.0.27, four critical
+  CVEs in authentication and HTTP/2 SNI handling, none of them used by the service; Jackson 3
+  3.1.5 → 3.1.7, denial-of-service CVEs in request parsing), Jackson 2.21.6 → 2.21.8 (CVE-2026-89425,
+  -89407, -91777, -91776: denial of service when parsing JSON), Logback 1.5.20 → 1.5.38, Guava
+  33.2.1 → 33.8.0-jre and OpenTelemetry API 1.62.0 → 1.68.0 (transitive, pinned in the parent POM),
+  AssertJ 3.27.6 → 3.27.7 (tests only). Reports and outputs of the test corpus are unchanged.
+- Remaining: OGNL 3.3.4 (CVE-2026-113730, moderate), a transitive dependency of Thymeleaf in the HL7
+  validator; the fix needs OGNL 3.4, which Thymeleaf 3.1 does not support. The converter evaluates
+  no templates or OGNL expressions from input, so the flaw is not reachable.
+
 ### Added
 
 - **CH EMED EPR (CARA EMED)**, feature 004: new format `ch-emed-epr` (module `format-ch-emed-epr`)

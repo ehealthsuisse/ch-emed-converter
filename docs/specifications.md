@@ -97,7 +97,10 @@ reviewer**.
 |---------|---------|
 | HAPI FHIR | 8.12.1 |
 | HL7 FHIR core (`org.hl7.fhir.*`, validator) | 6.10.4, newer than the 6.9.12 of HAPI 8.12.1 (faster pattern checks; see the parent POM) |
-| Jackson | 2.21.6 |
+| Jackson | 2.21.8 |
+| Spring Boot (REST service only) | 4.1.2 |
+| Logback | 1.5.38 |
+| Guava, OpenTelemetry API (transitive, raised for CVEs) | 33.8.0-jre, 1.68.0 |
 | picocli | 4.7.7 |
 | Apache PDFBox | 3.0.8 |
 | ZXing core | 3.5.4 |
