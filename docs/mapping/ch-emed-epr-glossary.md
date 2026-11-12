@@ -6,14 +6,14 @@ the mapping rules are in [ch-emed-epr.md](ch-emed-epr.md).
 
 ## Document types
 
-| Abbreviation (CH EMED EPR) | CH EMED 6.0.0 document | German | Composition `type` (SNOMED CT) | Converter (feature 004) |
+| Abbreviation (CH EMED EPR) | CH EMED 6.0.0 document | German | Composition `type` (SNOMED CT) | Converter |
 |---|---|---|---|---|
-| **MTP** | Medication Treatment Plan | Behandlungsplan (one entry per document) | `761931002` | yes |
-| **PRE** | Medication Prescription | Rezept | `761938008` | yes |
-| **PMLC** | Medication Card | Medikationskarte (current state, produced by the PMP service) | `736378000` | yes |
-| **DIS** | Medication Dispense | Abgabe | `82291000195104` | later |
-| **PADV** | Pharmaceutical Advice | Pharmazeutische Empfehlung | `419891008` | later |
-| **PML** | Medication List | Medikationsliste | `721912009` | later |
+| **MTP** | Medication Treatment Plan | Behandlungsplan (one entry per document) | `761931002` | yes (feature 004) |
+| **PRE** | Medication Prescription | Rezept | `761938008` | yes (feature 004) |
+| **PMLC** | Medication Card | Medikationskarte (current state, produced by the PMP service) | `736378000` | yes (feature 004) |
+| **DIS** | Medication Dispense | Abgabe | `82291000195104` | yes (feature 005) |
+| **PADV** | Pharmaceutical Advice | Pharmazeutische Empfehlung | `419891008` | yes (feature 005) |
+| **PML** | Medication List | Medikationsliste (produced by the PMP service) | `721912009` | yes (feature 005); CH EMED → PML only with a Device author |
 
 ## Profiles
 
@@ -51,4 +51,8 @@ Each EPR profile maps to the profile named in its `baseDefinition` (M-EPR-01). `
 | **Original representation** | PDF of the document, section LOINC `55108-5`; PDF/A in the EPR |
 | **treatmentPlan** | Extension `ch-emed-ext-treatmentplan`: reference to the MTP document and its MedicationStatement (required for PRE and PMLC entries) |
 | **lastConsideredDocument** | Extension `ch-emed-ext-last-considered-document`: last document considered for a PMLC entry |
+| **Dispense (DIS)** | One dispense of a medication by a pharmacy; references its treatment plan (required in the EPR) and, if any, its prescription |
+| **Pharmaceutical advice (PADV)** | One advice (change, cancel, suspend, refuse, comment, reset) on a treatment plan, prescription or dispense; a change carries the changed MedicationStatement or MedicationRequest |
+| **Medication list (PML)** | The PMP's list of a patient's treatment plans, prescriptions, dispenses and advice, authored by a Device |
+| **Document reference** | One of the extensions `ch-emed-ext-treatmentplan`, `-prescription`, `-dispense`, `-pharmaceuticaladvice`: `id` of the entry and `externalDocumentId` of its document; kept unchanged and checked for consistency within one document (M-EPR-04) |
 | **GLN** | Global Location Number of a healthcare professional (OID `2.51.1.3`) |

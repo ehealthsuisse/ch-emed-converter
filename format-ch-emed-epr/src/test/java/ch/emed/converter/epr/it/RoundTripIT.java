@@ -125,7 +125,7 @@ class RoundTripIT {
   }
 
   static Stream<String> officialExamples() {
-    return Stream.of("PMLC", "PRE", "MTP")
+    return Stream.of("PMLC", "PRE", "MTP", "DIS", "PADV", "PML")
         .flatMap(t -> EprFixtures.official(t).stream().map(n -> t + " " + n));
   }
 
@@ -159,10 +159,20 @@ class RoundTripIT {
         "chemed/medication-prescription-example.json",
         "chmed16a/rx-basic.json",
         "chmed16a/rx-erezept-example.json",
-        "chmed16a/rx-idtype4.json");
+        "chmed16a/rx-idtype4.json",
+        // feature 005 (T026): CH EMED dispenses, advice and lists of this module
+        "epr:chemed/Bundle-1-2-MedicationDispense.json",
+        "epr:chemed/Bundle-2-4-MedicationDispense.json",
+        "epr:chemed/Bundle-2-2-PharmaceuticalAdvice.json",
+        "epr:chemed/Bundle-PharmaceuticalAdvice-ChangeDosage.json",
+        "epr:chemed/Bundle-2-1-MedicationList.json",
+        "epr:synthetic/Bundle-DispenseWithoutTreatmentPlan.json");
   }
 
   private static byte[] chEmed(String fixture) {
+    if (fixture.startsWith("epr:")) {
+      return EprFixtures.bytes(fixture.substring(4));
+    }
     if (fixture.startsWith("chemed/")) {
       return Fixtures.bytes(fixture);
     }
@@ -199,9 +209,12 @@ class RoundTripIT {
             ChEmedJson.parse(original).getEntry().stream()
                 .filter(
                     e ->
-                        e.getResource() instanceof MedicationRequest r
-                            && r.getExtensionByUrl(
-                                    "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-ext-treatmentplan")
+                        (e.getResource() instanceof MedicationRequest
+                                || e.getResource()
+                                    instanceof org.hl7.fhir.r4.model.MedicationDispense)
+                            && ((org.hl7.fhir.r4.model.DomainResource) e.getResource())
+                                    .getExtensionByUrl(
+                                        "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-ext-treatmentplan")
                                 == null)
                 .count();
     List<TreatmentPlanReference> refs = new ArrayList<>();

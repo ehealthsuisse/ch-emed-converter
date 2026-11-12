@@ -137,7 +137,7 @@ The conversions of stories 1 and 2 and the options they need are available throu
 - **SC-001**: 100% of the official DIS, PADV and PML examples of CH EMED EPR 3.0.0 are converted to CH EMED documents that validate without errors.
 - **SC-002**: 100% of the official dispense and pharmaceutical-advice examples of CH EMED 6.0.0 are converted to CH EMED EPR documents that validate without errors when the required data is supplied by options, and fail only for documented missing data without them.
 - **SC-003**: 100% of the round trips of FR-011 over the test corpus differ only by documented changes.
-- **SC-004**: Converting a medication list with 100 entries, including validation, stays within the time limits of feature 004 on the reference hardware.
+- **SC-004**: Converting a medication list with 100 entries in total, including validation, stays within the time limits of feature 004 on the reference hardware (clarification 2026-11-12: 100 entries in total, not of each kind; larger lists grow linearly, research F7).
 - **SC-005**: For 100% of the inputs of the test corpus, library, CLI and REST give identical documents and reports.
 - **SC-006**: An automated scan of logs and reports from all test runs finds zero patient-identifying data.
 - **SC-007**: During all conversions, no connection to an external service is attempted.

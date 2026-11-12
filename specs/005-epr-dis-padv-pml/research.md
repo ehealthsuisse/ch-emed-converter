@@ -247,3 +247,13 @@ in the feature 004 outputs from such sources (the expected files of `FromChEmedM
 The rules C1–C4 report nothing for any official example of either IG, so none had to be narrowed.
 C2 needs no code of its own: a list entry carries its own reference, so C1 covers it.
 
+### F7 — Performance of large lists (R11 corrected, decision 2026-11-12)
+
+R11 planned a list with 100 entries of each kind (about 400). Measured on 4 vCPUs with the official
+list `Utc6b` enlarged (statements, prescriptions, observations; no official list holds a dispense):
+85 entries 11.6 s, 161 entries 22.2 s, 311 entries 44.6 s per direction, each with input and output
+validation. The time grows linearly, about 0.14 s per entry, almost all in the HL7 validation.
+Decision: SC-004 means 100 entries in total (measured 14.7 s); larger lists are documented as a
+limit in `docs/operations/rest-service.md`. `PerformanceTest` takes `-Depr.listSize=n` for other
+sizes.
+

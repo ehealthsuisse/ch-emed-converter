@@ -278,24 +278,24 @@ options; every output validates against CH EMED EPR.
 
 ## Phase 6: Polish & Cross-Cutting Concerns
 
-- [ ] T025 [P] CHMED16A refusal (research R7):
+- [X] T025 [P] CHMED16A refusal (research R7):
   - Test first in `format-chmed16a`: the CH EMED examples 1-2 (DIS), 2-2 (PADV) and 2-1 (PML),
     converted to `chmed16a`, fail with `UNSUPPORTED_DOCUMENT_TYPE`, and the message names
     "medication card" and "medication prescription".
   - Then change the message in `format-chmed16a/.../io/ChEmedDocumentReader.java` and
     `Chmed16aFormatModule.java`.
   - Check that no other test of features 001–003 depends on the old text.
-- [ ] T026 [P] Extend `it/RoundTripIT.java` (FR-011, SC-003):
+- [X] T026 [P] Extend `it/RoundTripIT.java` (FR-011, SC-003):
   - EPR → CH EMED → EPR for every official DIS, PADV and PML example;
   - CH EMED → EPR → CH EMED for the CH EMED examples of T002 (3-1 and 3-2 with option).
 
   Only the documented changes are allowed.
-- [ ] T027 [P] Extend `it/DeterminismIT.java` (FR-012) to the new corpus: byte-identical output
+- [X] T027 [P] Extend `it/DeterminismIT.java` (FR-012) to the new corpus: byte-identical output
   and report, twice and in a fresh converter.
-- [ ] T028 Extend `it/PerformanceTest.java` (SC-004, research R11) with a PML of 100 entries of
+- [X] T028 Extend `it/PerformanceTest.java` (SC-004, research R11) with a PML of 100 entries of
   each kind, generated synthetically, converted to CH EMED and back, including validation. Run it
   on andromeda with taskset on 4 vCPU and record the times in `docs/operations/rest-service.md`.
-- [ ] T029 [P] Documentation (research R10):
+- [X] T029 [P] Documentation (research R10):
   - `docs/mapping/ch-emed-epr.md`:
     - rules M-EPR-04, -28 and -29;
     - M-EPR-02, -23 and -25 extended;
@@ -310,13 +310,13 @@ options; every output validates against CH EMED EPR.
     to feature 005.
 
   `MappingTraceabilityTest` passes.
-- [ ] T030 [P] `CHANGELOG.md` `[Unreleased]`:
+- [X] T030 [P] `CHANGELOG.md` `[Unreleased]`:
   - DIS, PADV and PML in both directions;
   - `REFERENCE_INCONSISTENT`;
   - the CHMED16A message names the supported types;
   - OpenAPI 1.2.1;
   - `treatmentPlanReferences` also for dispenses.
-- [ ] T031 Run the scenarios of `quickstart.md`. Then run the full build
+- [X] T031 Run the scenarios of `quickstart.md`. Then run the full build
   (`tools/remote-build.sh build`) and the time tests (`tools/remote-build.sh load`) on andromeda.
 
 ---

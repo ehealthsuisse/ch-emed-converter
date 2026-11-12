@@ -38,21 +38,25 @@ Expected:
 
 ## Scenario 2 — Dispense to the EPR with a treatment-plan reference (US2.2)
 
+The input is the CH EMED dispense 1-2 without its treatment-plan reference (synthetic fixture). The
+CH EMED examples 3-1 and 3-2 record an administration, which CH EMED EPR does not support (research
+F3).
+
 ```bash
-CLI convert --from ch-emed --to ch-emed-epr fixtures/chemed/Bundle-3-1-MedicationDispense.json -o dis.json
+CLI convert --from ch-emed --to ch-emed-epr fixtures/synthetic/Bundle-DispenseWithoutTreatmentPlan.json -o dis.json
 ```
 
 Without the option: exit `1`, and `MISSING_REQUIRED_DATA` at the dispense's extension, without any
 identifier. Then:
 
 ```bash
-CLI convert --from ch-emed --to ch-emed-epr fixtures/chemed/Bundle-3-1-MedicationDispense.json -o dis.json \
+CLI convert --from ch-emed --to ch-emed-epr fixtures/synthetic/Bundle-DispenseWithoutTreatmentPlan.json -o dis.json \
   --treatment-plan urn:uuid:00000000-0000-4000-8000-000000000001,urn:uuid:00000000-0000-4000-8000-000000000002
 ```
 
 Expected:
 - Exit `0`, and a valid DIS.
-- `DERIVED_VALUE` for the reference.
+- `DERIVED_VALUE` for the reference and for each full URL replaced by a `urn:uuid` (M-EPR-05).
 - `UNMAPPABLE_ELEMENT` for each removed element.
 
 ## Scenario 3 — Medication list to the EPR (US2.5)
@@ -97,8 +101,8 @@ The parity test (`ServiceLibraryParityTest`) passes over the new corpus.
 
 ## Scenario 7 — Performance (SC-004)
 
-`PerformanceTest` converts a PML with 100 entries of each kind to CH EMED and back, including
-validation, on 4 vCPU.
+`PerformanceTest` converts a PML of about 100 entries to CH EMED and back, including validation,
+on 4 vCPU (SC-004 as clarified 2026-11-12).
 
 Expected: below the limit of feature 004. The time is recorded in
 `docs/operations/rest-service.md`.

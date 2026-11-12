@@ -73,21 +73,26 @@ QR code. Signed eRezepte are read without verifying the signature.
 ## CH EMED EPR (CARA EMED)
 
 Since feature 004 the service converts between CH EMED and CH EMED EPR 3.0.0, the EPR variant of
-CARA: `POST /api/v1/conversions/ch-emed-epr/ch-emed` and `.../ch-emed/ch-emed-epr`. Every
+CARA, for medication card (PMLC), prescription (PRE), treatment plan (MTP) and, since feature 005,
+dispense (DIS), pharmaceutical advice (PADV) and medication list (PML): `POST /api/v1/conversions/ch-emed-epr/ch-emed` and `.../ch-emed/ch-emed-epr`. Every
 conversion has `ch-emed` on one side; a request `chmed16a` → `ch-emed-epr` (or back) gets `404
 UNSUPPORTED_CONVERSION` naming the two steps through `ch-emed`. Options for the target
-`ch-emed-epr` (OpenAPI 1.2.0):
+`ch-emed-epr` (OpenAPI 1.2.1):
 
 - `outputForm` `treatment-plans`: a medication card becomes a FHIR `collection` with one MTP
   document per treatment (`application/fhir+json`);
 - `treatmentPlanReferences` `[{documentId, statementId}]` (both `urn:uuid:`): the treatment plans
-  in the EPR that the entries of a prescription (PRE) or card (PMLC) belong to, in document order;
+  in the EPR that the entries of a prescription (PRE) or card (PMLC), a dispense (DIS) or the
+  changed prescription of an advice (PADV) belong to, in document order;
 - `originalRepresentation`: a PDF/A in base64 as original representation; without it the service
   renders a PDF/A-1b for PRE and PMLC.
 
 The service does not submit documents to the EPR (IHE MHD) and does not fetch them; the primary
 system does. A medication card with a person as author does not become a PMLC (the community's
-aggregation service authors PMLC documents); create treatment plans from it instead. Rules and
+aggregation service authors PMLC documents); create treatment plans from it instead. The same holds
+for a medication list (PML). References between documents are kept; contradictions within one
+document are reported as warning `REFERENCE_INCONSISTENT`. Full URLs that are not `urn:uuid` become
+`urn:uuid` on the way to the EPR. Rules and
 limits: [docs/mapping/ch-emed-epr.md](../mapping/ch-emed-epr.md).
 
 ```json
@@ -237,6 +242,12 @@ warm context, output validation included; `format-ch-emed-epr` `PerformanceTest`
 | card with 20 medications → PMLC | 2.1 s |
 | card with 20 treatments → `treatment-plans` (20 MTP documents, each validated) | 2.0 s |
 | card with 100 treatments → `treatment-plans` (100 MTP documents) | 9.8 s |
+
+Feature 005 (measured 2026-11-12, same setup): a medication list of the official example, enlarged
+to about 100 entries (statements, prescriptions, observations; 109 Bundle entries), takes 14.7 s
+PML → CH EMED and 14.6 s CH EMED → PML, each with input and output validation (SC-004: 100 entries
+within the limits of feature 004). The time grows linearly with the list, about 0.14 s per entry:
+85 entries 11.6 s, 161 entries 22.2 s, 311 entries 44.6 s; larger lists exceed 30 s.
 
 Targets (feature 004 SC-005): 20 medications under 5 s, 100 under 30 s, as for CH EMED.
 

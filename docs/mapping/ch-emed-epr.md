@@ -91,7 +91,7 @@ Clinically relevant (`clinical: true`), so their removal is a clinical loss:
 | `Dosage.site`, `Dosage.method`, `Dosage.maxDosePerLifetime` | administration and maximum dose |
 | `MedicationStatement.statusReason`, `.reasonReference`, `.effective[x]` | status, reason and period of the treatment |
 | `MedicationRequest.statusReason`, `.reasonReference`, `.courseOfTherapyType`, `.detectedIssue` | status, reason and kind of the prescription, clinical issues |
-| `Observation.value[x]`, `.component`, `.interpretation`, `.referenceRange`, `.effective[x]` | observed values (pharmaceutical advice, a later feature) |
+| `Observation.value[x]`, `.component`, `.interpretation`, `.referenceRange`, `.effective[x]` | observed values (pharmaceutical advice, feature 005) |
 
 All other unsupported elements are technical or organisational (`meta` details, `id`,
 extensions on codings, identifier details, `encounter`, attester, organisational references,

@@ -18,7 +18,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-/** T072 and T073 (feature 004, spec edge cases 1 and 4), T006 (feature 005). */
+/** T072 and T073 (feature 004, spec edge cases 1 and 4), T006 and T025 (feature 005). */
 class EdgeCasesIT {
 
   private static Converter converter;
@@ -82,5 +82,33 @@ class EdgeCasesIT {
     assertThat(errors(toChmed16a))
         .extracting(ReportEntry::code)
         .doesNotContain(ReasonCode.FHIR_VALIDATION, ReasonCode.PARSE_ERROR);
+  }
+
+  /**
+   * Feature 005 (T025, research R7): CH EMED dispenses, advice and lists do not reach CHMED16A; the
+   * refusal names the supported types. The list 2-1 also carries the card's LOINC code.
+   */
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.ValueSource(
+      strings = {
+        "Bundle-1-2-MedicationDispense.json",
+        "Bundle-2-2-PharmaceuticalAdvice.json",
+        "Bundle-2-1-MedicationList.json"
+      })
+  void dispensesAdviceAndListsDoNotReachChmed16a(String name) {
+    ConversionResult result =
+        convert(FormatId.CH_EMED, FormatId.CHMED16A, EprFixtures.bytes("chemed/" + name));
+
+    assertThat(result.outcome()).as(name).isEqualTo(Outcome.FAILED);
+    assertThat(result.output()).isEmpty();
+    assertThat(errors(result))
+        .as(name)
+        .anySatisfy(
+            e -> {
+              assertThat(e.code()).isEqualTo(ReasonCode.UNSUPPORTED_DOCUMENT_TYPE);
+              assertThat(e.message())
+                  .contains("medication card")
+                  .contains("medication prescription");
+            });
   }
 }
