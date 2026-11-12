@@ -192,7 +192,7 @@ Integrators use the library, the command line or the REST service and get the sa
 - The treatment plans that a prescription or card references are already in the EPR, or are submitted together with it; the converter does not check this (FR-016). Story 3 produces treatment plans with stable identifiers that the caller can pass as references.
 - PDF/A-1b is sufficient for the original representation (the EPR accepts PDF/A-1 and PDF/A-2).
 - PMLC documents are produced in the EPR by the community's aggregator; the converter produces them only from cards with that author, for example cards read from the EPR (research F8).
-- DIS, PADV and PML documents follow in a later feature.
+- DIS, PADV and PML documents follow in a later feature (feature 005, `specs/005-epr-dis-padv-pml/`).
 - Submitting documents to the EPR and retrieving them (IHE MHD, CARA's eMedication service, EPR identifiers and metadata of the document registry) are out of scope (constitution 1.5.0).
 - Identifiers of the CARA environments (assigning authorities of patient ids, named in the IG) are not inserted by the converter; patient identifiers come from the source or the existing option.
 - Fixtures contain only synthetic data and the official examples of the IG (constitution).

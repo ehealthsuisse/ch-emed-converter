@@ -27,6 +27,10 @@ import java.util.zip.GZIPInputStream;
  *   <li>An element is not supported when its snapshot carries the standards-status {@code draft}
  *       extension and its {@code short} starts with "✕" (F7: {@code Dosage.text} of the base dosage
  *       is {@code draft} but required in practice, and has no "✕").
+ *   <li>Feature 005, research F4: an element whose value a {@code pattern[x]} or {@code fixed[x]}
+ *       of an ancestor in the same profile requires is supported despite the marker; the DIS and
+ *       PADV compositions require {@code Composition.type.coding.version} by their type pattern but
+ *       mark it "✕".
  *   <li>Scope {@code pmlc}: "✕ This element will be removed in PML(C) documents"; else {@code all}.
  *   <li>The EPR datatype profiles (dosage, quantities, ratios) are expanded into the resource
  *       profiles at the elements that use them, so each resource profile lists every path below it.
@@ -177,7 +181,7 @@ public final class UnsupportedElementExtractor {
       if (e.has("sliceName")) {
         slices.putIfAbsent(path, matcher(e, byId));
       }
-      if (unsupported(e)) {
+      if (unsupported(e) && !requiredByPattern(id, byId)) {
         if (!elements.containsKey(path)) {
           ObjectNode element = JsonNodeFactory.instance.objectNode();
           element.put("path", path);
@@ -200,6 +204,47 @@ public final class UnsupportedElementExtractor {
         }
       }
     }
+  }
+
+  /**
+   * @return true if a {@code pattern[x]} or {@code fixed[x]} of an ancestor element sets a value at
+   *     the element (feature 005, research F4)
+   */
+  static boolean requiredByPattern(String id, Map<String, JsonNode> byId) {
+    String[] parts = id.split("\\.");
+    for (int i = parts.length - 1; i > 0; i--) {
+      JsonNode ancestor = byId.get(String.join(".", java.util.Arrays.copyOf(parts, i)));
+      if (ancestor == null) {
+        continue;
+      }
+      List<String> rest = new ArrayList<>();
+      for (int k = i; k < parts.length; k++) {
+        rest.add(parts[k].replaceAll(":.*$", ""));
+      }
+      for (java.util.Iterator<Map.Entry<String, JsonNode>> it = ancestor.fields(); it.hasNext(); ) {
+        Map.Entry<String, JsonNode> field = it.next();
+        if ((field.getKey().startsWith("pattern") || field.getKey().startsWith("fixed"))
+            && present(field.getValue(), rest)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private static boolean present(JsonNode node, List<String> path) {
+    if (path.isEmpty()) {
+      return !node.isMissingNode() && !node.isNull();
+    }
+    if (node.isArray()) {
+      for (JsonNode item : node) {
+        if (present(item, path)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    return node.has(path.get(0)) && present(node.get(path.get(0)), path.subList(1, path.size()));
   }
 
   /**

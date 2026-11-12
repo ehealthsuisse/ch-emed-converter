@@ -126,8 +126,8 @@ public class CapabilitiesController {
             "array",
             null,
             "Target ch-emed-epr: [{documentId, statementId}] (urn:uuid), one per prescribed"
-                + " medication or card entry without a treatment-plan reference, in document"
-                + " order."),
+                + " medication, card entry, dispense or changed prescription of an advice"
+                + " without a treatment-plan reference, in document order."),
         new Option(
             "originalRepresentation",
             "string",

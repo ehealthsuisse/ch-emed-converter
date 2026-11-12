@@ -21,7 +21,7 @@ class FormatsCommandTest {
         .contains("ch-emed -> ch-emed-epr")
         .contains("ch.fhir.ig.ch-emed-epr#3.0.0")
         .contains("treatment-plans")
-        .contains("document types PMLC, PRE, MTP");
+        .contains("document types PMLC, PRE, MTP, DIS, PADV, PML");
   }
 
   @Test

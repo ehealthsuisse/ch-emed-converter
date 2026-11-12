@@ -112,7 +112,8 @@ final class ConvertCommand implements Callable<Integer> {
       paramLabel = "<documentId>,<statementId>",
       description =
           "Treatment-plan reference for --to ch-emed-epr, repeatable, in document order: one per"
-              + " prescribed medication or card entry without one; both urn:uuid:<uuid>")
+              + " prescribed medication, card entry, dispense or changed prescription of an advice"
+              + " without one; both urn:uuid:<uuid>")
   List<String> treatmentPlans = new ArrayList<>();
 
   @Option(

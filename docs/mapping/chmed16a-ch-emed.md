@@ -300,6 +300,7 @@ cross-check, `format-chmed16a/src/test/resources/schemas/`).
 | Prescription: quantity in another unit than packages, validity not in whole months, `numberOfRepeatsAllowed` | M-REV-35, M-REV-36 | yes |
 | Prescription: specific substitution codes other than `N`/`E` (read as "do not substitute") | M-REV-37 | yes |
 | Prescription: start date equal to the prescription date, organisation GLN, ZSR on person and organisation, further receivers | M-REV-34, M-REV-31, M-REV-39 | no |
+| Dispense, pharmaceutical advice and medication list documents (feature 005): eMediplan knows only medication plans and prescriptions; refused with `UNSUPPORTED_DOCUMENT_TYPE` naming the supported types. A SNOMED CT document type decides, so a medication list is not taken for a card by its LOINC `56445-0` | – | – |
 
 ## Validation limitations
 

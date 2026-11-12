@@ -29,6 +29,7 @@ public final class FromChEmedMapper {
   private static final ObjectMapper JSON = new ObjectMapper();
 
   private final UnsupportedElements unsupported;
+  private final FullUrls fullUrls = new FullUrls();
   private final Substitution substitution = new Substitution();
   private final RequiredData requiredData = new RequiredData();
   private final OriginalRepresentation originalRepresentation = new OriginalRepresentation();
@@ -50,7 +51,8 @@ public final class FromChEmedMapper {
    */
   @MappingRule({"M-EPR-01", "M-EPR-21"})
   public Bundle map(Bundle chEmed, EprDocumentType type, MappingContext ctx) {
-    Bundle epr = chEmed.copy();
+    // feature 005, M-EPR-05: urn:uuid full URLs before anything refers to the entries
+    Bundle epr = fullUrls.apply(chEmed.copy(), type, ctx);
     relabel(epr, "Bundle", type, ctx);
     for (int i = 0; i < epr.getEntry().size(); i++) {
       Resource resource = epr.getEntry().get(i).getResource();

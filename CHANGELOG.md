@@ -30,6 +30,14 @@ the report format MUST be recorded here (constitution, "Development Workflow").
   `PRE`, `MTP` for `ch-emed-epr`; library `FormatInfo.documentTypes()`, SPI
   `FormatModule.documentTypes()`).
 - CLI `formats` lists the input and output forms and the document types of every format.
+- **CH EMED EPR, further document types**, feature 005: dispense (DIS), pharmaceutical advice
+  (PADV) and medication list (PML) in both directions with CH EMED; a CH EMED medication list
+  becomes a PML only with a Device as author. Capabilities and CLI `formats` list
+  `PMLC, PRE, MTP, DIS, PADV, PML`; OpenAPI 1.2.1 (descriptions only).
+- Reason code `REFERENCE_INCONSISTENT` (WARNING): references to other documents within one
+  document contradict each other (rule M-EPR-04); the document is not changed.
+- `treatmentPlanReferences` also serves the dispense of a DIS and the changed prescription of a PADV
+  without a treatment-plan reference.
 
 ### Changed
 
@@ -38,6 +46,14 @@ the report format MUST be recorded here (constitution, "Development Workflow").
   REST `404` detail).
 - A CH EMED Medication Card is also recognised by the SNOMED CT code `736378000` of its
   Composition type alone (before: only LOINC `56445-0`); cards from the EPR carry SNOMED only.
+- Conversion to CH EMED EPR (all document types): full URLs that are not `urn:uuid` become
+  deterministic `urn:uuid`, every reference follows, each change is reported as `DERIVED_VALUE`
+  (rule M-EPR-05); before, CH EMED input with RESTful URLs kept them.
+- Unsupported elements of CH EMED EPR: an element whose value a pattern of the profile requires is
+  kept (`Composition.type.coding.version` of DIS, wrongly marked "✕" in the IG).
+- CH EMED → CHMED16A: the refusal of other document types names the supported ones ("supported:
+  medication card, medication prescription"); a SNOMED CT document type decides, so a medication
+  list (which also carries the card's LOINC `56445-0`) is refused instead of read as a card.
 - Privacy: validator paths no longer contain resource ids, only the resource type
   (`/*Patient*/` instead of `/*Patient/<id>*/`); ids may be built from a patient's name. Affects
   the paths of every `FHIR_VALIDATION` entry.
@@ -46,7 +62,12 @@ the report format MUST be recorded here (constitution, "Development Workflow").
 
 - CH EMED EPR: the `clinical` flags in `epr/unsupported-elements.json` (which removed elements
   count as clinical loss, WARNING instead of INFORMATION) still need the review of a person with
-  CH EMED domain knowledge (feature 004, task T036).
+  CH EMED domain knowledge (feature 004, task T036); this includes the dispense, advice and list
+  profiles of feature 005.
+- CH EMED EPR: a CH EMED dispense document that records a MedicationAdministration has no DIS
+  (`MISSING_REQUIRED_DATA`); CH EMED EPR does not support the advice reference of a dispense.
+- Performance: conversions of medication lists grow linearly, about 0.14 s per entry on 4 vCPUs;
+  100 entries take about 15 s, lists of more than about 200 entries exceed 30 s.
 
 ## [1.0.0] — 2026-11-08
 

@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 /**
  * T054 (feature 004, FR-011): every CH EMED EPR conversion of the corpus, in both directions and as
  * treatment-plans, gives byte-identical output and report when run twice and in a fresh converter.
+ * Feature 005 (T027): also the CH EMED dispenses, advice and lists.
  */
 class DeterminismIT {
 
@@ -68,6 +69,20 @@ class DeterminismIT {
               FormatId.CH_EMED_EPR,
               chEmed,
               defaults.withOutputForm(OutputForm.TREATMENT_PLANS)));
+    }
+    for (String fixture :
+        List.of(
+            "chemed/Bundle-1-2-MedicationDispense.json",
+            "chemed/Bundle-2-4-MedicationDispense.json",
+            "chemed/Bundle-3-1-MedicationDispense.json",
+            "chemed/Bundle-2-2-PharmaceuticalAdvice.json",
+            "chemed/Bundle-PharmaceuticalAdvice-ChangeDosage.json",
+            "chemed/Bundle-2-1-MedicationList.json",
+            "synthetic/Bundle-DispenseWithoutTreatmentPlan.json")) {
+      byte[] chEmed = EprFixtures.bytes(fixture);
+      cases.add(new Case(fixture, FormatId.CH_EMED, FormatId.CH_EMED_EPR, chEmed, defaults));
+      cases.add(
+          new Case(fixture + " refs", FormatId.CH_EMED, FormatId.CH_EMED_EPR, chEmed, references));
     }
     return cases;
   }

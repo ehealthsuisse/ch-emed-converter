@@ -12,6 +12,7 @@ import ch.emed.converter.core.spi.FormatModule;
 import ch.emed.converter.core.spi.MappingContext;
 import ch.emed.converter.epr.mapping.FromChEmedMapper;
 import ch.emed.converter.epr.mapping.ProfileMap;
+import ch.emed.converter.epr.mapping.ReferenceConsistency;
 import ch.emed.converter.epr.mapping.ToChEmedMapper;
 import ch.emed.converter.epr.mapping.TreatmentPlanSplitter;
 import ch.emed.converter.epr.mapping.UnsupportedElements;
@@ -32,6 +33,7 @@ public final class ChEmedEprFormatModule implements FormatModule {
   private final ToChEmedMapper toChEmed = new ToChEmedMapper();
   private final FromChEmedMapper fromChEmed = new FromChEmedMapper(UnsupportedElements.load());
   private final TreatmentPlanSplitter splitter = new TreatmentPlanSplitter(fromChEmed);
+  private final ReferenceConsistency references = new ReferenceConsistency();
 
   @Override
   public FormatId format() {
@@ -93,6 +95,8 @@ public final class ChEmedEprFormatModule implements FormatModule {
     if (!validate(epr, Phase.VALIDATE_INPUT, ctx)) {
       return null;
     }
+    // feature 005, M-EPR-04: report contradicting references, change nothing
+    references.check(epr, type.get(), ctx.report());
     return toChEmed.map(epr, type.get(), ctx);
   }
 
@@ -117,6 +121,8 @@ public final class ChEmedEprFormatModule implements FormatModule {
     if (epr == null || ctx.report().hasErrors()) {
       return null;
     }
+    // feature 005, M-EPR-04: report contradicting references, change nothing
+    references.check(epr, type.get(), ctx.report());
     if (ctx.options().validateOutput() && !validate(epr, Phase.VALIDATE_OUTPUT, ctx)) {
       // FR-006: output with validation errors is never returned
       return null;

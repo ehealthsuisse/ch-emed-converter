@@ -76,6 +76,9 @@ class OriginalRepresentationTest {
       case PMLC -> "official/Bundle-DocumentPmlcCARAPMP004AxapharmParacetamol.json";
       case PRE -> "official/Bundle-DocumentPreParacetamolAxapharmCARAPMP004.json";
       case MTP -> "official/Bundle-DocumentMtpParacetamolCARAPMP004.json";
+      case DIS -> "official/Bundle-DocumentDis1.json";
+      case PADV -> "official/Bundle-DocumentPadvChangeParacetamolCARAPMP004.json";
+      case PML -> "official/Bundle-BundlePml1.json";
     };
   }
 
@@ -240,34 +243,43 @@ class OriginalRepresentationTest {
     }
   }
 
+  /** MTP (feature 004) and DIS, PADV, PML (feature 005, research R6): nothing is rendered. */
   @ParameterizedTest
-  @ValueSource(strings = {"plain", "placeholder"})
-  void anMtpLeavesOutANonPdfAOriginalRepresentation(String kind) {
-    Bundle bundle = withSource(EprDocumentType.MTP, kind.equals("plain") ? pdf(0) : PLACEHOLDER);
+  @EnumSource(
+      value = EprDocumentType.class,
+      names = {"MTP", "DIS", "PADV", "PML"})
+  void otherTypesLeaveOutANonPdfAOriginalRepresentation(EprDocumentType type) {
+    for (byte[] source : List.of(pdf(0), PLACEHOLDER)) {
+      Bundle bundle = withSource(type, source);
 
-    ReportCollector report = apply(bundle, EprDocumentType.MTP, ConversionOptions.defaults());
+      ReportCollector report = apply(bundle, type, ConversionOptions.defaults());
 
-    assertThat(section(bundle)).isNull();
-    assertThat(binaries(bundle)).isEmpty();
-    assertThat(report.entries())
-        .singleElement()
-        .satisfies(
-            e -> {
-              assertThat(e.code()).isEqualTo(ReasonCode.UNMAPPABLE_ELEMENT);
-              assertThat(e.severity()).isEqualTo(Severity.INFORMATION);
-              assertThat(e.message()).contains("EPR requires PDF/A");
-            });
+      assertThat(section(bundle)).as(type.name()).isNull();
+      assertThat(binaries(bundle)).as(type.name()).isEmpty();
+      assertThat(report.entries())
+          .as(type.name())
+          .singleElement()
+          .satisfies(
+              e -> {
+                assertThat(e.code()).isEqualTo(ReasonCode.UNMAPPABLE_ELEMENT);
+                assertThat(e.severity()).isEqualTo(Severity.INFORMATION);
+                assertThat(e.message()).contains("EPR requires PDF/A");
+              });
+    }
   }
 
-  @org.junit.jupiter.api.Test
-  void anMtpWithoutOriginalRepresentationGetsNone() {
-    Bundle bundle = document(EprDocumentType.MTP);
+  @ParameterizedTest
+  @EnumSource(
+      value = EprDocumentType.class,
+      names = {"MTP", "DIS", "PADV", "PML"})
+  void otherTypesWithoutOriginalRepresentationGetNone(EprDocumentType type) {
+    Bundle bundle = document(type);
     if (section(bundle) != null) {
       composition(bundle).getSection().remove(section(bundle));
     }
     bundle.getEntry().removeIf(e -> e.getResource() instanceof Binary);
 
-    ReportCollector report = apply(bundle, EprDocumentType.MTP, ConversionOptions.defaults());
+    ReportCollector report = apply(bundle, type, ConversionOptions.defaults());
 
     assertThat(section(bundle)).isNull();
     assertThat(binaries(bundle)).isEmpty();

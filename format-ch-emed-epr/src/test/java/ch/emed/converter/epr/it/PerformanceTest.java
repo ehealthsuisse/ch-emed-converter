@@ -32,6 +32,9 @@ import org.slf4j.LoggerFactory;
  * T055 (feature 004, SC-005, research R14): times of CH EMED EPR conversions with the official
  * validation and a warm context. Run on andromeda with 4 vCPU; excluded from the normal build like
  * the time test of feature 001. Numbers are recorded in {@code docs/operations/rest-service.md}.
+ * Feature 005 (T028, SC-004 as adjusted 2026-11-12): a medication list of about 100 entries made
+ * from the official list example (statements, requests, observations; no official list holds a
+ * dispense); {@code -Depr.listSize=n} adds n entries of each kind. The time grows linearly.
  */
 class PerformanceTest {
 
@@ -142,5 +145,74 @@ class PerformanceTest {
 
     assertThat(typical).as("SC-005: 20 medications to PMLC").isLessThan(TYPICAL_LIMIT_MILLIS);
     assertThat(large).as("SC-005: 100 treatments").isLessThan(LARGE_LIMIT_MILLIS);
+  }
+
+  /**
+   * The official PML {@code Utc6b} with {@code size} more statements, requests and observations.
+   */
+  private static byte[] largeList() {
+    return largeList(Integer.getInteger("epr.listSize", 33));
+  }
+
+  private static byte[] largeList(int size) {
+    Bundle bundle =
+        ChEmedJson.parse(
+            ch.emed.converter.epr.testsupport.EprFixtures.bytes(
+                "official/Bundle-BundleUtc6bPml.json"));
+    Composition composition = (Composition) bundle.getEntryFirstRep().getResource();
+    Composition.SectionComponent section = composition.getSectionFirstRep();
+    List<Bundle.BundleEntryComponent> entries =
+        bundle.getEntry().stream()
+            .filter(
+                e ->
+                    e.getResource() instanceof MedicationStatement
+                        || e.getResource() instanceof org.hl7.fhir.r4.model.MedicationRequest
+                        || e.getResource() instanceof org.hl7.fhir.r4.model.Observation)
+            .toList();
+    int copies = 0;
+    for (Bundle.BundleEntryComponent entry : entries) {
+      long existing =
+          entries.stream()
+              .filter(e -> e.getResource().fhirType().equals(entry.getResource().fhirType()))
+              .count();
+      for (int k = 0; k < size / existing; k++) {
+        String url = "urn:uuid:" + UUID.nameUUIDFromBytes(("pml" + copies++).getBytes());
+        bundle.addEntry().setFullUrl(url).setResource(entry.getResource().copy());
+        section.addEntry(new Reference(url));
+      }
+    }
+    return ChEmedJson.serialize(bundle);
+  }
+
+  @Test
+  void aLargeMedicationListStaysWithinTheTimeLimit() {
+    Converter converter = Converters.create(new HapiChEmedValidator());
+    byte[] pml = largeList();
+    ConversionRequest read =
+        new ConversionRequest(
+            FormatId.CH_EMED_EPR, FormatId.CH_EMED, pml, ConversionOptions.defaults());
+    converter.convert(read);
+    ConversionResult[] result = new ConversionResult[1];
+    long toChEmed = millis(() -> result[0] = converter.convert(read));
+    assertThat(result[0].outcome())
+        .as(result[0].report().entries().toString())
+        .isNotEqualTo(Outcome.FAILED);
+    byte[] chEmed = result[0].output().orElseThrow();
+    LOG.info(
+        "medication list with {} entries, PML -> CH EMED with validation: {} ms",
+        ChEmedJson.parse(pml).getEntry().size(),
+        toChEmed);
+
+    ConversionRequest write =
+        new ConversionRequest(
+            FormatId.CH_EMED, FormatId.CH_EMED_EPR, chEmed, ConversionOptions.defaults());
+    long toEpr = millis(() -> result[0] = converter.convert(write));
+    assertThat(result[0].outcome())
+        .as(result[0].report().entries().toString())
+        .isNotEqualTo(Outcome.FAILED);
+    LOG.info("same list, CH EMED -> PML with validation: {} ms", toEpr);
+
+    assertThat(toChEmed).as("SC-004: list to CH EMED").isLessThan(LARGE_LIMIT_MILLIS);
+    assertThat(toEpr).as("SC-004: list to PML").isLessThan(LARGE_LIMIT_MILLIS);
   }
 }

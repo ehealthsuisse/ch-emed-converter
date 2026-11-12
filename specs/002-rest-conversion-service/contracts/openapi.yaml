@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: CH EMED Converter REST API
-  version: 1.2.0
+  version: 1.2.1
   description: |
     Stateless conversion between CH EMED and other Swiss eMedication formats.
     The service has no authentication and no TLS; it MUST be operated behind an API gateway,
@@ -192,9 +192,10 @@ components:
           type: array
           description: |
             Target ch-emed-epr: references to the treatment plans (MTP) in the EPR, one per
-            prescribed medication (PRE) or card entry (PMLC) without a reference, in document
-            order. References in the source are kept. A wrong number fails with
-            TREATMENT_PLAN_REFERENCES_MISMATCH. Not used for MTP and treatment-plans.
+            prescribed medication (PRE), card entry (PMLC), dispense (DIS) or changed prescription
+            of a pharmaceutical advice (PADV) without a reference, in document order. References
+            in the source are kept. A wrong number fails with TREATMENT_PLAN_REFERENCES_MISMATCH.
+            Not used for MTP, PML and treatment-plans.
           items:
             type: object
             additionalProperties: false
@@ -323,9 +324,9 @@ components:
                 items: { type: string, enum: [document, qr-payload, qr-image, treatment-plans] }
               documentTypes:
                 type: array
-                description: Document types the format converts (feature 004), e.g. PMLC, PRE, MTP; empty if the format does not name them.
+                description: Document types the format converts (features 004 and 005), e.g. PMLC, PRE, MTP, DIS, PADV, PML; empty if the format does not name them.
                 items: { type: string }
-                examples: [[PMLC, PRE, MTP]]
+                examples: [[PMLC, PRE, MTP, DIS, PADV, PML]]
         options:
           type: array
           items:

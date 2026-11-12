@@ -164,7 +164,9 @@ public final class ChEmedDocumentReader {
               ReasonCode.UNSUPPORTED_DOCUMENT_TYPE,
               Phase.VALIDATE_INPUT,
               "Composition.type",
-              "Document type " + typeName(composition.getType()) + " is not supported"));
+              "Document type "
+                  + typeName(composition.getType())
+                  + " is not supported; supported: medication card, medication prescription"));
       return null;
     }
     if (composition.hasConfidentiality()) {
@@ -188,6 +190,16 @@ public final class ChEmedDocumentReader {
   }
 
   private static DocumentType type(CodeableConcept type) {
+    // feature 005: a SNOMED CT code decides; the CH EMED medication list also carries the card's
+    // LOINC code 56445-0. LOINC alone is used only without a SNOMED code.
+    if (type.getCoding().stream().anyMatch(c -> SNOMED.equals(c.getSystem()))) {
+      if (hasCode(type, SNOMED, CARD_SNOMED)) {
+        return DocumentType.MEDICATION_CARD;
+      }
+      return hasCode(type, SNOMED, PRESCRIPTION_SNOMED)
+          ? DocumentType.MEDICATION_PRESCRIPTION
+          : null;
+    }
     if (hasCode(type, CARD_CODE) || hasCode(type, SNOMED, CARD_SNOMED)) {
       return DocumentType.MEDICATION_CARD;
     }

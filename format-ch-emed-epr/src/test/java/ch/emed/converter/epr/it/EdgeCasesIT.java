@@ -17,10 +17,8 @@ import ch.emed.converter.epr.testsupport.EprFixtures;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
-/** T072 and T073 (feature 004, spec edge cases 1 and 4). */
+/** T072 and T073 (feature 004, spec edge cases 1 and 4), T006 and T025 (feature 005). */
 class EdgeCasesIT {
 
   private static Converter converter;
@@ -38,32 +36,34 @@ class EdgeCasesIT {
     return result.report().entries().stream().filter(e -> e.severity() == Severity.ERROR).toList();
   }
 
-  /** Edge case 1: a CH EMED document of a type outside this feature is refused. */
-  @ParameterizedTest
-  @ValueSource(
-      strings = {
-        "Bundle-1-2-MedicationDispense.json",
-        "Bundle-2-2-PharmaceuticalAdvice.json",
-        "Bundle-2-1-MedicationList.json"
-      })
-  void chEmedDocumentsOfOtherTypesAreRefusedNamingTheSupportedTypes(String name) {
-    ConversionResult result =
-        convert(FormatId.CH_EMED, FormatId.CH_EMED_EPR, EprFixtures.bytes("chemed/" + name));
+  /**
+   * Edge case 1: a document of a type outside the converter's scope is refused naming the six
+   * supported types (feature 005; before, feature 004 refused DIS, PADV and PML here). From CH EMED
+   * EPR the type is checked before validation; as CH EMED input the same document already fails
+   * input validation, because its type contradicts the declared profiles.
+   */
+  @Test
+  void documentsOfOtherTypesAreRefusedNamingTheSupportedTypes() {
+    byte[] unknown = EprFixtures.bytes("synthetic/Bundle-UnknownDocumentType.json");
 
-    assertThat(result.outcome()).isEqualTo(Outcome.FAILED);
-    assertThat(result.output()).isEmpty();
-    assertThat(errors(result))
-        .as(name)
+    ConversionResult fromEpr = convert(FormatId.CH_EMED_EPR, FormatId.CH_EMED, unknown);
+
+    assertThat(fromEpr.outcome()).isEqualTo(Outcome.FAILED);
+    assertThat(fromEpr.output()).isEmpty();
+    assertThat(errors(fromEpr))
         .singleElement()
         .satisfies(
             e -> {
               assertThat(e.code()).isEqualTo(ReasonCode.UNSUPPORTED_DOCUMENT_TYPE);
               assertThat(e.message())
-                  .contains("not yet supported")
-                  .contains("PMLC")
-                  .contains("PRE")
-                  .contains("MTP");
+                  .contains("not recognised")
+                  .contains("PMLC", "PRE", "MTP", "DIS", "PADV", "PML");
             });
+
+    ConversionResult fromChEmed = convert(FormatId.CH_EMED, FormatId.CH_EMED_EPR, unknown);
+
+    assertThat(fromChEmed.outcome()).isEqualTo(Outcome.FAILED);
+    assertThat(fromChEmed.output()).isEmpty();
   }
 
   /**
@@ -82,5 +82,33 @@ class EdgeCasesIT {
     assertThat(errors(toChmed16a))
         .extracting(ReportEntry::code)
         .doesNotContain(ReasonCode.FHIR_VALIDATION, ReasonCode.PARSE_ERROR);
+  }
+
+  /**
+   * Feature 005 (T025, research R7): CH EMED dispenses, advice and lists do not reach CHMED16A; the
+   * refusal names the supported types. The list 2-1 also carries the card's LOINC code.
+   */
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.ValueSource(
+      strings = {
+        "Bundle-1-2-MedicationDispense.json",
+        "Bundle-2-2-PharmaceuticalAdvice.json",
+        "Bundle-2-1-MedicationList.json"
+      })
+  void dispensesAdviceAndListsDoNotReachChmed16a(String name) {
+    ConversionResult result =
+        convert(FormatId.CH_EMED, FormatId.CHMED16A, EprFixtures.bytes("chemed/" + name));
+
+    assertThat(result.outcome()).as(name).isEqualTo(Outcome.FAILED);
+    assertThat(result.output()).isEmpty();
+    assertThat(errors(result))
+        .as(name)
+        .anySatisfy(
+            e -> {
+              assertThat(e.code()).isEqualTo(ReasonCode.UNSUPPORTED_DOCUMENT_TYPE);
+              assertThat(e.message())
+                  .contains("medication card")
+                  .contains("medication prescription");
+            });
   }
 }

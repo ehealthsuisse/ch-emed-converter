@@ -239,7 +239,75 @@ class ChEmedToEprIT {
   }
 
   static Stream<String> officialDocuments() {
-    return Stream.of("PMLC", "PRE", "MTP").flatMap(t -> EprFixtures.official(t).stream());
+    return Stream.of("PMLC", "PRE", "MTP", "DIS", "PADV", "PML")
+        .flatMap(t -> EprFixtures.official(t).stream());
+  }
+
+  /** Feature 005 (T016, SC-002): the CH EMED dispense, advice and list examples. */
+  static Stream<String> chEmedDisPadvPml() {
+    return Stream.of("DIS", "PADV", "PML").flatMap(t -> EprFixtures.chEmed(t).stream());
+  }
+
+  /** Entries that need a treatment-plan reference from the option (M-EPR-28, research F1). */
+  private static int withoutTreatmentPlan(byte[] chEmed) {
+    long dispenses =
+        resources(chEmed, org.hl7.fhir.r4.model.MedicationDispense.class).stream()
+            .filter(d -> d.getExtensionByUrl(TREATMENT_PLAN) == null)
+            .count();
+    long requests =
+        resources(chEmed, MedicationRequest.class).stream()
+            .filter(r -> r.getExtensionByUrl(TREATMENT_PLAN) == null)
+            .count();
+    return (int) (dispenses + requests);
+  }
+
+  @ParameterizedTest
+  @MethodSource("chEmedDisPadvPml")
+  void chEmedDispensesAdviceAndListsBecomeValidEpr(String name) {
+    byte[] chEmed = EprFixtures.bytes("chemed/" + name);
+    if (name.startsWith("Bundle-3-")) {
+      // research F3: these dispense documents record an administration, which CH EMED EPR lacks
+      ConversionResult result =
+          convert(
+              FormatId.CH_EMED,
+              FormatId.CH_EMED_EPR,
+              chEmed,
+              ConversionOptions.defaults().withTreatmentPlanReferences(references(1)));
+      assertThat(result.outcome()).as(name).isEqualTo(Outcome.FAILED);
+      assertThat(result.report().entries())
+          .filteredOn(e -> e.severity() == Severity.ERROR)
+          .extracting(ReportEntry::code, ReportEntry::path)
+          .as(name)
+          .contains(tuple(ReasonCode.MISSING_REQUIRED_DATA, "Bundle.entry[0].resource.section"));
+      return;
+    }
+    int missing = withoutTreatmentPlan(chEmed);
+    if (missing > 0) {
+      ConversionResult without =
+          convert(FormatId.CH_EMED, FormatId.CH_EMED_EPR, chEmed, ConversionOptions.defaults());
+      assertThat(without.outcome()).as(name).isEqualTo(Outcome.FAILED);
+      assertThat(without.report().entries())
+          .filteredOn(e -> e.severity() == Severity.ERROR)
+          .extracting(ReportEntry::code)
+          .as(name)
+          .containsOnly(ReasonCode.MISSING_REQUIRED_DATA);
+    }
+
+    ConversionResult with =
+        convert(
+            FormatId.CH_EMED,
+            FormatId.CH_EMED_EPR,
+            chEmed,
+            missing == 0
+                ? ConversionOptions.defaults()
+                : ConversionOptions.defaults().withTreatmentPlanReferences(references(missing)));
+
+    assertThat(errors(with)).as(name).isEmpty();
+    assertThat(with.outcome()).as(name).isNotEqualTo(Outcome.FAILED);
+    assertThat(with.report().entries())
+        .as(name)
+        .extracting(ReportEntry::code)
+        .doesNotContain(ReasonCode.REFERENCE_INCONSISTENT);
   }
 
   @ParameterizedTest

@@ -10,7 +10,9 @@ Copied unchanged from `package/example/` of the vendored package `ch.fhir.ig.ch-
 | PMLC | `Bundle-BundlePmlc1`, `Bundle-DocumentPmlc*`, `Bundle-DocumentUCSF1/3/5*` |
 | PRE | `Bundle-DocumentPre*`, `Bundle-DocumentUCSF7*` |
 | MTP | `Bundle-DocumentMtp*`, `Bundle-DocumentUCSF2/6*` |
-| refused (later feature) | `Bundle-DocumentDis1`, `Bundle-DocumentPadv1`, `Bundle-BundlePml1` |
+| DIS (feature 005) | `Bundle-DocumentDis1`, `Bundle-DocumentUCSF4*` |
+| PADV (feature 005) | `Bundle-DocumentPadv*` |
+| PML (feature 005) | `Bundle-BundlePml1`, `Bundle-BundleUtc1Pml` (empty list), `Bundle-BundleUtc6bPml` |
 
 The original representations in these examples are placeholders ("not a valid binary"), not
 PDFs.
