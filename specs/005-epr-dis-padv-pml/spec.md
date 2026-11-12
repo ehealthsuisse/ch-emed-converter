@@ -82,7 +82,7 @@ The conversions of stories 1 and 2 and the options they need are available throu
 - References to documents the converter does not have (treatment plan, prescription, dispense, advice) → kept as given and not resolved; the converter never contacts the EPR.
 - Contradicting references within a document (for example a medication-list dispense pointing to a treatment plan that is not among the list's entries while the list holds it under another identifier, or an advice whose changed statement belongs to another treatment plan than the one it references) → reported as warning with the paths, output unchanged (FR-008).
 - Original representation: optional for DIS, PADV and PML; a PDF/A of the source or supplied by the caller is kept, none is rendered, and every case is reported.
-- Very large medication list (for example 100 entries of each kind) → converted within the time limits of feature 004.
+- Very large medication list → a list of 100 entries is converted within the time limits of feature 004; the time grows linearly with larger lists (SC-004, research F7).
 - CH EMED dispense, pharmaceutical advice or medication list converted to CHMED16A → refused as
   before (eMediplan knows only medication plans and prescriptions); the existing refusal stays and
   its message now names the supported types (clarification 2026-11-10).
@@ -103,7 +103,7 @@ The conversions of stories 1 and 2 and the options they need are available throu
 - **FR-004**: Every CH EMED EPR output MUST validate without errors against the pinned CH EMED EPR profiles and the profiles they depend on; output failing validation MUST NOT be returned.
 - **FR-005**: Every CH EMED EPR input MUST be validated before conversion; an input with errors MUST be refused with the validation findings.
 - **FR-006**: Elements that CH EMED EPR does not support MUST be left out of CH EMED EPR output, including inside contained and changed resources, and listed in the report with path and reason; clinically relevant elements MUST be marked as clinical loss.
-- **FR-007**: References to other documents (treatment plan, prescription, dispense, pharmaceutical advice) MUST be kept unchanged in both directions. A dispense without a treatment-plan reference MUST get it from the existing treatment-plan reference option of feature 004, reported as derived value; otherwise the conversion MUST fail with `MISSING_REQUIRED_DATA` naming the reference, never its value. The converter MUST NOT check whether referenced documents exist outside the document.
+- **FR-007**: References to other documents (treatment plan, prescription, dispense, pharmaceutical advice) MUST be kept unchanged in both directions. A reference CH EMED EPR does not support (the pharmaceutical-advice reference of a dispense) is removed and reported like any unsupported element (FR-006, research F2). A dispense without a treatment-plan reference MUST get it from the existing treatment-plan reference option of feature 004, reported as derived value; otherwise the conversion MUST fail with `MISSING_REQUIRED_DATA` naming the reference, never its value. The converter MUST NOT check whether referenced documents exist outside the document.
 - **FR-008**: The converter MUST check that the references within one document agree: a reference to an entry of the same document (for example in a medication list) MUST resolve, and the references of one dispense or advice (treatment plan, prescription, dispense, changed statement or request) MUST NOT contradict each other or the entries of the same document. Contradictions MUST be reported with the paths of the references concerned, never their values; they are warnings and do not change or fail the conversion, because references are kept as given (clarification 2026-11-10).
 - **FR-018**: Full URLs that are not `urn:uuid` MUST be replaced by deterministic `urn:uuid` on the way to CH EMED EPR, with every reference to them, and each replacement MUST be reported (clarification 2026-11-10, research F5).
 - **FR-009**: Data required by CH EMED EPR but missing in the source MUST come from the existing options (patient identifier, author, confidentiality, treatment-plan references); otherwise the conversion MUST fail with `MISSING_REQUIRED_DATA`. No other defaults may be applied to clinically relevant data.
@@ -114,7 +114,7 @@ The conversions of stories 1 and 2 and the options they need are available throu
 
 **Interfaces**
 
-- **FR-014**: All conversions and options MUST be available through library, CLI and REST with identical behaviour and report, without changing the behaviour of existing conversions other than turning the former refusal of these document types into conversions.
+- **FR-014**: All conversions and options MUST be available through library, CLI and REST with identical behaviour and report, without changing the behaviour of existing conversions other than turning the former refusal of these document types into conversions; the further changes are the full URLs of FR-018, which apply to all CH EMED EPR document types, and the CHMED16A refusal of these types, which names the supported types and decides by the SNOMED CT document type (research R7).
 - **FR-015**: The capability information MUST list DIS, PADV and PML as document types of CH EMED EPR, and the API description MUST cover them.
 
 **Data protection**
@@ -135,7 +135,7 @@ The conversions of stories 1 and 2 and the options they need are available throu
 ### Measurable Outcomes
 
 - **SC-001**: 100% of the official DIS, PADV and PML examples of CH EMED EPR 3.0.0 are converted to CH EMED documents that validate without errors.
-- **SC-002**: 100% of the official dispense and pharmaceutical-advice examples of CH EMED 6.0.0 are converted to CH EMED EPR documents that validate without errors when the required data is supplied by options, and fail only for documented missing data without them.
+- **SC-002**: 100% of the official dispense and pharmaceutical-advice examples of CH EMED 6.0.0 are converted to CH EMED EPR documents that validate without errors when the required data is supplied by options, and fail only for documented missing data without them; the dispense documents that record a medication administration (IG examples 3-1 and 3-2) have no CH EMED EPR equivalent and fail with `MISSING_REQUIRED_DATA` (research F3).
 - **SC-003**: 100% of the round trips of FR-011 over the test corpus differ only by documented changes.
 - **SC-004**: Converting a medication list with 100 entries in total, including validation, stays within the time limits of feature 004 on the reference hardware (clarification 2026-11-12: 100 entries in total, not of each kind; larger lists grow linearly, research F7).
 - **SC-005**: For 100% of the inputs of the test corpus, library, CLI and REST give identical documents and reports.

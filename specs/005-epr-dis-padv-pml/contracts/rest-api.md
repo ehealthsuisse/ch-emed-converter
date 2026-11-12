@@ -15,8 +15,8 @@ medication lists.
 - `CapabilitiesResponse.formats[].documentTypes`:
   - description: "… e.g. PMLC, PRE, MTP, DIS, PADV, PML …";
   - example: `[[PMLC, PRE, MTP, DIS, PADV, PML]]`.
-- `RequestOptions.treatmentPlanReferences`: the description names the dispense of a DIS as a
-  further use (exactly one reference).
+- `RequestOptions.treatmentPlanReferences`: the description names the dispense of a DIS and the
+  changed prescription of a PADV as further uses (research F1).
 - The capabilities option text of `treatmentPlanReferences` (`CapabilitiesController`) is changed
   the same way.
 - Report entries may carry the new reason code `REFERENCE_INCONSISTENT` (WARNING). The report

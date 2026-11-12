@@ -373,3 +373,13 @@ Task: "ReferenceConsistencyTest C1–C4 (T015)"
 5. Polish (round trips, determinism, performance, docs, CHANGELOG).
 
 Commit after each phase, once approved.
+
+---
+
+## Phase 7: Convergence
+
+- [X] T032 Align FR-014 with FR-018 (full URLs of all six types) and research R7 (CHMED16A refusal message and type detection) per FR-014 (contradicts)
+- [X] T033 State in FR-007 that references CH EMED EPR does not support (the advice reference of a dispense, research F2) are removed and reported per FR-007 (partial)
+- [X] T034 Name the documented exception of SC-002 (dispense documents with an administration, research F3) per SC-002 (partial)
+- [X] T035 Update the edge case "Very large medication list" and plan.md performance goals to SC-004 as clarified (100 entries in total) per SC-004 (contradicts)
+- [X] T036 Name the changed prescription of a PADV in the `treatmentPlanReferences` description of contracts/rest-api.md per FR-014/research F1 (partial)

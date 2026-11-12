@@ -56,7 +56,7 @@ which now names the supported types (R7).
 
 **Project Type**: Library with CLI and web service (Maven multi-module); no new module.
 
-**Performance Goals**: SC-004 is a PML with 100 entries of each kind, to CH EMED and back,
+**Performance Goals**: SC-004 is a PML with 100 entries in total (clarified 2026-11-12, research F7), to CH EMED and back,
 including validation, within SC-005b of feature 001 (< 30 s warm), measured on 4 vCPUs (R11).
 
 **Constraints**:
