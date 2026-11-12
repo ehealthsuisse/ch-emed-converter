@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -194,6 +195,37 @@ class ServiceLibraryParityTest extends AbstractRestTest {
         RestTestSupport.json("{\"outputForm\":\"treatment-plans\"}"),
         List.of("--output-form", "treatment-plans"),
         DEFAULTS.withOutputForm(OutputForm.TREATMENT_PLANS));
+  }
+
+  /** Feature 005: the CH EMED dispense, advice and list examples to CH EMED EPR. */
+  static Stream<Path> eprChEmedExamples() {
+    return RestTestSupport.corpus(RestTestSupport.EPR_CHEMED).stream();
+  }
+
+  @ParameterizedTest(name = "ch-emed -> ch-emed-epr (CH EMED example): {0}")
+  @MethodSource("eprChEmedExamples")
+  void chEmedExamplesToEpr(Path input) throws Exception {
+    assertParity(input, "ch-emed", "ch-emed-epr", null, List.of(), DEFAULTS);
+  }
+
+  /** Feature 005: a dispense that takes its treatment plan from the option. */
+  @Test
+  void dispenseWithTreatmentPlanReference() throws Exception {
+    String doc = "urn:uuid:11111111-1111-4111-8111-111111111111";
+    String ms = "urn:uuid:22222222-2222-4222-8222-222222222222";
+    assertParity(
+        RestTestSupport.EPR_SYNTHETIC.resolve("Bundle-DispenseWithoutTreatmentPlan.json"),
+        "ch-emed",
+        "ch-emed-epr",
+        RestTestSupport.json(
+            "{\"treatmentPlanReferences\":[{\"documentId\":\""
+                + doc
+                + "\",\"statementId\":\""
+                + ms
+                + "\"}]}"),
+        List.of("--treatment-plan", doc + "," + ms),
+        DEFAULTS.withTreatmentPlanReferences(
+            List.of(new ch.emed.converter.core.api.TreatmentPlanReference(doc, ms))));
   }
 
   static Stream<Path> chEmedCorpus() {

@@ -55,5 +55,18 @@ public abstract class AbstractRestTest {
       mvc.perform(convert("ch-emed", "ch-emed-epr", document, references));
       mvc.perform(convert("ch-emed", "ch-emed-epr", document, plans));
     }
+    // feature 005: CH EMED dispenses, advice and lists, with and without a reference
+    for (java.nio.file.Path input : RestTestSupport.corpus(RestTestSupport.EPR_CHEMED)) {
+      byte[] document = RestTestSupport.read(input);
+      mvc.perform(convert("ch-emed", "ch-emed-epr", document, null));
+      mvc.perform(convert("ch-emed", "ch-emed-epr", document, references));
+    }
+    mvc.perform(
+        convert(
+            "ch-emed",
+            "ch-emed-epr",
+            RestTestSupport.read(
+                RestTestSupport.EPR_SYNTHETIC.resolve("Bundle-DispenseWithoutTreatmentPlan.json")),
+            references));
   }
 }

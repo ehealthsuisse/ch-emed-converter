@@ -26,7 +26,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MvcResult;
 
 /**
- * T047 and T067 (feature 004, US5, contracts/rest-api.md): CH EMED EPR through REST, OpenAPI 1.2.0.
+ * T047 and T067 (feature 004, US5, contracts/rest-api.md), T023 (feature 005): CH EMED EPR through
+ * REST, OpenAPI 1.2.1.
  */
 class EprConversionContractTest extends AbstractRestTest {
 
@@ -288,5 +289,61 @@ class EprConversionContractTest extends AbstractRestTest {
                 options("{\"originalRepresentation\":\"%%% not base64 %%%\"}")))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.errorType").value("MALFORMED_REQUEST"));
+  }
+
+  /** Feature 005: DIS, PADV and PML in both directions, and a dispense with a reference. */
+  @Test
+  void disPadvPmlConformToContract() throws Exception {
+    for (String name :
+        List.of(
+            "Bundle-DocumentDis1.json",
+            "Bundle-DocumentPadvChangeParacetamolCARAPMP004.json",
+            "Bundle-BundlePml1.json")) {
+      MvcResult read =
+          mvc.perform(convert("ch-emed-epr", "ch-emed", epr(name), null))
+              .andExpect(status().isOk())
+              .andExpect(openApi().isValid(RestTestSupport.OPENAPI))
+              .andReturn();
+      mvc.perform(convert("ch-emed", "ch-emed-epr", output(read), null))
+          .andExpect(status().isOk())
+          .andExpect(openApi().isValid(RestTestSupport.OPENAPI));
+    }
+    byte[] dispense =
+        RestTestSupport.read(
+            RestTestSupport.EPR_SYNTHETIC.resolve("Bundle-DispenseWithoutTreatmentPlan.json"));
+    mvc.perform(convert("ch-emed", "ch-emed-epr", dispense, null))
+        .andExpect(status().isUnprocessableEntity())
+        .andExpect(jsonPath("$.errorType").value("CONVERSION_FAILED"));
+    mvc.perform(convert("ch-emed", "ch-emed-epr", dispense, options(references(1))))
+        .andExpect(status().isOk())
+        .andExpect(openApi().isValid(RestTestSupport.OPENAPI));
+  }
+
+  /** Feature 005, M-EPR-04: a contradiction is a warning in the report of a 200 response. */
+  @Test
+  void contradictingReferencesAreAWarning() throws Exception {
+    Bundle dis = ChEmedJson.parse(epr("Bundle-DocumentDis1.json"));
+    org.hl7.fhir.r4.model.MedicationDispense dispense =
+        dis.getEntry().stream()
+            .map(Bundle.BundleEntryComponent::getResource)
+            .filter(org.hl7.fhir.r4.model.MedicationDispense.class::isInstance)
+            .map(org.hl7.fhir.r4.model.MedicationDispense.class::cast)
+            .findFirst()
+            .orElseThrow();
+    org.hl7.fhir.r4.model.Extension plan = dispense.getExtensionByUrl(TREATMENT_PLAN);
+    org.hl7.fhir.r4.model.Extension prescription =
+        dispense.getExtensionByUrl(
+            "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-ext-prescription");
+    prescription.getExtensionByUrl("id").setValue(plan.getExtensionByUrl("id").getValue().copy());
+    ((org.hl7.fhir.r4.model.Identifier)
+            prescription.getExtensionByUrl("externalDocumentId").getValue())
+        .setValue(DOC);
+
+    mvc.perform(convert("ch-emed-epr", "ch-emed", ChEmedJson.serialize(dis), null))
+        .andExpect(status().isOk())
+        .andExpect(openApi().isValid(RestTestSupport.OPENAPI))
+        .andExpect(jsonPath("$.outcome").value("SUCCESS_WITH_WARNINGS"))
+        .andExpect(
+            jsonPath("$.report.entries[*].code").value(Matchers.hasItem("REFERENCE_INCONSISTENT")));
   }
 }

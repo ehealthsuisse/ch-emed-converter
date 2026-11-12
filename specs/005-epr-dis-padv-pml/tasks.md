@@ -245,11 +245,11 @@ options; every output validates against CH EMED EPR.
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T021 [P] [US3] Extend the expected document types to the six in:
+- [X] T021 [P] [US3] Extend the expected document types to the six in:
   - `converter-rest/src/test/java/ch/emed/converter/rest/contract/CapabilitiesContractTest.java`;
   - `converter-cli/src/test/java/ch/emed/converter/cli/FormatsCommandTest.java`;
   - `ChEmedEprFormatModuleTest`.
-- [ ] T022 [P] [US3] Extend to the corpus of T001/T002 and the synthetic inputs of T012/T015:
+- [X] T022 [P] [US3] Extend to the corpus of T001/T002 and the synthetic inputs of T012/T015:
   - `ServiceLibraryParityTest`;
   - `LogLeakTest`;
   - `ProblemLeakTest`;
@@ -257,13 +257,13 @@ options; every output validates against CH EMED EPR.
   - `PhiLeakTest`.
 
   Include a DIS with `treatmentPlanReferences` through CLI (`--treatment-plan`) and REST.
-- [ ] T023 [P] [US3] Extend `EprCliTest` and `EprConversionContractTest` with one DIS, PADV and PML
+- [X] T023 [P] [US3] Extend `EprCliTest` and `EprConversionContractTest` with one DIS, PADV and PML
   conversion in each direction, and with a contradiction (WARNING in the report, exit `0` / HTTP
   `200`).
 
 ### Implementation for User Story 3
 
-- [ ] T024 [US3] `ChEmedEprFormatModule.documentTypes()` returns the six types. The description
+- [X] T024 [US3] `ChEmedEprFormatModule.documentTypes()` returns the six types. The description
   of `treatmentPlanReferences` names the dispense in:
   - `CapabilitiesController.options()`;
   - the CLI help of `--treatment-plan` in `ConvertCommand`;

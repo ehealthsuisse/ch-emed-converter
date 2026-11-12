@@ -22,8 +22,10 @@ import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.DomainResource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-/** T046 and T066 (feature 004, US5, contracts/cli.md): CH EMED EPR through the CLI. */
+/** T046 and T066 (feature 004, US5), T023 (feature 005): CH EMED EPR through the CLI. */
 class EprCliTest {
 
   private static final String DOC = "urn:uuid:11111111-1111-4111-8111-111111111111";
@@ -251,5 +253,78 @@ class EprCliTest {
             tmp.resolve("missing.pdf").toString());
 
     assertThat(result.exitCode()).isEqualTo(CliMain.EXIT_USAGE);
+  }
+
+  /** Feature 005: DIS, PADV and PML in both directions give the library output. */
+  @ParameterizedTest
+  @ValueSource(strings = {"epr/dis.json", "epr/padv.json", "epr/pml.json"})
+  void disPadvPmlInBothDirectionsGiveTheLibraryOutput(String name) throws IOException {
+    Path epr = resource(name);
+    byte[] chEmed =
+        library(
+                FormatId.CH_EMED_EPR,
+                FormatId.CH_EMED,
+                Files.readAllBytes(epr),
+                ConversionOptions.defaults())
+            .output()
+            .orElseThrow();
+
+    CliTestSupport.Run read =
+        run("convert", "--from", "ch-emed-epr", "--to", "ch-emed", epr.toString());
+
+    assertThat(read.exitCode()).as(read.stderr()).isZero();
+    assertThat(read.stdout()).isEqualTo(chEmed);
+
+    Path input = tmp.resolve("chemed-" + epr.getFileName());
+    Files.write(input, chEmed);
+    byte[] back =
+        library(FormatId.CH_EMED, FormatId.CH_EMED_EPR, chEmed, ConversionOptions.defaults())
+            .output()
+            .orElseThrow();
+
+    CliTestSupport.Run write =
+        run("convert", "--from", "ch-emed", "--to", "ch-emed-epr", input.toString());
+
+    assertThat(write.exitCode()).as(write.stderr()).isZero();
+    assertThat(write.stdout()).isEqualTo(back);
+  }
+
+  /** Feature 005, M-EPR-04: a contradiction is a warning in the report; exit code 0. */
+  @Test
+  void contradictingReferencesAreAWarning() throws IOException {
+    String dis = Files.readString(resource("epr/dis.json"));
+    Bundle bundle = ChEmedJson.parse(dis.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    org.hl7.fhir.r4.model.MedicationDispense dispense =
+        bundle.getEntry().stream()
+            .map(Bundle.BundleEntryComponent::getResource)
+            .filter(org.hl7.fhir.r4.model.MedicationDispense.class::isInstance)
+            .map(org.hl7.fhir.r4.model.MedicationDispense.class::cast)
+            .findFirst()
+            .orElseThrow();
+    org.hl7.fhir.r4.model.Extension plan = dispense.getExtensionByUrl(TREATMENT_PLAN);
+    org.hl7.fhir.r4.model.Extension prescription =
+        dispense.getExtensionByUrl(
+            "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-ext-prescription");
+    prescription.getExtensionByUrl("id").setValue(plan.getExtensionByUrl("id").getValue().copy());
+    ((org.hl7.fhir.r4.model.Identifier)
+            prescription.getExtensionByUrl("externalDocumentId").getValue())
+        .setValue(DOC);
+    Path input = tmp.resolve("dis-contradiction.json");
+    Files.write(input, ChEmedJson.serialize(bundle));
+    Path report = tmp.resolve("report.json");
+
+    CliTestSupport.Run result =
+        run(
+            "convert",
+            "--from",
+            "ch-emed-epr",
+            "--to",
+            "ch-emed",
+            "--report",
+            report.toString(),
+            input.toString());
+
+    assertThat(result.exitCode()).as(result.stderr()).isZero();
+    assertThat(Files.readString(report)).contains("REFERENCE_INCONSISTENT").doesNotContain(DOC);
   }
 }

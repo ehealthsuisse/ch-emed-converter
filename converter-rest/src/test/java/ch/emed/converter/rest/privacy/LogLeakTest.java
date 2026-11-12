@@ -41,6 +41,9 @@ class LogLeakTest extends AbstractRestTest {
     "Karce",
     "1973-12-25",
     "Dupont",
+    // patient of the CH EMED dispense examples 3-1 and 3-2 (feature 005)
+    "Moser",
+    "1988-11-27",
     // option values
     "urn:oid:2.999.1",
     "Geheim-4711",

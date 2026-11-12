@@ -18,71 +18,72 @@ mapping rules: [mapping/chmed16a-ch-emed.md](mapping/chmed16a-ch-emed.md).
 ## Modules
 
 ```mermaid
+%%{init: {"flowchart": {"curve": "linear", "wrappingWidth": 400}, "markdownAutoWrap": false, "themeVariables": {"fontFamily": "Arial, Helvetica, sans-serif"}}}%%
 flowchart TB
-    subgraph clients["Clients"]
-        CLI["converter-cli<br/>picocli command line<br/>ch-emed-converter.jar + lib/"]
-        EMB["Embedding systems<br/>(Java library)"]
-        REST["converter-rest<br/>Spring Boot REST/JSON service<br/>ch-emed-converter-rest.jar"]
+    CLI["<i>             client             </i><br/>converter-cli<br/>command line"]
+    REST["<i>             client             </i><br/>converter-rest<br/>REST service"]
+    EMB["<i>             client             </i><br/>embedding system<br/>Java library"]
+
+    subgraph core[" "]
+        API["<b>API</b><br/>Converter<br/>for clients"]
+        PIPE["<i>core</i><br/><b>converter-core</b><br/>pipeline, report<br/>no format logic"]
+        SPIF["<b>                   SPI                   </b><br/>FormatModule<br/>via ServiceLoader"]
+        SPIV["<b>                   SPI                   </b><br/>ChEmedValidator<br/>via ServiceLoader"]
     end
 
-    subgraph core["converter-core (framework-free)"]
-        API["API<br/>Converter · Converters<br/>ConversionRequest / Result / Options"]
-        PIPE["DefaultConverter<br/>pipeline + report"]
-        REP["Report<br/>ConversionReport · ReasonCode<br/>OutcomeCalculator"]
-        SPI["SPI<br/>FormatModule · ChEmedValidator"]
-        UTIL["Shared<br/>IdStrategy (deterministic ids)<br/>PDF renderer (PDFBox)<br/>ChEmedJson (HAPI R4)"]
-    end
-
-    subgraph qr["converter-qr"]
-        QRC["QrImageReader · QrImageWriter<br/>ZXing, PNG/JPEG, no format knowledge"]
-    end
-
-    subgraph fmt["format-chmed16a"]
-        FM["Chmed16aFormatModule"]
-        IO["io<br/>JSON reader and writer, QR payload,<br/>input-form detection, eRezept URL parser"]
-        FWD["mapping<br/>CHMED16A → CH EMED"]
-        REV["mapping.reverse<br/>CH EMED → CHMED16A"]
-        VAL16["validation<br/>CHMED16A schema + eRezept rules"]
-    end
-
-    subgraph epr["format-ch-emed-epr"]
-        EFM["ChEmedEprFormatModule"]
-        EMAP["mapping<br/>EPR ↔ CH EMED, unsupported elements,<br/>required data, PDF/A, treatment plans"]
-    end
-
-    subgraph val["converter-validation"]
-        HV["HapiChEmedValidator<br/>(HAPI / HL7 validator, offline)"]
-        PKG[("Vendored IG packages<br/>ch-core · ch-emed · ch-term · ch-emed-epr<br/>hl7 extensions")]
-    end
+    FMT["<i>                plug-in                </i><br/>format-chmed16a<br/>CHMED16A ↔ CH EMED"]
+    EPRM["<i>                plug-in                </i><br/>format-ch-emed-epr<br/>CH EMED EPR ↔ CH EMED"]
+    VAL["<i>                plug-in                </i><br/>converter-validation<br/>CH EMED, offline"]
+    QR["<i>        supporting module        </i><br/>converter-qr<br/>QR image read/write"]
+    PKG[("<i>bundled data</i><br/>IG packages<br/>ch-core, ch-emed, ch-term,<br/>ch-emed-epr")]
 
     CLI --> API
-    EMB --> API
     REST --> API
+    EMB --> API
     API --> PIPE
-    PIPE --> REP
-    PIPE --> SPI
-    PIPE --> UTIL
-    FM -. "implements via ServiceLoader" .-> SPI
-    HV -. "implements via ServiceLoader" .-> SPI
-    EFM -. "implements via ServiceLoader" .-> SPI
-    EFM --> EMAP
-    FM --> IO
-    IO --> QRC
-    FM --> FWD
-    FM --> REV
-    FM --> VAL16
-    HV --> PKG
+    PIPE --> SPIF
+    PIPE --> SPIV
+    SPIF --> FMT
+    SPIF --> EPRM
+    SPIV --> VAL
+    FMT --> QR
+    VAL --> PKG
+
+    classDef client fill:#e8f5e9,stroke:#4c9a5b,color:#1b4332
+    classDef port fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#1e3a8a
+    classDef corenode fill:#1d4ed8,stroke:#1e3a8a,stroke-width:3px,color:#ffffff
+    classDef plugin fill:#fef3c7,stroke:#b45309,stroke-width:2px,color:#78350f
+    classDef ext fill:#f3f4f6,stroke:#9ca3af,color:#374151
+
+    class CLI,REST,EMB client
+    class API,SPIF,SPIV port
+    class PIPE corenode
+    class FMT,EPRM,VAL plugin
+    class QR,PKG ext
+    style core fill:#eff6ff,stroke:#1d4ed8,stroke-width:2px
 ```
 
-Dependencies in the POMs: `format-chmed16a`, `format-ch-emed-epr` and `converter-validation` depend
-on `converter-core`; `format-ch-emed-epr` validates through the validator of the mapping context
-and renders the PDF/A with `converter-core` (feature 004);
-`format-chmed16a` also depends on `converter-qr` (feature 003), which depends on ZXing only;
-`converter-cli` depends on all of them (the format modules at runtime). `converter-rest` depends on
-`converter-core` and, at runtime, on the format and validation modules; it is the only module with
-Spring dependencies (Spring Boot BOM imported in its own POM, enforced by the parent's
-`enforce-framework-free` rule for all other modules). `converter-core` depends on neither.
-Operation of the service: [operations/rest-service.md](operations/rest-service.md).
+### Build dependencies
+
+The diagram above shows who calls whom at runtime. The build dependencies in the POMs point
+the other way: the plug-ins depend on `converter-core` because they implement its SPIs, while
+`converter-core` depends on no other module of the project. This is why a new format can be
+added without changing the core.
+
+| Module | Depends on (project modules) | Notes |
+|---|---|---|
+| `converter-core` | none | HAPI FHIR structures, PDFBox |
+| `converter-qr` | none | ZXing only |
+| `format-chmed16a` | `converter-core`, `converter-qr` | QR images and eRezept URLs (feature 003) |
+| `format-ch-emed-epr` | `converter-core` | validates through the validator of the mapping context and renders the PDF/A with `converter-core` |
+| `converter-validation` | `converter-core` | HAPI FHIR validator, vendored IG packages |
+| `converter-cli` | `converter-core`, `converter-validation`; `format-chmed16a` and `format-ch-emed-epr` at runtime | picocli |
+| `converter-rest` | `converter-core`; `format-chmed16a`, `format-ch-emed-epr` and `converter-validation` at runtime | only module with Spring (Spring Boot BOM in its own POM) |
+
+"At runtime" means the module is only put on the classpath, where `ServiceLoader` finds it;
+the client's code does not refer to it. All modules except `converter-rest` are kept free of
+web and application frameworks by the parent POM's `enforce-framework-free` rule.
+Operation of the REST service: [operations/rest-service.md](operations/rest-service.md).
 
 ## Conversion pipeline
 
@@ -93,56 +94,86 @@ directions are shown separately.
 ### Format → CH EMED (e.g. CHMED16A → CH EMED)
 
 ```mermaid
+%%{init: {"theme": "base", "look": "classic", "themeVariables": {"primaryColor": "#ffffff", "primaryBorderColor": "#6b7280", "primaryTextColor": "#111827", "lineColor": "#374151", "actorBkg": "#ffffff", "actorBorder": "#6b7280", "actorTextColor": "#111827", "actorLineColor": "#6b7280", "signalColor": "#374151", "signalTextColor": "#111827", "labelBoxBkgColor": "#ffffff", "labelBoxBorderColor": "#6b7280", "labelTextColor": "#111827", "loopTextColor": "#111827", "noteBkgColor": "#f9fafb", "noteBorderColor": "#9ca3af", "noteTextColor": "#111827", "sequenceNumberColor": "#ffffff"}}}%%
 sequenceDiagram
     autonumber
-    actor Caller as CLI / library caller
-    participant C as DefaultConverter
-    participant F as FormatModule (CHMED16A)
-    participant V as ChEmedValidator
-    participant R as ReportCollector
-
-    Caller->>C: convert(request: CHMED16A → CH_EMED, bytes, options)
-    C->>F: toChEmed(bytes, ctx)
-    Note over F: PARSE: decode JSON / QR payload, check schema<br/>MAP: build Medication Card or Prescription Bundle
-    F-->>R: DERIVED_VALUE, UNMAPPABLE_ELEMENT, ...
-    F-->>C: Bundle
-    Note over C: errors so far ⇒ stop, no output
-    opt validateOutput
-        C->>V: validate(bundle, VALIDATE_OUTPUT)
-        V-->>R: FHIR_VALIDATION entries
+    box rgb(232,245,233) client
+        actor Caller as Client (CLI, REST service, library)
     end
-    C->>C: serialize Bundle as FHIR JSON
-    C->>R: OutcomeCalculator(entries, strict)
-    C-->>Caller: ConversionResult(outcome, CH EMED JSON, report)
+    box rgb(239,246,255) converter-core
+        participant C as DefaultConverter
+        participant R as ReportCollector
+    end
+    box rgb(254,243,199) plug-ins
+        participant F as FormatModule (format-chmed16a)
+        participant V as ChEmedValidator (converter-validation)
+    end
+
+    rect rgb(255,255,255)
+        Caller->>C: convert(CHMED16A → CH EMED, bytes, options)
+        Note over C: CHECK: find FormatModule for CHMED16A,<br/>outputForm offered
+        C->>F: toChEmed(bytes, ctx)
+        Note over F: PARSE: detect input form (JSON, QR payload,<br/>QR image, eRezept URL)<br/>CHECK: CHMED16A schema, eRezept rules for prescriptions<br/>MAP: build Medication Card or Prescription Bundle
+        F->>R: add entries (DERIVED_VALUE, UNMAPPABLE_ELEMENT, ...)
+        F-->>C: Bundle (none if errors)
+        opt no errors so far
+            opt validateOutput (default on)
+                C->>V: validate(Bundle, VALIDATE_OUTPUT)
+                V-->>C: FHIR_VALIDATION entries
+                C->>R: add entries
+            end
+            C->>C: serialize Bundle as FHIR JSON
+        end
+        C->>C: calculate outcome (strict), build ConversionReport
+        C-->>Caller: ConversionResult
+        Note over Caller,C: outcome, report, output (none if FAILED),<br/>raw eRezept signature data if any
+    end
 ```
 
 ### CH EMED → Format (e.g. CH EMED → CHMED16A)
 
 ```mermaid
+%%{init: {"theme": "base", "look": "classic", "themeVariables": {"primaryColor": "#ffffff", "primaryBorderColor": "#6b7280", "primaryTextColor": "#111827", "lineColor": "#374151", "actorBkg": "#ffffff", "actorBorder": "#6b7280", "actorTextColor": "#111827", "actorLineColor": "#6b7280", "signalColor": "#374151", "signalTextColor": "#111827", "labelBoxBkgColor": "#ffffff", "labelBoxBorderColor": "#6b7280", "labelTextColor": "#111827", "loopTextColor": "#111827", "noteBkgColor": "#f9fafb", "noteBorderColor": "#9ca3af", "noteTextColor": "#111827", "sequenceNumberColor": "#ffffff"}}}%%
 sequenceDiagram
     autonumber
-    actor Caller as CLI / library caller
-    participant C as DefaultConverter
-    participant V as ChEmedValidator
-    participant F as FormatModule (CHMED16A)
-    participant R as ReportCollector
+    box rgb(232,245,233) client
+        actor Caller as Client (CLI, REST service, library)
+    end
+    box rgb(239,246,255) converter-core
+        participant C as DefaultConverter
+        participant R as ReportCollector
+    end
+    box rgb(254,243,199) plug-ins
+        participant F as FormatModule (format-chmed16a)
+        participant V as ChEmedValidator (converter-validation)
+    end
 
-    Caller->>C: convert(request: CH_EMED → CHMED16A, bytes, options)
-    C->>C: PARSE: read FHIR JSON Bundle
-    C->>V: validate(bundle, VALIDATE_INPUT)
-    V-->>R: FHIR_VALIDATION entries
-    Note over C: errors so far ⇒ stop, no output
-    C->>F: fromChEmed(bundle, ctx)
-    Note over F: MAP: reverse mapping to Medication Plan or Prescription,<br/>CHMED16A schema and eRezept rules on the result
-    F-->>R: reverse mapping entries (capability gaps, eRezept requirements)
-    F-->>C: CHMED16A JSON bytes
-    C->>R: OutcomeCalculator(entries, strict)
-    C-->>Caller: ConversionResult(outcome, CHMED16A JSON, report)
+    rect rgb(255,255,255)
+        Caller->>C: convert(CH EMED → CHMED16A, bytes, options)
+        Note over C: CHECK: find FormatModule for CHMED16A,<br/>outputForm offered<br/>PARSE: read FHIR JSON Bundle<br/>(QR image, QR payload or eRezept URL rejected with a hint)
+        C->>V: validate(Bundle, VALIDATE_INPUT)
+        V-->>C: FHIR_VALIDATION entries
+        C->>R: add entries
+        opt no errors so far
+            C->>F: fromChEmed(Bundle, ctx)
+            Note over F: MAP: reverse mapping to Medication Plan or Prescription<br/>CHECK: eRezept rules for prescriptions, CHMED16A schema<br/>WRITE: JSON, QR payload or QR image (outputForm,<br/>no QR image for prescriptions)
+            F->>R: add entries (capability gaps, eRezept requirements)
+            F-->>C: CHMED16A output (none if errors)
+        end
+        C->>C: calculate outcome (strict), build ConversionReport
+        C-->>Caller: ConversionResult
+        Note over Caller,C: outcome, report, output (none if FAILED)
+    end
 ```
 
 The outcome is `SUCCESS`, `SUCCESS_WITH_WARNINGS` or `FAILED`; no output is returned for `FAILED`.
 With `strict`, clinical loss turns the outcome into `FAILED`. Reports carry paths and codes only,
 never patient values (privacy, see README "Logging (privacy)").
+
+The converter validates CH EMED input whenever a validator is available; the format module checks
+its own input (for example the CHMED16A schema). CH EMED EPR input is always validated: without a
+validator the conversion fails with `VALIDATION_INCOMPLETE` (feature 004, rule M-EPR-03). Output
+validation is on by default and can only be switched off through the library API.
 
 ## Formats and extensions: implemented and planned
 
@@ -153,19 +184,27 @@ that path when it refuses such a pair (constitution, "hub model"; feature 004 FR
 scope and timing are not decided yet.
 
 ```mermaid
+%%{init: {"flowchart": {"curve": "linear"}}}%%
 flowchart LR
-    CHMED16A["CHMED16A<br/>eMediplan plan and prescription<br/>(implemented, feature 001)"]
-    HUB(("CH EMED 6.0.0<br/>HL7 FHIR R4<br/>hub model"))
-    CHMED23A["CHMED23A<br/>(planned, separate feature)"]
-    ERX["eMediplan QR code, eRezept Schweiz QR code / URL<br/>(implemented, feature 003)"]
-    EPR["CH EMED EPR 3.0.0 (CARA EMED)<br/>PMLC · PRE · MTP<br/>(implemented, feature 004)"]
+    ERX["eMediplan QR code,<br/>eRezept Schweiz QR code / URL<br/>transmission forms of CHMED16A<br/>implemented, feature 003"]
+    CHMED16A["CHMED16A<br/>eMediplan plan and prescription<br/>implemented, feature 001"]
+    CHMED23A["CHMED23A<br/>planned, separate feature"]
+    HUB(("CH EMED 6.0.0<br/>HL7 FHIR R4<br/>hub"))
+    EPR["CH EMED EPR 3.0.0<br/>(CARA EMED)<br/>PMLC, PRE, MTP<br/>implemented, feature 004<br/>DIS, PADV, PML<br/>feature 005"]
 
+    ERX <-->|read and write| CHMED16A
     CHMED16A <--> HUB
     CHMED23A <-.-> HUB
-    ERX <--> CHMED16A
     HUB <--> EPR
 
-    classDef planned stroke-dasharray: 5 5
+    classDef hub fill:#1d4ed8,stroke:#1e3a8a,stroke-width:3px,color:#ffffff
+    classDef plugin fill:#fef3c7,stroke:#b45309,stroke-width:2px,color:#78350f
+    classDef form fill:#fffbeb,stroke:#b45309,color:#78350f
+    classDef planned fill:#f3f4f6,stroke:#9ca3af,color:#374151,stroke-dasharray: 5 5
+
+    class HUB hub
+    class CHMED16A,EPR plugin
+    class ERX form
     class CHMED23A planned
 ```
 
