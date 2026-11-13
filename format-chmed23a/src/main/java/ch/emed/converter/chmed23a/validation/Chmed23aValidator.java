@@ -125,6 +125,7 @@ public final class Chmed23aValidator {
     if (prescription && m.meds().isEmpty()) {
       error("/meds", "A prescription needs at least one medicament");
     }
+    gs1(m.rec(), "/rec", "GLN");
     if (plan && m.rec() != null) {
       notUsed("/rec");
     }
@@ -188,6 +189,12 @@ public final class Chmed23aValidator {
     if (d.dLstMen() != null && !isDate(d.dLstMen())) {
       error("/patient/mData/dLstMen", "dLstMen must be a date (YYYY-MM-DD)");
     }
+    if (d.w() != null && d.w().signum() < 0) {
+      error("/patient/mData/w", "Weight must not be negative");
+    }
+    if (d.h() != null && d.h().signum() < 0) {
+      error("/patient/mData/h", "Height must not be negative");
+    }
     if (d.toG() != null && !GESTATION.matcher(d.toG()).matches()) {
       error("/patient/mData/toG", "toG must have the form {week}-{day}");
     }
@@ -211,6 +218,8 @@ public final class Chmed23aValidator {
 
   @MappingRule({"C23-OBJ-07", "C23-OBJ-08"})
   private void author(HealthcarePerson person, HealthcareOrganization org) {
+    gs1(person == null ? null : person.gln(), "/hcPerson/gln", "GLN");
+    gs1(org == null ? null : org.gln(), "/hcOrg/gln", "GLN");
     if (person != null) {
       required(person.fName(), "/hcPerson/fName");
       required(person.lName(), "/hcPerson/lName");
@@ -251,6 +260,9 @@ public final class Chmed23aValidator {
   @MappingRule({"C23-OBJ-09", "C23-OBJ-10", "C23-OBJ-12"})
   private void medicament(Medicament m, String path) {
     required(m.id(), path + "/id");
+    if (m.idType() != null && m.idType() == Medicament.ID_GTIN) {
+      gs1(m.id(), path + "/id", "GTIN");
+    }
     if (m.idType() == null) {
       error(path + "/idType", "idType is required");
     } else if (m.idType() < Medicament.ID_NONE || m.idType() > Medicament.ID_PRODUCT_NUMBER) {
@@ -511,6 +523,35 @@ public final class Chmed23aValidator {
       required(e.schema(), path + "/" + i + "/schema");
       extensions(e.exts(), path + "/" + i + "/exts");
     }
+  }
+
+  /**
+   * GLN and GTIN: 13 digits with the GS1 check digit (C23-OBJ-15). CHMED23A does not constrain the
+   * format and the official examples use invalid GLNs (finding F7), so a violation is a WARNING and
+   * the value is carried unchanged; CH EMED EPR, however, requires valid GLNs.
+   */
+  @MappingRule("C23-OBJ-15")
+  private void gs1(String value, String path, String kind) {
+    if (value != null && !validGs1(value)) {
+      warning(
+          path,
+          kind
+              + " is not 13 digits with a valid GS1 check digit; carried unchanged (CH EMED EPR"
+              + " requires valid GLNs)");
+    }
+  }
+
+  /** True for 13 digits whose last digit is the GS1 check digit (GLN, GTIN-13). */
+  static boolean validGs1(String value) {
+    if (value.length() != 13 || !value.chars().allMatch(Character::isDigit)) {
+      return false;
+    }
+    int sum = 0;
+    for (int i = 0; i < 12; i++) {
+      int digit = value.charAt(i) - '0';
+      sum += (i % 2 == 0) ? digit : digit * 3;
+    }
+    return (10 - (sum % 10)) % 10 == value.charAt(12) - '0';
   }
 
   // -------------------------------------------------------------------------------------------

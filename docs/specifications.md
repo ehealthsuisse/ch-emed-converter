@@ -72,6 +72,23 @@ reviewer**.
 | Image | 1-bit PNG, 8 px per module, `pHYs` so that the symbol without quiet zone prints 40 mm wide |
 | Reading | PNG and JPEG, at most 40 megapixels, exactly one code, content read as UTF-8 |
 
+## eMediplan CHMED23A (feature 006, deprecated)
+
+IG eMediplan has stopped developing CHMED23A (strategy of 2025-12-02); the specification is frozen
+and marked "Deprecated". The converter still reads and writes it; capabilities and documentation mark
+it as deprecated.
+
+| Artefact | Pinned version |
+|----------|----------------|
+| Repository | <https://github.com/ig-emediplan/specification> (MIT licence, © 2024 ig-emediplan) |
+| Commit | `0b579aa6f3aff10a017498db57048c6504091653` (2026-05-22), the same as for CHMED16A |
+| Files | `chmed23a/README.md` (object model), `chmed23a/posology.md`, `chmed23a/terminology.md`, `chmed23a/conventions.md`, `chmed23a/examples.md`, `chmed23a/client-implementations/dotnet/` (reference implementation, validation rules, examples), `chtransmissionformat/README.md` (ReleaseYear 23) |
+| JSON schema | none; conformance rules C23-* of `docs/mapping/chmed23a-ch-emed.md` (research R7) |
+| Code tables | units (CDTYP 9), routes (CDTYP 61), methods (CDTYP 62) and risks of `terminology.md`, vendored as `format-chmed23a/src/main/resources/chmed23a/terminology/*.csv` (`tools/chmed23a/extract_fixtures.py`) |
+| EDQM | routes and administration methods of CH Term 3.3.0 (`route-edqm.csv`, `method-edqm.csv`) |
+| Payload | `CHMED23A.` + Base64 (RFC 4648 §4, with padding) of GZip (MTIME 0) of the UTF-8 JSON; chunks `CHMED23A.{i}/{n}.` are read only |
+| QR symbol | the parameters of CHMED16A above (provisional; the specification states none for ReleaseYear 23) |
+
 ## eRezept Schweiz
 
 | Artefact | Pinned version |

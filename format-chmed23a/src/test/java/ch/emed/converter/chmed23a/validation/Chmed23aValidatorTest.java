@@ -211,6 +211,50 @@ class Chmed23aValidatorTest {
         .contains("/meds/1/pos/0/unit", "/meds/1/pos/0/roa", "/meds/1/pos/0/moa");
   }
 
+  /** C23-OBJ-15: GLN and GTIN check digits are warnings; the value is carried (finding F7). */
+  @Test
+  void glnAndGtinCheckDigitsAreWarnings() throws Exception {
+    List<ReportEntry> example1 = validate(Fixtures.bytes("chmed23a/official/Example1.json"));
+    assertThat(errors(example1)).isEmpty();
+    assertThat(example1)
+        .filteredOn(e -> e.severity() == Severity.WARNING && e.message().contains("GS1"))
+        .extracting(ReportEntry::path)
+        .containsExactly("/hcPerson/gln");
+
+    List<ReportEntry> valid =
+        validate(
+            "Example4",
+            r -> {
+              at(r, "/hcPerson").put("gln", "7601000000002");
+              at(r, "/hcOrg").remove("gln");
+              r.put("rec", "7601001362383");
+            });
+    assertThat(valid).noneMatch(e -> e.message().contains("GS1"));
+
+    List<ReportEntry> invalid =
+        validate(
+            "Example4",
+            r -> {
+              r.put("rec", "7601001362384");
+              at(r, "/meds/0").put("id", "7680388400377");
+            });
+    assertThat(errors(invalid)).isEmpty();
+    assertThat(invalid)
+        .filteredOn(e -> e.severity() == Severity.WARNING && e.message().contains("GS1"))
+        .extracting(ReportEntry::path)
+        .containsExactlyInAnyOrder("/rec", "/hcPerson/gln", "/hcOrg/gln", "/meds/0/id");
+    assertThat(invalid).allSatisfy(e -> assertThat(e.message()).doesNotContain("7601001362384"));
+  }
+
+  @Test
+  void gs1CheckDigit() {
+    assertThat(Chmed23aValidator.validGs1("7601001362383")).isTrue();
+    assertThat(Chmed23aValidator.validGs1("7680334810013")).isTrue();
+    assertThat(Chmed23aValidator.validGs1("7601001362384")).isFalse();
+    assertThat(Chmed23aValidator.validGs1("123123123123")).isFalse();
+    assertThat(Chmed23aValidator.validGs1("760100136238X")).isFalse();
+  }
+
   @Test
   void messagesNeverContainValues() throws Exception {
     List<ReportEntry> entries =

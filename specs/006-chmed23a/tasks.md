@@ -191,7 +191,7 @@ model, reader, validator and transmission format that every story needs
   - the official fixtures T002–T004 → no ERROR.
 
   Assert codes and paths, and that messages contain no values.
-- [ ] T017 [P] Write `T/validation/DotnetValidationTraceTest.java`. It reads the table "C23 ↔ .NET
+- [X] T017 [P] Write `T/validation/DotnetValidationTraceTest.java`. It reads the table "C23 ↔ .NET
   validation tests" in `docs/mapping/chmed23a-ch-emed.md`, which lists every test method of
   `Emediplan.ChMed23A.Tests.Unit/Validation/*`, and asserts that each row names a C23 rule with a
   fixture of T016 or "not applicable" with a reason (research R7.4).
@@ -265,7 +265,7 @@ quickstart Scenarios 1–3, 5).
 
 > Write these tests FIRST and make sure they FAIL before implementation.
 
-- [ ] T026 [P] [US1] Write `T/mapping/PatientMapperTest.java` for M23-PAT and M23-MDT
+- [X] T026 [P] [US1] Write `T/mapping/PatientMapperTest.java` for M23-PAT and M23-MDT
   (research R11):
   - names, birth date, gender 1/2/3 → `male`/`female`/`other`;
   - address without invented country;
@@ -275,7 +275,7 @@ quickstart Scenarios 1–3, 5).
   - no usable id → option `patientIdentifier`, else `MISSING_REQUIRED_DATA` (F5);
   - each `mData` element → WARNING `UNMAPPABLE_ELEMENT` with clinical loss;
   - extensions → WARNING per path, without name or value.
-- [ ] T027 [P] [US1] Write `T/mapping/AuthorMapperTest.java` for M23-AUT (research R8):
+- [X] T027 [P] [US1] Write `T/mapping/AuthorMapperTest.java` for M23-AUT (research R8):
   - `auth` 1 → PractitionerRole, Practitioner (GLN, names, ZSR) and Organization (name, address,
     GLN, ZSR) from the document;
   - option `author` given → not used, INFORMATION;
@@ -294,10 +294,10 @@ quickstart Scenarios 1–3, 5).
   - `unit` mapped (case-insensitive), and unmapped → text;
   - `relMeal` 1–3 with segments and without time → `when` AC*/C*/PC*; with times and 4–7 →
     `additionalInstruction.text` and WARNING without clinical loss.
-- [ ] T029 [P] [US1] Write `T/mapping/PosologyTextTest.java`. It checks the localized descriptions
+- [X] T029 [P] [US1] Write `T/mapping/PosologyTextTest.java`. It checks the localized descriptions
   (de, fr, it, en) of every posology type, including nested sequences, intervals and days of the
   month. Equal input gives equal text, and the text contains no patient data.
-- [ ] T030 [P] [US1] Write `T/mapping/MedicationCardBuilderTest.java` for M23-DOC and M23-MED:
+- [X] T030 [P] [US1] Write `T/mapping/MedicationCardBuilderTest.java` for M23-DOC and M23-MED:
   - `medType` 1 → Medication Card profiles and composition type;
   - `id` UUID → identifier;
   - `id` other text or absent → derived identifier, `DERIVED_VALUE` and `UNMAPPABLE_ELEMENT` (F3);
@@ -567,22 +567,22 @@ capabilities mark the format as deprecated.
 
 **Purpose**: Documentation, performance, changelog and the final checks
 
-- [ ] T070 [P] Write `T/it/PerformanceTest.java` (SC-005, research R14): a synthetic plan with 20
+- [X] T070 [P] Write `T/it/PerformanceTest.java` (SC-005, research R14): a synthetic plan with 20
   medicaments of mixed posologies from the posology fixtures, converted to CH EMED and back
   including validation. Assert < 30 s warm. Add the test to the `load` step in
   `tools/remote-build.sh` (`-pl format-chmed16a,format-chmed23a,converter-rest`).
-- [ ] T071 [P] Update `docs/specifications.md` with a CHMED23A row (repository, commit, files, MIT,
+- [X] T071 [P] Update `docs/specifications.md` with a CHMED23A row (repository, commit, files, MIT,
   deprecated with strategy date) and `docs/third-party-licenses.md` with the example fixtures
   (MIT, © 2024 ig-emediplan).
-- [ ] T072 [P] Update `docs/architecture.md`:
+- [X] T072 [P] Update `docs/architecture.md`:
   - the module `format-chmed23a` in the module diagram;
   - the package `core.chemed`;
   - the hub with CHMED23A marked as deprecated.
 
   Update `README.md` with the formats list and a note on the deprecation.
-- [ ] T073 [P] Extend `tools/validate-outputs.sh` with
+- [X] T073 [P] Extend `tools/validate-outputs.sh` with
   `format-chmed23a/target/it-outputs/*.json` for the official HL7 validator.
-- [ ] T074 Complete `docs/mapping/chmed23a-ch-emed.md`:
+- [X] T074 Complete `docs/mapping/chmed23a-ch-emed.md`:
   - every rule with its final wording;
   - the table "C23 ↔ .NET validation tests" (T017);
   - capability gaps;
@@ -590,15 +590,15 @@ capabilities mark the format as deprecated.
     with several posologies (R10).
 
   The traceability test T025 must have no pending rules.
-- [ ] T075 Update `CHANGELOG.md` `[Unreleased]`:
+- [X] T075 Update `CHANGELOG.md` `[Unreleased]`:
   - Added: format `chmed23a` (deprecated), `ReasonCode.CHUNK_INVALID`, `FormatInfo.deprecated`
     and `FormatModule.deprecated()`, OpenAPI 1.3.0;
   - Changed: CH EMED helpers moved to `converter-core` (`core.chemed`); CHMED16A refusal message
     for CHMED23A input.
-- [ ] T076 Run the full build `./mvnw -B clean verify` on the Linux machine
+- [X] T076 Run the full build `./mvnw -B clean verify` on the Linux machine
   (`tools/remote-build.sh all`). Report the duration, and fix failures with a regression test
   first.
-- [ ] T077 Run the time tests on 4 vCPUs (`tools/remote-build.sh load`). Report the duration and
+- [X] T077 Run the time tests on 4 vCPUs (`tools/remote-build.sh load`). Report the duration and
   record the SC-005 measurement in `docs/operations/rest-service.md`.
 - [ ] T078 Walk through quickstart.md Scenarios 1–7 with the built CLI and REST service, and
   correct the quickstart where the real output differs.

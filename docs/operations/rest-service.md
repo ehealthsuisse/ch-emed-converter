@@ -266,6 +266,13 @@ measured).
 
 Targets (feature 004 SC-005): 20 medications under 5 s, 100 under 30 s, as for CH EMED.
 
+CHMED23A (feature 006, measured 2026-11-13, same setup, `format-chmed23a` `PerformanceTest`): a
+plan with 20 medicaments of mixed posologies from the corpus, CHMED23A → CH EMED → CHMED23A with
+validation of the CH EMED document, takes 0.33–0.45 s per round trip with a warm context (SC-005:
+within 30 s, as SC-005b of feature 001). The other measurements of the same run: 20 parallel REST
+requests of 20 medications, slowest answer 2.8 s; medication list of 109 entries PML → CH EMED
+4.9 s.
+
 Targets of the spec (revised 2026-11-01): 20 different medications under 5 s and 100 under 30 s end
 to end, with less than 1 s added by the service (SC-002); 20 simultaneous requests with 20
 medications each answered with p95 under 40 s, or rejected at once with `SERVICE_BUSY` beyond

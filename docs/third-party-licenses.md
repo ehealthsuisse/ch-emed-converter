@@ -25,7 +25,9 @@ with the Apache-2.0/MIT/EPL policy of the project (constitution, technology gate
 | SIL OFL 1.1 (font, feature 004) | Liberation Sans Regular, inside the PDFBox JAR | embedded as subset in the rendered PDF/A; already shipped with PDFBox |
 | ICC profile licence (colour profile, feature 004) | `sRGB2014.icc` (sRGB IEC 61966-2-1, ICC version 2.0.0), International Color Consortium | vendored as `converter-core/src/main/resources/render/srgb.icc`, output intent of the rendered PDF/A; licence: "may be copied, distributed, embedded, made, used, and sold without restriction" (<https://registry.color.org/profile-library/#license>), unchanged file; SHA-256 in `docs/specifications.md` |
 | Apache-2.0 (tests only, feature 004) | Apache PDFBox `preflight` 3.0.8 | PDF/A-1b validation in the tests of `converter-core` and `format-ch-emed-epr`; not shipped |
-| project modules | `converter-core`, `converter-qr`, `converter-validation`, `format-chmed16a`, `format-ch-emed-epr`, `converter-cli`, `converter-rest` | Apache-2.0 (see `LICENSE`, `<licenses>` in the parent POM) |
+| MIT (test fixtures, feature 006) | CHMED23A examples of `ig-emediplan/specification` (`examples.md`, `posology.md`, .NET examples, transcribed) | test resources of `format-chmed23a` only, with the licence notice in `fixtures/chmed23a/official/README.md`; not shipped |
+| MIT (code tables, feature 006) | CHMED23A code tables of `terminology.md` (units, routes, methods, risks; "provided for free by HCI Solutions AG") | vendored as CSV in `format-chmed23a`; shipped |
+| project modules | `converter-core`, `converter-qr`, `converter-validation`, `format-chmed16a`, `format-chmed23a`, `format-ch-emed-epr`, `converter-cli`, `converter-rest` | Apache-2.0 (see `LICENSE`, `<licenses>` in the parent POM) |
 
 Reviewed again 2026-10-29 for the REST service (feature 002): the runtime dependencies of
 `converter-rest` (`converter-rest/target/licenses/THIRD-PARTY.txt`, 130 entries) add only

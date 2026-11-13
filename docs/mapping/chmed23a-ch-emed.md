@@ -1,6 +1,7 @@
 # Mapping specification: CHMED23A ↔ CH EMED
 
-**Version**: 0.1.0 (feature 006, in progress; domain review pending) | **CHMED23A**: commit
+**Version**: 1.0.0 (feature 006, complete for medication plans and prescriptions in both
+directions; domain review pending) | **CHMED23A**: commit
 `0b579aa` of `ig-emediplan/specification` | **CH EMED**: 6.0.0. See
 [pinned specifications](../specifications.md).
 
@@ -29,6 +30,18 @@ match (`MappingTraceabilityTest`, task T025).
 The rules follow CHMED16A (`chmed16a-ch-emed.md`) wherever the formats agree; such rows say "as
 M-…".
 
+**Domain review pending**: a person with eMediplan / CH EMED knowledge has to confirm these
+interpretation points:
+- the method table `method-edqm.csv` (CDTYP 62 → EDQM by the German designation, M23-DOS-14) and
+  the route codes taken as EDQM codes (M23-DOS-13);
+- units beyond the CHMED16A table (`gtt` → drop, `UI` → `[iU]`, UCUM units; `Appl` unmapped;
+  M23-DOS-15) and `N/A` for plans without dose unit (M23-REV-12);
+- the meal relation as event timing or as additional instruction text (M23-DOS-16);
+- `sic` and repetition durations under one day reported as clinical loss (M23-RX-04, M23-RX-08);
+- one MedicationRequest per posology of a prescribed medicament (M23-RX-02, research R10);
+- GLN and GTIN check digits as WARNING instead of error (C23-OBJ-15, finding F7); the .NET
+  reference implementation refuses invalid GLNs.
+
 ## Conformance
 
 The rules come from the object model (README.md), posology.md and terminology.md of the pinned
@@ -44,7 +57,7 @@ otherwise, a violation is ERROR `CHMED_INVALID_FIELD` at the path.
 | C23-OBJ-03 | `dt` is a date-time with offset (`YYYY-MM-DDThh:mm:ss[.f…]±hh:mm`). |
 | C23-OBJ-04 | Patient: `fName`, `lName`, `bdt` and `gender` required; `lng` required for MP; `bdt` a date; `gender` 1, 2 or 3; `country` ISO 3166 alpha-2; `lng` ISO 639-1 in either case. |
 | C23-OBJ-05 | Patient ids: at least one; `type` 1 or 2; `val` required; `sId` required for `type` 2. |
-| C23-OBJ-06 | MedicalData: `dLstMen` a date; `toG` `{week}-{day}` with day > 0; risk category `id` 1–7; risk ids not in terminology.md or in another category → WARNING. |
+| C23-OBJ-06 | MedicalData: `dLstMen` a date; `toG` `{week}-{day}` with day > 0; `w` and `h` not negative; risk category `id` 1–7; risk ids not in terminology.md or in another category → WARNING. |
 | C23-OBJ-07 | HealthcarePerson: `fName`, `lName` required; `gln` required for Rx. |
 | C23-OBJ-08 | HealthcareOrganization: `name`, `street`, `zip`, `city` required; `gln` required for MP when the person has none; a ZSR number in person and organization → ERROR (it may be set only once). |
 | C23-OBJ-09 | Medicament: `id` and `idType` required; `idType` 1–4, 4 (product number) not for Rx; `autoMed` required for MP. |
@@ -53,6 +66,7 @@ otherwise, a violation is ERROR `CHMED_INVALID_FIELD` at the path.
 | C23-OBJ-12 | Fields with usage `-` for the document type ("can be set, but won't be used"): `rec`, `reps`, `sic`, `nbPack`, `zsr` in MP; `autoMed`, `prscbBy`, `mData`, `lng` in Rx → INFORMATION `UNMAPPABLE_ELEMENT` "not used for this document type". |
 | C23-OBJ-13 | Unknown properties → INFORMATION `UNKNOWN_FIELD_IGNORED`. A property of the wrong JSON type → ERROR. |
 | C23-OBJ-14 | An integer property given with a decimal part is rounded (conventions.md) → INFORMATION `DERIVED_VALUE`. |
+| C23-OBJ-15 | GLN (`hcPerson/gln`, `hcOrg/gln`, `rec`) and GTIN (`id` with `idType` 2) are 13 digits with the GS1 check digit; otherwise WARNING, value carried unchanged (the specification does not constrain the format, and the official examples use invalid GLNs, finding F7; CH EMED EPR requires valid GLNs, `gln-modulus-10`). |
 | C23-POS-01 | Posology: `po` required; `unit` required for MP; `dtFrom`, `dtTo` a date or a date-time with offset; `dtTo` ≥ `dtFrom`; `relMeal` 1–7. |
 | C23-POS-02 | Daily: `ds` has exactly 4 values, each ≥ 0. |
 | C23-POS-03 | FreeText: `text` is not empty. |
@@ -69,7 +83,189 @@ otherwise, a violation is ERROR `CHMED_INVALID_FIELD` at the path.
 | C23-TERM-02 | `roa` is a code of CDTYP 61; otherwise WARNING. |
 | C23-TERM-03 | `moa` is a code of CDTYP 62; otherwise WARNING. |
 
-**C23 ↔ .NET validation tests**: filled in by task T074.
+**C23 ↔ .NET validation tests** (task T017): every test method of
+`Emediplan.ChMed23A.Tests.Unit/Validation/*` at the pinned commit (176 methods) and the conformance
+rule that covers the same check. `MappingTraceabilityTest` and `DotnetValidationTraceTest` check
+that every row names a rule of this specification or "not applied" with a reason.
+
+| .NET test | Rule | Note |
+|-----------|------|------|
+| `ApplicationAtTimeValidationTests.WhenValidatingValidApplicationAtTime_ReturnsValidationError` | C23-POS-10 |  |
+| `ApplicationAtTimeValidationTests.WhenValidatingApplicationAtTimeWithoutTimeOfDay_ReturnsValidationError` | C23-POS-10 |  |
+| `ApplicationAtTimeValidationTests.WhenValidatingApplicationAtTimeWithoutDosage_ReturnsValidationError` | C23-POS-10 |  |
+| `ApplicationAtTimeValidationTests.WhenValidatingApplicationAtTimeWithInvalidTimeOfDay_ReturnsValidationError` | C23-POS-10 |  |
+| `ApplicationInSegmentValidationTests.WhenValidatingValidApplicationInSegment_ReturnsValidationError` | C23-POS-10 |  |
+| `ApplicationInSegmentValidationTests.WhenValidatingApplicationInSegmentWithoutSegment_ReturnsValidationError` | C23-POS-10 |  |
+| `ApplicationInSegmentValidationTests.WhenValidatingApplicationInSegmentWithoutDosage_ReturnsValidationError` | C23-POS-10 |  |
+| `ApplicationInSegmentValidationTests.WhenValidatingApplicationInSegmentWithInvalidSegment_ReturnsValidationError` | C23-POS-10 |  |
+| `ApplicationInSegmentValidationTests.WhenValidatingApplicationInSegmentWithInvalidDosage_ReturnsValidationError` | C23-POS-10 | nested object validated by C23-POS-11 or C23-POS-10 |
+| `DosageFromToValidationTests.WhenValidatingMinimalValidDosageFromTo_ReturnsNoValidationErrors` | C23-POS-11 |  |
+| `DosageFromToValidationTests.WhenValidatingDosageFromToWithoutAmountFrom_ReturnsValidationErrors` | C23-POS-11 |  |
+| `DosageFromToValidationTests.WhenValidatingDosageFromToWithAmountFromOutOfRange_ReturnsValidationErrors` | C23-POS-11 |  |
+| `DosageFromToValidationTests.WhenValidatingDosageFromToWithoutAmountTo_ReturnsValidationErrors` | C23-POS-11 |  |
+| `DosageFromToValidationTests.WhenValidatingDosageFromToWithoutAmountFromGreaterOrEqualAmountTo_ReturnsValidationErrors` | C23-POS-11 |  |
+| `DosageFromToValidationTests.WhenValidatingDosageFromToWithoutDuration_ReturnsValidationErrors` | C23-POS-11 |  |
+| `DosageFromToValidationTests.WhenValidatingDosageFromToWithInvalidDuration_ReturnsValidationErrors` | C23-POS-11 |  |
+| `DosageFromToValidationTests.WhenValidatingDosageFromToWithoutDurationUnit_ReturnsValidationErrors` | C23-POS-11 |  |
+| `DosageFromToValidationTests.WhenValidatingDosageFromToWithInvalidDurationUnit_ReturnsValidationErrors` | C23-POS-11 |  |
+| `DosageRangeValidationTests.WhenValidatingMinimalValidDosageRange_ReturnsNoValidationErrors` | C23-POS-11 |  |
+| `DosageRangeValidationTests.WhenValidatingDosageRangeWithoutMinAmount_ReturnsValidationErrors` | C23-POS-11 |  |
+| `DosageRangeValidationTests.WhenValidatingDosageRangeWithNegativeMinAmount_ReturnsValidationErrors` | C23-POS-11 |  |
+| `DosageRangeValidationTests.WhenValidatingDosageRangeWithoutMaxAmount_ReturnsValidationErrors` | C23-POS-11 |  |
+| `DosageRangeValidationTests.WhenValidatingDosageRangeWithMaxAmountGreaterThanOrEqualMinAmount_ReturnsValidationErrors` | C23-POS-11 |  |
+| `DosageSimpleValidationTests.WhenValidatingDosageSimpleWithValidAmount_ReturnsNoValidationErrors` | C23-POS-11 |  |
+| `DosageSimpleValidationTests.WhenValidatingValidDosageSimpleWithInvalidAmount_ReturnsValidationError` | C23-POS-11 |  |
+| `ExtensionsValidationTests.WhenValidatingMinimalValidExtension_ReturnsNoValidationErrors` | C23-OBJ-11 |  |
+| `ExtensionsValidationTests.WhenValidatingExtensionWithoutValue_ReturnsNoValidationErrors` | C23-OBJ-11 |  |
+| `ExtensionsValidationTests.WhenValidatingExtensionWithoutName_ReturnsValidationErrors` | C23-OBJ-11 |  |
+| `ExtensionsValidationTests.WhenValidatingExtensionWithoutSchema_ReturnsValidationErrors` | C23-OBJ-11 |  |
+| `ExtensionsValidationTests.WhenValidatingExtensionWithInvalidNestedExtension_ReturnsValidationErrors` | C23-OBJ-11 | nested extension validated by C23-OBJ-11 |
+| `HealthcareOrganizationValidationTests.WhenValidatingMinimalValidHealthcareOrganization_ReturnsNoValidationErrors` | C23-OBJ-08 |  |
+| `HealthcareOrganizationValidationTests.WhenValidatingValidHealthcareOrganizationWithoutName_ReturnsValidationError` | C23-OBJ-08 |  |
+| `HealthcareOrganizationValidationTests.WhenValidatingValidHealthcareOrganizationWithoutStreet_ReturnsValidationError` | C23-OBJ-08 |  |
+| `HealthcareOrganizationValidationTests.WhenValidatingValidHealthcareOrganizationWithoutZip_ReturnsValidationError` | C23-OBJ-08 |  |
+| `HealthcareOrganizationValidationTests.WhenValidatingValidHealthcareOrganizationWithoutCity_ReturnsValidationError` | C23-OBJ-08 |  |
+| `HealthcarePersonValidationTests.WhenValidatingMinimalValidHealthcarePerson_ReturnsNoValidationErrors` | C23-OBJ-07 |  |
+| `HealthcarePersonValidationTests.WhenValidatingValidHealthcarePersonWithoutGln_ReturnsValidationError` | C23-OBJ-07 |  |
+| `HealthcarePersonValidationTests.WhenValidatingValidHealthcarePersonWithoutFirstName_ReturnsValidationError` | C23-OBJ-07 |  |
+| `HealthcarePersonValidationTests.WhenValidatingValidHealthcarePersonWithoutLastName_ReturnsValidationError` | C23-OBJ-07 |  |
+| `MedicalDataValidationTests.WhenValidatingMinimalValidMedicalData_ReturnsNoValidationErrors` | C23-OBJ-06 |  |
+| `MedicalDataValidationTests.WhenValidatingFullMedicalData_ReturnsNoValidationErrors` | C23-OBJ-06 |  |
+| `MedicalDataValidationTests.WhenValidatingMedicalDataWithNegativeTimeToGestationDays_ReturnsValidationError` | C23-OBJ-06 |  |
+| `MedicalDataValidationTests.WhenValidatingMedicalDataWithNegativeWeightKg_ReturnsValidationError` | C23-OBJ-06 |  |
+| `MedicalDataValidationTests.WhenValidatingMedicalDataWithNegativeHeightCm_ReturnsValidationError` | C23-OBJ-06 |  |
+| `MedicalDataValidationTests.WhenValidatingMedicalDataWithInvalidExtension_ReturnsValidationError` | C23-OBJ-06 | nested extension validated by C23-OBJ-11 |
+| `MedicalDataValidationTests.WhenValidatingMedicalDataWithInvalidRiskCategory_ReturnsValidationError` | C23-OBJ-06 |  |
+| `MedicamentValidationTests.WhenValidatingMinimalValidMedicament_ReturnsNoValidationErrors` | C23-OBJ-09 |  |
+| `MedicamentValidationTests.WhenValidatingMedicamentWithoutId_ReturnsValidationErrors` | C23-OBJ-09 |  |
+| `MedicamentValidationTests.WhenValidatingMedicamentWithInvalidNumberOfPackages_ReturnsValidationErrors` | C23-OBJ-09 |  |
+| `MedicamentValidationTests.WhenValidatingMedicamentWithoutIdType_ReturnsValidationErrors` | C23-OBJ-09 |  |
+| `MedicamentValidationTests.WhenValidatingMedicamentWithoutIsAutoMedicationForMedicationPlan_ReturnsValidationErrors` | C23-OBJ-09 | usage "-" in a plan: reported as INFORMATION (C23-OBJ-12), not validated |
+| `MedicationValidationTests.WhenValidatingMedicationWithMinimalPropertiesSet_ReturnsNoValidationErrors` | C23-OBJ-01 |  |
+| `MedicationValidationTests.WhenValidatingMedicationWithoutHealthcarePersonWhenAuthorIsPatient_ReturnsNoValidationErrors` | C23-OBJ-02 |  |
+| `MedicationValidationTests.WhenValidatingMedicationWithoutMedicamentsForMedicationPlan_ReturnsNoValidationErrors` | C23-OBJ-01 | usage "-" in a plan: reported as INFORMATION (C23-OBJ-12), not validated |
+| `MedicationValidationTests.WhenPatientIsMedicationPlanAuthor_ReturnsNoValidationErrors` | C23-OBJ-02 |  |
+| `MedicationValidationTests.WhenValidatingMedicationWithoutPatient_ReturnsValidationErrors` | C23-OBJ-01 |  |
+| `MedicationValidationTests.WhenValidatingMedicationWithoutHealthcarePersonWhenAuthorIsHealthcarePerson_ReturnsValidationErrors` | C23-OBJ-02 |  |
+| `MedicationValidationTests.WhenValidatingMedicationWithoutMedicamentsForPrescription_ReturnsValidationErrors` | C23-OBJ-01 |  |
+| `MedicationValidationTests.WhenValidatingMedicationWithoutMedType_ReturnsValidationErrors` | C23-OBJ-02 |  |
+| `MedicationValidationTests.WhenValidatingMedicationWithoutAuthor_ReturnsValidationErrors` | C23-OBJ-02 |  |
+| `MedicationValidationTests.WhenValidatingMedicationWithInvalidAuthor_ReturnsValidationErrors` | C23-OBJ-02 |  |
+| `MedicationValidationTests.WhenValidatingMedicationWithoutCreationDate_ReturnsValidationErrors` | C23-OBJ-03 |  |
+| `MedicationValidationTests.WhenValidatingMedicationWithoutGlnForHealthcarePersonAndHealthcareOrganization_ReturnsValidationErrors` | C23-OBJ-01 |  |
+| `MedicationValidationTests.WhenValidatingMedicationWithZsrSetForHealthcarePersonAndHealthcareOrganization_ReturnsValidationErrors` | C23-OBJ-01 |  |
+| `MedicationValidationTests.WhenPatientIsPrescriptionAuthor_ReturnsValidationErrors` | C23-OBJ-02 |  |
+| `PatientIdValidationTests.WhenValidatingMinimalValidPatientId_ReturnsNoValidationErrors` | C23-OBJ-05 |  |
+| `PatientIdValidationTests.WhenValidatingPatientIdWithInsuranceCardNumberWithoutSystemIdentifier_ReturnsNoValidationErrors` | C23-OBJ-05 |  |
+| `PatientIdValidationTests.WhenValidatingPatientIdWithTypeLocalPidWithoutSystemIdentifier_ReturnsValidationError` | C23-OBJ-05 |  |
+| `PatientIdValidationTests.WhenValidatingPatientIdWithoutType_ReturnsValidationError` | C23-OBJ-05 |  |
+| `PatientIdValidationTests.WhenValidatingPatientIdWithoutValue_ReturnsValidationError` | C23-OBJ-05 |  |
+| `PatientIdValidationTests.WhenValidatingPatientIdWithInvalidPatientIdType_ReturnsValidationError` | C23-OBJ-05 |  |
+| `PatientValidationTests.WhenValidatingMinimalPatient_ReturnsNoValidationErrors` | C23-OBJ-04 |  |
+| `PatientValidationTests.WhenValidatingPatientWithoutFirstName_ReturnsValidationError` | C23-OBJ-04 |  |
+| `PatientValidationTests.WhenValidatingPatientWithoutLastName_ReturnsValidationError` | C23-OBJ-04 |  |
+| `PatientValidationTests.WhenValidatingPatientWithoutBirthDate_ReturnsValidationError` | C23-OBJ-04 |  |
+| `PatientValidationTests.WhenValidatingPatientWithoutGender_ReturnsValidationError` | C23-OBJ-04 |  |
+| `PatientValidationTests.WhenValidatingPatientWithNullIds_ReturnsValidationError` | C23-OBJ-05 |  |
+| `PatientValidationTests.WhenValidatingPatientWithEmptyIds_ReturnsValidationError` | C23-OBJ-05 |  |
+| `PatientValidationTests.WhenValidatingPatientWithInvalidIds_ReturnsValidationError` | C23-OBJ-05 |  |
+| `PatientValidationTests.WhenValidatingPatientWithInvalidExtensions_ReturnsValidationError` | C23-OBJ-04 | nested extension validated by C23-OBJ-11 |
+| `PatientValidationTests.WhenValidatingPatientWithInvalidMedicalData_ReturnsValidationError` | C23-OBJ-04 |  |
+| `PatientValidationTests.WhenValidatingPatientWithInvalidCounty_ReturnsValidationError` | C23-OBJ-04 |  |
+| `CyclicValidationTests.WhenValidatingMinimalValidCyclic_ReturnsNoValidationErrors` | C23-POS-05 |  |
+| `CyclicValidationTests.WhenValidatingCyclicWithoutCycleDurationUnit_ReturnsValidationErrors` | C23-POS-05 |  |
+| `CyclicValidationTests.WhenValidatingCyclicWithInvalidCycleDurationUnit_ReturnsValidationErrors` | C23-POS-05 |  |
+| `CyclicValidationTests.WhenValidatingCyclicWithoutCycleDuration_ReturnsValidationErrors` | C23-POS-05 |  |
+| `CyclicValidationTests.WhenValidatingCyclicWithInvalidCycleDuration_ReturnsValidationErrors` | C23-POS-05 |  |
+| `CyclicValidationTests.WhenValidatingCyclicWithoutTimedDosage_ReturnsValidationErrors` | C23-POS-05 |  |
+| `CyclicValidationTests.WhenValidatingCyclicWithInvalidTimedDosage_ReturnsValidationErrors` | C23-POS-05 |  |
+| `CyclicValidationTests.WhenValidatingCyclicWithInvalidTimedDosagesPerCycle_ReturnsValidationErrors` | C23-POS-05 |  |
+| `DailyValidationTests.WhenValidatingMinimalDaily_ReturnsNoValidationErrors` | C23-POS-02 |  |
+| `DailyValidationTests.WhenValidatingDailyWithTooManyDosages_ReturnValidationErrors` | C23-POS-02 |  |
+| `DailyValidationTests.WhenValidatingDailyWithTooFewDosages_ReturnValidationErrors` | C23-POS-02 |  |
+| `DailyValidationTests.WhenValidatingDailyWithNegativeDosage_ReturnValidationErrors` | C23-POS-02 |  |
+| `DailyValidationTests.WhenValidatingDailyWithNegativeDosages_ReturnValidationErrors` | C23-POS-02 |  |
+| `FreeTextValidationTests.WhenValidatingMinimalValidFreeText_ReturnsNoValidationErrors` | C23-POS-03 |  |
+| `FreeTextValidationTests.WhenValidatingFreeTextWithEmptyText_ReturnsValidationErrors` | C23-POS-03 |  |
+| `SequenceValidationTests.WhenValidatingMinimalValidSequence_ReturnsNoValidationErrors` | C23-POS-06 |  |
+| `SequenceValidationTests.WhenValidatingSequenceWithoutSequenceObjects_ReturnsValidationErrors` | C23-POS-06 |  |
+| `SequenceValidationTests.WhenValidatingSequenceWithEmptySequenceObjects_ReturnsValidationErrors` | C23-POS-06 |  |
+| `SequenceValidationTests.WhenValidatingSequenceWithInvalidSequenceObjects_ReturnsValidationErrors` | C23-POS-06 |  |
+| `SingleValidationTests.WhenValidatingMinimalValidSingle_ReturnsNoValidationErrors` | C23-POS-04 |  |
+| `SingleValidationTests.WhenValidatingSingleWithoutTimedDosage_ReturnsValidationErrors` | C23-POS-04 |  |
+| `SingleValidationTests.WhenValidatingSingleWithInvalidTimedDosage_ReturnsValidationErrors` | C23-POS-04 |  |
+| `SingleValidationTests.WhenValidatingSingleWithTimedDosageOfTypeDaysOfMonth_ReturnsValidationErrors` | C23-POS-04 |  |
+| `SingleValidationTests.WhenValidatingSingleWithTimedDosageOfTypeInterval_ReturnsValidationErrors` | C23-POS-04 |  |
+| `SingleValidationTests.WhenValidatingSingleWithTimedDosageOfTypeWeekDays_ReturnsValidationErrors` | C23-POS-04 |  |
+| `PosologyValidationTests.WhenValidatingMinimalValidPosology_ReturnsNoValidationErrors` | C23-POS-01 |  |
+| `PosologyValidationTests.WhenValidatingPosologyWithoutPosologyDetailObject_ReturnsValidationErrors` | C23-POS-01 |  |
+| `PosologyValidationTests.WhenValidatingPosologyWithInvalidPosologyDetailObject_ReturnsValidationErrors` | C23-POS-01 |  |
+| `PosologyValidationTests.WhenValidatingPosologyWithInvalidRelativeToMeal_ReturnsValidationErrors` | C23-POS-01 |  |
+| `PosologyValidationTests.WhenValidatingPosologyWithToDateBeforeFromDate_ReturnsValidationErrors` | C23-POS-01 |  |
+| `DurationValidationTests.WhenValidatingValidDuration_ReturnsNoValidationErrors` | C23-OBJ-10 |  |
+| `DurationValidationTests.WhenValidatingDurationWithNullPropertiesForMedicationStatement_ReturnsNoValidationErrors` | C23-OBJ-10 | usage "-" in a plan: reported as INFORMATION (C23-OBJ-12), not validated |
+| `DurationValidationTests.WhenValidatingDurationWithNegativeDurationValue_ReturnsValidationError` | C23-OBJ-10 |  |
+| `DurationValidationTests.WhenValidatingDurationWithoutDurationValueForPrescription_ReturnsValidationError` | C23-OBJ-10 |  |
+| `DurationValidationTests.WhenValidatingDurationWithoutUnitForPrescription_ReturnsValidationError` | C23-OBJ-10 |  |
+| `NumberAndDurationValidationTests.WhenValidatingValidNumberAndDuration_ReturnsNoValidationErrors` | C23-OBJ-10 |  |
+| `NumberAndDurationValidationTests.WhenValidatingNumberAndDurationWithNullPropertiesForMedicationStatement_ReturnsNoValidationErrors` | C23-OBJ-10 | usage "-" in a plan: reported as INFORMATION (C23-OBJ-12), not validated |
+| `NumberAndDurationValidationTests.WhenValidatingNumberAndDurationWithInvalidDurationValue_ReturnsValidationError` | C23-OBJ-10 |  |
+| `NumberAndDurationValidationTests.WhenValidatingNumberAndDurationWithNegativeValue_ReturnsValidationError` | C23-OBJ-10 |  |
+| `NumberAndDurationValidationTests.WhenValidatingNumberAndDurationWithInvalidUnit_ReturnsValidationError` | C23-OBJ-10 |  |
+| `NumberAndDurationValidationTests.WhenValidatingNumberAndDurationWithoutValueForPrescription_ReturnsValidationError` | C23-OBJ-10 |  |
+| `NumberAndDurationValidationTests.WhenValidatingNumberAndDurationWithoutDurationValueForPrescription_ReturnsValidationError` | C23-OBJ-10 |  |
+| `NumberAndDurationValidationTests.WhenValidatingNumberAndDurationWithoutUnitForPrescription_ReturnsValidationError` | C23-OBJ-10 |  |
+| `NumberValidationTests.WhenValidatingNumberWithPositiveValueForPrescription_ReturnsNoValidationErrors` | C23-OBJ-10 |  |
+| `NumberValidationTests.WhenValidatingNumberWithoutValueForMedicationPlan_ReturnsNoValidationErrors` | C23-OBJ-10 | usage "-" in a plan: reported as INFORMATION (C23-OBJ-12), not validated |
+| `NumberValidationTests.WhenValidatingNumberWithNegativeValue_ReturnsValidationError` | C23-OBJ-10 |  |
+| `NumberValidationTests.WhenValidatingNumberWithoutValueForPrescription_ReturnsValidationError` | C23-OBJ-10 |  |
+| `RiskCategoryValidationTests.WhenValidatingMinimalValidRiskCategory_ReturnsNoValidationErrors` | C23-OBJ-06 |  |
+| `RiskCategoryValidationTests.WhenValidatingRiskCategoryWithEmptyRiskIds_ReturnsNoValidationErrors` | C23-OBJ-06 |  |
+| `RiskCategoryValidationTests.WhenValidatingRiskCategoryWithRiskIds_ReturnsNoValidationErrors` | C23-OBJ-06 |  |
+| `RiskCategoryValidationTests.WhenValidatingRiskCategoryWithoutId_ReturnsValidationErrors` | C23-OBJ-06 |  |
+| `PauseValidationTests.WhenValidatingMinimalValidPause_ReturnsNoValidationErrors` | C23-POS-06 |  |
+| `PauseValidationTests.WhenValidatingPauseWithoutDuration_ReturnsValidationErrors` | C23-POS-06 |  |
+| `PauseValidationTests.WhenValidatingPauseWithInvalidDuration_ReturnsValidationErrors` | C23-POS-06 |  |
+| `PauseValidationTests.WhenValidatingPauseWithoutDurationUnit_ReturnsValidationErrors` | C23-POS-06 |  |
+| `PauseValidationTests.WhenValidatingPauseWithInvalidDurationUnit_ReturnsValidationErrors` | C23-POS-06 |  |
+| `PosologySequenceValidationTests.WhenValidatingMinimalValidPosologySequence_ReturnsNoValidationErrors` | C23-POS-06 |  |
+| `PosologySequenceValidationTests.WhenValidatingPosologySequenceWithoutDuration_ReturnsValidationErrors` | C23-POS-06 |  |
+| `PosologySequenceValidationTests.WhenValidatingPosologySequenceWithInvalidDuration_ReturnsValidationErrors` | C23-POS-06 |  |
+| `PosologySequenceValidationTests.WhenValidatingPosologySequenceWithoutDurationUnit_ReturnsValidationErrors` | C23-POS-06 |  |
+| `PosologySequenceValidationTests.WhenValidatingPosologySequenceWithInvalidDurationUnit_ReturnsValidationErrors` | C23-POS-06 |  |
+| `PosologySequenceValidationTests.WhenValidatingPosologySequenceWithoutPosologyDetailObject_ReturnsValidationErrors` | C23-POS-06 |  |
+| `PosologySequenceValidationTests.WhenValidatingPosologySequenceWithInvalidPosologyDetailObject_ReturnsValidationErrors` | C23-POS-06 |  |
+| `DaySegmentsValidationTests.WhenValidatingMinimalValidDaySegments_ReturnsNoValidationErrors` | C23-POS-10 |  |
+| `DaySegmentsValidationTests.WhenValidatingDaySegmentsWithoutApplications_ReturnsValidationErrors` | C23-POS-10 |  |
+| `DaySegmentsValidationTests.WhenValidatingDaySegmentsWithEmptyApplications_ReturnsValidationErrors` | C23-POS-10 |  |
+| `DaySegmentsValidationTests.WhenValidatingDaySegmentsWithInvalidApplication_ReturnsValidationErrors` | C23-POS-10 | nested object validated by C23-POS-11 or C23-POS-10 |
+| `DaysOfMonthValidationTests.WhenValidatingMinimalValidDaysOfMonth_ReturnsNoValidationErrors` | C23-POS-08 |  |
+| `DaysOfMonthValidationTests.WhenValidatingDaysOfMonthWithoutDays_ReturnsValidationErrors` | C23-POS-08 |  |
+| `DaysOfMonthValidationTests.WhenValidatingDaysOfMonthWithOutOfRangeDays_ReturnsValidationErrors` | C23-POS-08 |  |
+| `DaysOfMonthValidationTests.WhenValidatingDaysOfMonthWithEmptyDays_ReturnsValidationErrors` | C23-POS-08 |  |
+| `DaysOfMonthValidationTests.WhenValidatingDaysOfMonthWithoutTimedDosage_ReturnsValidationErrors` | C23-POS-08 |  |
+| `DosageOnlyValidationTests.WhenValidatingMinimalValidDosageOnly_ReturnsNoValidationErrors` | C23-POS-11 |  |
+| `DosageOnlyValidationTests.WhenValidatingDosageOnlyWithoutDosage_ReturnsValidationErrors` | C23-POS-11 |  |
+| `DosageOnlyValidationTests.WhenValidatingDosageOnlyWithInvalidDosage_ReturnsValidationErrors` | C23-POS-11 | nested object validated by C23-POS-11 or C23-POS-10 |
+| `IntervalValidationTests.WhenValidatingMinimalValidInterval_ReturnsNoValidationErrors` | C23-POS-09 |  |
+| `IntervalValidationTests.WhenValidatingIntervalWithoutDosage_ReturnsValidationErrors` | C23-POS-09 |  |
+| `IntervalValidationTests.WhenValidatingIntervalWithInvalidDosage_ReturnsValidationErrors` | C23-POS-09 | nested object validated by C23-POS-11 or C23-POS-10 |
+| `IntervalValidationTests.WhenValidatingIntervalWithoutMinIntervalDurationUnit_ReturnsValidationErrors` | C23-POS-09 |  |
+| `IntervalValidationTests.WhenValidatingIntervalWithInvalidMinIntervalDurationUnit_ReturnsValidationErrors` | C23-POS-09 |  |
+| `IntervalValidationTests.WhenValidatingIntervalWithoutMinIntervalDuration_ReturnsValidationErrors` | C23-POS-09 |  |
+| `IntervalValidationTests.WhenValidatingIntervalWithInvalidMinIntervalDuration_ReturnsValidationErrors` | C23-POS-09 |  |
+| `TimesValidationTests.WhenValidatingMinimalValidTimes_ReturnsNoValidationErrors` | C23-POS-10 |  |
+| `TimesValidationTests.WhenValidatingTimesWithoutApplications_ReturnsValidationErrors` | C23-POS-10 |  |
+| `TimesValidationTests.WhenValidatingTimesWithEmptyApplications_ReturnsValidationErrors` | C23-POS-10 |  |
+| `TimesValidationTests.WhenValidatingTimesWithInvalidApplication_ReturnsValidationErrors` | C23-POS-10 | nested object validated by C23-POS-11 or C23-POS-10 |
+| `WeekDaysValidationTests.WhenValidatingMinimalValidWeekDays_ReturnsNoValidationErrors` | C23-POS-07 |  |
+| `WeekDaysValidationTests.WhenValidatingWeekDaysWithoutDaysOfWeek_ReturnsValidationErrors` | C23-POS-07 |  |
+| `WeekDaysValidationTests.WhenValidatingWeekDaysWithEmptyDaysOfWeek_ReturnsValidationErrors` | C23-POS-07 |  |
+| `WeekDaysValidationTests.WhenValidatingWeekDaysWithNotUniqueDaysOfWeek_ReturnsValidationErrors` | C23-POS-07 |  |
+| `WeekDaysValidationTests.WhenValidatingWeekDaysWithInvalidDaysOfWeek_ReturnsValidationErrors` | C23-POS-07 |  |
+| `WeekDaysValidationTests.WhenValidatingWeekDaysWithoutTimedDosage_ReturnsValidationErrors` | C23-POS-07 |  |
+| `WeekDaysValidationTests.WhenValidatingWeekDaysWithInvalidTimedDosage_ReturnsValidationErrors` | C23-POS-07 |  |
+| `GlnValidatorTests.WhenValidatingGln_ReturnsExceptedValidationResult` | C23-OBJ-15 | as WARNING, not as error: the official examples use GLNs without a valid check digit (research F7) |
 
 ## Input forms
 

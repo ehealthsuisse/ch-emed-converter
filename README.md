@@ -1,6 +1,7 @@
 # ch-emed-converter
 
-Bidirectional conversion between **eMediplan CHMED16A** (medication plan, prescription) and
+Bidirectional conversion between **eMediplan CHMED16A** and **CHMED23A** (medication plan,
+prescription; CHMED23A is deprecated by IG eMediplan but still supported) and
 **CH EMED 6.0.0** (Medication Card and Medication Prescription document), as a Java 21 library, a
 command-line tool and a REST service with identical behaviour. CH EMED is the hub model: every conversion goes to or from CH EMED, so further
 formats can be plugged in as modules.
@@ -23,6 +24,7 @@ formats can be plugged in as modules.
 | `converter-qr` | QR code image reader and writer (ZXing), without format knowledge |
 | `converter-validation` | offline CH EMED validation with the vendored IG packages |
 | `format-chmed16a` | CHMED16A model, parser, validator, mappers, serializer |
+| `format-chmed23a` | CHMED23A (deprecated by IG eMediplan): model, reader, conformance rules, mappers, writer, QR payload with chunks |
 | `converter-cli` | picocli command line (`ch-emed-converter.jar`) |
 | `converter-rest` | stateless REST/JSON service, Spring Boot (`ch-emed-converter-rest.jar`) |
 
@@ -71,7 +73,7 @@ java -jar converter-cli/target/ch-emed-converter.jar convert --from ch-emed --to
 
 | Option | Meaning |
 |--------|---------|
-| `--from`, `--to` | `chmed16a`, `ch-emed` or `ch-emed-epr`; every conversion has `ch-emed` on one side (convert `chmed16a` → `ch-emed` → `ch-emed-epr` in two steps) |
+| `--from`, `--to` | `chmed16a`, `chmed23a`, `ch-emed` or `ch-emed-epr`; every conversion has `ch-emed` on one side (convert `chmed16a` → `ch-emed` → `ch-emed-epr` in two steps) |
 | `<input-file>` / `-` | input file or stdin; CHMED16A also as textual QR payload `CHMED16A1…`, PNG/JPEG QR image or signed eRezept URL (detected by content) |
 | `-o`, `--output` | output file (default: stdout) |
 | `--output-form document|qr-payload|qr-image|treatment-plans` | output form; `qr-*` for `--to chmed16a` (`qr-image` only for medication plans), `treatment-plans` for `--to ch-emed-epr` and a medication card (one MTP per treatment) ||qr-payload\|qr-image` | output form for `--to chmed16a`; `qr-image` only for medication plans |
@@ -142,7 +144,7 @@ network** — requests contain patient data. Operation, configuration and probes
 
 - Architecture overview (modules, pipeline, adding a format): [docs/architecture.md](docs/architecture.md)
 - Pinned versions (CH EMED, CH Core, CHMED16A commit, eRezept): [docs/specifications.md](docs/specifications.md)
-- Mapping rules, capability gaps, reason codes: [docs/mapping/chmed16a-ch-emed.md](docs/mapping/chmed16a-ch-emed.md)
+- Mapping rules, capability gaps, reason codes: [docs/mapping/chmed16a-ch-emed.md](docs/mapping/chmed16a-ch-emed.md), [docs/mapping/chmed23a-ch-emed.md](docs/mapping/chmed23a-ch-emed.md)
 - Third-party licences: [docs/third-party-licenses.md](docs/third-party-licenses.md)
 - Change history: [CHANGELOG.md](CHANGELOG.md)
 
