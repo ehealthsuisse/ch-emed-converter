@@ -375,7 +375,7 @@ and the repetition rules are kept or reported (spec US2).
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T042 [P] [US2] Write `T/mapping/PrescriptionDetailsMapperTest.java`, one test per row of
+- [X] T042 [P] [US2] Write `T/mapping/PrescriptionDetailsMapperTest.java`, one test per row of
   research R10:
   - `reps` Number, Duration in days/weeks/months/years (inclusive end), Duration in
     seconds/minutes/hours (WARNING with clinical loss), NumberAndDuration;
@@ -386,14 +386,14 @@ and the repetition rules are kept or reported (spec US2).
   - `rec` → logical performer reference.
 
   Synthetic fixtures go in `FX/chmed23a/synthetic/rx-*.json`.
-- [ ] T043 [P] [US2] Write `T/mapping/MedicationPrescriptionBuilderTest.java` (M23-RX):
+- [X] T043 [P] [US2] Write `T/mapping/MedicationPrescriptionBuilderTest.java` (M23-RX):
   - `medType` 3 → Medication Prescription profiles;
   - each medicament × posology → one MedicationRequest, with dispense fields copied and
     INFORMATION `DERIVED_VALUE` naming the split (F4);
   - medicament without posology → dosage text "dosage not given" and `DERIVED_VALUE`;
   - `auth` 2 in a prescription → `CHMED_INVALID_FIELD`, from the validator;
   - `idType` 4 in a prescription → `CHMED_INVALID_FIELD`.
-- [ ] T044 [P] [US2] Write `T/it/Chmed23aPrescriptionToChEmedIT.java`:
+- [X] T044 [P] [US2] Write `T/it/Chmed23aPrescriptionToChEmedIT.java`:
   - `Example4` and the prescription fixtures convert and validate;
   - the expected output in `FX/expected/` is compared byte-exactly;
   - the report has four MedicationRequests for the tapering medicament (F4) and INFORMATION for
@@ -402,11 +402,11 @@ and the repetition rules are kept or reported (spec US2).
 
 ### Implementation for User Story 2
 
-- [ ] T045 [P] [US2] Implement `M/mapping/PrescriptionDetailsMapper.java` (M23-RX, research R10).
+- [X] T045 [P] [US2] Implement `M/mapping/PrescriptionDetailsMapper.java` (M23-RX, research R10).
   Make T042 pass.
-- [ ] T046 [US2] Implement `M/mapping/MedicationPrescriptionBuilder.java`, reusing T035–T039.
+- [X] T046 [US2] Implement `M/mapping/MedicationPrescriptionBuilder.java`, reusing T035–T039.
   Make T043 pass (depends on T045).
-- [ ] T047 [US2] Wire `medType` 3 into `Chmed23aFormatModule.toChEmed`, and create the expected
+- [X] T047 [US2] Wire `medType` 3 into `Chmed23aFormatModule.toChEmed`, and create the expected
   output of T044 after review. Make T044 pass.
 
 **Checkpoint**: Both CHMED23A document types are read.

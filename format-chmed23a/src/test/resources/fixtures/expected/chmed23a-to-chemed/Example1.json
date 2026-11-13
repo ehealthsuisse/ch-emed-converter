@@ -5,15 +5,15 @@
   },
   "identifier" : {
     "system" : "urn:ietf:rfc:3986",
-    "value" : "urn:uuid:bc866f1e-7e79-58ce-aa42-d381e13e8e63"
+    "value" : "urn:uuid:51c4ab12-0c88-5457-98dc-a2367843a03f"
   },
   "type" : "document",
   "timestamp" : "2024-01-09T09:14:36.0000000+01:00",
   "entry" : [ {
-    "fullUrl" : "urn:uuid:dc428e67-a0a4-5602-8839-1b74438dfb95",
+    "fullUrl" : "urn:uuid:de07a6c2-89b7-520e-a1e2-f8c3dce8366d",
     "resource" : {
       "resourceType" : "Composition",
-      "id" : "dc428e67-a0a4-5602-8839-1b74438dfb95",
+      "id" : "de07a6c2-89b7-520e-a1e2-f8c3dce8366d",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-composition-medicationcard" ]
       },
@@ -24,7 +24,7 @@
       },
       "identifier" : {
         "system" : "urn:ietf:rfc:3986",
-        "value" : "urn:uuid:bc866f1e-7e79-58ce-aa42-d381e13e8e63"
+        "value" : "urn:uuid:51c4ab12-0c88-5457-98dc-a2367843a03f"
       },
       "status" : "final",
       "type" : {
@@ -39,11 +39,11 @@
         } ]
       },
       "subject" : {
-        "reference" : "urn:uuid:819dab17-3c13-5748-ac3a-1aa69d07c4b5"
+        "reference" : "urn:uuid:23c31643-ee69-5590-a55c-d789d10611bc"
       },
       "date" : "2024-01-09T09:14:36.0000000+01:00",
       "author" : [ {
-        "reference" : "urn:uuid:8c30891a-fc39-555b-bb80-6a15ed676207"
+        "reference" : "urn:uuid:197d2eaf-f14c-55bb-8a48-8fb5397e1699"
       } ],
       "title" : "Medikationsplan",
       "confidentiality" : "N",
@@ -76,14 +76,14 @@
               "valueString" : "original-representation"
             }, {
               "url" : "data",
-              "valueUri" : "urn:uuid:6a9959a9-53eb-5dbe-b83d-eadbd6a15adc"
+              "valueUri" : "urn:uuid:bc77b4a1-95e5-52fe-b687-abbbcc6fb388"
             } ]
           } ],
           "status" : "generated",
           "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Representation of the original view: <span id=\"original-representation\">PDF</span></div>"
         },
         "entry" : [ {
-          "reference" : "urn:uuid:6a9959a9-53eb-5dbe-b83d-eadbd6a15adc"
+          "reference" : "urn:uuid:bc77b4a1-95e5-52fe-b687-abbbcc6fb388"
         } ]
       }, {
         "title" : "Medikamentenliste",
@@ -95,23 +95,23 @@
           } ]
         },
         "entry" : [ {
-          "reference" : "urn:uuid:4799cf11-ad24-5c43-8382-40bc39df14b9"
+          "reference" : "urn:uuid:86e67e08-03fe-52ab-b2d7-d3a1727f8b35"
         }, {
-          "reference" : "urn:uuid:d11a9a73-e179-5d49-a1ad-329b9554b374"
+          "reference" : "urn:uuid:f6e9a4a6-ced4-50f8-a826-24eea347889d"
         }, {
-          "reference" : "urn:uuid:8c235cc4-de32-53f3-9fdb-d8710fca4a9b"
+          "reference" : "urn:uuid:d1cbaf12-eff8-561f-bd31-4d57c3e76386"
         }, {
-          "reference" : "urn:uuid:b819d230-e6fc-5d35-9821-f75aff27ef9e"
+          "reference" : "urn:uuid:fce9dd86-502a-5967-92ef-7cda33925ea7"
         }, {
-          "reference" : "urn:uuid:fc190f13-f1aa-55fe-bfa5-78ec5cdbe9b8"
+          "reference" : "urn:uuid:5bb60d3e-622c-5f01-ad13-464bff353686"
         } ]
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:819dab17-3c13-5748-ac3a-1aa69d07c4b5",
+    "fullUrl" : "urn:uuid:23c31643-ee69-5590-a55c-d789d10611bc",
     "resource" : {
       "resourceType" : "Patient",
-      "id" : "819dab17-3c13-5748-ac3a-1aa69d07c4b5",
+      "id" : "23c31643-ee69-5590-a55c-d789d10611bc",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-core/StructureDefinition/ch-core-patient-epr" ]
       },
@@ -156,10 +156,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:8c30891a-fc39-555b-bb80-6a15ed676207",
+    "fullUrl" : "urn:uuid:197d2eaf-f14c-55bb-8a48-8fb5397e1699",
     "resource" : {
       "resourceType" : "PractitionerRole",
-      "id" : "8c30891a-fc39-555b-bb80-6a15ed676207",
+      "id" : "197d2eaf-f14c-55bb-8a48-8fb5397e1699",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-practitionerrole" ]
       },
@@ -168,17 +168,17 @@
         "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Hans Muster, Medical practice Dr. med. Hans Muster</div>"
       },
       "practitioner" : {
-        "reference" : "urn:uuid:635626c5-9e4a-5a74-8973-59b5d4ab7a0b"
+        "reference" : "urn:uuid:32851e28-898f-5558-9452-a2ba8ababdbc"
       },
       "organization" : {
-        "reference" : "urn:uuid:20f93d4a-5238-50a6-a1cd-59a9ab6e6a4d"
+        "reference" : "urn:uuid:3216d282-2c09-5040-980c-4410348d0892"
       }
     }
   }, {
-    "fullUrl" : "urn:uuid:635626c5-9e4a-5a74-8973-59b5d4ab7a0b",
+    "fullUrl" : "urn:uuid:32851e28-898f-5558-9452-a2ba8ababdbc",
     "resource" : {
       "resourceType" : "Practitioner",
-      "id" : "635626c5-9e4a-5a74-8973-59b5d4ab7a0b",
+      "id" : "32851e28-898f-5558-9452-a2ba8ababdbc",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-practitioner" ]
       },
@@ -196,10 +196,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:20f93d4a-5238-50a6-a1cd-59a9ab6e6a4d",
+    "fullUrl" : "urn:uuid:3216d282-2c09-5040-980c-4410348d0892",
     "resource" : {
       "resourceType" : "Organization",
-      "id" : "20f93d4a-5238-50a6-a1cd-59a9ab6e6a4d",
+      "id" : "3216d282-2c09-5040-980c-4410348d0892",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-organization" ]
       },
@@ -216,10 +216,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:4799cf11-ad24-5c43-8382-40bc39df14b9",
+    "fullUrl" : "urn:uuid:86e67e08-03fe-52ab-b2d7-d3a1727f8b35",
     "resource" : {
       "resourceType" : "MedicationStatement",
-      "id" : "4799cf11-ad24-5c43-8382-40bc39df14b9",
+      "id" : "86e67e08-03fe-52ab-b2d7-d3a1727f8b35",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
       },
@@ -239,18 +239,18 @@
       } ],
       "identifier" : [ {
         "system" : "urn:ietf:rfc:3986",
-        "value" : "urn:uuid:fe2c1b76-f8f1-5f2b-aa1d-72f49922ef51"
+        "value" : "urn:uuid:b415ad78-3e44-5984-bbac-1f80d52f17d1"
       } ],
       "status" : "active",
       "medicationReference" : {
         "reference" : "#med"
       },
       "subject" : {
-        "reference" : "urn:uuid:819dab17-3c13-5748-ac3a-1aa69d07c4b5"
+        "reference" : "urn:uuid:23c31643-ee69-5590-a55c-d789d10611bc"
       },
       "dateAsserted" : "2024-01-09T09:14:36.0000000+01:00",
       "informationSource" : {
-        "reference" : "urn:uuid:8c30891a-fc39-555b-bb80-6a15ed676207"
+        "reference" : "urn:uuid:197d2eaf-f14c-55bb-8a48-8fb5397e1699"
       },
       "reasonCode" : [ {
         "text" : "Pancreas"
@@ -288,10 +288,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:d11a9a73-e179-5d49-a1ad-329b9554b374",
+    "fullUrl" : "urn:uuid:f6e9a4a6-ced4-50f8-a826-24eea347889d",
     "resource" : {
       "resourceType" : "MedicationStatement",
-      "id" : "d11a9a73-e179-5d49-a1ad-329b9554b374",
+      "id" : "f6e9a4a6-ced4-50f8-a826-24eea347889d",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
       },
@@ -311,18 +311,18 @@
       } ],
       "identifier" : [ {
         "system" : "urn:ietf:rfc:3986",
-        "value" : "urn:uuid:f9591e98-6e18-5439-bafa-38971f187790"
+        "value" : "urn:uuid:b56b0889-ca8f-5308-962c-6985bc50cc39"
       } ],
       "status" : "active",
       "medicationReference" : {
         "reference" : "#med"
       },
       "subject" : {
-        "reference" : "urn:uuid:819dab17-3c13-5748-ac3a-1aa69d07c4b5"
+        "reference" : "urn:uuid:23c31643-ee69-5590-a55c-d789d10611bc"
       },
       "dateAsserted" : "2024-01-09T09:14:36.0000000+01:00",
       "informationSource" : {
-        "reference" : "urn:uuid:8c30891a-fc39-555b-bb80-6a15ed676207"
+        "reference" : "urn:uuid:197d2eaf-f14c-55bb-8a48-8fb5397e1699"
       },
       "reasonCode" : [ {
         "text" : "Cholesterol-lowering drug"
@@ -361,10 +361,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:8c235cc4-de32-53f3-9fdb-d8710fca4a9b",
+    "fullUrl" : "urn:uuid:d1cbaf12-eff8-561f-bd31-4d57c3e76386",
     "resource" : {
       "resourceType" : "MedicationStatement",
-      "id" : "8c235cc4-de32-53f3-9fdb-d8710fca4a9b",
+      "id" : "d1cbaf12-eff8-561f-bd31-4d57c3e76386",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
       },
@@ -388,18 +388,18 @@
       } ],
       "identifier" : [ {
         "system" : "urn:ietf:rfc:3986",
-        "value" : "urn:uuid:3effb0ad-9595-5b70-a9d9-8a6647d91bdf"
+        "value" : "urn:uuid:5415733c-dde5-58aa-8c15-fc490fa96d51"
       } ],
       "status" : "active",
       "medicationReference" : {
         "reference" : "#med"
       },
       "subject" : {
-        "reference" : "urn:uuid:819dab17-3c13-5748-ac3a-1aa69d07c4b5"
+        "reference" : "urn:uuid:23c31643-ee69-5590-a55c-d789d10611bc"
       },
       "dateAsserted" : "2024-01-09T09:14:36.0000000+01:00",
       "informationSource" : {
-        "reference" : "urn:uuid:8c30891a-fc39-555b-bb80-6a15ed676207"
+        "reference" : "urn:uuid:197d2eaf-f14c-55bb-8a48-8fb5397e1699"
       },
       "reasonCode" : [ {
         "text" : "Vitamins/minerals"
@@ -435,10 +435,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:b819d230-e6fc-5d35-9821-f75aff27ef9e",
+    "fullUrl" : "urn:uuid:fce9dd86-502a-5967-92ef-7cda33925ea7",
     "resource" : {
       "resourceType" : "MedicationStatement",
-      "id" : "b819d230-e6fc-5d35-9821-f75aff27ef9e",
+      "id" : "fce9dd86-502a-5967-92ef-7cda33925ea7",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
       },
@@ -458,7 +458,7 @@
       } ],
       "identifier" : [ {
         "system" : "urn:ietf:rfc:3986",
-        "value" : "urn:uuid:74a318bc-ecae-51ab-a202-d28bb42c7dfb"
+        "value" : "urn:uuid:f8968e2d-e651-5f07-8852-483ffe65b2d8"
       } ],
       "status" : "active",
       "category" : {
@@ -472,11 +472,11 @@
         "reference" : "#med"
       },
       "subject" : {
-        "reference" : "urn:uuid:819dab17-3c13-5748-ac3a-1aa69d07c4b5"
+        "reference" : "urn:uuid:23c31643-ee69-5590-a55c-d789d10611bc"
       },
       "dateAsserted" : "2024-01-09T09:14:36.0000000+01:00",
       "informationSource" : {
-        "reference" : "urn:uuid:8c30891a-fc39-555b-bb80-6a15ed676207"
+        "reference" : "urn:uuid:197d2eaf-f14c-55bb-8a48-8fb5397e1699"
       },
       "reasonCode" : [ {
         "text" : "Vitamins/minerals"
@@ -489,7 +489,7 @@
         },
         "doseAndRate" : [ {
           "doseQuantity" : {
-            "value" : 1,
+            "value" : 1.0,
             "unit" : "Stk",
             "system" : "http://snomed.info/sct",
             "code" : "767525000"
@@ -498,10 +498,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:fc190f13-f1aa-55fe-bfa5-78ec5cdbe9b8",
+    "fullUrl" : "urn:uuid:5bb60d3e-622c-5f01-ad13-464bff353686",
     "resource" : {
       "resourceType" : "MedicationStatement",
-      "id" : "fc190f13-f1aa-55fe-bfa5-78ec5cdbe9b8",
+      "id" : "5bb60d3e-622c-5f01-ad13-464bff353686",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
       },
@@ -525,18 +525,18 @@
       } ],
       "identifier" : [ {
         "system" : "urn:ietf:rfc:3986",
-        "value" : "urn:uuid:4810c005-d93e-51a5-9326-3d089eca389d"
+        "value" : "urn:uuid:4d17cb08-d12f-515f-aaf5-26bd1bf5fa38"
       } ],
       "status" : "active",
       "medicationReference" : {
         "reference" : "#med"
       },
       "subject" : {
-        "reference" : "urn:uuid:819dab17-3c13-5748-ac3a-1aa69d07c4b5"
+        "reference" : "urn:uuid:23c31643-ee69-5590-a55c-d789d10611bc"
       },
       "dateAsserted" : "2024-01-09T09:14:36.0000000+01:00",
       "informationSource" : {
-        "reference" : "urn:uuid:8c30891a-fc39-555b-bb80-6a15ed676207"
+        "reference" : "urn:uuid:197d2eaf-f14c-55bb-8a48-8fb5397e1699"
       },
       "reasonCode" : [ {
         "text" : "Rheumatism"
@@ -560,10 +560,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:6a9959a9-53eb-5dbe-b83d-eadbd6a15adc",
+    "fullUrl" : "urn:uuid:bc77b4a1-95e5-52fe-b687-abbbcc6fb388",
     "resource" : {
       "resourceType" : "Binary",
-      "id" : "6a9959a9-53eb-5dbe-b83d-eadbd6a15adc",
+      "id" : "bc77b4a1-95e5-52fe-b687-abbbcc6fb388",
       "contentType" : "application/pdf",
       "data" : "{{pdf}}"
     }

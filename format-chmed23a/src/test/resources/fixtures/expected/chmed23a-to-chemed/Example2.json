@@ -5,15 +5,15 @@
   },
   "identifier" : {
     "system" : "urn:ietf:rfc:3986",
-    "value" : "urn:uuid:2d3e1a34-815f-5001-98f2-8709dc80bb58"
+    "value" : "urn:uuid:411db66f-8f7f-5427-b8e7-1a9d00eee057"
   },
   "type" : "document",
   "timestamp" : "2024-01-10T15:54:06.0000000+01:00",
   "entry" : [ {
-    "fullUrl" : "urn:uuid:5eb0f558-8998-50ed-8506-b37ac34e5caf",
+    "fullUrl" : "urn:uuid:dba53a4e-ffab-5ee9-96ef-a7600a4882be",
     "resource" : {
       "resourceType" : "Composition",
-      "id" : "5eb0f558-8998-50ed-8506-b37ac34e5caf",
+      "id" : "dba53a4e-ffab-5ee9-96ef-a7600a4882be",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-composition-medicationcard" ]
       },
@@ -24,7 +24,7 @@
       },
       "identifier" : {
         "system" : "urn:ietf:rfc:3986",
-        "value" : "urn:uuid:2d3e1a34-815f-5001-98f2-8709dc80bb58"
+        "value" : "urn:uuid:411db66f-8f7f-5427-b8e7-1a9d00eee057"
       },
       "status" : "final",
       "type" : {
@@ -39,11 +39,11 @@
         } ]
       },
       "subject" : {
-        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+        "reference" : "urn:uuid:7dc0b4b8-aeb6-5cc8-92a8-c9125c74cd53"
       },
       "date" : "2024-01-10T15:54:06.0000000+01:00",
       "author" : [ {
-        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+        "reference" : "urn:uuid:cff4b396-0832-510a-a9df-b7a4eda4ddf0"
       } ],
       "title" : "Medikationsplan",
       "confidentiality" : "N",
@@ -76,14 +76,14 @@
               "valueString" : "original-representation"
             }, {
               "url" : "data",
-              "valueUri" : "urn:uuid:01bd08ce-5807-5285-a1dd-1f56defb48a3"
+              "valueUri" : "urn:uuid:fc10b237-c034-5adc-bfd8-3cc2f2c3f36e"
             } ]
           } ],
           "status" : "generated",
           "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Representation of the original view: <span id=\"original-representation\">PDF</span></div>"
         },
         "entry" : [ {
-          "reference" : "urn:uuid:01bd08ce-5807-5285-a1dd-1f56defb48a3"
+          "reference" : "urn:uuid:fc10b237-c034-5adc-bfd8-3cc2f2c3f36e"
         } ]
       }, {
         "title" : "Medikamentenliste",
@@ -95,25 +95,25 @@
           } ]
         },
         "entry" : [ {
-          "reference" : "urn:uuid:e2dd2859-0690-57f2-8743-1f8533414799"
+          "reference" : "urn:uuid:4ebfcbca-8138-5668-a8e2-3bcef3163ec3"
         }, {
-          "reference" : "urn:uuid:fe6efcd9-01fc-53df-92ab-c498ccfb2579"
+          "reference" : "urn:uuid:d7b2dbb6-39d3-50de-89e8-3f8817a6f797"
         }, {
-          "reference" : "urn:uuid:c9f9a1a4-5177-5b17-a74a-915644fc23c0"
+          "reference" : "urn:uuid:872fe0c6-99ae-5d7c-852c-9410152fc4c7"
         }, {
-          "reference" : "urn:uuid:eb93a258-37a3-516a-9e92-29e0135241b1"
+          "reference" : "urn:uuid:c717bc12-9f3c-5873-a9f8-c5a226db787f"
         }, {
-          "reference" : "urn:uuid:c5cced38-7e83-596d-a45b-af574dc64673"
+          "reference" : "urn:uuid:aed4d2e1-c36e-5980-a1f8-29033fb11f10"
         }, {
-          "reference" : "urn:uuid:c0cc0cdc-aee2-5d3c-bf73-a97ca4264027"
+          "reference" : "urn:uuid:365238b4-8fe8-5a53-8ad1-6f76c22b0e46"
         }, {
-          "reference" : "urn:uuid:2704a432-ec89-56c7-9c87-770650e03b5d"
+          "reference" : "urn:uuid:9b8442a9-34df-5452-9f14-5282525305aa"
         }, {
-          "reference" : "urn:uuid:03413390-fcf1-5d2f-97e4-d1351f5cf0e9"
+          "reference" : "urn:uuid:717dd3b0-9619-5197-b04b-d25c5cbbea89"
         }, {
-          "reference" : "urn:uuid:3c622b52-d1ed-5ca3-af38-87501b442e23"
+          "reference" : "urn:uuid:6dba5992-1daf-52c4-be3a-642f3e317e0c"
         }, {
-          "reference" : "urn:uuid:b3ad7501-d8d1-53c0-8b7b-c8af486ce6cf"
+          "reference" : "urn:uuid:4a755f89-863b-53a1-9049-0ebee71e9f0f"
         } ]
       }, {
         "title" : "Kommentar",
@@ -131,10 +131,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66",
+    "fullUrl" : "urn:uuid:7dc0b4b8-aeb6-5cc8-92a8-c9125c74cd53",
     "resource" : {
       "resourceType" : "Patient",
-      "id" : "43f300d8-4333-50aa-8d92-37e8b83b5f66",
+      "id" : "7dc0b4b8-aeb6-5cc8-92a8-c9125c74cd53",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-core/StructureDefinition/ch-core-patient-epr" ]
       },
@@ -173,10 +173,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572",
+    "fullUrl" : "urn:uuid:cff4b396-0832-510a-a9df-b7a4eda4ddf0",
     "resource" : {
       "resourceType" : "PractitionerRole",
-      "id" : "6bc2723c-8634-5e7b-afe9-0576a4964572",
+      "id" : "cff4b396-0832-510a-a9df-b7a4eda4ddf0",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-practitionerrole" ]
       },
@@ -185,17 +185,17 @@
         "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Hans Beispiel, Arztpraxis Sonnenschein</div>"
       },
       "practitioner" : {
-        "reference" : "urn:uuid:d2647449-86c0-596e-b1e9-915b74b425c5"
+        "reference" : "urn:uuid:8270e58b-2ce3-5992-a2c2-ce3dcde1c254"
       },
       "organization" : {
-        "reference" : "urn:uuid:2ed34834-462d-5501-8a0f-895b60f61d3e"
+        "reference" : "urn:uuid:b1d8e467-6a13-5a34-95bf-562fd43f9734"
       }
     }
   }, {
-    "fullUrl" : "urn:uuid:d2647449-86c0-596e-b1e9-915b74b425c5",
+    "fullUrl" : "urn:uuid:8270e58b-2ce3-5992-a2c2-ce3dcde1c254",
     "resource" : {
       "resourceType" : "Practitioner",
-      "id" : "d2647449-86c0-596e-b1e9-915b74b425c5",
+      "id" : "8270e58b-2ce3-5992-a2c2-ce3dcde1c254",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-practitioner" ]
       },
@@ -213,10 +213,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:2ed34834-462d-5501-8a0f-895b60f61d3e",
+    "fullUrl" : "urn:uuid:b1d8e467-6a13-5a34-95bf-562fd43f9734",
     "resource" : {
       "resourceType" : "Organization",
-      "id" : "2ed34834-462d-5501-8a0f-895b60f61d3e",
+      "id" : "b1d8e467-6a13-5a34-95bf-562fd43f9734",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-organization" ]
       },
@@ -237,10 +237,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:e2dd2859-0690-57f2-8743-1f8533414799",
+    "fullUrl" : "urn:uuid:4ebfcbca-8138-5668-a8e2-3bcef3163ec3",
     "resource" : {
       "resourceType" : "MedicationStatement",
-      "id" : "e2dd2859-0690-57f2-8743-1f8533414799",
+      "id" : "4ebfcbca-8138-5668-a8e2-3bcef3163ec3",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
       },
@@ -264,18 +264,18 @@
       } ],
       "identifier" : [ {
         "system" : "urn:ietf:rfc:3986",
-        "value" : "urn:uuid:11fae027-b189-53cc-81b8-8ba3c7a9f882"
+        "value" : "urn:uuid:ffb2b6a5-460f-5253-a20c-206defffc223"
       } ],
       "status" : "active",
       "medicationReference" : {
         "reference" : "#med"
       },
       "subject" : {
-        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+        "reference" : "urn:uuid:7dc0b4b8-aeb6-5cc8-92a8-c9125c74cd53"
       },
       "dateAsserted" : "2024-01-10T15:54:06.0000000+01:00",
       "informationSource" : {
-        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+        "reference" : "urn:uuid:cff4b396-0832-510a-a9df-b7a4eda4ddf0"
       },
       "reasonCode" : [ {
         "text" : "Thyroid gland"
@@ -293,7 +293,7 @@
         },
         "doseAndRate" : [ {
           "doseQuantity" : {
-            "value" : 1,
+            "value" : 1.0,
             "unit" : "Stk",
             "system" : "http://snomed.info/sct",
             "code" : "767525000"
@@ -302,10 +302,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:fe6efcd9-01fc-53df-92ab-c498ccfb2579",
+    "fullUrl" : "urn:uuid:d7b2dbb6-39d3-50de-89e8-3f8817a6f797",
     "resource" : {
       "resourceType" : "MedicationStatement",
-      "id" : "fe6efcd9-01fc-53df-92ab-c498ccfb2579",
+      "id" : "d7b2dbb6-39d3-50de-89e8-3f8817a6f797",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
       },
@@ -329,18 +329,18 @@
       } ],
       "identifier" : [ {
         "system" : "urn:ietf:rfc:3986",
-        "value" : "urn:uuid:168db7bd-d959-56c5-b88d-3da1ca915063"
+        "value" : "urn:uuid:7f8e6f1a-1764-5d1f-ac93-80ca8bf41605"
       } ],
       "status" : "active",
       "medicationReference" : {
         "reference" : "#med"
       },
       "subject" : {
-        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+        "reference" : "urn:uuid:7dc0b4b8-aeb6-5cc8-92a8-c9125c74cd53"
       },
       "dateAsserted" : "2024-01-10T15:54:06.0000000+01:00",
       "informationSource" : {
-        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+        "reference" : "urn:uuid:cff4b396-0832-510a-a9df-b7a4eda4ddf0"
       },
       "reasonCode" : [ {
         "text" : "Thyroid gland"
@@ -358,7 +358,7 @@
         },
         "doseAndRate" : [ {
           "doseQuantity" : {
-            "value" : 1,
+            "value" : 1.0,
             "unit" : "Stk",
             "system" : "http://snomed.info/sct",
             "code" : "767525000"
@@ -367,10 +367,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:c9f9a1a4-5177-5b17-a74a-915644fc23c0",
+    "fullUrl" : "urn:uuid:872fe0c6-99ae-5d7c-852c-9410152fc4c7",
     "resource" : {
       "resourceType" : "MedicationStatement",
-      "id" : "c9f9a1a4-5177-5b17-a74a-915644fc23c0",
+      "id" : "872fe0c6-99ae-5d7c-852c-9410152fc4c7",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
       },
@@ -394,18 +394,18 @@
       } ],
       "identifier" : [ {
         "system" : "urn:ietf:rfc:3986",
-        "value" : "urn:uuid:5e3c3fd7-261f-5851-b3cc-5758a135378f"
+        "value" : "urn:uuid:40059651-2c99-5a19-96e8-d35865a4b8e9"
       } ],
       "status" : "active",
       "medicationReference" : {
         "reference" : "#med"
       },
       "subject" : {
-        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+        "reference" : "urn:uuid:7dc0b4b8-aeb6-5cc8-92a8-c9125c74cd53"
       },
       "dateAsserted" : "2024-01-10T15:54:06.0000000+01:00",
       "informationSource" : {
-        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+        "reference" : "urn:uuid:cff4b396-0832-510a-a9df-b7a4eda4ddf0"
       },
       "reasonCode" : [ {
         "text" : "Blood thinner"
@@ -424,10 +424,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:eb93a258-37a3-516a-9e92-29e0135241b1",
+    "fullUrl" : "urn:uuid:c717bc12-9f3c-5873-a9f8-c5a226db787f",
     "resource" : {
       "resourceType" : "MedicationStatement",
-      "id" : "eb93a258-37a3-516a-9e92-29e0135241b1",
+      "id" : "c717bc12-9f3c-5873-a9f8-c5a226db787f",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
       },
@@ -451,18 +451,18 @@
       } ],
       "identifier" : [ {
         "system" : "urn:ietf:rfc:3986",
-        "value" : "urn:uuid:b22ba5ff-ea97-5e85-86a1-c31a18f24a17"
+        "value" : "urn:uuid:2fe60dcc-a1ea-5961-a00c-364a7e404b5a"
       } ],
       "status" : "active",
       "medicationReference" : {
         "reference" : "#med"
       },
       "subject" : {
-        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+        "reference" : "urn:uuid:7dc0b4b8-aeb6-5cc8-92a8-c9125c74cd53"
       },
       "dateAsserted" : "2024-01-10T15:54:06.0000000+01:00",
       "informationSource" : {
-        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+        "reference" : "urn:uuid:cff4b396-0832-510a-a9df-b7a4eda4ddf0"
       },
       "dosage" : [ {
         "text" : "alle 2 Woche(n): Mo: 20:00 1 Stk",
@@ -491,10 +491,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:c5cced38-7e83-596d-a45b-af574dc64673",
+    "fullUrl" : "urn:uuid:aed4d2e1-c36e-5980-a1f8-29033fb11f10",
     "resource" : {
       "resourceType" : "MedicationStatement",
-      "id" : "c5cced38-7e83-596d-a45b-af574dc64673",
+      "id" : "aed4d2e1-c36e-5980-a1f8-29033fb11f10",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
       },
@@ -518,18 +518,18 @@
       } ],
       "identifier" : [ {
         "system" : "urn:ietf:rfc:3986",
-        "value" : "urn:uuid:ac8408c4-a34e-5c2e-b67e-84bef6a98fb5"
+        "value" : "urn:uuid:58d6971a-3980-53ac-a346-f036383968a7"
       } ],
       "status" : "active",
       "medicationReference" : {
         "reference" : "#med"
       },
       "subject" : {
-        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+        "reference" : "urn:uuid:7dc0b4b8-aeb6-5cc8-92a8-c9125c74cd53"
       },
       "dateAsserted" : "2024-01-10T15:54:06.0000000+01:00",
       "informationSource" : {
-        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+        "reference" : "urn:uuid:cff4b396-0832-510a-a9df-b7a4eda4ddf0"
       },
       "reasonCode" : [ {
         "text" : "Infection"
@@ -548,7 +548,7 @@
         },
         "doseAndRate" : [ {
           "doseQuantity" : {
-            "value" : 1,
+            "value" : 1.0,
             "unit" : "Stk",
             "system" : "http://snomed.info/sct",
             "code" : "767525000"
@@ -557,10 +557,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:c0cc0cdc-aee2-5d3c-bf73-a97ca4264027",
+    "fullUrl" : "urn:uuid:365238b4-8fe8-5a53-8ad1-6f76c22b0e46",
     "resource" : {
       "resourceType" : "MedicationStatement",
-      "id" : "c0cc0cdc-aee2-5d3c-bf73-a97ca4264027",
+      "id" : "365238b4-8fe8-5a53-8ad1-6f76c22b0e46",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
       },
@@ -584,18 +584,18 @@
       } ],
       "identifier" : [ {
         "system" : "urn:ietf:rfc:3986",
-        "value" : "urn:uuid:25e38a91-0302-58b8-a2d0-5fe56eeac71e"
+        "value" : "urn:uuid:9c223c8e-991c-5b97-8d33-b8be6f84d42c"
       } ],
       "status" : "active",
       "medicationReference" : {
         "reference" : "#med"
       },
       "subject" : {
-        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+        "reference" : "urn:uuid:7dc0b4b8-aeb6-5cc8-92a8-c9125c74cd53"
       },
       "dateAsserted" : "2024-01-10T15:54:06.0000000+01:00",
       "informationSource" : {
-        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+        "reference" : "urn:uuid:cff4b396-0832-510a-a9df-b7a4eda4ddf0"
       },
       "reasonCode" : [ {
         "text" : "Infection"
@@ -612,7 +612,7 @@
         },
         "doseAndRate" : [ {
           "doseQuantity" : {
-            "value" : 1,
+            "value" : 1.0,
             "unit" : "Stk",
             "system" : "http://snomed.info/sct",
             "code" : "767525000"
@@ -621,10 +621,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:2704a432-ec89-56c7-9c87-770650e03b5d",
+    "fullUrl" : "urn:uuid:9b8442a9-34df-5452-9f14-5282525305aa",
     "resource" : {
       "resourceType" : "MedicationStatement",
-      "id" : "2704a432-ec89-56c7-9c87-770650e03b5d",
+      "id" : "9b8442a9-34df-5452-9f14-5282525305aa",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
       },
@@ -648,18 +648,18 @@
       } ],
       "identifier" : [ {
         "system" : "urn:ietf:rfc:3986",
-        "value" : "urn:uuid:7c0d335c-fa7a-5ec0-8a64-ab30abc8c352"
+        "value" : "urn:uuid:f0beb4af-e3ac-51f5-989c-8b4a431adaf9"
       } ],
       "status" : "active",
       "medicationReference" : {
         "reference" : "#med"
       },
       "subject" : {
-        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+        "reference" : "urn:uuid:7dc0b4b8-aeb6-5cc8-92a8-c9125c74cd53"
       },
       "dateAsserted" : "2024-01-10T15:54:06.0000000+01:00",
       "informationSource" : {
-        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+        "reference" : "urn:uuid:cff4b396-0832-510a-a9df-b7a4eda4ddf0"
       },
       "dosage" : [ {
         "patientInstruction" : "1 application once a month, next appointment on 10.02.2024",
@@ -686,7 +686,7 @@
         },
         "doseAndRate" : [ {
           "doseQuantity" : {
-            "value" : 1,
+            "value" : 1.0,
             "unit" : "Stk",
             "system" : "http://snomed.info/sct",
             "code" : "767525000"
@@ -695,10 +695,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:03413390-fcf1-5d2f-97e4-d1351f5cf0e9",
+    "fullUrl" : "urn:uuid:717dd3b0-9619-5197-b04b-d25c5cbbea89",
     "resource" : {
       "resourceType" : "MedicationStatement",
-      "id" : "03413390-fcf1-5d2f-97e4-d1351f5cf0e9",
+      "id" : "717dd3b0-9619-5197-b04b-d25c5cbbea89",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
       },
@@ -722,18 +722,18 @@
       } ],
       "identifier" : [ {
         "system" : "urn:ietf:rfc:3986",
-        "value" : "urn:uuid:95f65de5-f839-591c-9441-7ef505b9f554"
+        "value" : "urn:uuid:570267ed-f1cb-500a-91b3-6d55d6426b22"
       } ],
       "status" : "active",
       "medicationReference" : {
         "reference" : "#med"
       },
       "subject" : {
-        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+        "reference" : "urn:uuid:7dc0b4b8-aeb6-5cc8-92a8-c9125c74cd53"
       },
       "dateAsserted" : "2024-01-10T15:54:06.0000000+01:00",
       "informationSource" : {
-        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+        "reference" : "urn:uuid:cff4b396-0832-510a-a9df-b7a4eda4ddf0"
       },
       "dosage" : [ {
         "text" : "If palpitations occur, take Â½ pill and wait 30 minutes. If palpitations persist, take another Â½ pill and wait another 30 minutes. If it does not get better, contact a doctor.",
@@ -748,10 +748,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:3c622b52-d1ed-5ca3-af38-87501b442e23",
+    "fullUrl" : "urn:uuid:6dba5992-1daf-52c4-be3a-642f3e317e0c",
     "resource" : {
       "resourceType" : "MedicationStatement",
-      "id" : "3c622b52-d1ed-5ca3-af38-87501b442e23",
+      "id" : "6dba5992-1daf-52c4-be3a-642f3e317e0c",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
       },
@@ -771,7 +771,7 @@
       } ],
       "identifier" : [ {
         "system" : "urn:ietf:rfc:3986",
-        "value" : "urn:uuid:cb94e535-1d39-5a6b-9e5e-250dcec6597d"
+        "value" : "urn:uuid:f8caaf1a-f67f-5f40-a619-d10f48cd4637"
       } ],
       "status" : "active",
       "category" : {
@@ -785,11 +785,11 @@
         "reference" : "#med"
       },
       "subject" : {
-        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+        "reference" : "urn:uuid:7dc0b4b8-aeb6-5cc8-92a8-c9125c74cd53"
       },
       "dateAsserted" : "2024-01-10T15:54:06.0000000+01:00",
       "informationSource" : {
-        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+        "reference" : "urn:uuid:cff4b396-0832-510a-a9df-b7a4eda4ddf0"
       },
       "dosage" : [ {
         "text" : "alle 1 Monat(e): am Tag des Monats 10: 10-20 gtt",
@@ -803,10 +803,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:b3ad7501-d8d1-53c0-8b7b-c8af486ce6cf",
+    "fullUrl" : "urn:uuid:4a755f89-863b-53a1-9049-0ebee71e9f0f",
     "resource" : {
       "resourceType" : "MedicationStatement",
-      "id" : "b3ad7501-d8d1-53c0-8b7b-c8af486ce6cf",
+      "id" : "4a755f89-863b-53a1-9049-0ebee71e9f0f",
       "meta" : {
         "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
       },
@@ -826,7 +826,7 @@
       } ],
       "identifier" : [ {
         "system" : "urn:ietf:rfc:3986",
-        "value" : "urn:uuid:7fb2dad2-9cdd-5a6b-8fd6-323c4713f7c3"
+        "value" : "urn:uuid:c1208e72-2bb1-5390-ab39-b273935e737f"
       } ],
       "status" : "active",
       "category" : {
@@ -840,11 +840,11 @@
         "reference" : "#med"
       },
       "subject" : {
-        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+        "reference" : "urn:uuid:7dc0b4b8-aeb6-5cc8-92a8-c9125c74cd53"
       },
       "dateAsserted" : "2024-01-10T15:54:06.0000000+01:00",
       "informationSource" : {
-        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+        "reference" : "urn:uuid:cff4b396-0832-510a-a9df-b7a4eda4ddf0"
       },
       "dosage" : [ {
         "timing" : {
@@ -860,7 +860,7 @@
         "asNeededBoolean" : true,
         "doseAndRate" : [ {
           "doseQuantity" : {
-            "value" : 2,
+            "value" : 2.0,
             "unit" : "gtt",
             "system" : "http://snomed.info/sct",
             "code" : "732994000"
@@ -869,10 +869,10 @@
       } ]
     }
   }, {
-    "fullUrl" : "urn:uuid:01bd08ce-5807-5285-a1dd-1f56defb48a3",
+    "fullUrl" : "urn:uuid:fc10b237-c034-5adc-bfd8-3cc2f2c3f36e",
     "resource" : {
       "resourceType" : "Binary",
-      "id" : "01bd08ce-5807-5285-a1dd-1f56defb48a3",
+      "id" : "fc10b237-c034-5adc-bfd8-3cc2f2c3f36e",
       "contentType" : "application/pdf",
       "data" : "{{pdf}}"
     }

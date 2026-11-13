@@ -7,6 +7,7 @@ import ch.emed.converter.chmed23a.mapping.Documents;
 import ch.emed.converter.chmed23a.mapping.MappingRule;
 import ch.emed.converter.chmed23a.mapping.MappingScope;
 import ch.emed.converter.chmed23a.mapping.MedicationCardBuilder;
+import ch.emed.converter.chmed23a.mapping.MedicationPrescriptionBuilder;
 import ch.emed.converter.chmed23a.model.Medication;
 import ch.emed.converter.chmed23a.validation.Chmed23aValidator;
 import ch.emed.converter.core.api.FormatId;
@@ -83,7 +84,7 @@ public final class Chmed23aFormatModule implements FormatModule {
     Bundle bundle =
         med.isPlan()
             ? MedicationCardBuilder.build(med, scope)
-            : fail(ctx, ReasonCode.UNSUPPORTED_DOCUMENT_TYPE, "Prescriptions are not yet mapped");
+            : MedicationPrescriptionBuilder.build(med, scope);
     return ctx.report().hasErrors() ? null : bundle;
   }
 

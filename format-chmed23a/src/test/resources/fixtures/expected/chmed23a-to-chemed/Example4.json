@@ -1,0 +1,906 @@
+{
+  "resourceType" : "Bundle",
+  "meta" : {
+    "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-document-medicationprescription" ]
+  },
+  "identifier" : {
+    "system" : "urn:ietf:rfc:3986",
+    "value" : "urn:uuid:6fb4d04a-52f4-5700-ae8f-aeedc516ef20"
+  },
+  "type" : "document",
+  "timestamp" : "2024-02-08T10:01:23.0000000+01:00",
+  "entry" : [ {
+    "fullUrl" : "urn:uuid:e9ffbaf0-7096-5424-b2fa-37aeac86c941",
+    "resource" : {
+      "resourceType" : "Composition",
+      "id" : "e9ffbaf0-7096-5424-b2fa-37aeac86c941",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-composition-medicationprescription" ]
+      },
+      "language" : "de-CH",
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"de-CH\" lang=\"de-CH\">Rezept</div>"
+      },
+      "identifier" : {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:6fb4d04a-52f4-5700-ae8f-aeedc516ef20"
+      },
+      "status" : "final",
+      "type" : {
+        "coding" : [ {
+          "system" : "http://loinc.org",
+          "code" : "57833-6",
+          "display" : "Prescription for medication"
+        }, {
+          "system" : "http://snomed.info/sct",
+          "code" : "761938008",
+          "display" : "Medicinal prescription record (record artifact)"
+        } ]
+      },
+      "subject" : {
+        "reference" : "urn:uuid:6990328a-6640-59be-8a22-30f4eea951f1"
+      },
+      "date" : "2024-02-08T10:01:23.0000000+01:00",
+      "author" : [ {
+        "reference" : "urn:uuid:c81cf790-f0b9-585f-ae5e-837fe5408064"
+      } ],
+      "title" : "Rezept",
+      "confidentiality" : "N",
+      "_confidentiality" : {
+        "extension" : [ {
+          "url" : "http://fhir.ch/ig/ch-core/StructureDefinition/ch-ext-epr-confidentialitycode",
+          "valueCodeableConcept" : {
+            "coding" : [ {
+              "system" : "http://snomed.info/sct",
+              "code" : "17621005",
+              "display" : "Normal (qualifier value)"
+            } ]
+          }
+        } ]
+      },
+      "section" : [ {
+        "title" : "Original Darstellung",
+        "code" : {
+          "coding" : [ {
+            "system" : "http://loinc.org",
+            "code" : "55108-5",
+            "display" : "Clinical presentation Document"
+          } ]
+        },
+        "text" : {
+          "extension" : [ {
+            "url" : "http://hl7.org/fhir/StructureDefinition/textLink",
+            "extension" : [ {
+              "url" : "htmlid",
+              "valueString" : "original-representation"
+            }, {
+              "url" : "data",
+              "valueUri" : "urn:uuid:9b43aa9f-688b-5e01-8bf9-138d3a332669"
+            } ]
+          } ],
+          "status" : "generated",
+          "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Representation of the original view: <span id=\"original-representation\">PDF</span></div>"
+        },
+        "entry" : [ {
+          "reference" : "urn:uuid:9b43aa9f-688b-5e01-8bf9-138d3a332669"
+        } ]
+      }, {
+        "title" : "Arzneimittelverordnung",
+        "code" : {
+          "coding" : [ {
+            "system" : "http://loinc.org",
+            "code" : "57828-6",
+            "display" : "Prescription list"
+          } ]
+        },
+        "entry" : [ {
+          "reference" : "urn:uuid:78f7fc2f-a204-5676-8a6b-a69c6ecb26c2"
+        }, {
+          "reference" : "urn:uuid:b1db1efa-5cce-5142-a310-70a8f6d4295b"
+        }, {
+          "reference" : "urn:uuid:ae97cb14-76bc-5458-9e44-b493a0919608"
+        }, {
+          "reference" : "urn:uuid:f7ce35ca-766d-521c-84b8-25c1cb7cda73"
+        }, {
+          "reference" : "urn:uuid:8edcf28f-ab43-5de8-b775-b9cde29cddb1"
+        }, {
+          "reference" : "urn:uuid:934eeb66-2066-543a-adb1-b5741931d2d0"
+        }, {
+          "reference" : "urn:uuid:fda9ac82-e96e-5e33-a9e3-e8c665b37377"
+        } ]
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:6990328a-6640-59be-8a22-30f4eea951f1",
+    "resource" : {
+      "resourceType" : "Patient",
+      "id" : "6990328a-6640-59be-8a22-30f4eea951f1",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-core/StructureDefinition/ch-core-patient-epr" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Sebastian Example, 1971-05-15</div>"
+      },
+      "identifier" : [ {
+        "system" : "urn:oid:2.999.1",
+        "value" : "TEST-0001"
+      } ],
+      "name" : [ {
+        "family" : "Example",
+        "given" : [ "Sebastian" ]
+      } ],
+      "telecom" : [ {
+        "system" : "phone",
+        "value" : "079 999 99 99"
+      } ],
+      "gender" : "male",
+      "birthDate" : "1971-05-15",
+      "address" : [ {
+        "line" : [ "Bernstrasse 1" ],
+        "city" : "Bern",
+        "postalCode" : "3000",
+        "country" : "CH"
+      } ],
+      "communication" : [ {
+        "language" : {
+          "coding" : [ {
+            "system" : "urn:ietf:bcp:47",
+            "code" : "de"
+          } ]
+        },
+        "preferred" : true
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:c81cf790-f0b9-585f-ae5e-837fe5408064",
+    "resource" : {
+      "resourceType" : "PractitionerRole",
+      "id" : "c81cf790-f0b9-585f-ae5e-837fe5408064",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-practitionerrole" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Hans Muster, Arztpraxis Sonnenschein</div>"
+      },
+      "practitioner" : {
+        "reference" : "urn:uuid:8221fd77-eda1-5923-99c2-61d39224d3e3"
+      },
+      "organization" : {
+        "reference" : "urn:uuid:f7bce375-bb17-54b5-80d1-50822148ea56"
+      }
+    }
+  }, {
+    "fullUrl" : "urn:uuid:8221fd77-eda1-5923-99c2-61d39224d3e3",
+    "resource" : {
+      "resourceType" : "Practitioner",
+      "id" : "8221fd77-eda1-5923-99c2-61d39224d3e3",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-practitioner" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Hans Muster</div>"
+      },
+      "identifier" : [ {
+        "system" : "urn:oid:2.51.1.3",
+        "value" : "123123123123"
+      } ],
+      "name" : [ {
+        "family" : "Muster",
+        "given" : [ "Hans" ]
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:f7bce375-bb17-54b5-80d1-50822148ea56",
+    "resource" : {
+      "resourceType" : "Organization",
+      "id" : "f7bce375-bb17-54b5-80d1-50822148ea56",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-organization" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Arztpraxis Sonnenschein, Bernstrasse 1, 3000 Bern</div>"
+      },
+      "identifier" : [ {
+        "system" : "urn:oid:2.51.1.3",
+        "value" : "55255255255"
+      }, {
+        "system" : "urn:oid:2.16.756.5.30.1.123.100.2.1.1",
+        "value" : "XX.1254"
+      } ],
+      "name" : "Arztpraxis Sonnenschein",
+      "address" : [ {
+        "line" : [ "Bernstrasse 1" ],
+        "city" : "Bern",
+        "postalCode" : "3000",
+        "country" : "CH"
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:78f7fc2f-a204-5676-8a6b-a69c6ecb26c2",
+    "resource" : {
+      "resourceType" : "MedicationRequest",
+      "id" : "78f7fc2f-a204-5676-8a6b-a69c6ecb26c2",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationrequest" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">GTIN 7680388400376</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "coding" : [ {
+            "system" : "urn:oid:2.51.1.1",
+            "code" : "7680388400376"
+          } ],
+          "text" : "GTIN 7680388400376"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:7ed7f0dd-065d-5708-bc4d-4a46abaf8bd5"
+      } ],
+      "status" : "active",
+      "intent" : "order",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:6990328a-6640-59be-8a22-30f4eea951f1"
+      },
+      "authoredOn" : "2024-02-08T10:01:23.0000000+01:00",
+      "requester" : {
+        "reference" : "urn:uuid:c81cf790-f0b9-585f-ae5e-837fe5408064"
+      },
+      "dosageInstruction" : [ {
+        "sequence" : 1,
+        "timing" : {
+          "repeat" : {
+            "boundsPeriod" : {
+              "start" : "2024-02-08",
+              "end" : "2024-02-10"
+            },
+            "when" : [ "MORN" ]
+          }
+        },
+        "doseAndRate" : [ {
+          "doseQuantity" : {
+            "value" : 0.25,
+            "unit" : "Stk",
+            "system" : "http://snomed.info/sct",
+            "code" : "767525000"
+          }
+        } ]
+      }, {
+        "sequence" : 2,
+        "timing" : {
+          "repeat" : {
+            "when" : [ "EVE" ]
+          }
+        },
+        "doseAndRate" : [ {
+          "doseQuantity" : {
+            "value" : 0.25,
+            "unit" : "Stk",
+            "system" : "http://snomed.info/sct",
+            "code" : "767525000"
+          }
+        } ]
+      } ],
+      "dispenseRequest" : {
+        "validityPeriod" : {
+          "start" : "2024-02-08",
+          "end" : "2024-08-07"
+        },
+        "quantity" : {
+          "value" : 1.0,
+          "unit" : "Package - unit of product usage (qualifier value)",
+          "system" : "http://snomed.info/sct",
+          "code" : "1681000175101"
+        }
+      },
+      "substitution" : {
+        "allowedCodeableConcept" : {
+          "coding" : [ {
+            "system" : "http://terminology.hl7.org/CodeSystem/v3-substanceAdminSubstitution",
+            "code" : "E",
+            "display" : "equivalent"
+          } ]
+        }
+      }
+    }
+  }, {
+    "fullUrl" : "urn:uuid:b1db1efa-5cce-5142-a310-70a8f6d4295b",
+    "resource" : {
+      "resourceType" : "MedicationRequest",
+      "id" : "b1db1efa-5cce-5142-a310-70a8f6d4295b",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationrequest" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">GTIN 7680388400376</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "coding" : [ {
+            "system" : "urn:oid:2.51.1.1",
+            "code" : "7680388400376"
+          } ],
+          "text" : "GTIN 7680388400376"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:a77383a1-335f-5117-93ca-3375a3697955"
+      } ],
+      "status" : "active",
+      "intent" : "order",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:6990328a-6640-59be-8a22-30f4eea951f1"
+      },
+      "authoredOn" : "2024-02-08T10:01:23.0000000+01:00",
+      "requester" : {
+        "reference" : "urn:uuid:c81cf790-f0b9-585f-ae5e-837fe5408064"
+      },
+      "dosageInstruction" : [ {
+        "sequence" : 1,
+        "timing" : {
+          "repeat" : {
+            "boundsPeriod" : {
+              "start" : "2024-02-11",
+              "end" : "2024-02-13"
+            },
+            "when" : [ "MORN" ]
+          }
+        },
+        "doseAndRate" : [ {
+          "doseQuantity" : {
+            "value" : 0.5,
+            "unit" : "Stk",
+            "system" : "http://snomed.info/sct",
+            "code" : "767525000"
+          }
+        } ]
+      }, {
+        "sequence" : 2,
+        "timing" : {
+          "repeat" : {
+            "when" : [ "EVE" ]
+          }
+        },
+        "doseAndRate" : [ {
+          "doseQuantity" : {
+            "value" : 0.5,
+            "unit" : "Stk",
+            "system" : "http://snomed.info/sct",
+            "code" : "767525000"
+          }
+        } ]
+      } ],
+      "dispenseRequest" : {
+        "validityPeriod" : {
+          "start" : "2024-02-08",
+          "end" : "2024-08-07"
+        },
+        "quantity" : {
+          "value" : 1.0,
+          "unit" : "Package - unit of product usage (qualifier value)",
+          "system" : "http://snomed.info/sct",
+          "code" : "1681000175101"
+        }
+      },
+      "substitution" : {
+        "allowedCodeableConcept" : {
+          "coding" : [ {
+            "system" : "http://terminology.hl7.org/CodeSystem/v3-substanceAdminSubstitution",
+            "code" : "E",
+            "display" : "equivalent"
+          } ]
+        }
+      }
+    }
+  }, {
+    "fullUrl" : "urn:uuid:ae97cb14-76bc-5458-9e44-b493a0919608",
+    "resource" : {
+      "resourceType" : "MedicationRequest",
+      "id" : "ae97cb14-76bc-5458-9e44-b493a0919608",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationrequest" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">GTIN 7680388400376</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "coding" : [ {
+            "system" : "urn:oid:2.51.1.1",
+            "code" : "7680388400376"
+          } ],
+          "text" : "GTIN 7680388400376"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:cef420e8-2ac5-50cc-916a-8d521658d8b3"
+      } ],
+      "status" : "active",
+      "intent" : "order",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:6990328a-6640-59be-8a22-30f4eea951f1"
+      },
+      "authoredOn" : "2024-02-08T10:01:23.0000000+01:00",
+      "requester" : {
+        "reference" : "urn:uuid:c81cf790-f0b9-585f-ae5e-837fe5408064"
+      },
+      "dosageInstruction" : [ {
+        "sequence" : 1,
+        "timing" : {
+          "repeat" : {
+            "boundsPeriod" : {
+              "start" : "2024-02-14",
+              "end" : "2024-02-16"
+            },
+            "when" : [ "MORN" ]
+          }
+        },
+        "doseAndRate" : [ {
+          "doseQuantity" : {
+            "value" : 0.75,
+            "unit" : "Stk",
+            "system" : "http://snomed.info/sct",
+            "code" : "767525000"
+          }
+        } ]
+      }, {
+        "sequence" : 2,
+        "timing" : {
+          "repeat" : {
+            "when" : [ "EVE" ]
+          }
+        },
+        "doseAndRate" : [ {
+          "doseQuantity" : {
+            "value" : 0.75,
+            "unit" : "Stk",
+            "system" : "http://snomed.info/sct",
+            "code" : "767525000"
+          }
+        } ]
+      } ],
+      "dispenseRequest" : {
+        "validityPeriod" : {
+          "start" : "2024-02-08",
+          "end" : "2024-08-07"
+        },
+        "quantity" : {
+          "value" : 1.0,
+          "unit" : "Package - unit of product usage (qualifier value)",
+          "system" : "http://snomed.info/sct",
+          "code" : "1681000175101"
+        }
+      },
+      "substitution" : {
+        "allowedCodeableConcept" : {
+          "coding" : [ {
+            "system" : "http://terminology.hl7.org/CodeSystem/v3-substanceAdminSubstitution",
+            "code" : "E",
+            "display" : "equivalent"
+          } ]
+        }
+      }
+    }
+  }, {
+    "fullUrl" : "urn:uuid:f7ce35ca-766d-521c-84b8-25c1cb7cda73",
+    "resource" : {
+      "resourceType" : "MedicationRequest",
+      "id" : "f7ce35ca-766d-521c-84b8-25c1cb7cda73",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationrequest" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">GTIN 7680388400376</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "coding" : [ {
+            "system" : "urn:oid:2.51.1.1",
+            "code" : "7680388400376"
+          } ],
+          "text" : "GTIN 7680388400376"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:5bea8326-c20a-5b73-95aa-f8882a10ef62"
+      } ],
+      "status" : "active",
+      "intent" : "order",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:6990328a-6640-59be-8a22-30f4eea951f1"
+      },
+      "authoredOn" : "2024-02-08T10:01:23.0000000+01:00",
+      "requester" : {
+        "reference" : "urn:uuid:c81cf790-f0b9-585f-ae5e-837fe5408064"
+      },
+      "dosageInstruction" : [ {
+        "sequence" : 1,
+        "timing" : {
+          "repeat" : {
+            "boundsPeriod" : {
+              "start" : "2024-02-17"
+            },
+            "when" : [ "MORN" ]
+          }
+        },
+        "doseAndRate" : [ {
+          "doseQuantity" : {
+            "value" : 1,
+            "unit" : "Stk",
+            "system" : "http://snomed.info/sct",
+            "code" : "767525000"
+          }
+        } ]
+      }, {
+        "sequence" : 2,
+        "timing" : {
+          "repeat" : {
+            "when" : [ "EVE" ]
+          }
+        },
+        "doseAndRate" : [ {
+          "doseQuantity" : {
+            "value" : 1,
+            "unit" : "Stk",
+            "system" : "http://snomed.info/sct",
+            "code" : "767525000"
+          }
+        } ]
+      } ],
+      "dispenseRequest" : {
+        "validityPeriod" : {
+          "start" : "2024-02-08",
+          "end" : "2024-08-07"
+        },
+        "quantity" : {
+          "value" : 1.0,
+          "unit" : "Package - unit of product usage (qualifier value)",
+          "system" : "http://snomed.info/sct",
+          "code" : "1681000175101"
+        }
+      },
+      "substitution" : {
+        "allowedCodeableConcept" : {
+          "coding" : [ {
+            "system" : "http://terminology.hl7.org/CodeSystem/v3-substanceAdminSubstitution",
+            "code" : "E",
+            "display" : "equivalent"
+          } ]
+        }
+      }
+    }
+  }, {
+    "fullUrl" : "urn:uuid:8edcf28f-ab43-5de8-b775-b9cde29cddb1",
+    "resource" : {
+      "resourceType" : "MedicationRequest",
+      "id" : "8edcf28f-ab43-5de8-b775-b9cde29cddb1",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationrequest" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">GTIN 7680563180079</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "coding" : [ {
+            "system" : "urn:oid:2.51.1.1",
+            "code" : "7680563180079"
+          } ],
+          "text" : "GTIN 7680563180079"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:6d29d3db-41e1-5135-a874-1bec84b6512d"
+      } ],
+      "status" : "active",
+      "intent" : "order",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:6990328a-6640-59be-8a22-30f4eea951f1"
+      },
+      "authoredOn" : "2024-02-08T10:01:23.0000000+01:00",
+      "requester" : {
+        "reference" : "urn:uuid:c81cf790-f0b9-585f-ae5e-837fe5408064"
+      },
+      "reasonCode" : [ {
+        "text" : "Pain"
+      } ],
+      "dosageInstruction" : [ {
+        "sequence" : 1,
+        "patientInstruction" : "Maximum 4 pills a day",
+        "timing" : {
+          "repeat" : {
+            "boundsPeriod" : {
+              "start" : "2024-02-08"
+            },
+            "when" : [ "MORN" ]
+          }
+        },
+        "asNeededBoolean" : true,
+        "doseAndRate" : [ {
+          "doseRange" : {
+            "low" : {
+              "value" : 1.0,
+              "unit" : "Stk",
+              "system" : "http://snomed.info/sct",
+              "code" : "767525000"
+            },
+            "high" : {
+              "value" : 2.0,
+              "unit" : "Stk",
+              "system" : "http://snomed.info/sct",
+              "code" : "767525000"
+            }
+          }
+        } ]
+      }, {
+        "sequence" : 2,
+        "timing" : {
+          "repeat" : {
+            "when" : [ "EVE" ]
+          }
+        },
+        "doseAndRate" : [ {
+          "doseRange" : {
+            "low" : {
+              "value" : 1.0,
+              "unit" : "Stk",
+              "system" : "http://snomed.info/sct",
+              "code" : "767525000"
+            },
+            "high" : {
+              "value" : 2.0,
+              "unit" : "Stk",
+              "system" : "http://snomed.info/sct",
+              "code" : "767525000"
+            }
+          }
+        } ]
+      } ],
+      "dispenseRequest" : {
+        "quantity" : {
+          "value" : 2.0,
+          "unit" : "Package - unit of product usage (qualifier value)",
+          "system" : "http://snomed.info/sct",
+          "code" : "1681000175101"
+        }
+      },
+      "substitution" : {
+        "allowedCodeableConcept" : {
+          "coding" : [ {
+            "system" : "http://terminology.hl7.org/CodeSystem/v3-substanceAdminSubstitution",
+            "code" : "N",
+            "display" : "none"
+          } ]
+        }
+      }
+    }
+  }, {
+    "fullUrl" : "urn:uuid:934eeb66-2066-543a-adb1-b5741931d2d0",
+    "resource" : {
+      "resourceType" : "MedicationRequest",
+      "id" : "934eeb66-2066-543a-adb1-b5741931d2d0",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationrequest" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">GTIN 7680552740055</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "coding" : [ {
+            "system" : "urn:oid:2.51.1.1",
+            "code" : "7680552740055"
+          } ],
+          "text" : "GTIN 7680552740055"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:e511689a-3c5e-52fa-9361-9900cfe20739"
+      } ],
+      "status" : "active",
+      "intent" : "order",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:6990328a-6640-59be-8a22-30f4eea951f1"
+      },
+      "authoredOn" : "2024-02-08T10:01:23.0000000+01:00",
+      "requester" : {
+        "reference" : "urn:uuid:c81cf790-f0b9-585f-ae5e-837fe5408064"
+      },
+      "reasonCode" : [ {
+        "text" : "Cough"
+      } ],
+      "dosageInstruction" : [ {
+        "timing" : {
+          "repeat" : {
+            "boundsPeriod" : {
+              "start" : "2024-02-08",
+              "end" : "2024-02-28"
+            },
+            "timeOfDay" : [ "21:00:00" ]
+          }
+        },
+        "doseAndRate" : [ {
+          "doseQuantity" : {
+            "value" : 20.0,
+            "unit" : "gtt",
+            "system" : "http://snomed.info/sct",
+            "code" : "732994000"
+          }
+        } ]
+      } ],
+      "dispenseRequest" : {
+        "numberOfRepeatsAllowed" : 0,
+        "quantity" : {
+          "value" : 1.0,
+          "unit" : "Package - unit of product usage (qualifier value)",
+          "system" : "http://snomed.info/sct",
+          "code" : "1681000175101"
+        }
+      },
+      "substitution" : {
+        "allowedCodeableConcept" : {
+          "coding" : [ {
+            "system" : "http://terminology.hl7.org/CodeSystem/v3-substanceAdminSubstitution",
+            "code" : "E",
+            "display" : "equivalent"
+          } ]
+        }
+      }
+    }
+  }, {
+    "fullUrl" : "urn:uuid:fda9ac82-e96e-5e33-a9e3-e8c665b37377",
+    "resource" : {
+      "resourceType" : "MedicationRequest",
+      "id" : "fda9ac82-e96e-5e33-a9e3-e8c665b37377",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationrequest" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">GTIN 7680362030131</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "coding" : [ {
+            "system" : "urn:oid:2.51.1.1",
+            "code" : "7680362030131"
+          } ],
+          "text" : "GTIN 7680362030131"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:bb2235ea-b7bd-53f6-b283-d886e63adfa0"
+      } ],
+      "status" : "active",
+      "intent" : "order",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:6990328a-6640-59be-8a22-30f4eea951f1"
+      },
+      "authoredOn" : "2024-02-08T10:01:23.0000000+01:00",
+      "requester" : {
+        "reference" : "urn:uuid:c81cf790-f0b9-585f-ae5e-837fe5408064"
+      },
+      "dosageInstruction" : [ {
+        "patientInstruction" : "Take half an hour before bedtime.",
+        "timing" : {
+          "repeat" : {
+            "boundsPeriod" : {
+              "start" : "2024-02-08"
+            },
+            "when" : [ "NIGHT" ]
+          }
+        },
+        "asNeededBoolean" : true,
+        "doseAndRate" : [ {
+          "doseQuantity" : {
+            "value" : 0.5,
+            "unit" : "Stk",
+            "system" : "http://snomed.info/sct",
+            "code" : "767525000"
+          }
+        } ]
+      } ],
+      "dispenseRequest" : {
+        "numberOfRepeatsAllowed" : 2,
+        "quantity" : {
+          "value" : 1.0,
+          "unit" : "Package - unit of product usage (qualifier value)",
+          "system" : "http://snomed.info/sct",
+          "code" : "1681000175101"
+        }
+      },
+      "substitution" : {
+        "allowedCodeableConcept" : {
+          "coding" : [ {
+            "system" : "http://terminology.hl7.org/CodeSystem/v3-substanceAdminSubstitution",
+            "code" : "E",
+            "display" : "equivalent"
+          } ]
+        }
+      }
+    }
+  }, {
+    "fullUrl" : "urn:uuid:9b43aa9f-688b-5e01-8bf9-138d3a332669",
+    "resource" : {
+      "resourceType" : "Binary",
+      "id" : "9b43aa9f-688b-5e01-8bf9-138d3a332669",
+      "contentType" : "application/pdf",
+      "data" : "{{pdf}}"
+    }
+  } ]
+}

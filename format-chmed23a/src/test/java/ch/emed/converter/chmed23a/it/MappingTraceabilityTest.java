@@ -35,16 +35,6 @@ class MappingTraceabilityTest {
       Set.of(
           "M23-QR-11",
           "M23-QR-12",
-          "M23-RX-01",
-          "M23-RX-02",
-          "M23-RX-03",
-          "M23-RX-04",
-          "M23-RX-05",
-          "M23-RX-06",
-          "M23-RX-07",
-          "M23-RX-08",
-          "M23-RX-09",
-          "M23-RX-10",
           "M23-REV-01",
           "M23-REV-02",
           "M23-REV-03",
@@ -60,8 +50,7 @@ class MappingTraceabilityTest {
           "M23-REV-13",
           "M23-REV-14",
           "M23-REV-15",
-          "M23-REV-16",
-          "M23-DOC-02");
+          "M23-REV-16");
 
   private static Set<String> codeIds() throws IOException {
     Set<String> ids = new TreeSet<>();

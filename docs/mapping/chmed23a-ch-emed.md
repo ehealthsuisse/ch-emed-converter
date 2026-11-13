@@ -21,6 +21,7 @@ match (`MappingTraceabilityTest`, task T025).
 - CHMED23A paths are JSON Pointers (`/meds/0/pos/1/po/tdo`).
 - CH EMED paths are FHIRPath expressions.
 - Empty strings are treated as absent.
+- Decimals keep the precision of the source (`1.0` stays `1.0`).
 - Messages name paths, never values (FR-016).
 - Generated resource ids are UUID v5 of `<document id>#<path>`, as for CHMED16A; `fullUrl` and
   references use `urn:uuid:<id>`.

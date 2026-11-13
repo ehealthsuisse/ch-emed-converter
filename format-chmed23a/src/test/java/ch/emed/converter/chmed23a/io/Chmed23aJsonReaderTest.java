@@ -59,7 +59,7 @@ class Chmed23aJsonReaderTest {
                             assertThat(s.ss().get(0).dose())
                                 .isEqualTo(
                                     new DosageObject.Range(
-                                        new BigDecimal("1"), new BigDecimal("2")))));
+                                        new BigDecimal("1.0"), new BigDecimal("2.0")))));
     assertThat(med.hcOrg().zsr()).isEqualTo("XX.1254");
   }
 

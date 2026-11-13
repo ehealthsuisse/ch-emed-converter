@@ -36,7 +36,7 @@ class ExpectedOutputIT {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"Example1", "Example2", "Example3"})
+  @ValueSource(strings = {"Example1", "Example2", "Example3", "Example4"})
   void officialExampleMatchesTheExpectedOutput(String example) throws Exception {
     ConversionResult result =
         converter.convert(

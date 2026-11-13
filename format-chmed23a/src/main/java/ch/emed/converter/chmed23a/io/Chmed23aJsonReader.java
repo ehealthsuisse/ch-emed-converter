@@ -25,6 +25,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -45,7 +46,9 @@ public final class Chmed23aJsonReader {
   private static final ObjectMapper MAPPER =
       new ObjectMapper()
           .enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)
-          .enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
+          .enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
+          // keep decimals as written (1.0 stays 1.0); the default factory strips trailing zeros
+          .setNodeFactory(JsonNodeFactory.withExactBigDecimals(true));
 
   private static final Set<String> MEDICATION =
       Set.of(
