@@ -81,6 +81,7 @@ class NoOutboundNetworkTest extends AbstractRestTest {
     }
 
     convertEpr();
+    convertChmed23a();
 
     assertThat(attempts).as("outbound connection attempts").isEmpty();
   }

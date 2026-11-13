@@ -50,6 +50,10 @@ public final class RestTestSupport {
   public static final Path EPR =
       Path.of("..", "format-ch-emed-epr", "src", "test", "resources", "fixtures", "official");
 
+  /** CHMED23A corpus of feature 006: official examples, posology fragments, .NET examples. */
+  public static final Path CHMED23A =
+      Path.of("..", "format-chmed23a", "src", "test", "resources", "fixtures", "chmed23a");
+
   /** Synthetic CH EMED EPR fixtures of feature 005, e.g. a document of an unknown type. */
   public static final Path EPR_SYNTHETIC = EPR.resolveSibling("synthetic");
 

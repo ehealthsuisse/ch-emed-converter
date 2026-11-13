@@ -45,7 +45,8 @@ final class FormatsCommand implements Callable<Integer> {
                             ", ", f.outputForms().stream().map(OutputForm::externalName).toList())
                         + (f.documentTypes().isEmpty()
                             ? ""
-                            : "; document types " + String.join(", ", f.documentTypes()))));
+                            : "; document types " + String.join(", ", f.documentTypes()))
+                        + (f.deprecated() ? "; deprecated by IG eMediplan" : "")));
     context.out.println("Specifications:");
     converter
         .pinnedSpecifications()

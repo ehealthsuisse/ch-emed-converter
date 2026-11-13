@@ -64,8 +64,8 @@ final class ConvertCommand implements Callable<Integer> {
       names = "--output-form",
       defaultValue = "document",
       description =
-          "Output form: document, qr-payload, qr-image (qr-* only with --to chmed16a) or"
-              + " treatment-plans (only with --to ch-emed-epr and a medication card)")
+          "Output form: document, qr-payload, qr-image (qr-* only with --to chmed16a or chmed23a)"
+              + " or treatment-plans (only with --to ch-emed-epr and a medication card)")
   String outputForm;
 
   @Option(

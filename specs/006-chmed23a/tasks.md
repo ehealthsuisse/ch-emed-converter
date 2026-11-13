@@ -517,40 +517,40 @@ capabilities mark the format as deprecated.
 
 ### Tests for User Story 4 ⚠️
 
-- [ ] T062 [P] [US4] Extend `converter-cli/src/test/java/ch/emed/converter/cli/FormatsCommandTest.java`:
+- [X] T062 [P] [US4] Extend `converter-cli/src/test/java/ch/emed/converter/cli/FormatsCommandTest.java`:
   the line for `chmed23a` with input and output forms, document types `MP, Rx` and `; deprecated by
   IG eMediplan`; the other lines are unchanged.
-- [ ] T063 [P] [US4] Write `converter-cli/src/test/java/ch/emed/converter/cli/Chmed23aCliTest.java`:
+- [X] T063 [P] [US4] Write `converter-cli/src/test/java/ch/emed/converter/cli/Chmed23aCliTest.java`:
   - `--from chmed23a` with a JSON file, a chunk text file and a PNG;
   - `--to chmed23a` with `--output-form document|qr-payload|qr-image`;
   - exit `1` for `CHUNK_INVALID` and `QR_CAPACITY_EXCEEDED`;
   - exit `2` for `--output-form qr-image --to ch-emed`;
   - the help text of `--output-form` names `chmed23a`.
-- [ ] T064 [P] [US4] Extend `converter-rest/src/test/java/ch/emed/converter/rest/contract/CapabilitiesContractTest.java`:
+- [X] T064 [P] [US4] Extend `converter-rest/src/test/java/ch/emed/converter/rest/contract/CapabilitiesContractTest.java`:
   - the `chmed23a` entry with forms, document types and `"deprecated": true`;
   - no `deprecated` property on other formats;
   - the pairs `chmed23a ↔ ch-emed`;
   - the option text of `outputForm`.
-- [ ] T065 [P] [US4] Write `converter-rest/src/test/java/ch/emed/converter/rest/contract/Chmed23aConversionContractTest.java`:
+- [X] T065 [P] [US4] Write `converter-rest/src/test/java/ch/emed/converter/rest/contract/Chmed23aConversionContractTest.java`:
   - both pairs with each input form (Base64 `document`) and output form;
   - `chmed23a → chmed16a` → 404 `UNSUPPORTED_CONVERSION`, detail naming `ch-emed`;
   - `CHUNK_INVALID` → 422;
   - responses validate against `openapi.yaml` 1.3.0.
-- [ ] T066 [P] [US4] Extend `ServiceLibraryParityTest`, `LogLeakTest`,
+- [X] T066 [P] [US4] Extend `ServiceLibraryParityTest`, `LogLeakTest`,
   `ProblemLeakTest`, `NoOutboundNetworkTest` and `NonAsciiPreservationTest` in `converter-rest`
   with the CHMED23A corpus. Cover SC-004, SC-006 and SC-007
   with the fixtures of T002–T004 and the CH EMED inputs of T052.
 
 ### Implementation for User Story 4
 
-- [ ] T067 [US4] Add the dependency `format-chmed23a` to `converter-cli/pom.xml` and
+- [X] T067 [US4] Add the dependency `format-chmed23a` to `converter-cli/pom.xml` and
   `converter-rest/pom.xml`, and check that the assemblies (thin JAR `lib/`, OCI image) contain it.
   Update `converter-cli/.../FormatsCommand.java` (deprecated suffix) and the `--output-form` help in
   `converter-cli/.../ConvertCommand.java`. Make T062 and T063 pass.
-- [ ] T068 [US4] Add `deprecated` to `converter-rest/.../model/CapabilitiesResponse.java`, with
+- [X] T068 [US4] Add `deprecated` to `converter-rest/.../model/CapabilitiesResponse.java`, with
   `@JsonInclude(NON_DEFAULT)` so that it is absent when `false`, and fill it in
   `CapabilitiesController.java`. Update the `outputForm` option text there.
-- [ ] T069 [US4] Update `specs/002-rest-conversion-service/contracts/openapi.yaml` to 1.3.0 as in
+- [X] T069 [US4] Update `specs/002-rest-conversion-service/contracts/openapi.yaml` to 1.3.0 as in
   contracts/rest-api.md:
   - `deprecated` property;
   - `FormatName` examples;

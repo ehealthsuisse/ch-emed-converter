@@ -57,6 +57,22 @@ class CapabilitiesContractTest extends AbstractRestTest {
         .containsExactly("document", "treatment-plans");
     assertThat(stream(epr.get("documentTypes")).map(JsonNode::asText))
         .containsExactly("PMLC", "PRE", "MTP", "DIS", "PADV", "PML");
+    assertThat(epr.has("deprecated")).isFalse();
+    // T064 (feature 006): CHMED23A is listed with its forms and marked as deprecated
+    assertThat(pairs).contains("chmed23a->ch-emed", "ch-emed->chmed23a");
+    JsonNode chmed23a =
+        stream(body.get("formats"))
+            .filter(f -> f.get("name").asText().equals("chmed23a"))
+            .findFirst()
+            .orElseThrow();
+    assertThat(stream(chmed23a.get("inputForms")).map(JsonNode::asText))
+        .containsExactly("json", "qr-payload", "qr-image");
+    assertThat(stream(chmed23a.get("outputForms")).map(JsonNode::asText))
+        .containsExactly("document", "qr-payload", "qr-image");
+    assertThat(stream(chmed23a.get("documentTypes")).map(JsonNode::asText))
+        .containsExactly("MP", "Rx");
+    assertThat(chmed23a.get("deprecated").asBoolean()).isTrue();
+    assertThat(option(body, "outputForm").get("description").asText()).contains("chmed23a");
     assertThat(body.get("specifications").get("CH_EMED_EPR").asText())
         .isEqualTo("ch.fhir.ig.ch-emed-epr#3.0.0");
 

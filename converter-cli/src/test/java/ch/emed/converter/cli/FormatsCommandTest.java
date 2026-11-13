@@ -24,6 +24,21 @@ class FormatsCommandTest {
         .contains("document types PMLC, PRE, MTP, DIS, PADV, PML");
   }
 
+  /** T062 (feature 006): CHMED23A with its forms and the deprecated mark; others unmarked. */
+  @Test
+  void listsChmed23aAsDeprecated() {
+    String out = run("formats").stdoutText();
+
+    assertThat(out)
+        .contains("chmed23a -> ch-emed")
+        .contains("ch-emed -> chmed23a")
+        .contains(
+            "chmed23a: input json, qr-payload, qr-image; output document, qr-payload, qr-image;"
+                + " document types MP, Rx; deprecated by IG eMediplan")
+        .contains("CHMED23A (ig-emediplan/specification@0b579aa6)");
+    assertThat(out.lines().filter(l -> l.contains("deprecated"))).hasSize(1);
+  }
+
   @Test
   void versionPrintsConverterAndSpecificationVersions() {
     CliTestSupport.Run result = run("--version");
