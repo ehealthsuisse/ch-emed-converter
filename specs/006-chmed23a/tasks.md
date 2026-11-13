@@ -600,7 +600,7 @@ capabilities mark the format as deprecated.
   first.
 - [X] T077 Run the time tests on 4 vCPUs (`tools/remote-build.sh load`). Report the duration and
   record the SC-005 measurement in `docs/operations/rest-service.md`.
-- [ ] T078 Walk through quickstart.md Scenarios 1–7 with the built CLI and REST service, and
+- [X] T078 Walk through quickstart.md Scenarios 1–7 with the built CLI and REST service, and
   correct the quickstart where the real output differs.
 
 ---
