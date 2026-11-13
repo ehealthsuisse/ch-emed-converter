@@ -1,6 +1,7 @@
 package ch.emed.converter.chmed23a;
 
 import ch.emed.converter.chmed23a.io.Chmed23aJsonReader;
+import ch.emed.converter.chmed23a.io.Chmed23aJsonWriter;
 import ch.emed.converter.chmed23a.io.InputFormDetector;
 import ch.emed.converter.chmed23a.io.TransmissionFormat;
 import ch.emed.converter.chmed23a.mapping.Documents;
@@ -8,10 +9,14 @@ import ch.emed.converter.chmed23a.mapping.MappingRule;
 import ch.emed.converter.chmed23a.mapping.MappingScope;
 import ch.emed.converter.chmed23a.mapping.MedicationCardBuilder;
 import ch.emed.converter.chmed23a.mapping.MedicationPrescriptionBuilder;
+import ch.emed.converter.chmed23a.mapping.reverse.DocumentReverseBuilder;
+import ch.emed.converter.chmed23a.mapping.reverse.ReverseScope;
 import ch.emed.converter.chmed23a.model.Medication;
 import ch.emed.converter.chmed23a.validation.Chmed23aValidator;
 import ch.emed.converter.core.api.FormatId;
 import ch.emed.converter.core.api.OutputForm;
+import ch.emed.converter.core.chemed.ChEmedDocumentReader;
+import ch.emed.converter.core.chemed.ChEmedDocumentReader.ChEmedDocument;
 import ch.emed.converter.core.report.Phase;
 import ch.emed.converter.core.report.ReasonCode;
 import ch.emed.converter.core.report.ReportEntry;
@@ -19,6 +24,7 @@ import ch.emed.converter.core.spi.FormatModule;
 import ch.emed.converter.core.spi.MappingContext;
 import ch.emed.converter.qr.QrException;
 import ch.emed.converter.qr.QrImageReader;
+import ch.emed.converter.qr.QrImageWriter;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CodingErrorAction;
@@ -171,6 +177,41 @@ public final class Chmed23aFormatModule implements FormatModule {
 
   @Override
   public byte[] fromChEmed(Bundle document, MappingContext ctx) {
-    return fail(ctx, ReasonCode.UNSUPPORTED_DOCUMENT_TYPE, "Writing CHMED23A is not yet supported");
+    ChEmedDocument doc = ChEmedDocumentReader.open(document, ctx.report(), "CHMED23A");
+    if (doc == null) {
+      return null;
+    }
+    Medication med = DocumentReverseBuilder.build(new ReverseScope(doc, ctx));
+    if (med == null) {
+      return null;
+    }
+    Chmed23aValidator.validate(med, ctx.report(), Phase.VALIDATE_OUTPUT);
+    if (ctx.report().hasErrors()) {
+      return null;
+    }
+    return write(Chmed23aJsonWriter.write(med), ctx);
+  }
+
+  /**
+   * Writes the JSON in the requested output form: the document, one payload, or a QR image of the
+   * payload; a payload too large for one code fails for the image (M23-QR-10..12).
+   */
+  @MappingRule({"M23-QR-11", "M23-QR-12"})
+  private static byte[] write(byte[] json, MappingContext ctx) {
+    return switch (ctx.options().outputForm()) {
+      case DOCUMENT -> json;
+      case QR_PAYLOAD -> TransmissionFormat.encode(json);
+      case QR_IMAGE -> {
+        String payload = new String(TransmissionFormat.encode(json), StandardCharsets.US_ASCII);
+        try {
+          yield QrImageWriter.write(payload);
+        } catch (QrException e) {
+          ctx.report().add(ReportEntry.error(reasonCode(e.kind()), Phase.MAP, "/", e.getMessage()));
+          yield null;
+        }
+      }
+      // not offered by CHMED23A; DefaultConverter refuses it before mapping
+      case TREATMENT_PLANS -> throw new IllegalStateException("Output form not offered");
+    };
   }
 }

@@ -78,7 +78,7 @@ class PosologyToFhirMapperTest {
   void freeTextIsLossless() {
     List<Dosage> result = map(pos(new PosologyDetail.FreeText("Nach Bedarf ½ Tablette")));
     assertThat(result).singleElement().satisfies(d -> assertThat(d.getText()).contains("½"));
-    assertThat(report.entries()).isEmpty();
+    assertThat(codes()).containsExactly(ReasonCode.UNMAPPABLE_ELEMENT);
   }
 
   @Test

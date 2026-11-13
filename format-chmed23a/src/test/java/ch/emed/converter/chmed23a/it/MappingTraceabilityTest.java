@@ -31,26 +31,7 @@ class MappingTraceabilityTest {
    * Rules of later user stories not implemented yet (tasks.md phases 4-6); must be empty at the end
    * of phase 7 (task T074).
    */
-  private static final Set<String> PENDING =
-      Set.of(
-          "M23-QR-11",
-          "M23-QR-12",
-          "M23-REV-01",
-          "M23-REV-02",
-          "M23-REV-03",
-          "M23-REV-04",
-          "M23-REV-05",
-          "M23-REV-06",
-          "M23-REV-07",
-          "M23-REV-08",
-          "M23-REV-09",
-          "M23-REV-10",
-          "M23-REV-11",
-          "M23-REV-12",
-          "M23-REV-13",
-          "M23-REV-14",
-          "M23-REV-15",
-          "M23-REV-16");
+  private static final Set<String> PENDING = Set.of();
 
   private static Set<String> codeIds() throws IOException {
     Set<String> ids = new TreeSet<>();

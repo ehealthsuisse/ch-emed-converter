@@ -423,7 +423,7 @@ the round trips in both directions match the capability gaps (spec US3, quicksta
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T048 [P] [US3] Write `T/io/Chmed23aJsonWriterTest.java`:
+- [X] T048 [P] [US3] Write `T/io/Chmed23aJsonWriterTest.java`:
   - property order as in the README tables and the posology.md tables;
   - empty lists and absent values omitted;
   - defaults not materialised;
@@ -431,7 +431,7 @@ the round trips in both directions match the capability gaps (spec US3, quicksta
   - UTF-8 without escaping of non-ASCII;
   - no line breaks;
   - reading the written JSON gives back an equal model.
-- [ ] T049 [P] [US3] Write `T/mapping/reverse/PatientReverseMapperTest.java` (M23-REV, research
+- [X] T049 [P] [US3] Write `T/mapping/reverse/PatientReverseMapperTest.java` (M23-REV, research
   R11):
   - `lng` from the Composition language, then patient communication, then option
     `defaultLanguage` with `DERIVED_VALUE`;
@@ -439,13 +439,13 @@ the round trips in both directions match the capability gaps (spec US3, quicksta
   - identifiers: VeKa → type 1, any other system → type 2 with `sId`; none →
     `MISSING_REQUIRED_DATA`;
   - address and telecom.
-- [ ] T050 [P] [US3] Write `T/mapping/reverse/AuthorReverseMapperTest.java` (research R8):
+- [X] T050 [P] [US3] Write `T/mapping/reverse/AuthorReverseMapperTest.java` (research R8):
   - Patient author → `auth` 2 (plan); for a prescription → `MISSING_REQUIRED_DATA`;
   - PractitionerRole → `auth` 1 with `hcPerson` and `hcOrg`;
   - missing street/zip/city/name/GLN → options `author`/`organization`, else
     `MISSING_REQUIRED_DATA` at the path;
   - ZSR only once.
-- [ ] T051 [P] [US3] Write `T/mapping/reverse/PosologyFromFhirMapperTest.java`:
+- [X] T051 [P] [US3] Write `T/mapping/reverse/PosologyFromFhirMapperTest.java`:
   - the inverse of every exact row of research R9;
   - a text-only dosage → FreeText without a report entry;
   - an uncovered structure → FreeText with the generated text and WARNING
@@ -453,7 +453,7 @@ the round trips in both directions match the capability gaps (spec US3, quicksta
   - `asNeeded`, `patientInstruction`, `boundsPeriod`, `route`, `method`, `additionalInstruction`
     text of a `relMeal` label → `relMeal`;
   - units back to CDTYP 9 codes.
-- [ ] T052 [P] [US3] Write `T/mapping/reverse/MedicationPlanBuilderTest.java` and
+- [X] T052 [P] [US3] Write `T/mapping/reverse/MedicationPlanBuilderTest.java` and
   `T/mapping/reverse/PrescriptionBuilderTest.java`:
   - document id from `Composition.identifier`;
   - `dt`, `rmk`;
@@ -463,11 +463,11 @@ the round trips in both directions match the capability gaps (spec US3, quicksta
   - CH EMED documents of other types → `UNSUPPORTED_DOCUMENT_TYPE` naming MP and Rx;
   - the CH EMED inputs in `FX/chemed/`: the outputs of T031/T044 and copies of the CHMED16A CH EMED
     fixtures.
-- [ ] T053 [P] [US3] Write `T/it/ChEmedToChmed23aIT.java`:
+- [X] T053 [P] [US3] Write `T/it/ChEmedToChmed23aIT.java`:
   - every input of `FX/chemed/` converts;
   - the output passes `Chmed23aValidator` (FR-007);
   - the expected JSON in `FX/expected/` is compared byte-exactly.
-- [ ] T054 [P] [US3] Write `T/it/QrOutputIT.java`:
+- [X] T054 [P] [US3] Write `T/it/QrOutputIT.java`:
   - `qr-payload` starts with `CHMED23A.` and decodes, by the specification's rules, to the
     `document` output;
   - `qr-image` of a plan and of a prescription is written, read back, and gives the same payload
@@ -475,25 +475,25 @@ the round trips in both directions match the capability gaps (spec US3, quicksta
   - a synthetic large card (`FX/chemed/large-card.json`, generated like the CHMED16A
     `LargePlanGenerator`) → `QR_CAPACITY_EXCEEDED` naming 2331 bytes, while `qr-payload` works;
   - no chunked output.
-- [ ] T055 [P] [US3] Write `T/it/RoundTripIT.java` (FR-011, SC-002):
+- [X] T055 [P] [US3] Write `T/it/RoundTripIT.java` (FR-011, SC-002):
   - CHMED23A → CH EMED → CHMED23A for every fixture of T002–T004;
   - CH EMED → CHMED23A → CH EMED for every input of `FX/chemed/`;
   - the differences must be exactly those listed by `CapabilityGaps` (data-model §7) and asserted
     per fixture: no `mData`, no extensions, text posologies as FreeText, derived id, split
     prescribed medicaments.
-- [ ] T056 [P] [US3] Write `T/it/DeterminismIT.java` (FR-012): two runs with identical input and
+- [X] T056 [P] [US3] Write `T/it/DeterminismIT.java` (FR-012): two runs with identical input and
   options give byte-identical JSON, payload and PNG for every fixture, in both directions.
 
 ### Implementation for User Story 3
 
-- [ ] T057 [P] [US3] Implement `M/io/Chmed23aJsonWriter.java`. Make T048 pass.
-- [ ] T058 [P] [US3] Implement `M/mapping/reverse/PatientReverseMapper.java` and
+- [X] T057 [P] [US3] Implement `M/io/Chmed23aJsonWriter.java`. Make T048 pass.
+- [X] T058 [P] [US3] Implement `M/mapping/reverse/PatientReverseMapper.java` and
   `M/mapping/reverse/AuthorReverseMapper.java`, plus `ReverseScope`. Make T049 and T050 pass.
-- [ ] T059 [US3] Implement `M/mapping/reverse/PosologyFromFhirMapper.java`, reusing
+- [X] T059 [US3] Implement `M/mapping/reverse/PosologyFromFhirMapper.java`, reusing
   `PosologyText` for the fallback. Make T051 pass.
-- [ ] T060 [US3] Implement `M/mapping/reverse/MedicationPlanBuilder.java` and
+- [X] T060 [US3] Implement `M/mapping/reverse/MedicationPlanBuilder.java` and
   `M/mapping/reverse/PrescriptionBuilder.java`. Make T052 pass (depends on T058, T059).
-- [ ] T061 [US3] Wire `Chmed23aFormatModule.fromChEmed`:
+- [X] T061 [US3] Wire `Chmed23aFormatModule.fromChEmed`:
   - read the document;
   - build the plan or prescription;
   - run `Chmed23aValidator` in phase `VALIDATE_OUTPUT`;

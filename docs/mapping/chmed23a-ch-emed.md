@@ -165,7 +165,7 @@ posology, and the report has WARNING `DOSAGE_FREE_TEXT_FALLBACK` with clinical l
 | M23-DOS-12 | `appInstr` | base entry `patientInstruction` | |
 | M23-DOS-13 | `roa` (CDTYP 61) | `route` EDQM, same code, if in the CH Term route value set | otherwise WARNING `UNMAPPABLE_ELEMENT` with clinical loss |
 | M23-DOS-14 | `moa` (CDTYP 62) | `method` EDQM through the table `method-edqm.csv` (unambiguous rows only; domain review) | unmapped → WARNING `UNMAPPABLE_ELEMENT` with clinical loss |
-| M23-DOS-15 | `unit` (CDTYP 9) | `doseQuantity.unit` = `unit`, system/code from the CDTYP 9 table (as M-DOS-08) | unmapped → text |
+| M23-DOS-15 | `unit` (CDTYP 9) | `doseQuantity.unit` = `unit` in the spelling of terminology.md (`STK` → `Stk`), system/code from the CDTYP 9 table (as M-DOS-08) | unmapped → text; a unit without structured dose (FreeText, all doses 0) → INFORMATION `UNMAPPABLE_ELEMENT` |
 | M23-DOS-16 | `relMeal` 1/2/3 | with day segments or without time: `when` ACM/ACD/ACV, CM/CD/CV, PCM/PCD/PCV, or AC/C/PC | with times of day, or 4–7: the localized label in `additionalInstruction.text`, WARNING `UNMAPPABLE_ELEMENT` without clinical loss |
 
 ## Prescription
@@ -192,13 +192,13 @@ posology, and the report has WARNING `DOSAGE_FREE_TEXT_FALLBACK` with clinical l
 | M23-REV-03 | `Composition.date` | `dt` | |
 | M23-REV-04 | section `annotation` | `rmk` | |
 | M23-REV-05 | `Composition.author` Patient | `auth` 2 | Rx → `MISSING_REQUIRED_DATA` (a prescription needs a healthcare person) |
-| M23-REV-06 | `Composition.author` PractitionerRole | `auth` 1, `hcPerson` (GLN, names, ZSR), `hcOrg` (GLN, name, address, ZSR) | missing required parts from options `author` / `organization`, else `MISSING_REQUIRED_DATA` at the path |
+| M23-REV-06 | `Composition.author` PractitionerRole | `auth` 1, `hcPerson` (GLN, names, ZSR), `hcOrg` (GLN, name, address, ZSR) | missing required parts from options `author` / `organization`, else `MISSING_REQUIRED_DATA` at the path; fields with usage `-` for the document type are written (they may be set), a second ZSR number is dropped |
 | M23-REV-07 | Patient names, birth date, address, telecom | `fName`, `lName`, `bdt`, `street`, `zip`, `city`, `country`, `phones`, `emails` | |
-| M23-REV-08 | `Composition.language`, else `communication.language` | `lng` (two letters) | MP without language → option `defaultLanguage`, INFORMATION `DERIVED_VALUE` |
+| M23-REV-08 | `Composition.language`, else `communication.language` | `lng` (two letters), also in prescriptions (usage `-`) | without language → option `defaultLanguage`, INFORMATION `DERIVED_VALUE` |
 | M23-REV-09 | `gender` male / female / other | 1 / 2 / 3 | `unknown` or absent → `MISSING_REQUIRED_DATA` |
 | M23-REV-10 | `identifier` VeKa / other system | `ids` type 1 / type 2 with `sId` | none → `MISSING_REQUIRED_DATA` |
 | M23-REV-11 | MedicationStatement / MedicationRequest with contained Medication | one medicament each; `idType` from the coding (GTIN → 2) or `code.text` (1); `rsn`; `autoMed`; requests are not merged (research R10) | |
-| M23-REV-12 | structured dosage | inverse of M23-DOS-02, -04 … -08, -10 … -16 | |
+| M23-REV-12 | structured dosage | inverse of M23-DOS-02, -04 … -08, -10 … -16 | plan without dose unit → `unit` `N/A` (CDTYP 9), INFORMATION `DERIVED_VALUE` |
 | M23-REV-13 | dosage with `text` only | FreeText | lossless |
 | M23-REV-14 | dosage the reverse table does not cover | FreeText with the generated description | WARNING `DOSAGE_FREE_TEXT_FALLBACK` |
 | M23-REV-15 | `numberOfRepeatsAllowed`, `validityPeriod` | `reps` Number / Duration (months if whole months, else days) / NumberAndDuration | |
@@ -218,6 +218,7 @@ assert exactly these differences.
 | `moa` without confirmed EDQM mapping; `roa` outside the CH Term value set | CHMED23A → CH EMED | M23-DOS-13, M23-DOS-14 | yes |
 | `prscbBy`; Pharmacode and product number as text only | CHMED23A → CH EMED | M23-MED-07, M23-MED-03, M23-MED-04 | no |
 | Non-UUID document id | CHMED23A → CH EMED | M23-DOC-04 | no |
-| Prescribed medicament with several posologies returns as several medicaments | round trip | M23-RX-02, M23-REV-11 | no |
+| Medicament with several posologies returns as several medicaments (plans and prescriptions; resource ids change, content stays) | round trip | M23-MED-08, M23-RX-02, M23-REV-11 | no |
+| Equivalent posology forms return in one canonical form (e.g. Cyclic of one day with day segments returns as Daily; FreeText without unit gets unit `N/A` in a plan) | round trip | M23-REV-12, M23-REV-14 | no |
 | `relMeal` 4–7 or with clock times kept as text | round trip | M23-DOS-16 | no |
 | CH EMED elements without CHMED23A counterpart (confidentiality, original representation, statuses, notes) | CH EMED → CHMED23A | M23-REV-01 | no |

@@ -8,6 +8,7 @@ import ch.emed.converter.chmed23a.model.Posology;
 import ch.emed.converter.chmed23a.model.PosologyDetail;
 import ch.emed.converter.chmed23a.model.TimeUnit;
 import ch.emed.converter.chmed23a.model.TimedDosage;
+import ch.emed.converter.chmed23a.validation.Terminology;
 import ch.emed.converter.core.chemed.Profiles;
 import ch.emed.converter.core.chemed.Units;
 import ch.emed.converter.core.report.Phase;
@@ -63,7 +64,7 @@ public final class PosologyToFhirMapper {
    * CHMED23A units (CDTYP 9) beyond the shared table, each unambiguous in the CH Term UnitCode
    * value set (research R9; domain review).
    */
-  static final Map<String, String[]> EXTRA_UNITS =
+  public static final Map<String, String[]> EXTRA_UNITS =
       Map.ofEntries(
           Map.entry("%", new String[] {UCUM, "%", "percent"}),
           Map.entry("BQ", new String[] {UCUM, "Bq", "Becquerel"}),
@@ -150,6 +151,7 @@ public final class PosologyToFhirMapper {
     result.add(base);
     if (pos.po() instanceof PosologyDetail.FreeText free) {
       base.setText(free.text());
+      unitWithoutDose(pos, posPath, scope);
       meal(pos, base, false, language, posPath, scope);
       return result;
     }
@@ -163,6 +165,7 @@ public final class PosologyToFhirMapper {
                   Phase.MAP,
                   posPath + "/po/ds",
                   "All doses are 0; no dose quantity is set"));
+      unitWithoutDose(pos, posPath, scope);
       return result;
     }
     List<Entry> entries = entries(pos.po());
@@ -202,6 +205,21 @@ public final class PosologyToFhirMapper {
    */
   public static Dosage noPosology(String note) {
     return new Dosage().setText(note);
+  }
+
+  /** A unit without a structured dose has nothing to attach to (as M-MED-09 of CHMED16A). */
+  private static void unitWithoutDose(Posology pos, String posPath, MappingScope scope) {
+    if (present(pos.unit())) {
+      scope
+          .report()
+          .add(
+              ReportEntry.information(
+                  ReasonCode.UNMAPPABLE_ELEMENT,
+                  Phase.MAP,
+                  posPath + "/unit",
+                  "A unit without structured dose has nothing to attach to and is not carried"
+                      + " over"));
+    }
   }
 
   /** Structured entries of a posology detail, or null if CH EMED cannot hold it exactly. */
@@ -504,6 +522,16 @@ public final class PosologyToFhirMapper {
                 .withClinicalLoss(true));
   }
 
+  /** The CDTYP 62 code of an EDQM administration method, or null (inverse of M23-DOS-14). */
+  public static String methodOf(String edqm) {
+    for (String[] row : METHODS.values()) {
+      if (row[1].equals(edqm)) {
+        return row[0];
+      }
+    }
+    return null;
+  }
+
   /** CH Term code {system, code, display} of a CDTYP 9 unit, or null (M23-DOS-15). */
   @MappingRule("M23-DOS-15")
   public static String[] unitCode(String unit) {
@@ -518,7 +546,8 @@ public final class PosologyToFhirMapper {
     String[] code = unitCode(unit);
     Quantity q = new Quantity();
     q.setValue(value);
-    q.setUnit(unit);
+    // the unit in the spelling of terminology.md (e.g. STK -> Stk), stable in round trips
+    q.setUnit(Terminology.isUnit(unit) ? Terminology.unitCode(unit) : unit);
     q.setSystem(code[0]);
     q.setCode(code[1]);
     return q;
