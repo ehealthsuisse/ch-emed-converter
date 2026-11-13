@@ -7,6 +7,8 @@ import ch.emed.converter.chmed16a.model.HcPerson;
 import ch.emed.converter.chmed16a.model.Medication;
 import ch.emed.converter.core.api.AuthorDetails;
 import ch.emed.converter.core.api.OrganizationDetails;
+import ch.emed.converter.core.chemed.Narratives;
+import ch.emed.converter.core.chemed.Profiles;
 import ch.emed.converter.core.report.Phase;
 import ch.emed.converter.core.report.ReasonCode;
 import ch.emed.converter.core.report.ReportEntry;

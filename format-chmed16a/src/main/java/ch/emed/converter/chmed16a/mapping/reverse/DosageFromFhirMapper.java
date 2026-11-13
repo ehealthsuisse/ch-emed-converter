@@ -3,11 +3,11 @@ package ch.emed.converter.chmed16a.mapping.reverse;
 import static ch.emed.converter.chmed16a.mapping.PatientMapper.present;
 
 import ch.emed.converter.chmed16a.mapping.DosageToFhirMapper;
-import ch.emed.converter.chmed16a.mapping.Labels;
 import ch.emed.converter.chmed16a.mapping.MappingRule;
-import ch.emed.converter.chmed16a.mapping.Profiles;
 import ch.emed.converter.chmed16a.model.Posology;
 import ch.emed.converter.chmed16a.model.TakingTime;
+import ch.emed.converter.core.chemed.Labels;
+import ch.emed.converter.core.chemed.Profiles;
 import ch.emed.converter.core.report.Phase;
 import ch.emed.converter.core.report.ReasonCode;
 import ch.emed.converter.core.report.ReportEntry;
@@ -164,8 +164,8 @@ public final class DosageFromFhirMapper {
                         ReasonCode.DOSAGE_FREE_TEXT_FALLBACK,
                         Phase.MAP,
                         path + "." + mode.element(),
-                        "The dosage has dates but cannot be carried as posology (no dose or no unit); the"
-                            + " dates are carried as text in AppInstr")
+                        "The dosage has dates but cannot be carried as posology (no dose or no"
+                            + " unit); the dates are carried as text in AppInstr")
                     .withTargetPath("Medicament.AppInstr"));
       }
     }

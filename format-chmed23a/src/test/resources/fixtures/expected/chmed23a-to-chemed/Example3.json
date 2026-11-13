@@ -1,0 +1,373 @@
+{
+  "resourceType" : "Bundle",
+  "meta" : {
+    "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-document-medicationcard" ]
+  },
+  "identifier" : {
+    "system" : "urn:ietf:rfc:3986",
+    "value" : "urn:uuid:f8e1427b-f92e-5c5f-8d3a-2980aad0e37c"
+  },
+  "type" : "document",
+  "timestamp" : "2024-02-05T21:33:46.0000000+01:00",
+  "entry" : [ {
+    "fullUrl" : "urn:uuid:a3056152-7a5a-5886-a8bc-16a43ec61d33",
+    "resource" : {
+      "resourceType" : "Composition",
+      "id" : "a3056152-7a5a-5886-a8bc-16a43ec61d33",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-composition-medicationcard" ]
+      },
+      "language" : "de-CH",
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"de-CH\" lang=\"de-CH\">Medikationsplan</div>"
+      },
+      "identifier" : {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:f8e1427b-f92e-5c5f-8d3a-2980aad0e37c"
+      },
+      "status" : "final",
+      "type" : {
+        "coding" : [ {
+          "system" : "http://loinc.org",
+          "code" : "56445-0",
+          "display" : "Medication summary Document"
+        }, {
+          "system" : "http://snomed.info/sct",
+          "code" : "736378000",
+          "display" : "Medication management plan (record artifact)"
+        } ]
+      },
+      "subject" : {
+        "reference" : "urn:uuid:3d69f654-4efd-57e0-900d-61e1d21d3415"
+      },
+      "date" : "2024-02-05T21:33:46.0000000+01:00",
+      "author" : [ {
+        "reference" : "urn:uuid:3d69f654-4efd-57e0-900d-61e1d21d3415"
+      } ],
+      "title" : "Medikationsplan",
+      "confidentiality" : "N",
+      "_confidentiality" : {
+        "extension" : [ {
+          "url" : "http://fhir.ch/ig/ch-core/StructureDefinition/ch-ext-epr-confidentialitycode",
+          "valueCodeableConcept" : {
+            "coding" : [ {
+              "system" : "http://snomed.info/sct",
+              "code" : "17621005",
+              "display" : "Normal (qualifier value)"
+            } ]
+          }
+        } ]
+      },
+      "section" : [ {
+        "title" : "Original Darstellung",
+        "code" : {
+          "coding" : [ {
+            "system" : "http://loinc.org",
+            "code" : "55108-5",
+            "display" : "Clinical presentation Document"
+          } ]
+        },
+        "text" : {
+          "extension" : [ {
+            "url" : "http://hl7.org/fhir/StructureDefinition/textLink",
+            "extension" : [ {
+              "url" : "htmlid",
+              "valueString" : "original-representation"
+            }, {
+              "url" : "data",
+              "valueUri" : "urn:uuid:e62e785b-319f-504c-b57b-de3c5ec48e86"
+            } ]
+          } ],
+          "status" : "generated",
+          "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Representation of the original view: <span id=\"original-representation\">PDF</span></div>"
+        },
+        "entry" : [ {
+          "reference" : "urn:uuid:e62e785b-319f-504c-b57b-de3c5ec48e86"
+        } ]
+      }, {
+        "title" : "Medikamentenliste",
+        "code" : {
+          "coding" : [ {
+            "system" : "http://loinc.org",
+            "code" : "10160-0",
+            "display" : "History of Medication use Narrative"
+          } ]
+        },
+        "entry" : [ {
+          "reference" : "urn:uuid:27427516-2f75-5a54-ab29-e904283747b2"
+        }, {
+          "reference" : "urn:uuid:d85b0d57-c71b-531f-a175-4f167965914d"
+        }, {
+          "reference" : "urn:uuid:1b003e5a-4e99-5ef9-81bf-4d2e189dda91"
+        }, {
+          "reference" : "urn:uuid:768c5da8-ee50-5310-951b-fc59299c4872"
+        } ]
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:3d69f654-4efd-57e0-900d-61e1d21d3415",
+    "resource" : {
+      "resourceType" : "Patient",
+      "id" : "3d69f654-4efd-57e0-900d-61e1d21d3415",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-core/StructureDefinition/ch-core-patient-epr" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dana Banana, 1997-07-17</div>"
+      },
+      "identifier" : [ {
+        "system" : "urn:oid:2.999.1",
+        "value" : "TEST-0001"
+      } ],
+      "name" : [ {
+        "family" : "Banana",
+        "given" : [ "Dana" ]
+      } ],
+      "telecom" : [ {
+        "system" : "phone",
+        "value" : "079 999 99 99"
+      }, {
+        "system" : "email",
+        "value" : "ana@email.de"
+      } ],
+      "gender" : "female",
+      "birthDate" : "1997-07-17",
+      "address" : [ {
+        "line" : [ "Bodenseeweg 3" ],
+        "city" : "Konstanz",
+        "postalCode" : "78462",
+        "country" : "DE"
+      } ],
+      "communication" : [ {
+        "language" : {
+          "coding" : [ {
+            "system" : "urn:ietf:bcp:47",
+            "code" : "de"
+          } ]
+        },
+        "preferred" : true
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:27427516-2f75-5a54-ab29-e904283747b2",
+    "resource" : {
+      "resourceType" : "MedicationStatement",
+      "id" : "27427516-2f75-5a54-ab29-e904283747b2",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">GTIN 7680298120012: während 1 Tag(e): einmalig: 1 Stk; dann während 1 Tag(e): einmalig: 2 Stk (wiederholen), vor dem Essen</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "coding" : [ {
+            "system" : "urn:oid:2.51.1.1",
+            "code" : "7680298120012"
+          } ],
+          "text" : "GTIN 7680298120012"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:82ea2c24-9d4d-5ddb-b4e6-83c752fce100"
+      } ],
+      "status" : "active",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:3d69f654-4efd-57e0-900d-61e1d21d3415"
+      },
+      "dateAsserted" : "2024-02-05T21:33:46.0000000+01:00",
+      "informationSource" : {
+        "reference" : "urn:uuid:3d69f654-4efd-57e0-900d-61e1d21d3415"
+      },
+      "reasonCode" : [ {
+        "text" : "Thyroid gland"
+      } ],
+      "dosage" : [ {
+        "text" : "während 1 Tag(e): einmalig: 1 Stk; dann während 1 Tag(e): einmalig: 2 Stk (wiederholen), vor dem Essen",
+        "patientInstruction" : "30 minutes before breakfast."
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:d85b0d57-c71b-531f-a175-4f167965914d",
+    "resource" : {
+      "resourceType" : "MedicationStatement",
+      "id" : "d85b0d57-c71b-531f-a175-4f167965914d",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">GTIN 7680662560024: alle 1 Tag(e) 6x: 1 Stk, mindestens im Abstand von 4 Stunde(n)</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "coding" : [ {
+            "system" : "urn:oid:2.51.1.1",
+            "code" : "7680662560024"
+          } ],
+          "text" : "GTIN 7680662560024"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:2dc28cb3-46d6-5886-9612-44c948485c9e"
+      } ],
+      "status" : "completed",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:3d69f654-4efd-57e0-900d-61e1d21d3415"
+      },
+      "dateAsserted" : "2024-02-05T21:33:46.0000000+01:00",
+      "informationSource" : {
+        "reference" : "urn:uuid:3d69f654-4efd-57e0-900d-61e1d21d3415"
+      },
+      "reasonCode" : [ {
+        "text" : "Sore thorat"
+      } ],
+      "dosage" : [ {
+        "text" : "alle 1 Tag(e) 6x: 1 Stk, mindestens im Abstand von 4 Stunde(n)",
+        "patientInstruction" : "Do not take the lozenge immediately before eating or drinking. Take maximum 6 per day.",
+        "timing" : {
+          "repeat" : {
+            "boundsPeriod" : {
+              "start" : "2024-01-18",
+              "end" : "2024-01-20"
+            }
+          }
+        }
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:1b003e5a-4e99-5ef9-81bf-4d2e189dda91",
+    "resource" : {
+      "resourceType" : "MedicationStatement",
+      "id" : "1b003e5a-4e99-5ef9-81bf-4d2e189dda91",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">GTIN 7680563180079: alle 1 Tag(e) 4x: 1 Stk, mindestens im Abstand von 6 Stunde(n), bei Bedarf</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "coding" : [ {
+            "system" : "urn:oid:2.51.1.1",
+            "code" : "7680563180079"
+          } ],
+          "text" : "GTIN 7680563180079"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:93effb0b-7df8-5531-a4e2-20dc19576f71"
+      } ],
+      "status" : "active",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:3d69f654-4efd-57e0-900d-61e1d21d3415"
+      },
+      "dateAsserted" : "2024-02-05T21:33:46.0000000+01:00",
+      "informationSource" : {
+        "reference" : "urn:uuid:3d69f654-4efd-57e0-900d-61e1d21d3415"
+      },
+      "reasonCode" : [ {
+        "text" : "Fever/pain"
+      } ],
+      "dosage" : [ {
+        "text" : "alle 1 Tag(e) 4x: 1 Stk, mindestens im Abstand von 6 Stunde(n), bei Bedarf",
+        "patientInstruction" : "Up to 4 pills daily with at least 6 hours between each dose.",
+        "timing" : {
+          "repeat" : {
+            "boundsPeriod" : {
+              "start" : "2024-01-18"
+            }
+          }
+        },
+        "asNeededBoolean" : true
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:768c5da8-ee50-5310-951b-fc59299c4872",
+    "resource" : {
+      "resourceType" : "MedicationStatement",
+      "id" : "768c5da8-ee50-5310-951b-fc59299c4872",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">GTIN 7680594920033: während 21 Tag(e): alle 1 Tag(e): 09:00 1 Stk; dann Pause 7 Tag(e) (wiederholen)</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "coding" : [ {
+            "system" : "urn:oid:2.51.1.1",
+            "code" : "7680594920033"
+          } ],
+          "text" : "GTIN 7680594920033"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:1ed4bcbd-4284-5962-8257-25e08b511d2b"
+      } ],
+      "status" : "active",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:3d69f654-4efd-57e0-900d-61e1d21d3415"
+      },
+      "dateAsserted" : "2024-02-05T21:33:46.0000000+01:00",
+      "informationSource" : {
+        "reference" : "urn:uuid:3d69f654-4efd-57e0-900d-61e1d21d3415"
+      },
+      "reasonCode" : [ {
+        "text" : "Contraception"
+      } ],
+      "dosage" : [ {
+        "text" : "während 21 Tag(e): alle 1 Tag(e): 09:00 1 Stk; dann Pause 7 Tag(e) (wiederholen)"
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:e62e785b-319f-504c-b57b-de3c5ec48e86",
+    "resource" : {
+      "resourceType" : "Binary",
+      "id" : "e62e785b-319f-504c-b57b-de3c5ec48e86",
+      "contentType" : "application/pdf",
+      "data" : "{{pdf}}"
+    }
+  } ]
+}

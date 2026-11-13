@@ -214,6 +214,12 @@ not refused.
 
 **Errors**: `CHMED_INVALID_FIELD` with the JSON path, never the value (FR-007, FR-016).
 
+**Codes outside the terminology** (`unit`, `roa`, `moa`, risk ids): WARNING `CHMED_INVALID_FIELD`
+with the path, not an error. The .NET reference examples themselves use units outside CDTYP 9
+(finding F9), and the .NET validator does not check codes. The mapping then treats the code as
+unmapped: a unit gives a text dosage with clinical loss (R9), so strict mode still fails.
+Codes the converter writes always come from the tables.
+
 **Output**: Output is validated with the same rules before it is returned. A violation means a bug
 in the mapping: the conversion fails with `CHMED_INVALID_FIELD` in phase `VALIDATE_OUTPUT`.
 
@@ -464,8 +470,18 @@ refused and no report entry is added.
    CH EMED Medication Card and Prescription fixtures of CHMED16A, for the reverse direction.
 
 **Findings on the official examples** (to be asserted, not "fixed"):
-- **F1**: Example 2 has FreeText `If palpitations occur, take Â½ pill…`, a double-encoded "½" in
-  the source. It is carried as given.
+- **F1**: Example 2 has FreeText with non-ASCII text (`take ½ pill`). It must be kept unchanged
+  in both directions and in the payload.
+- **F7**: The examples use identifiers that do not follow the usual formats:
+  - GLNs with 11 or 12 digits (`123123123123`, `55255255255`);
+  - `sId` `9.99.999.9.99`, which is not a valid OID (OIDs start with 0, 1 or 2);
+  - ZSR `XX.1254`;
+  - dates with 7 fractional digits (`…09:14:36.0000000+01:00`).
+
+  CHMED23A does not constrain these formats, so the validator accepts them. How CH EMED
+  validation treats them is settled in the first fixture test (T031). Where CH EMED rejects a
+  value, the mapping must not repair it: it reports the element and, where the profile allows,
+  leaves it out.
 - **F2**: The plans carry `nbPack` and `prscbBy`. The prescription carries `autoMed` and `mData`.
   Both are usage `-` for their document type → INFORMATION (R7).
 - **F3**: No example has `id` → derived document identifier (R8).
@@ -477,6 +493,12 @@ refused and no report entry is added.
     Core patient (R11), and the option is not needed.
   - The option is used only if a document has no usable id at all.
 - **F6**: The payload example of the transmission format is a pre-release draft (R4).
+- **F8**: Three examples of `posology.md` (Single, Cyclic, Sequence) use draft property names
+  (`d` instead of `do`, `td` instead of `tdo`). They are kept verbatim as fixtures and are refused
+  as non-conforming. The object tables and the .NET examples cover the same cases with the final
+  names.
+- **F9**: Most .NET examples use units outside CDTYP 9 (`TABL`, `Applikation`). They are reported
+  as WARNING (R7) rather than refused.
 
 ## R14 — Performance
 

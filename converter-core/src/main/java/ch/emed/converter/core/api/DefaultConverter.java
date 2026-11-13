@@ -273,7 +273,11 @@ public final class DefaultConverter implements Converter {
     for (FormatModule module : registry.modules()) {
       formats.add(
           new FormatInfo(
-              module.format(), module.inputForms(), module.outputForms(), module.documentTypes()));
+              module.format(),
+              module.inputForms(),
+              module.outputForms(),
+              module.documentTypes(),
+              module.deprecated()));
     }
     formats.sort(Comparator.comparing(f -> f.format().id()));
     return List.copyOf(formats);

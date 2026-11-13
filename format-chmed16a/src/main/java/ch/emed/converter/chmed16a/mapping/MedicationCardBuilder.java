@@ -6,6 +6,9 @@ import ch.emed.converter.chmed16a.model.Medicament;
 import ch.emed.converter.chmed16a.model.Medication;
 import ch.emed.converter.chmed16a.model.Posology;
 import ch.emed.converter.core.api.Confidentiality;
+import ch.emed.converter.core.chemed.Labels;
+import ch.emed.converter.core.chemed.Narratives;
+import ch.emed.converter.core.chemed.Profiles;
 import ch.emed.converter.core.render.OriginalRepresentationRenderer;
 import ch.emed.converter.core.report.Phase;
 import ch.emed.converter.core.report.ReasonCode;
@@ -257,7 +260,8 @@ public final class MedicationCardBuilder {
     text.addExtension(link);
     text.setStatus(Narrative.NarrativeStatus.GENERATED);
     text.setDivAsString(
-        "<div xmlns=\"http://www.w3.org/1999/xhtml\">Representation of the original view: <span id=\""
+        "<div xmlns=\"http://www.w3.org/1999/xhtml\">Representation of the original view: <span"
+            + " id=\""
             + HTML_ID
             + "\">PDF</span></div>");
     original.setText(text);

@@ -1,7 +1,7 @@
 package ch.emed.converter.chmed16a.mapping.reverse;
 
-import ch.emed.converter.chmed16a.io.ChEmedDocumentReader.ChEmedDocument;
 import ch.emed.converter.core.api.ConversionOptions;
+import ch.emed.converter.core.chemed.ChEmedDocumentReader.ChEmedDocument;
 import ch.emed.converter.core.report.Phase;
 import ch.emed.converter.core.report.ReasonCode;
 import ch.emed.converter.core.report.ReportCollector;

@@ -1,0 +1,227 @@
+{
+  "patient": {
+    "fName": "Dana",
+    "lName": "Banana",
+    "bdt": "1997-07-17",
+    "gender": 2,
+    "street": "Bodenseeweg 3",
+    "zip": "78462",
+    "city": "Konstanz",
+    "country": "DE",
+    "lng": "DE",
+    "phones": [
+      "079 999 99 99"
+    ],
+    "emails": [
+      "ana@email.de"
+    ],
+    "ids": [
+      {
+        "type": 2,
+        "sId": "9.99.999.9.99",
+        "val": "57484"
+      }
+    ],
+    "mData": {
+      "rcs": [
+        {
+          "id": 1
+        },
+        {
+          "id": 2
+        },
+        {
+          "id": 3,
+          "rIds": [
+            612
+          ]
+        },
+        {
+          "id": 4,
+          "rIds": [
+            580
+          ]
+        },
+        {
+          "id": 5,
+          "rIds": [
+            615
+          ]
+        },
+        {
+          "id": 6
+        },
+        {
+          "id": 7
+        }
+      ],
+      "w": 56.0,
+      "h": 165.0
+    }
+  },
+  "meds": [
+    {
+      "id": "7680298120012",
+      "idType": 2,
+      "pos": [
+        {
+          "po": {
+            "t": 5,
+            "sos": [
+              {
+                "t": 1,
+                "po": {
+                  "t": 3,
+                  "tdo": {
+                    "t": 1,
+                    "do": {
+                      "t": 1,
+                      "a": 1.0
+                    }
+                  }
+                },
+                "duU": 4,
+                "du": 1
+              },
+              {
+                "t": 1,
+                "po": {
+                  "t": 3,
+                  "tdo": {
+                    "t": 1,
+                    "do": {
+                      "t": 1,
+                      "a": 2.0
+                    }
+                  }
+                },
+                "duU": 4,
+                "du": 1
+              }
+            ]
+          },
+          "relMeal": 1,
+          "inRes": false,
+          "unit": "Stk",
+          "appInstr": "30 minutes before breakfast."
+        }
+      ],
+      "rsn": "Thyroid gland",
+      "autoMed": false,
+      "prscbBy": "Dr. Hans Vogel, Konstanz",
+      "nbPack": 1.0
+    },
+    {
+      "id": "7680662560024",
+      "idType": 2,
+      "pos": [
+        {
+          "dtFrom": "2024-01-18",
+          "dtTo": "2024-01-20",
+          "po": {
+            "t": 4,
+            "cyDuU": 4,
+            "cyDu": 1,
+            "tdo": {
+              "t": 6,
+              "do": {
+                "t": 1,
+                "a": 1.0
+              },
+              "miDuU": 3,
+              "miDu": 4
+            },
+            "tdpc": 6
+          },
+          "inRes": false,
+          "unit": "Stk",
+          "appInstr": "Do not take the lozenge immediately before eating or drinking. Take maximum 6 per day."
+        }
+      ],
+      "rsn": "Sore thorat",
+      "autoMed": false,
+      "prscbBy": "Apotheke Blumenwiese, Romanshorn",
+      "nbPack": 1.0
+    },
+    {
+      "id": "7680563180079",
+      "idType": 2,
+      "pos": [
+        {
+          "dtFrom": "2024-01-18",
+          "po": {
+            "t": 4,
+            "cyDuU": 4,
+            "cyDu": 1,
+            "tdo": {
+              "t": 6,
+              "do": {
+                "t": 1,
+                "a": 1.0
+              },
+              "miDuU": 3,
+              "miDu": 6
+            },
+            "tdpc": 4
+          },
+          "inRes": true,
+          "unit": "Stk",
+          "appInstr": "Up to 4 pills daily with at least 6 hours between each dose."
+        }
+      ],
+      "rsn": "Fever/pain",
+      "autoMed": false,
+      "prscbBy": "Apotheke Blumenwiese, Romanshorn",
+      "nbPack": 1.0
+    },
+    {
+      "id": "7680594920033",
+      "idType": 2,
+      "pos": [
+        {
+          "po": {
+            "t": 5,
+            "sos": [
+              {
+                "t": 1,
+                "po": {
+                  "t": 4,
+                  "cyDuU": 4,
+                  "cyDu": 1,
+                  "tdo": {
+                    "t": 2,
+                    "ts": [
+                      {
+                        "dt": "09:00:00",
+                        "do": {
+                          "t": 1,
+                          "a": 1.0
+                        }
+                      }
+                    ]
+                  },
+                  "tdpc": 1
+                },
+                "duU": 4,
+                "du": 21
+              },
+              {
+                "t": 2,
+                "duU": 4,
+                "du": 7
+              }
+            ]
+          },
+          "unit": "Stk"
+        }
+      ],
+      "rsn": "Contraception",
+      "autoMed": false,
+      "prscbBy": "Dr. Hannelore Beispielhaft, Romanshorn",
+      "nbPack": 1.0
+    }
+  ],
+  "medType": 1,
+  "auth": 2,
+  "dt": "2024-02-05T21:33:46.0000000+01:00"
+}

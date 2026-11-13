@@ -5,6 +5,8 @@ import static ch.emed.converter.chmed16a.mapping.PatientMapper.present;
 import ch.emed.converter.chmed16a.model.Medicament;
 import ch.emed.converter.chmed16a.model.Posology;
 import ch.emed.converter.chmed16a.model.TakingTime;
+import ch.emed.converter.core.chemed.Profiles;
+import ch.emed.converter.core.chemed.Units;
 import ch.emed.converter.core.report.Phase;
 import ch.emed.converter.core.report.ReasonCode;
 import ch.emed.converter.core.report.ReportEntry;
@@ -39,29 +41,11 @@ public final class DosageToFhirMapper {
   public static final Map<String, String[]> ROUTES =
       Map.of("PO", new String[] {"20053000", "Oral use"});
 
-  private static final String UCUM = "http://unitsofmeasure.org";
-
   /**
-   * CHMED16A unit (INDEX CDTYP 9, case-insensitive) → code of the CH Term UnitCode value set
-   * {system, code, display}. Only unambiguous mappings are listed; extend after domain review (task
-   * T116). Unmapped units lead to a free-text dosage (CH EMED requires coded dose units).
+   * CHMED16A unit (INDEX CDTYP 9, case-insensitive) → CH Term UnitCode; the table lives in {@link
+   * Units} since feature 006.
    */
-  public static final Map<String, String[]> UNITS =
-      Map.ofEntries(
-          Map.entry("STK", new String[] {Profiles.SNOMED, "767525000", "Unit"}),
-          Map.entry("MG", new String[] {UCUM, "mg", "milligram"}),
-          Map.entry("G", new String[] {UCUM, "g", "gram"}),
-          Map.entry("UG", new String[] {UCUM, "ug", "microgram"}),
-          Map.entry("MCG", new String[] {UCUM, "ug", "microgram"}),
-          Map.entry("ML", new String[] {UCUM, "mL", "milliliter"}),
-          Map.entry("L", new String[] {UCUM, "L", "liter"}),
-          Map.entry("IE", new String[] {UCUM, "[iU]", "international unit"}),
-          Map.entry("MMOL", new String[] {UCUM, "mmol", "millimole"}),
-          Map.entry(
-              "TR", new String[] {Profiles.SNOMED, "732994000", "Drop (unit of presentation)"}),
-          Map.entry(
-              "HUB",
-              new String[] {Profiles.SNOMED, "732981002", "Actuation (unit of presentation)"}));
+  public static final Map<String, String[]> UNITS = Units.CDTYP9;
 
   private DosageToFhirMapper() {}
 

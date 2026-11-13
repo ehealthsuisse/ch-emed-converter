@@ -1,0 +1,728 @@
+# CHMED23A risks, terminology.md and README.md at ig-emediplan/specification@0b579aa6
+code;category;de;fr
+597;1;Niereninsuffizienz, terminale (Clcr <15 ml/min);Insuffisance rénale, terminale (Clcr <15 ml/min)
+575;1;Niereninsuffizienz, schwere (Clcr 15–30 ml/min);Insuffisance rénale, sévère (Clcr 15–30 ml/min)
+576;1;Niereninsuffizienz, mittelschwere (Clcr 30–60 ml/min);Insuffisance rénale, modérée (Clcr 30–60 ml/min)
+577;1;Niereninsuffizienz, leichte (Clcr 60–90 ml/min);Insuffisance rénale, légère (Clcr 60–90 ml/min)
+572;2;Leberinsuffizienz, schwere (Child-Pugh C);insuffisance hépatique, sévère (Child-Pugh C)
+573;2;Leberinsuffizienz, mittelschwere (Child-Pugh B);Insuffisance hépatique, modérée (Child-Pugh B)
+574;2;Leberinsuffizienz, leichte (Child-Pugh A));Insuffisance hépatique, légère (Child-Pugh A)
+78;3;Schwangerschaft;Grossesse
+77;3;Stillzeit;Allaitement
+612;3;Frauen im gebärfähigen Alter;Femmes en âge de procréer
+580;4;Leistungssportler;Sportifs de compétition
+615;5;Potenziell gefährlichen Situationen ausgesetzt, wie beispielsweise dem Führen von Fahrzeugen, dem Bedienen von Maschinen oder dem Arbeiten in grossen Höhen;Potenziell gefährlichen Situationen ausgesetzt, wie beispielsweise dem Führen von Fahrzeugen, dem Bedienen von Maschinen oder dem Arbeiten in grossen Höhen
+1;6;Penicillin-Kreuzallergie;Allergie croisée aux pénicillines
+2;6;Clindamycin-/Penicillin-Allergie;Allergie à la clindamycine/pénicilline
+3;6;Holzteer-Allergie;Allergie au goudron de bois
+4;6;Proteasehemmer-Allergie;Allergie aux inhibiteurs de protéase du VIH
+5;6;Gyrasehemmer-Allergie (Pipemidsäure-Typ);Allergie aux quinolones (type acide pipémidique)
+6;6;Gyrasehemmer-Allergie (Nalidixinsäure-Typ);Allergie aux quinolones (type acide nalidixique)
+7;6;Gyrasehemmer-Allergie (Cinoxacin-Typ);Allergie aux quinolones (type cinoxacine)
+8;6;Parfüm-Allergie;Allergie au parfum
+9;6;Virustatika-Allergie (Mozenavir-Typ);Allergie aux antiviraux (type mozénavir)
+10;6;Bienenköniginnenfuttersaft-Allergie;Allergie à la gelée royale
+11;6;Gelatine-Allergie (Rind);Allergie à la gélatine (bovine)
+12;6;Pyritinol-Allergie;Allergie au pyritinol
+13;6;Alpha-1-Proteinaseinhibitor (human)-Allergie;Allergie à l'alpha-1 antitrypsine (humaine)
+14;6;Polidocanol-Allergie;Allergie au polidocanol
+15;6;Immunglobulin (human)-Allergie;Allergie aux immunoglobulines (humaines)
+16;6;Blutgerinnungsfaktor (human)-Allergie;Allergie aux facteurs de coagulation sanguine (humains)
+17;6;Milch-Allergie;Allergie au lait
+18;6;Bienenwachs-Allergie;Allergie à la cire d'abeille
+19;6;Alkylhydrochinon-Allergie (Geroquinol-Typ);Allergie aux alkylhydroquinones (type géroquinol)
+20;6;Alkylbenzoesäure-Allergie (Ginkgolat-Typ);Allergie aux acides alkylbenzoïques (type ginkgolide)
+21;6;Alkylresorcinol-Allergie (Grevillol-Typ);Allergie aux alkylrésorcinols (type grévillol)
+22;6;Alkylphenol-Allergie;Allergie aux alkylphénols
+23;6;Dill-Petersilie-Allergie;Allergie à l'aneth
+24;6;Kaffeesäure-Allergie;Allergie à l'acide caféique
+25;6;Ratanhia-Allergie;Allergie au ratanhia
+26;6;Alliaceae-Allergie;Allergie aux alliacées
+27;6;Mönchspfeffer-Allergie;Allergie au gattilier
+28;6;Kava-Kava-Allergie;Allergie au kava-kava
+29;6;Perlglanzmittel-Allergie;Allergie aux agents nacrants
+30;6;Phenylendiamin-Allergie;Allergie à la phénylendiamine
+31;6;Acetanilid-Allergie;Allergie à l'acétanilide
+32;6;Bishydroxymethylimidazolidinthion-Allergie;Allergie à la dihydroxyméthyl-1,3-thiono-2-imidazolidine
+33;6;Persulfat-Allergie;Allergie aux persulfates
+34;6;Chloracetamid-Allergie;Allergie au chloracétamide
+35;6;UV-Filter-Allergie (Alkylaminobenzoesäure-Typ);Allergie aux filtres UV (type acide alkyle amino-benzoïque)
+36;6;UV-Filter-Allergie (Zimtsäure-Typ);Allergie aux filtres UV (type acide cinnamique)
+37;6;Ethylendiaminderivate-Allergie;Allergie aux dérivés de l'éthylènediamine
+38;6;Dimethylsulfoxid-Allergie;Allergie au diméthylsulfoxyde
+39;6;Analgetika-Allergie (Benzydamin-Typ);Allergie aux analgésiques (type benzydamine)
+40;6;Phenylpropiophenon-Allergie (Fenon-Typ);Allergie aux phénylpropiophénones (type fénone)
+41;6;Diuretika-Allergie (Diazoxid-Typ);Allergie aux diurétiques (type diazoxide)
+42;6;UV-Filter-Allergie (Benzophenon-Typ);Allergie aux filtres UV (type benzophénone)
+43;6;Fibrat-Allergie (Benzophenon-Typ);Allergie aux fibrates (type benzophénone)
+44;6;Analgetika-Allergie (Benzophenon-Typ);Allergie aux analgésiques (type benzophénone)
+45;6;Antiinfektiva-Allergie (Pentamidin-Typ);Allergie aux anti-infectieux (type pentamidine)
+46;6;Iod-Allergie (ausser Röntgenkontrastmittel);Allergie à l'iode (à l'exception des produits de contraste radiologique)
+47;6;Hydroxycumarin-Allergie (Hymecromon-Typ);Allergie aux hydroxycoumarines (type hymécromone)
+48;6;Albumin (human)-Allergie;Allergie à l'albumine (humaine)
+49;6;Analgetika-Allergie (Azapropazon-Typ);Allergie aux analgésiques (type azapropazone)
+50;6;Analgetika-Allergie (Cyclooxygenasehemmer);Allergie aux analgésiques (type inhibiteurs de la cyclo-oxygénase)
+51;6;Glucosaminoglycan-Allergie;Allergie aux glycosaminoglycanes
+52;6;Antimykotika-Allergie (Amphotericin B-Typ);Allergie aux antifongiques (type amphotéricine B)
+53;6;Digitalisglycosid-Allergie;Allergie aux glucosides digitaliques
+54;6;Diaminopyrimidin-Allergie;Allergie aux diaminopyrimidines
+55;6;Neomycin-/Bacitracin-Allergie;Allergie à la néomycin/bacitracine
+56;6;Polypeptidhormon-Allergie (Calcitonin-Typ);Allergie aux hormones polypeptidiques (type calcitonine)
+57;6;Antihistaminika-Allergie (Antazolin-Typ);Allergie aux antihistaminiques (type antazoline)
+58;6;Analgetika-Allergie (nichtsteroidale Antirheumatika);Allergie aux analgésiques (type anti-inflammatoires non stéroïdiens)
+59;6;Paraaminobenzol-Allergie;Allergie aux para-amino-benzoyls
+60;6;Sulfonamid-Allergie;Allergie aux sulfonamides
+61;6;Beta-Lactam-Allergie;Allergie aux bêta-lactames
+62;6;Pyrimethamin-Allergie;Allergie à la pyriméthamine
+63;6;Analgetika-Allergie (Pyrazolidin-Typ);Allergie aux analgésiques (type pyrazolidine)
+64;6;Virustatika-Allergie (Pyrimidin-Nucleosid-Typ);Allergie aux antiviraux (type nucléosides pyrimidiniques)
+65;6;Iod-Allergie (Röntgenkontrastmittel);Allergie à l'iode (produits de contraste radiologique)
+66;6;Insulin (Schwein)-Allergie;Allergie à l'insuline (porcine)
+67;6;Insulin (Rind)-Allergie;Allergie à l'insuline (bovine)
+68;6;Insulin (human)-Allergie;Allergie à l'insuline (humaine)
+69;6;Heparinoid-Allergie;Allergie aux héparinoïdes
+70;6;Folsäure-Allergie;Allergie à l'acide folique
+71;6;Lokalanästhetika-Allergie (Ester-Typ);Allergie aux anesthésiques locaux (type ester)
+72;6;Gyrasehemmer-Allergie (Norfloxacin-Typ);Allergie aux quinolones (type norfloxacine)
+73;6;Analgetika-Allergie (Arylpropionsäure-Typ);Allergie aux analgésiques (type acide arylpropionique)
+79;6;Phthalsäuredialkylester-Allergie;Allergie aux esters dialkyliques de l'acide phtalique
+80;6;Schalentier-Allergie;Allergie aux crustacés
+81;6;Lupinen-Allergie;Allergie aux lupins
+82;6;Zink-Allergie;Allergie au zinc
+83;6;Ustekinumab-Allergie;Allergie à l'ustékinumab
+84;6;Antihypertonika-Allergie (Urapidil-Typ);Allergie aux antihypertenseurs (type urapidil)
+85;6;Mannitol-Allergie;Allergie au mannitol
+86;6;Antineoplastika-Allergie (Pazopanib-Typ);Allergie aux antinéoplasiques (type pazopanib)
+87;6;Immunmodulatoren-Allergie (Glatiramer-Typ);Allergie aux immunomodulateurs (type glatiramère)
+88;6;Glucose-Galactose-Malabsorption;Malabsorption du glucose-galactose
+89;6;Saccharoseintoleranz (erblich);Intolérance au saccharose (héréditaire)
+90;6;Tomate-Allergie;Allergie aux tomates
+91;6;Sericin-Allergie;Allergie à la séricine
+92;6;Hirse-Allergie;Allergie au millet
+93;6;Antihypertonika-Allergie (Ambrisentan-Typ);Allergie aux antihypertenseurs (type ambrisentan)
+94;6;Hundeeiweiss-Allergie;Allergie à l'albumine de chien
+95;6;Phosphodiesterasehemmer-Allergie (Tadalafil-Typ);Allergie aux inhibiteurs de la phosphodiestérase (type tadalafil)
+96;6;Phosphodiesterasehemmer-Allergie (Sildenafil-Typ);Allergie aux inhibiteurs de la phosphodiestérase (type sildénafil)
+97;6;Tranquillantien-Allergie (Buspiron-Typ);Allergie aux tranquillisants (type buspirone)
+98;6;Analgetika-Allergie (Etoricoxib-Typ);Allergie aux analgésiques (type étoricoxib)
+99;6;Talkum-Allergie;Allergie au talc
+100;6;Weizen-Allergie;Allergie aux céréales
+101;6;Palladium-Allergie;Allergie au palladium
+102;6;Triptan-Allergie (Sulfonamid-Typ);Allergie aux triptans (type sulfonamides)
+103;6;Antineoplastika-Allergie (Sunitinib-Typ);Allergie aux antinéoplasiques (type sunitinib)
+104;6;Idursulfase-Allergie;Allergie à l'idursulfase
+105;6;Gonadoliberin-Allergie (Buserelin-Typ);Allergie aux gonadolibérines (type buséréline)
+106;6;Antidepressiva-Allergie (Sertralin-Typ);Allergie aux antidépresseurs (type sertraline)
+107;6;Kautschuk-Allergie;Allergie au caoutchouc
+108;6;Adrenozeptor-Antagonisten-Allergie (Tamsulosin-Typ);Allergie aux antagonistes des récepteurs adrénergiques (type tamsulosine)
+109;6;Antidiabetika-Allergie (Sitagliptin-Typ);Allergie aux antidiabétiques (type sitagliptine)
+110;6;Anthelminthika-Allergie (Tiabendazol-Typ);Allergie aux antihelminthiques (type tiabendazole)
+111;6;Zytostatika-Allergie (Clofarabin-Typ);Allergie aux cytostatiques (type clofarabine)
+112;6;Zytostatika-Allergie (Panitumumab-Typ);Allergie aux cytostatiques (type panitumumab)
+113;6;Antiepileptika-Allergie (Stiripentol-Typ);Allergie aux antiépileptiques (type stiripentol)
+114;6;Neuroleptika-Allergie (Olanzapin-Typ);Allergie aux neuroleptiques (type olanzapine)
+115;6;Strontiumranelat-Allergie;Allergie au ranélate de strontium
+116;6;Affeneiweiss-Allergie;Allergie à l'albumine de singe
+117;6;Enteneiweiss-Allergie;Allergie à l'albumine de canard
+118;6;Diphenylguanidin-Allergie;Allergie à la diphénylguanidine
+119;6;Benzothiazolsulfenamid-Allergie;Allergie aux benzothiazolsulfénamides
+120;6;Duftstoff-Allergie (Farnesol-Typ);Allergie au parfum (type farnésol)
+121;6;Konservierungsstoff-Allergie (Iodpropinylbutylcarbamat-Typ);Allergie aux agents conservateurs (type iodopropinyl butylcarbamate)
+122;6;Muskarinrezeptor-Agonisten-Allergie (Pilocarpin-Typ);Allergie aux agonistes des récepteurs muscariniques (type pilocarpine)
+123;6;Duftstoff-Allergie (Cyclohexencarbaldehyd-Typ);Allergie au parfum (type cyclohexencarbaldéhyde)
+124;6;Rotavirus-Lebendimpfstoff-Allergie;Allergie au vaccin vivant contre le rotavirus
+125;6;Antineoplastika-Allergie (Sorafenib-Typ);Allergie aux cytostatiques (type sorafénib)
+126;6;Alglucosidase alfa-Allergie;Allergie à l'alglucosidase alfa
+127;6;Antineoplastika-Allergie (Bortezomib-Typ);Allergie aux antinéoplasiques (type bortézomib)
+128;6;Antidepressiva-Allergie (Fluvoxamin-Typ);Allergie aux antidépresseurs (type fluvoxamine)
+129;6;Rotigotin-Allergie;Allergie à la rotigotine
+130;6;Antibiotika-Allergie (Daptomycin-Typ);Allergie aux antibiotiques (type daptomycine)
+131;6;Pollen-Allergie;Allergie aux pollens
+132;6;Rasagilin-Allergie;Allergie à la rasagiline
+133;6;Eflornithin-Allergie;Allergie à l'éflornithine
+134;6;Benzoylcyclohexandion-Allergie;Allergie à la benzoyl-cyclohexanedione
+135;6;Komplexbildner-Allergie (Pentetsäure-Typ);Allergie aux formateurs de complexes (type acide pentétique)
+136;6;Komplexbildner-Allergie (Gadobensäure-Typ);Allergie aux formateurs de complexes (type acide gadobénique)
+137;6;Komplexbildner-Allergie (Gadoxetsäure-Typ);Allergie aux formateurs de complexes (type acide gadoxétique)
+138;6;Komplexbildner-Allergie (Fodipir-Typ);Allergie aux formateurs de complexes (type fodipir)
+139;6;Antineoplastika-Allergie (Letrozol-Typ);Allergie aux antinéoplasiques (type létrozole)
+140;6;Antiepileptika-Allergie (Zonisamid-Typ);Allergie aux antiépileptiques (type zonisamide)
+141;6;Hefe-Allergie;Allergie aux levures
+142;6;Lentinan-Allergie;Allergie au lentinane
+143;6;Fischeiweiss-Allergie;Allergie à l'albumine de saumon
+144;6;Zitronensäure-Allergie;Allergie à l'acide citrique
+145;6;Thrombininhibitor-Allergie (Melagatran-Typ);Allergie aux inhibiteurs de la thrombine (type mélagatran)
+146;6;Usninsäure-Allergie;Allergie à l'acide usnique
+147;6;Virustatika-Allergie (Ribavirin-Typ);Allergie aux antiviraux (type ribavirine)
+148;6;Antibiotika-Allergie (Linezolid-Typ);Allergie aux antibiotiques (type linézolide)
+149;6;Hypnotika-Allergie (Clomethiazol-Typ);Allergie aux hypnotiques (type clométhiazole)
+150;6;Brennesselwurzel-Allergie;Allergie à la racine d'ortie
+151;6;Komplexbildner-Allergie (Gadotersäure-Typ);Allergie aux chélateurs (type acide gadotérique)
+152;6;Nicotin-Allergie;Allergie à la nicotine
+153;6;Laronidase-Allergie;Allergie à la laronidase
+154;6;Antibiotika-Allergie (Fusafungin-Typ);Allergie aux antibiotiques (type fusafungine)
+155;6;Antitussiva-Allergie (Eprazinon-Typ);Allergie aux antitussifs (type éprazinone)
+156;6;Cholesterol-Resorptionshemmer-Allergie (Ezetimib-Typ);Allergie aux inhibiteurs de l'absorption du cholestérol (type ézétimibe)
+157;6;Immunsuppressiva-Allergie (Sirolimus-Typ);Allergie aux immunosuppresseurs (type sirolimus)
+158;6;Tannineiweiss-Allergie;Allergie à l'albumine de tannin
+159;6;Capsaicin-Allergie;Allergie à la capsaïcine
+160;6;Liponsäure-Allergie;Allergie à l'acide lipoïque
+161;6;Insektengift-Allergie;Allergie au venin d'abeille
+162;6;Ascorbinsäure-Allergie;Allergie à l'acide ascorbique
+163;6;Anticholinergika-Allergie (Disopyramid-Typ);Allergie aux anticholinergiques (type disopyramide)
+164;6;Diuretika-Allergie (Amilorid-Typ);Allergie aux diurétiques (type amiloride)
+165;6;Ergolin-Allergie (Pergolid-Typ);Allergie à l'ergoline (type pergolide)
+166;6;Alpha-Reduktasehemmer-Allergie (Finasterid-Typ);Allergie aux inhibiteurs de l'alpha-réductase (type finastéride)
+167;6;Analgetika-Allergie (Flupirtin-Typ);Allergie aux analgésiques (type flupirtine)
+168;6;Muskelrelaxantien-Allergie (Botulinumtoxin Typ A);Allergie aux myorelaxants (type toxine botulique A)
+169;6;Ulkus-Therapeutika-Allergie (Proglumid-Typ);Allergie aux antiulcéreux (type proglumide)
+170;6;Benzodiazepin-Allergie (Azulen-Typ);Allergie aux benzodiazépines (type azulène)
+171;6;Histaminrezeptor-Agonisten-Allergie (Betahistin-Typ);Allergie aux agonistes histaminergiques (type bêtahistine)
+172;6;Muskelrelaxantien-Allergie (Baclofen-Typ);Allergie aux myorelaxants (type baclofène)
+173;6;Estrogen-Allergie;Allergie aux œstrogènes
+174;6;Hypnotika-Allergie (Zopiclon-Typ);Allergie aux hypnotiques (type zopiclone)
+175;6;Antifibrinolytika-Allergie (Tranexamsäure-Typ);Allergie aux antifibrinolytiques (type acide tranexamique)
+176;6;Schwefel-Allergie;Allergie au soufre
+177;6;Malaria-Therapeutika-Allergie (Proguanil-Typ);Allergie aux médicaments antipaludéens (type proguanil)
+178;6;Herzglycosid-Allergie (Gitoformat-Typ);Allergie aux glucosides cardiotoniques (type gitoformate)
+179;6;Statin-Allergie (Fluvastatin-Typ);Allergie aux statines (type fluvastatine)
+180;6;Statin-Allergie (Atorvastatin-Typ);Allergie aux statines (type atorvastatine)
+181;6;Statin-Allergie (Pravastatin-Typ);Allergie aux statines (type pravastatine)
+182;6;Hypophysenhinterlappenhormon-Allergie (Oxytocin-Typ);Allergie aux hormones du lobe postérieur de l'hypophyse (type ocytocine)
+183;6;Antiepileptika-Allergie (Gabapentin-Typ);Allergie aux antiépileptiques (type gabapentine)
+184;6;Acetylcholinesterasehemmer-Allergie (Neostigmin-Typ);Allergie aux inhibiteurs de l'acétylcholinestérase (type néostigmine)
+185;6;Photosensitizer-Allergie;Allergie aux photosensibilisateurs
+186;6;Neuroleptika-Allergie (Fluspirilen-Typ);Allergie aux neuroleptiques (type fluspirilène)
+187;6;Antiestrogen-Allergie (Tamoxifen-Typ);Allergie aux anti-œstrogènes (type tamoxifène)
+188;6;Antitussiva-Allergie (Clobutinol-Typ);Allergie aux antitussifs (type clobutinol)
+189;6;Antimetabolit-Allergie (Mycophenolat-Typ);Allergie aux antimétabolites (type mycophénolate)
+190;6;Fibrinolytika-Allergie (Anistreplase-Typ);Allergie aux fibrinolytiques (type anistreplase)
+191;6;Psychostimulanzien-Allergie (Metamfepramon-Typ);Allergie aux psychostimulants (type métamfépramone)
+192;6;Anticholinergika-Allergie (Biperiden-Typ);Allergie aux anticholinergiques (type bipéridène)
+193;6;Spasmolytika-Allergie (Oxybutynin-Typ);Allergie aux spasmolytiques (type oxybutynine)
+194;6;Spasmolytika-Allergie (Mebeverin-Typ);Allergie aux spasmolytiques (type mébévérine)
+195;6;Spasmolytika-Allergie (Flavoxat-Typ);Allergie aux spasmolytiques (type flavoxate)
+196;6;Opioid-Allergie (Meptazinol-Typ);Allergie aux opioïdes (type meptazinol)
+197;6;Gyrasehemmer-Allergie;Allergie aux quinolones
+198;6;Antineoplastika-Allergie (Phenylpyrimidinylamin-Typ);Allergie aux antinéoplasiques  (type phényl-pyrimidinyl-amine)
+199;6;Antimykotika-Allergie (Caspofungin-Typ);Allergie aux antifongiques (type caspofungine)
+200;6;Antineoplastika-Allergie (Bicalutamid-Typ);Allergie au bicalutamide
+201;6;Antitussiva-Allergie (Dropropizin-Typ);Allergie aux antitussifs (type dropropizine)
+202;6;Flavonoid-Allergie (Hyperosid-Typ);Allergie aux flavonoïdes (type hyperoside)
+203;6;Adrenozeptor-Antagonisten-Allergie (Alfuzosin-Typ);Allergie aux antagonistes des récepteurs adrénergiques (type alfuzosine)
+204;6;Nootropika-Allergie (Piracetam-Typ);Allergie aux nootropes (type piracétam)
+205;6;Zytostatika-Allergie (Estramustin-Typ);Allergie aux cytostatiques (type estramustine)
+206;6;Topoisomerasehemmer-Allergie (Topotecan-Typ);Allergie aux inhibiteurs des topo-isomérases (type topotécan)
+207;6;Interleukin 1-Rezeptor-Antagonisten-Allergie (Anakinra-Typ);Allergie aux antagonistes du récepteur de l'interleukine 1 (type anakinra)
+208;6;Prostacyclin-Allergie;Allergie aux prostacyclines
+209;6;Antidepressiva-Allergie (Phenylpiperidin-Typ);Allergie aux antidépresseurs (type phénylpipéridine)
+210;6;Porphyrin-/Chlorin-Allergie;Allergie aux porphyrines/aux chlorines
+211;6;Ratteneiweiss-Allergie;Allergie à l'albumine de rat
+212;6;Imidazotetrazin-Allergie (Temozolomid-Typ);Allergie aux imidazotétrazines (type témozolomide)
+213;6;Agalsidase-Allergie;Allergie à l'agalsidase bêta
+214;6;Analgetika-Allergie (Celecoxib-Typ);Allergie aux analgésiques (type célécoxib)
+215;6;Antiadiposita-Allergie (Orlistat-Typ);Allergie aux anti-adiposité (type orlistat)
+216;6;Antiepileptika-Allergie (Sultiam-Typ);Allergie aux antiépileptiques (type sultiame)
+217;6;Antihistaminika-Allergie (Mizolastin-Typ);Allergie aux antihistaminiques (type mizolastine)
+218;6;Biotin-Allergie;Allergie à la biotine
+219;6;Rasburicase-Allergie;Allergie à la rasburicase
+220;6;Antidiabetika-Allergie (Nateglinid-Typ);Allergie aux antidiabétiques (type natéglinide)
+221;6;Proteasehemmer-Allergie (Amprenavir-Typ);Allergie aux inhibiteurs de protéase (type amprénavir)
+222;6;Katecholaminwiederaufnahmehemmer-Allergie (Bupropion-Typ);Allergie aux inhibiteurs de la recapture des catécholamines (type bupropion)
+223;6;Etanercept-Allergie;Allergie à l'étanercept
+224;6;Streptogramin-Antibiotika-Allergie (Pristin-Typ);Allergie aux antibiotiques de la famille des streptogramines (type pristine)
+225;6;Analgetika-Allergie (Rofecoxib-Typ);Allergie aux analgésiques (type rofécoxib)
+226;6;Leflunomid-Allergie;Allergie au léflunomide
+227;6;Dapson-Allergie;Allergie à la dapsone
+228;6;Thiosalicylsäure-Allergie;Allergie à l'acide thiosalicylique
+229;6;Virustatika-Allergie (Abacavir-Typ);Allergie aux antiviraux (type abacavir)
+230;6;Virustatika-Allergie (Efavirenz-Typ);Allergie aux antiviraux (type éfavirenz)
+231;6;Gonadotropininhibitor-Allergie (Cetrorelix-Typ);Allergie aux inhibiteurs de la gonadotropine (type cétrorélix)
+232;6;Leukotrienrezeptor-Antagonisten-Allergie (Montelukast-Typ);Allergie aux antagonistes des récepteurs des leucotriènes (type montélukast)
+233;6;Muskelrelaxantien-Allergie (Tolperison-Typ);Allergie aux myorelaxants (type tolpérisone)
+234;6;Phenylketonurie;Phénylcétonurie
+235;6;Lactoseintoleranz;Intolérance au lactose
+236;6;Galactoseintoleranz;Intolérance au galactose
+237;6;Fructoseintoleranz (erblich);Intolérance au fructose (héréditaire)
+238;6;Antibiotika-Allergie (Tyrothricin-Typ);Allergie aux antibiotiques (type tyrothricine)
+239;6;Antidiabetika-Allergie (Repaglinid-Typ);Allergie aux antidiabétiques (type répaglinide)
+240;6;Schweineeiweiss-Allergie;Allergie à l'albumine porcine
+241;6;Kanincheneiweiss-Allergie;Allergie à l'albumine de lapin
+242;6;Ziegeneiweiss-Allergie;Allergie à l'albumine caprine
+243;6;Schafeiweiss-Allergie;Allergie à l'albumine ovine
+244;6;Rindereiweiss-Allergie;Allergie à l'albumine bovine
+245;6;Pferdeeiweiss-Allergie;Allergie à l'albumine de cheval
+246;6;Schimmelpilz-Allergie;Allergie aux moisissures
+247;6;Aminoacridin-Allergie (Ethacridin-Typ);Allergie aux aminoacridines (type éthacridine)
+248;6;Antitussiva-Allergie (Pentoxyverin-Typ);Allergie aux antitussifs (type pentoxyvérine)
+249;6;Mukolytika-Allergie (Ambroxol-Typ);Allergie aux mucolytiques (type ambroxol)
+250;6;Triptan-Allergie (Sumatriptan-Typ);Allergie aux triptans (type sumatriptan)
+251;6;Neuroleptika-Allergie (Risperidon-Typ);Allergie aux neuroleptiques (type rispéridone)
+252;6;Polyethylenglycolrizinusöl-Allergie (parenterale Anwendung);Allergie à l'huile de ricin polyéthylène glycol (utilisation parentérale)
+253;6;Antiarrhythmika-Allergie (Mexiletin-Typ);Allergie aux antiarythmiques (type mexilétine)
+254;6;Proteasehemmer-Allergie (Saquinavir-Typ);Allergie aux inhibiteurs de la protéase du VIH (type saquinavir)
+255;6;Proteasehemmer-Allergie (Ritonavir-Typ);Allergie aux inhibiteurs de la protéase du VIH (type ritonavir)
+256;6;Proteasehemmer-Allergie (Indinavir-Typ);Allergie aux inhibiteurs de la protéase du VIH (type indinavir)
+257;6;Proteasehemmer-Allergie (Lopinavir-Typ);Allergie aux inhibiteurs de la protéase du VIH (type lopinavir)
+258;6;Humanprotein-Allergie;Allergie aux protéines humaines
+259;6;Alpha-Glucosidasehemmer-Allergie (Acarbose-Typ);Allergie aux inhibiteurs de l'alpha-glucosidase (type acarbose)
+260;6;Virustatika-Allergie (Nevirapin-Typ);Allergie aux antiviraux (type névirapine)
+261;6;Riluzol-Allergie;Allergie au riluzole
+262;6;Spasmolytika-Allergie (Tiropramid-Typ);Allergie aux spasmolytiques (type tiropramide)
+263;6;Antidepressiva-Allergie (Phenylpiperazin-Typ);Allergie aux antidépresseurs (type phénylpipérazine)
+264;6;Interferon alpha-Allergie;Allergie à l'interféron alpha
+265;6;Interferon beta-Allergie;Allergie à l'interféron bêta
+266;6;Interferon gamma-Allergie;Allergie à l'interféron gamma
+267;6;Anthelminthika-Allergie (Mebendazol-Typ);Allergie aux antihelminthiques (type mébendazole)
+268;6;Mistel-Allergie;Allergie au gui
+269;6;Interleukin 2-Allergie (Aldesleukin-Typ);Allergie à l'interleukine 2 (type aldesleukine)
+270;6;Wachstumsfaktor-Allergie (Filgrastim-Typ);Allergie aux facteurs de croissance hématopoïétique (type filgrastim)
+271;6;Wachstumsfaktor-Allergie (Molgramostim-Typ);Allergie aux facteurs de croissance hématopoïétique (type molgramostim)
+272;6;Antianämika-Allergie (Erythropoetin-Typ);Allergie aux antianémiques (type érythropoïétine)
+273;6;Sesquiterpenlacton-Allergie;Allergie aux lactones sesquiterpéniques
+274;6;Cocosnussfettsäureamid-Allergie;Allergie aux acides gras de noix de coco
+275;6;Cetyl-/Stearylalkohol-Allergie;Allergie à l'alcool cétyl stéarylique
+276;6;Laurylsulfat-Allergie;Allergie au laurylsulfate
+277;6;Sorbitan-Allergie;Allergie au sorbitan
+278;6;Triethanolamin-Allergie;Allergie à la triéthanolamine
+279;6;Antimykotika-Allergie (Imidazol-Typ);Allergie aux antifongiques imidazolés
+280;6;Antimykotika-Allergie (Triazol-Typ);Allergie aux antifongiques triazolés
+281;6;Captan-Allergie;Allergie au captane
+282;6;Crotamiton-Allergie;Allergie au crotamiton
+283;6;Diethyltoluamid-Allergie;Allergie au diéthyltoluamide
+284;6;Thrombozytenaggregationshemmer-Allergie (Ticlopidin-Typ);Allergie aux inhibiteurs de l'agrégation plaquettaire (type ticlopidine)
+285;6;Immunsuppressiva-Allergie (Tacrolimus-Typ);Allergie aux immunosuppresseurs (type tacrolimus)
+286;6;Carboxymethylcellulose-Allergie;Allergie à la carboxyméthylcellulose
+287;6;Sterculiagummi-Allergie;Allergie à la gomme de sterculia
+288;6;Isopropylmyristat-Allergie;Allergie à l'isopropyl myristate
+289;6;Mercaptobenzothiazol-Allergie;Allergie au mercaptobenzothiazole
+290;6;Cobalt-Allergie;Allergie au cobalt
+291;6;Ammoniumbituminosulfonat-Allergie;Allergie aux bituminosulfonates d'ammonium
+292;6;Kakao-Allergie;Allergie au cacao
+293;6;Flohsamen-Allergie;Allergie au plantain
+294;6;Benzylalkohol-Allergie;Allergie à l'acool benzylique
+295;6;Sesam-Allergie;Allergie à l'huile de sésame
+296;6;Hexylenglycol-Allergie;Allergie à l'hexylène glycol
+297;6;Chinon-Allergie (Menadion-Typ);Allergie aux quinones (type ménadione)
+298;6;Monoterpen-Allergie;Allergie aux monoterpènes
+299;6;Zimtsäure-Allergie;Allergie à l'acide cinammique
+300;6;Alkylbrenzcatechin-Allergie (Urushiol-Typ);Allergie aux alkylbrenzcatéchines (type urushiol)
+301;6;Cyclopropenon-Allergie;Allergie aux cyclopropénones
+302;6;Spargel-Allergie;Allergie à l'asperge
+303;6;Falcarinol-Allergie;Allergie au falcarinol
+304;6;Asiatsäure-Allergie;Allergie à l'acide asiatique
+305;6;Diterpen-Allergie (Abietinsäure-Typ);Allergie aux diterpènes (type acide abiétique)
+306;6;Gummi arabicum-Allergie;Allergie à la gomme arabique
+307;6;Erdbeer-Allergie;Allergie à la fraise
+308;6;Kreuzblütler-Allergie;Allergie aux brassicacées
+309;6;Isothiocyanat-Allergie;Allergie aux isothiocyanates
+310;6;Allylsulfid-Allergie;Allergie aux sulfures allyliques
+311;6;Hülsenfrüchte-Allergie;Allergie aux légumes secs
+312;6;Sellerie-Karotten-Beifuss-Gewürz-Allergie;Allergie céleri-carottes-armoise-épices
+313;6;Dinitronaphthol-Allergie;Allergie au dinitronaphtol
+314;6;Triphenylmethanfarbstoff-Allergie (Malachitgrün-Typ);Allergie aux colorants triphénylméthanes (type vert de malachite)
+315;6;Nigrosin-Allergie;Allergie à la nigrosine
+316;6;Chinolingelb-Allergie;Allergie au jaune de quinoléine
+317;6;Farbstoff-Allergie (Indigo-Typ);Allergie aux colorants (type indigo)
+318;6;Anthrachinonfarbstoff-Allergie;Allergie aux colorants anthraquinoniques
+319;6;Azofarbstoff-Allergie;Allergie aux colorants azoïques
+320;6;Kupfer-Allergie;Allergie au cuivre
+321;6;Chrom-Allergie;Allergie au chrome
+322;6;Diaminobenzen-Allergie;Allergie à la phénylendiamine (groupement para-amino)
+323;6;Chloramid-Allergie (Tosylchloramid-Typ);Allergie aux sulfonamides (type tosylchloramide)
+324;6;Mercaptoessigsäure-Allergie;Allergie à l'acide mercapto-acétique
+325;6;Fluorid-Allergie;Allergie au fluorure
+326;6;Aluminiumzirkoniumhydroxochlorid-Allergie;Allergie à l'hydroxychlorure d'aluminium et de zirconium
+327;6;Antiinfektiva-Allergie (Hexetidin-Typ);Allergie aux anti-infectieux (type hexétidine)
+328;6;Antimykotika-Allergie (Ciclopirox-Typ);Allergie aux agents conservateurs (type pyridines)
+329;6;Konservierungsstoff-Allergie (Isothiazolon-Typ);Allergie aux agents conservateurs (type isothiazolones)
+330;6;Phenol-Allergie;Allergie aux phénols
+331;6;Formaldehyd-Allergie;Allergie au formaldéhyde
+332;6;Undecylensäure-Allergie;Allergie à l'acide undécylénique
+333;6;Sorbinsäure-Allergie;Allergie à l'acide sorbique
+334;6;Konservierungsstoff-Allergie (quartäre Ammoniumverbindungen);Allergie aux agents conservateurs (type composés ammoniums quarternaires)
+335;6;Konservierungsstoff-Allergie (Dibromdicyanbutan-Typ);Allergie aux agents conservateurs (type dibromodicyanobutanes)
+336;6;UV-Filter-Allergie (Ensulizol-Typ);Allergie aux filtres UV (type ensulizole)
+337;6;UV-Filter-Allergie (Imidazol-Typ);Allergie aux filtres UV (type imidazole)
+338;6;UV-Filter-Allergie (Avobenzon-Typ);Allergie aux filtres UV (type avobenzone)
+339;6;UV-Filter-Allergie (Benzylidenbornanon-Typ);Allergie aux filtres UV (type benzylidène bornanone)
+340;6;Lithium-Allergie;Allergie au lithium
+341;6;Neuroleptika-Allergie (Sulpirid-Typ);Allergie aux neuroleptiques (type sulpiride)
+342;6;Acetylcholinesterasehemmer-Allergie (Tacrin-Typ);Allergie aux inhibiteurs de l'acétylcholinestérase (type tacrine)
+343;6;Amifostin-Allergie;Allergie à l'amifostine
+344;6;Vasodilatatoren-Allergie (Trapidil-Typ);Allergie aux vasodilatateurs (type trapidil)
+345;6;Zytostatika-Allergie (Aminoglutethimid-Typ);Allergie aux cytostatiques (type aminoglutéthimide)
+346;6;Steinkohlenteer-Allergie;Allergie au coaltar
+347;6;Hirudin-Allergie;Allergie à l'hirudine
+348;6;Ethylendiamin-Allergie;Allergie à l'éthylènediamine
+349;6;Komplexbildner-Allergie (EDTA-Typ);Allergie aux chélateurs (type EDTA)
+350;6;Nickel-Allergie;Allergie au nickel
+351;6;Wollwachs-Allergie;Allergie à la lanoline
+352;6;Paraffin-Allergie;Allergie à la paraffine
+353;6;Propylenglycol-Allergie;Allergie au propylène glycol
+354;6;Polyethylenglycol-Allergie;Allergie au polyéthylène glycol
+355;6;Aspartam-Allergie;Allergie à l'aspartame
+356;6;Saccharin-Allergie;Allergie à la saccharine
+357;6;Cyclamat-Allergie;Allergie au cyclamate
+358;6;Pyrvinium-Allergie;Allergie au pyrvinium
+359;6;Antipsoriatika-Allergie (Methoxsalen-Typ);Allergie aux antipsoriasiques (type méthoxsalène)
+360;6;Gestagen-Allergie (Pregnadien-Typ);Allergie aux progestatifs (type prégnadiène)
+361;6;Vasodilatatoren-Allergie (Glyceroltrinitrat-Typ);Allergie aux vasodilatateurs (type nitroglycérine)
+362;6;Disulfiram-Allergie;Allergie au disulfirame
+363;6;Benzoesäure-Allergie;Allergie à l'acide benzoïque
+364;6;Fibrat-Allergie (Clofibrat-Typ);Allergie aux fibrates (type clofibrate)
+365;6;Benzophenon-Allergie;Allergie à la benzophénone
+366;6;Retinoid-Allergie;Allergie aux rétinoïdes
+367;6;Antiinfektiva-Allergie (Hexamidin-Typ);Allergie aux anti-infectieux (type hexamidine)
+368;6;Chlorhexidin-Allergie;Allergie à la chlorhexidine
+369;6;Dexpanthenol-Allergie;Allergie au dexpanthénol
+370;6;Antibiotika-Allergie (Fusidinsäure-Typ);Allergie aux antibiotiques (type acide fusidique)
+371;6;Prokinetika-Allergie (Metoclopramid-Typ);Allergie aux procinétiques (type métoclopramide)
+372;6;Prokinetika-Allergie (Domperidon-Typ);Allergie aux procinétiques (type dompéridone)
+373;6;Vasodilatatoren-Allergie (Minoxidil-Typ);Allergie aux vasodilatateurs (type minoxidil)
+374;6;Antiepileptika-Allergie (Valproinsäure-Typ);Allergie aux antiépileptiques (type acide valproïque)
+375;6;Antimykotika-Allergie (Terbinafin-Typ);Allergie aux antifongiques (type terbinafine)
+376;6;Zytostatika-Allergie (Vindesin-Typ);Allergie aux cytostatiques (type vindésine)
+377;6;Antibiotika-Allergie (Natamycin-Typ);Allergie aux macrolides (type natamycine)
+378;6;Beta-Sympathomimetika-Allergie (Formoterol-Typ);Allergie aux bêta-sympathomimétiques
+379;6;Antiepileptika-Allergie (Ethosuximid-Typ);Allergie aux antiépileptiques (type éthosuximide)
+380;6;Antimetabolit-Allergie (Didanosin-Typ);Allergie aux antimétabolites (type didanosine)
+381;6;Virustatika-Allergie (Aciclovir-Typ);Allergie aux antiviraux (type aciclovir)
+382;6;Antimykotika-Allergie (Nystatin-Typ);Allergie aux antifongiques (type nystatine)
+383;6;Iod-Allergie;Allergie à l'iode
+384;6;Thiamin-Allergie;Allergie à la thiamine
+385;6;Pyridoxin-Allergie;Allergie à la pyridoxine
+386;6;Cobalamin-Allergie;Allergie à la cobalamine
+387;6;Cholera-Impfstoff-Allergie;Allergie au vaccin contre le choléra
+388;6;Röteln-Impfstoff-Allergie;Allergie au vaccin contre la rubéole
+389;6;Hepatitis B-Impfstoff-Allergie;Allergie au vaccin contre l'hépatite B
+390;6;Hepatitis A-Impfstoff-Allergie;Allergie au vaccin contre l'hépatite A
+391;6;Tollwut-Impfstoff-Allergie;Allergie au vaccin contre la rage
+392;6;Poliomyelitis-Impfstoff-Allergie;Allergie au vaccin contre la poliomyélite
+393;6;Typhus-Impfstoff-Allergie;Allergie au vaccin contre la fièvre typhoïde
+394;6;Pertussis-Impfstoff-Allergie;Allergie au vaccin contre la coqueluche
+395;6;Haemophilus influenza B-Impfstoff-Allergie;Allergie au vaccin contre Haemophilus influenza B
+396;6;Tuberkulose-Impfstoff-Allergie;Allergie au vaccin contre la tuberculose
+397;6;Varizellen-Impfstoff-Allergie;Allergie au vaccin contre la varicelle
+398;6;Quecksilber-Allergie;Allergie au mercure
+399;6;Sulfanylalkansulfonsäure-Allergie;Allergie à l'acide sulfanyl alcane sulfonique
+400;6;Neuroleptika-Allergie (Zotepin-Typ);Allergie aux neuroleptiques (type zotépine)
+401;6;Fibrinolytika-Allergie (Reteplase-Typ);Allergie aux fibrinolytiques (type rétéplase)
+402;6;Antidepressiva-Allergie (Moclobemid-Typ);Allergie aux antidépresseurs (type moclobémide)
+403;6;Muskarinrezeptor-Antagonisten-Allergie (Pirenzepin-Typ);Allergie aux antagonistes des récepteurs muscariniques (type pirenzépine)
+404;6;Ulkus-Therapeutika-Allergie (Omeprazol-Typ);Allergie aux anti-ulcéreux (type oméprazole)
+405;6;Zytostatika-Allergie (Pentostatin-Typ);Allergie aux cytostatiques (type pentostatine)
+406;6;Mäuseeiweiss-Allergie;Allergie protéines de souris
+407;6;Alpha-2-Adrenozeptor-Agonisten-Allergie (Clonidin-Typ);Allergie aux agonistes des récepteurs alpha-2 adrénergiques (type clonidine)
+408;6;Serotoninrezeptor-Antagonisten-Allergie;Allergie aux antagonistes du récepteur de la sérotonine
+409;6;Lindan-Allergie;Allergie au lindane
+410;6;Sartan-Allergie (Losartan-Typ);Allergie aux sartans (type losartan)
+411;6;Antidepressiva-Allergie (Venlafaxin-Typ);Allergie aux antidépresseurs (type venlafaxine)
+412;6;Chymotrypsin-Allergie;Allergie à la chymotrypsine
+413;6;Streptodornase-Allergie;Allergie à la streptodornase
+414;6;Antimykotika-Allergie (Griseofulvin-Typ);Allergie aux antifongiques (type griséofulvine)
+415;6;Parasympatholytika-Allergie (Scopolamin-Typ);Allergie aux parasympatholytiques (type scopolamine)
+416;6;Hydroxychinolin-Allergie (Clioquinol-Typ);Allergie à l'hydroxyquinoline (type clioquinol)
+417;6;Levamisol-Allergie;Allergie au lévamisole
+418;6;Antidiabetika-Allergie (Metformin-Typ);Allergie aux antidiabétiques (type metformine)
+419;6;Phenolphthalein-Allergie;Allergie à la phénolphthaléine
+420;6;Antibiotika-Allergie (Colistin-Typ);Allergie aux antibiotiques (type colistine)
+421;6;Thiouracil-Allergie;Allergie au thiouracil
+422;6;Thyreostatika-Allergie (Thiamazol-Typ);Allergie aux thyréostatiques (type thiamazole)
+423;6;Perchlorat-Allergie;Allergie aux perchlorates
+424;6;Virustatika-Allergie (Tromantadin-Typ);Allergie aux antiviraux (type tromantadine)
+425;6;Zytostatika-Allergie (Procarbazin-Typ);Allergie aux cytostatiques (type procarbazine)
+426;6;Antimetabolit-Allergie (Purin-Typ);Allergie aux antimétabolites (type purine)
+427;6;Sulfonamid-Allergie (Paraamino-Gruppe);Allergie aux sulfonamides (type groupe para-amino)
+428;6;Insulin-Allergie;Allergie à l'insuline
+429;6;Androgen-Allergie (Testosteron-Typ);Allergie aux androgènes (type testostérone)
+430;6;Cromoglicinsäure-Allergie;Allergie à l'acide cromoglicique
+431;6;Antituberkulotika-Allergie (Ethambutol-Typ);Allergie aux antituberculeux (type éthambutol)
+432;6;Hypophysenvorderlappenhormone-Allergie (Corticotropin-Typ);Allergie aux hormones du lobe antérieur de l'hypophyse (type corticotropine)
+433;6;Sulfit-Allergie;Allergie aux sulfites
+434;6;Trimethoprim-Allergie (Trihydroxybenzyl-Determinante);Allergie au triméthoprime (déterminants trihydroxybenzyles)
+435;6;Antibiotika-Allergie (Neomycin-Typ);Allergie aux antibiotiques (type néomycine)
+436;6;Antibiotika-Allergie (Bacitracin-Typ);Allergie aux antibiotiques (type bacitracine)
+437;6;Antidepressiva-Allergie (Citalopram-Typ);Allergie aux antidépresseurs (type citalopram)
+438;6;Lokalanästhetika-Allergie (Pramocain-Typ);Allergie aux anesthésiques locaux (type pramocaïne)
+439;6;Opioid-Allergie (Buprenorphin-Typ);Allergie aux opioïdes (type buprénorphine)
+440;6;Opioid-Allergie (Tramadol-Typ);Allergie aux opioïdes (type tramadol)
+441;6;Opioid-Allergie (Methadon-Typ);Allergie aux opioïdes (type méthadone)
+442;6;Opioid-Allergie (Piritramid-Typ);Allergie aux opioïdes (type piritramide)
+443;6;Calcitonin (Lachs)-Allergie;Allergie à la calcitonine (saumon)
+444;6;Antihistaminika-Allergie (Terfenadin-Typ);Allergie aux antihistaminiques (type terfénadine)
+445;6;Antitussiva-Allergie (Noscapin-Typ);Allergie à la tritoqualine
+446;6;Antihistaminika-Allergie (Azelastin-Typ);Allergie aux antihistaminiques (type azélastine)
+447;6;Antihistaminika-Allergie (Piperidylamino-Typ);Allergie aux antihistaminiques (type pipéramine)
+448;6;Antihistaminika-Allergie (Levocabastin-Typ);Allergie aux antihistaminiques (type lévocabastine)
+449;6;Antihistaminika-Allergie (Piperazin-Typ);Allergie aux antihistaminiques (type pipérazine)
+450;6;Antihistaminika-Allergie (Mebhydrolin-Typ);Allergie aux antihistaminiques (type mébhydroline)
+451;6;Anästhetika-Allergie (Halothan-Typ);Allergie aux anesthésiques (type halothane)
+452;6;Antiepileptika-Allergie (Lamotrigin-Typ);Allergie aux antiépileptiques (type lamotrigine)
+453;6;Anästhetika-Allergie (Ketamin-Typ);Allergie aux anesthésiques (type kétamine)
+454;6;Anästhetika-Allergie (Etomidat-Typ);Allergie aux anesthésiques (type étomidate)
+455;6;Muskelrelaxantien-Allergie (Bisammonium-Typ);Allergie aux curares (type bis-ammonium)
+456;6;Paraben-Allergie;Allergie au parabène
+457;6;Ulkus-Therapeutika-Allergie (Ranitidin-Typ);Allergie aux antiulcéreux (type ranitidine)
+458;6;Papain-Allergie;Allergie à la papaïne
+459;6;Antimetabolit-Allergie (Cytosin-Typ);Allergie aux antimétabolites (type cytosine)
+460;6;Antimetabolit-Allergie (Fluorouracil-Typ);Allergie aux antimétabolites (type fluorouracil)
+461;6;Antiarrhythmika-Allergie (Ajmalin-Typ);Allergie aux anti-arythmiques (type ajmaline)
+462;6;Neuroleptika-Allergie (Flupentixol-Typ);Allergie aux neuroleptiques (type flupentixol)
+463;6;Anästhetika-Allergie (Propofol-Typ);Allergie aux anesthésiques (type propofol)
+464;6;Zytostatika-Allergie (Aziridin-Typ);Allergie aux cytostatiques (type aziridine)
+465;6;Zytostatika-Allergie (Busulfan-Typ);Allergie aux cytostatiques (type busulfan)
+466;6;Zytostatika-Allergie (Cyclophosphamid-Typ);Allergie aux cytostatiques (type cyclophosphamide)
+467;6;Zytostatika-Allergie (Chlorambucil-Typ);Allergie aux cytostatiques (type chlorambucil)
+468;6;Zytostatika-Allergie (Cisplatin-Typ);Allergie aux cytostatiques (type cisplatine)
+469;6;Antibiotika-Allergie (Rifamycin-Typ);Allergie aux antibiotiques (type rifamycine)
+470;6;Antiinfektiva-Allergie (Novobiocin-Typ);Allergie aux anti-infectieux (type novobiocine)
+471;6;Folsäure-Antagonisten-Allergie (Methotrexat-Typ);Allergie aux antagonistes de l'acide folique (type méthotrexate)
+472;6;Glucocerebrosidase-Allergie (Imiglucerase-Typ);Allergie à la glucocérébrosidase (type imiglucérase)
+473;6;Xanthenfarbstoff-Allergie;Allergie aux colorants de type xanthène
+474;6;Zytostatika-Allergie (Actinomycin-Typ);Allergie aux cytostatiques (type actinomycine)
+475;6;Zytostatika-Allergie (Bleomycin-Typ);Allergie aux cytostatiques (type bléomycine)
+476;6;Zytostatika-Allergie (Mitomycin-Typ);Allergie aux cytostatiques (type mitomycine)
+477;6;Urokinase-Allergie;Allergie à l’urokinase
+478;6;Streptokinase-Allergie;Allergie à la streptokinase
+479;6;Phosphodiesterasehemmer-Allergie (Amrinon-Typ);Allergie aux inhibiteurs de la phosphodiestérase (type amrinone)
+480;6;Glucagon-Allergie;Allergie au glucagon
+481;6;Acetylcystein-Allergie;Allergie à l'acétylcystéine
+482;6;Penicillamin-Allergie (Penicillin-Metabolit);Allergie à la pénicillamine (métabolite de la pénicilline)
+483;6;Antihistaminika-Allergie (Piperidyliden-Typ);Allergie aux antiépileptiques (type pipéridyliques)
+484;6;Pneumokokken-Impfstoff-Allergie;Allergie au vaccin antipneumococcique
+485;6;Diphtherietoxoid-Allergie;Allergie à l'anatoxine diphtérique
+486;6;Tetanus-Impfstoff-Allergie;Allergie au vaccin antitétanique
+487;6;Hühnereiweiss-Allergie;Allergie à l'albumine des œufs de poule
+488;6;Protamin-Allergie;Allergie à la protamine
+489;6;Paraaminocarbonsäure-Allergie;Allergie à l'acide para-aminocarbonique
+490;6;Aminopenicillin-/Aminocephalosporin-Allergie;Allergie aux aminopénicillines (type ampicilline)
+491;6;Calcium-Antagonisten-Allergie (Verapamil-Typ);Allergie aux antagonistes calciques (type vérapamil)
+492;6;Calcium-Antagonisten-Allergie (Diltiazem-Typ);Allergie aux antagonistes calciques (type diltiazem)
+493;6;Dextran-Allergie;Allergie au dextran
+494;6;Tranquillantien-Allergie (Meprobamat-Typ);Allergie aux tranquillisants (type méprobamate)
+495;6;Xanthin-Allergie (Theobromin-Typ);Allergie aux xanthines (type théobromine)
+496;6;Cumarin-Allergie;Allergie à la coumarine
+497;6;Antituberkulotika-Allergie (Protionamid-Typ);Allergie aux antituberculeux (type protionamide)
+498;6;Diuretika-Allergie (Hydrochlorothiazid-Typ);Allergie aux diurétiques (type hydrochlorothiazide)
+499;6;Antibiotika-Allergie (Tetracyclin-Typ);Allergie aux antibiotiques (type tétracycline)
+500;6;Antidiabetika-Allergie (Glibenclamid-Typ);Allergie aux antidiabétiques (type glibenclamide)
+501;6;Diuretika-Allergie (Sulfonamid-Typ);Allergie aux diurétiques (type sulfonamides)
+502;6;Antiinfektiva-Allergie (Sulfonamid-Typ);Allergie aux anti-infectieux (type sulfonamides)
+503;6;Analgetika-Allergie (Salicylat-Typ);Allergie aux analgésiques (type salicylés)
+504;6;Antihypertonika-Allergie (Reserpin-Typ);Allergie aux antihypertenseurs (type réserpine)
+505;6;Analgetika-Allergie (Pyrazolon-Typ);Allergie aux analgésiques (type pyrazolone)
+506;6;Antituberkulotika-Allergie (Pyrazincarboxamid-Typ);Allergie aux antituberculeux (type pyrazincarboxamide)
+507;6;Sulfonamid-Allergie (Probenecid-Typ);Allergie aux sulfonamides (type probénécide)
+508;6;Zytostatika-Allergie (Etoposid-Typ);Allergie aux cytostatiques (type étoposide)
+509;6;Neuroleptika-Allergie (Phenothiazin-Typ);Allergie aux neuroleptiques (type phénothiazine)
+510;6;Analgetika-Allergie (Paracetamol-Typ);Allergie aux analgésiques (type paracétamol)
+511;6;Spasmolytika-Allergie (Papaverin-Typ);Allergie aux spasmolytiques (type papavérine)
+512;6;Zytostatika-Allergie (Taxan-Typ);Allergie aux cytostatiques (type taxanes)
+513;6;Analgetika-Allergie (Oxicam-Typ);Allergie aux analgésiques (type oxicam)
+514;6;Antiinfektiva-Allergie (Nitroimidazol-Typ);Allergie aux anti-infectieux (type nitroimidazoles)
+515;6;Antiinfektiva-Allergie (Nitrofuran-Typ);Allergie aux anti-infectieux (type nitrofurane)
+516;6;Nicotinsäure-Allergie;Allergie à l'acide nicotinique
+517;6;Opioid-Allergie (Piperidin-Typ);Allergie aux opioïdes (type pipéridine)
+518;6;Monobactam-Allergie;Allergie aux monobactams
+519;6;Psychostimulanzien-Allergie (Methylphenidat-Typ);Allergie aux psychostimulants (type méthylphénidate)
+520;6;Alpha-2-Adrenozeptor-Agonisten-Allergie (Methyldopa-Typ);Allergie aux agonistes des récepteurs alpha-2 adrénergiques (type méthyldopa)
+521;6;Antibiotika-Allergie (Erythromycin-Typ);Allergie aux antibiotiques (type érythromycine)
+522;6;Antibiotika-Allergie (Clindamycin-Typ);Allergie aux antibiotiques (type clindamycine)
+523;6;Antituberkulotika-Allergie (Isoniazid-Typ);Allergie aux antituberculeux (type isoniazide)
+524;6;Hydroxyethylstärke-Allergie;Allergie aux hydroxyéthyl-amidons
+525;6;Vasodilatatoren-Allergie (Hydralazin-Typ);Allergie aux vasodilatateurs (type hydralazine)
+526;6;Antiepileptika-Allergie (Phenytoin-Typ);Allergie aux antiépileptiques (type phénytoïne)
+527;6;Heparin-Allergie;Allergie à l'héparine
+528;6;Gold-Allergie;Allergie à l'or
+529;6;Antibiotika-Allergie (Vancomycin-Typ);Allergie aux antibiotiques (type vancomycine)
+530;6;Glucocorticoid-Allergie;Allergie aux glucocorticoïdes
+531;6;Antidepressiva-Allergie (Fluoxetin-Typ);Allergie aux antidépresseurs (type fluoxétine )
+532;6;Antihistaminika-Allergie (Tripelennamin-Typ);Allergie aux antihistaminiques (type tripélennamine)
+533;6;Antihistaminika-Allergie (Diphenhydramin-Typ);Allergie aux antihistaminiques (type diphénhydramine)
+534;6;Antidepressiva-Allergie (Doxepin-Typ);Allergie aux antidépresseurs (type doxépine)
+535;6;Antidepressiva-Allergie (Amitriptylin-Typ);Allergie aux antidépresseurs (type amitriptyline)
+536;6;Antidepressiva-Allergie (Dibenzepin-Typ);Allergie aux antidépresseurs (type dibenzépine)
+537;6;Antidepressiva-Allergie (Maprotilin-Typ);Allergie aux antidépresseurs (type maprotiline)
+538;6;Antidepressiva-Allergie (Imipramin-Typ);Allergie aux antidépresseurs (type imipramine)
+539;6;Trimethoprim-Allergie (Diaminopyrimidin-Determinante);Allergie au triméthoprime (famille des diaminopyrimidines)
+540;6;Komplexbildner-Allergie (Deferoxamin-Typ);Allergie aux chélateurs (type déféroxamine)
+541;6;Muskelrelaxantien-Allergie (Dantrolen-Typ);Allergie aux myorelaxants (type dantrolène)
+542;6;Opioid-Allergie (Phenanthren-Typ);Allergie aux opioïdes (type phénanthrène)
+543;6;Immunsuppressiva-Allergie (Ciclosporin-Typ);Allergie aux immunosuppresseurs (type ciclosporine)
+544;6;Chlorethan-Allergie;Allergie au chloroéthane
+545;6;Antibiotika-Allergie (Chloramphenicol-Typ);Allergie aux antibiotiques (type chloramphénicol)
+546;6;Protozoenmittel-Allergie (Chinin-Typ);Allergie aux médicaments antiprotozoaires (type quinine)
+547;6;Cephalosporin-/Cephamycin-Allergie;Allergie aux céphalosporines/céphamycines
+548;6;Antiepileptika-Allergie (Carbamazepin-Typ);Allergie aux antiépileptiques (type carbamazépine)
+549;6;Carboanhydratasehemmer-Allergie (Sulfonamid-Typ);Allergie aux inhibiteurs de l'anhydrase carbonique (type sulfonamide)
+550;6;Carbapenem-/Penem-Allergie;Allergie aux carbapénems/pénems
+551;6;Calcium-Antagonisten-Allergie (Nifedipin-Typ);Allergie aux inhibiteurs calciques (type nifédipine)
+552;6;Calcitonin-Allergie;Allergie à la calcitonine
+553;6;Neuroleptika-Allergie (Melperon-Typ);Allergie aux neuroleptiques (type melpérone)
+554;6;Bisphosphonat-Allergie;Allergie aux bisphosphonates
+555;6;Betablocker-Allergie (Propranolol-Typ);Allergie aux bêtabloquants (type propranolol)
+556;6;Benzodiazepin-Allergie (Diazepin-Typ);Allergie aux benzodiazépines (type diazépine)
+557;6;Opioid-Allergie (Pentazocin-Typ);Allergie aux opioïdes (type pentazocine)
+558;6;Benzbromaron-Allergie;Allergie à la benzbromarone
+559;6;Barbiturat-Allergie;Allergie aux barbituriques
+560;6;Analgetika-Allergie (Arylessigsäure-Typ);Allergie aux analgésiques (type acide arylacétique)
+561;6;Asparaginase-Allergie;Allergie à l'asparaginase
+562;6;Analgetika-Allergie (Anthranilsäure-Typ);Allergie aux analgésiques (type acide anthranilique)
+563;6;Zytostatika-Allergie (Anthracyclin-Typ);Allergie aux cytostatiques (type anthracyclines)
+564;6;Antibiotika-Allergie (Streptomycin-Typ);Allergie aux antibiotiques (type streptomycine)
+565;6;Lokalanästhetika-Allergie (Lidocain-Typ);Allergie aux anesthésiques locaux (type lidocaïne)
+566;6;Xanthinoxidasehemmer-Allergie (Allopurinol-Typ);Allergie aux inhibiteurs de la xanthine oxydase (type allopurinol)
+567;6;Antihistaminika-Allergie (Pheniramin-Typ);Allergie aux antihistaminiques (type phéniramine)
+568;6;Hypnotika-Allergie (Aldehyd-Typ);Allergie aux hypnotiques (type aldéhyde, p.ex.hydrate de chloral)
+569;6;ACE-Hemmer-Allergie (Enalapril-Typ);Allergie aux inhibiteurs de l'ECA (type énalapril)
+570;6;Malaria-Therapeutika-Allergie (Chloroquin-Typ);Allergie aux médicaments antipaludéens (type chloroquine)
+571;6;Penicillin-Allergie;Allergie aux pénicillines
+606;6;Eisenkomplex-Allergie;Allergie aux complexes ferriques
+607;6;Bariumsulfat-Allergie (Röntgenkontrastmittel);Allergie au sulfate de barium (produit de contraste)
+608;6;Zytostatika-Allergie (Ingenol mebutat-Typ);Allergie aux cytostatiques (type mébutate d'ingénol)
+609;6;Vasodilatatoren-Allergie (Molsidomin-Typ);Allergie aux vasodilatateurs (type molsidomine)
+610;6;Antineoplastika-Allergie (Vemurafenib-Typ);Allergie aux antinéoplasiques (type vémurafénib)
+611;6;Methacrylate-Allergie;Allergie au méthacrylate
+616;6;Antidepressiva-Allergie (Milnacipran-Typ);Allergie aux antidépresseurs (type milnacipran)
+617;6;Aminopropanol-Allergie;Allergie à l'aminopropanol
+618;6;Antidiabetika-Allergie (Liraglutid-Typ);Allergie aux antidiabétiques (type liraglutide)
+619;6;Hamstereiweiss-Allergie;Allergie aux protéines de hamster
+620;6;Ethylhexylglycerol-Allergie;Allergie à l'éthylhexyl glycérine
+621;6;Banane-Allergie;Allergie à la banane
+622;6;Dopaminrezeptor-Agonisten-Allergie (Apomorphin-Typ);Allergie aux agonistes dopaminergiques (type apomorphine)
+623;6;Antineoplastika-Allergie (Talimogen laherparepvec-Typ);Allergie aux antinéoplasiques (type talimogène laherparépvec)
+624;6;Antineoplastika-Allergie (Carfilzomib-Typ);Allergie aux antinéoplasiques (type carfilzomib)
+625;6;Antihypertonika-Allergie (Macitentan-Typ);Allergie aux antihypertenseurs (type macitentan)
+626;6;Idebenon-Allergie;Allergie à l'idébénone
+627;6;Alirocumab-Allergie;Allergie à l'alirocumab
+628;6;Antineoplastika-Allergie (Trametinib-Typ);Allergie aux antinéoplasiques (type tramétinib)
+629;6;Pelargonsäure-Allergie;Allergie à l'acide pélargonique
+630;6;Zytostatika-Allergie (Nivolumab-Typ);Allergie aux cytostatiques (type nivolumab)
+631;6;Antipsoriatika-Allergie (Secukinumab-Typ);Allergie aux antipsoriasiques (type sécukinumab)
+632;6;Safinamid-Allergie;Allergie au safinamide
+633;6;Apfel-Allergie;Allergie aux pommes
+634;6;Maisstärke-Allergie;Allergie à la fécule de maïs
+635;6;Antineoplastika-Allergie (Idelalisib-Typ);Allergie aux antinéoplasiques (typ idélalisib)
+636;6;Denosumab-Allergie;Allergie au dénosumab
+637;6;Avocado-Allergie;Allergie à l'avocat
+638;6;Arganöl-Allergie;Allergie à l'huile d'argan
+639;6;Virustatika-Allergie (Simeprevir-Typ);Allergie aux antiviraux (type siméprévir)
+640;6;Antituberkulotika-Allergie (Delamanid-Typ);Allergie aux antituberculeux (type délamanid)
+641;6;Elosulfase alfa-Allergie;Allergie à l'élosulfase alfa
+642;6;Beta-Sympathomimetika-Allergie (Mirabegron-Typ);Allergie aux bêta-sympathomimétiques (typ mirabégron)
+643;6;Alkylglucosid-Allergie;Allergie aux alkyl glucosides
+644;6;Antibiotika-Allergie (Mupirocin-Typ);Allergie aux antibiotiques (type mupirocine)
+645;6;Chlordinitrobenzen-Allergie;Allergie au dinitrochlorobenzène
+646;6;Aminoethanol-Allergie;Allergie à l'aminoéthanol
+647;6;Antidiabetika-Allergie (Canagliflozin-Typ);Allergie aux antidiabétiques (type canagliflozine)
+648;6;Lomitapid-Allergie;Allergie au lomitapide.
+649;6;Antineoplastika-Allergie (Vismodegib-Typ);Allergie aux antinéoplasiques (type vismodégib)
+650;6;Antibiotika-Allergie (Fidaxomicin-Typ);Allergie aux antibiotiques (type fidaxomicine)
+651;6;Acetylcholinesterasehemmer-Allergie (Donepezil-Typ);Allergie aux anticholinestérasique (type donézépil)
+652;6;Antidiabetika-Allergie (Alogliptin-Typ);Allergie aux antidiabétiques (type alogliptine)
+653;6;Polyallergie;Polyallergie
+654;6;Vasodilatatoren-Allergie (Naftidrofuryl-Typ);Allergie aux vasodilatateurs (type naftidrofuryl)
+655;6;Phosphodiesterasehemmer-Allergie (Roflumilast-Typ);Allergie aux inhibiteurs de la phosphodiestérase (type roflumilast)
+656;6;Komplexbildner-Allergie (Disulfanylpropansulfonsäure-Typ);Allergie aux chélateurs (type DMPS)
+657;6;Antineoplastika-Allergie (Tasonermin-Typ);Allergie aux antinéoplasiques (typ tasonermine)
+658;6;Antimykotika-Allergie (Amorolfin-Typ);Allergie aux antifongiques (type amorolfine)
+659;6;Antiepileptika-Allergie (Felbamat-Typ);Allergie aux antiépileptiques (type felbamate)
+660;6;Parasympatholytika-Allergie (Glycopyrronium-Typ);Allergie aux parasympatholytiques (type glycopyrronium)
+661;6;Alpha-Sympathomimetika-Allergie (Phenylephrin-Typ);Allergie aux sympathomimétiques des récepteurs alpha adrénergiques (type phényléphrine)
+662;6;Antiinfektiva-Allergie (Bibrocathol-Typ);Allergie aux anti-infectieux (type bibrocathol)
+663;6;Antibiotika-Allergie (Fosfomycin-Typ);Allergie aux antibiotiques (type fosfomycine)
+664;6;Anticholinergika-Allergie (Bornaprin-Typ);Allergie aux anticholinergiques (type bornaprine)
+665;6;Antiphlogistika-Allergie (Oxaceprol-Typ);Allergie aux anti-inflammatoires (type oxacéprol)
+666;6;Neuroleptika-Allergie (Ziprasidon-Typ);Allergie aux neuroleptiques (type ziprasidone)
+667;6;Anticholinergika-Allergie (Methanthelinium-Typ);Allergie aux anticholinergiques (type méthanthélinium)
+668;6;Antituberkulotika-Allergie (Cycloserin-Typ);Allergie aux antituberculeux (type cyclosérine)
+669;6;Metaaminocarbonsäure-Allergie;Allergie à l'acide méta-aminocarbonique
+670;6;Pyrethroid-Allergie (Permethrin-Typ);Allergie aux pyréthrinoïdes (type perméthrine)
+671;6;Alpha-2-Adrenozeptor-Antagonisten-Allergie (Yohimbin-Typ);Allergie aux inhibiteurs des récepteurs adrénergiques alpha-2 (type yohimbine)
+672;6;Sesquiterpen-Allergie;Allergie aux sesquiterpènes
+673;6;Komplexbildner-Allergie (Tiopronin-Typ);Allergie aux chélateurs (type tiopronine)
+674;6;Steinfrucht-Allergie;Allergie aux fruits à noyaux
+675;6;Arsentrioxid-Allergie;Allergie au trioxyde d'arsenic
+676;6;Icaridin-Allergie;Allergie à l'icaridine
+677;6;Antineoplastika-Allergie (Bosutinib-Typ);Allergie aux antinéoplasiques (type bosutinib)
+678;6;Umweltallergie durch Inhalations- oder Injektionsallergene;Allergie environnementale à des allergènes par inhalation ou par injection
+679;6;Schalenfrucht-Allergie;Allergie aux fruits à coques
+680;6;Hausstaubmilben-Allergie;Allergie aux acariens
+681;6;Plerixafor-Allergie;Allergie au plérixafor
+682;6;Anthelminthika-Allergie (Praziquantel-Typ);Allergie aux anthelminthiques (type praziquantel)
+683;6;Pirfenidon-Allergie;Allergie à la pirfénidone
+684;6;Palifermin-Allergie;Allergie à la palifermine
+685;6;Virustatika-Allergie (Oseltamivir-Typ);Allergie aux antiviraux (type oseltamivir)
+686;6;Psychostimulanzien-Allergie (Modafinil-Typ);Allergie aux psychostimulants (type modafinil)
+687;6;Antineoplastika-Allergie (Mifamurtid-Typ);Allergie aux antinéoplasiques (type mifamurtide)
+688;6;Mecasermin-Allergie;Allergie à la mécasermine
+689;6;Antiinfektiva-Allergie (Maraviroc-Typ);Allergie aux anti-infectieux (type maraviroc)
+690;6;Komplexbildner-Allergie (Dexrazoxan-Typ);Allergie aux chélateurs (type dexrazoxane)
+691;6;Lanthancarbonat-Allergie;Allergie au carbonate de lanthane
+692;6;Antiinfektiva-Allergie (Raltegravir-Typ);Allergie aux anti-infectieux (type raltégravir)
+693;6;Antibiotika-Allergie (Retapamulin-Typ);Allergie aux antibiotiques (type rétapamuline)
+694;6;Vareniclin-Allergie;Allergie à la varénicline
+695;6;Hypnotika-Allergie (Zaleplon-Typ);Allergie aux hypnotiques (type zaléplon)
+696;6;Analgetika-Allergie (Ziconotid-Typ);Allergie aux analgésiques (type ziconotide)
+697;6;Thrombozytenaggregationshemmer-Allergie (Ticagrelor-Typ);Allergie aux antiagrégants plaquettaires (type ticagrélor)
+698;6;Antineoplastika-Allergie (Imiquimod-Typ);Allergie aux antinéoplasiques (type imiquimod)
+699;6;Romiplostim-Allergie;Allergie au romiplostim.
+700;6;Anionenaustauscherharz-Allergie (Colestilan-Typ);Allergie aux résines échangeuses d'anions (type colestilan).
+701;6;Zytostatika-Allergie (Ipilimumab-Typ);Allergie aux cytostatiques (type ipilimumab).
+702;6;Antiepileptika-Allergie (Rufinamid-Typ);Allergie aux antiépileptiques (type rufinamide).
+703;6;Hypophysenvorderlappenhormone-Allergie (Protirelin-Typ);Allergie aux hormones antéhypophysaires (type protiréline).
+704;6;Parathormon-Allergie (Teriparatid-Typ);Allergie à la parathormone (type tériparatide).
+705;6;Thrombozytenaggregationshemmer-Allergie (Tirofiban-Typ);Allergie aux antiagrégants plaquettaires (type tirofiban).
+706;6;Komplexbildner-Allergie (Sugammadex-Typ);Allergie aux chélateurs (type sugammadex).
+707;6;Antiepileptika-Allergie (Topiramat-Typ);Allergie aux antiépileptiques (type topiramate).
+708;6;Antiepileptika-Allergie (Vigabatrin-Typ);Allergie aux antiépileptiques (type vigabatrine).
+709;6;Virustatika-Allergie (Telaprevir-Typ);Allergie aux antiviraux (type télaprévir).
+710;6;Spasmolytika-Allergie (Solifenacin-Typ);Allergie aux spasmolytiques (type solifénacine).
+711;6;Antineoplastika-Allergie (Lenalidomid-Typ);Allergie aux antinéoplasiques (type lénalidomide)
+712;6;Antiepileptika-Allergie (Lacosamid-Typ);Allergie aux antiépileptiques (type lacosamide).
+713;6;Neuroleptika-Allergie (Quetiapin-Typ);Allergie aux neuroleptiques (type quétiapine).
+714;6;Bradykininrezeptor-Antagonisten-Allergie (Icatibant-Typ);Allergie aux antagonistes des récepteurs de la bradykinine (type icatibant).
+715;6;Antineoplastika-Allergie (Hydroxycarbamid-Typ);Allergie aux antinéoplasiques (type hydroxycarbamide)
+716;6;Galsulfase-Allergie;Allergie à la galsulfase
+717;6;Antineoplastika-Allergie (Axitinib-Typ);Allergie aux antinéoplasiques (type axitinib)
+718;6;Virustatika-Allergie (Foscarnet-Typ);Allergie aux antiviraux (type foscarnet)
+719;6;Antineoplastika-Allergie (Exemestan-Typ);Allergie aux antinéoplasiques (type exémestane)
+720;6;Fomepizol-Allergie;Allergie au fomépizole
+721;6;Gonadotropin-Allergie (Follitropin-Typ);Allergie aux gonadotropines (type follitropine)
+722;6;Muskarinrezeptor-Antagonisten-Allergie (Tolterodin-Typ);Allergie aux antagonistes des récepteurs muscariniques (type toltérodine)
+723;6;Xanthinoxidasehemmer-Allergie (Febuxostat-Typ);Allergie aux inhibiteurs de la xanthine oxydase (type fébuxostat)
+724;6;Antidiabetika-Allergie (Exenatid-Typ);Allergie aux antidiabétiques (type exénatide)
+725;6;Virustatika-Allergie (Etravirin-Typ);Allergie aux antiviraux (type étravirine)
+726;6;Zytostatika-Allergie (Eribulin-Typ);Allergie aux cytostatiques (type éribuline)
+727;6;Virustatika-Allergie (Entecavir-Typ);Allergie aux antiviraux (type entécavir)
+728;6;COMT-Hemmer-Allergie (Entacapon-Typ);Allergie aux inhibiteurs de la COMT (type entacapone)
+729;6;Antidiarrhoika-Allergie (Racecadotril-Typ);Allergie aux antidiarrhéiques (type racécadotril)
+730;6;Immunmodulatoren-Allergie (Belimumab-Typ);Allergie aux immunomodulateurs (type bélimumab)
+731;6;Thrombozytenaggregationshemmer-Allergie (Eptifibatid-Typ);Allergie aux antiagrégants plaquettaires (type eptifibatide)
+732;6;Sympathomimetika-Allergie (Dobutamin-Typ);Allergie aux sympatomimétiques (type dobutamine)
+733;6;Analeptika-Allergie (Doxapram-Typ);Allergie aux analeptiques (type doxapram)
+734;6;Komplexbildner-Allergie (Deferasirox-Typ);Allergie aux chélateurs (type déférasirox)
+735;6;Thrombininhibitor-Allergie (Dabigatran-Typ);Allergie aux inhibiteurs de la thrombine (type dabigatran)
+736;6;Calcimimetika-Allergie (Cinacalcet-Typ);Allergie aux agents antiparathyroïdiens (type cinacalcet)
+737;6;Thrombozytenaggregationshemmer-Allergie (Cilostazol-Typ);Allergie aux angiagrégants plaquettaires (type cilostazol)
+738;6;Vasodilatatoren-Allergie (Buflomedil-Typ);Allergie aux vasodilatateurs (type buflomédil)
+739;6;Antihypertonika-Allergie (Bosentan-Typ);Allergie aux antihypertenseurs (type bosentan)
+740;6;Laxanzien-Allergie (Diphenol-Typ);Allergie aux laxatifs (type diphénol)
+741;6;Antineoplastika-Allergie (Abatacept-Typ);Allergie aux antinéoplasiques (type abatacept)
+742;6;Melatoninrezeptor-Agonisten-Allergie (Agomelatin-Typ);Allergie aux agonistes des récepteurs de la mélatonine (type agomélatine)
+743;6;Secocalciferol-Allergie (Alfacalcidol-Typ);Allergie au sécocalciférol (type alfacalcidol)
+744;6;Azelainsäure-Allergie;Allergie à l'acide azélaïque
+745;6;Virustatika-Allergie (Adefovir-Typ);Allergie aux antiviraux (type adéfovir)
+746;6;Thrombininhibitor-Allergie (Argatroban-Typ);Allergie aux inhibiteurs de la thrombine (type argatroban)
+747;6;Neuroleptika-Allergie (Aripiprazol-Typ);Allergie aux neuroleptiques (type aripiprazole)
+748;6;Antifibrinolytika-Allergie (Aprotinin-Typ);Allergie aux antifibrinolytiques (type aprotinine)
+749;6;Antiemetika-Allergie (Aprepitant-Typ);Allergie aux antiémétiques (type aprépitant)
+750;6;Antihypertonika-Allergie (Aliskiren-Typ);Allergie aux antihypertenseurs (type aliskirène)
+751;6;Virustatika-Allergie (Boceprevir-Typ);Allergie aux antiviraux (type bocéprévir)
+752;6;Thrombozytenbildungshemmer-Allergie (Anagrelid-Typ);Allergie aux inhibiteurs de la formation des plaquettes (type anagrélide)
+753;6;Antipsoriatika-Allergie (Adalimumab-Typ);Allergie aux antipsoriasiques (type adalimumab)
+754;6;Fumarsäureester-Allergie;Allergie aux esters de l'acide fumarique
+755;6;Lebensmittelallergie;Allergie aux produits alimentaires
+779;7;Diabetes mellitus Typ 1;Diabète de type 1
+780;7;Diabetes mellitus Typ 2;Diabète de type 2

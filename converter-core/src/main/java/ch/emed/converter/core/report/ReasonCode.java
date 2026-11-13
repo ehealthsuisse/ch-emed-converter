@@ -87,5 +87,12 @@ public final class ReasonCode {
    */
   public static final String REFERENCE_INCONSISTENT = "REFERENCE_INCONSISTENT";
 
+  /**
+   * A chunked QR payload is incomplete or inconsistent: missing, duplicated or out-of-range index,
+   * mixed totals or subversions, or a single chunk of one (feature 006, research R5). The message
+   * names the index, never the data.
+   */
+  public static final String CHUNK_INVALID = "CHUNK_INVALID";
+
   private ReasonCode() {}
 }

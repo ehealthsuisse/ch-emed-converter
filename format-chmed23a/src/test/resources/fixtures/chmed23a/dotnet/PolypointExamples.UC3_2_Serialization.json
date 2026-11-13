@@ -1,0 +1,27 @@
+{
+  "id": "MyId",
+  "medType": 1,
+  "dt": "2024-01-09T09:14:36+01:00",
+  "patient": {
+    "fName": "Dora",
+    "lName": "Graber",
+    "bdt": "1954-12-01",
+    "gender": 2,
+    "lng": "de",
+    "ids": [
+      {
+        "type": 1,
+        "val": "756.1234.5678.97"
+      }
+    ]
+  },
+  "auth": 2,
+  "meds": [
+    {
+      "id": "Duodopa-Pumpe: Levodopa 20 mg/Carbidopa 4,63 mg pro 1 ml Duodopa-Gel",
+      "idType": 1,
+      "autoMed": false,
+      "pos": []
+    }
+  ]
+}

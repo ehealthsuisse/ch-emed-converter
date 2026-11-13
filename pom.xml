@@ -24,6 +24,7 @@
     <module>converter-qr</module>
     <module>converter-validation</module>
     <module>format-chmed16a</module>
+    <module>format-chmed23a</module>
     <module>format-ch-emed-epr</module>
     <module>converter-cli</module>
     <module>converter-rest</module>
@@ -176,6 +177,11 @@
         <artifactId>format-chmed16a</artifactId>
         <version>${project.version}</version>
         <type>test-jar</type>
+      </dependency>
+      <dependency>
+        <groupId>ch.emed.converter</groupId>
+        <artifactId>format-chmed23a</artifactId>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>ch.emed.converter</groupId>

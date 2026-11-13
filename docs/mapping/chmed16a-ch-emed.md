@@ -27,7 +27,7 @@ pattern for foreign addresses (M-ERX-04) and the treatment of `Rep` above 24 mon
 | M-IN-01 | Input starting with `{` is plain CHMED16A JSON. |
 | M-IN-02 | Input starting with `CHMED` (case-insensitive) is the textual QR payload (ChTransmissionFormat ReleaseYear 16): `CHMED16A`, compression flag `1` = Base64 GZip JSON, `0` = plain JSON. Decompressed size is limited by `maxDecodedSize` (default 5 MB). Corrupt payload → `PARSE_ERROR`; the payload is never echoed. Another release year/sub-version → `UNSUPPORTED_VERSION`. |
 | M-IN-03 | Input starting with `http` that is not a signed eRezept URL (`https://eprescription.hin.ch/…`, feature 003) → `PARSE_ERROR`. |
-| M-IN-04 | JSON with camelCase CHMED23A keys (`patient`, `meds`, `medType`) and without `Patient` → `UNSUPPORTED_VERSION`. |
+| M-IN-04 | JSON with camelCase CHMED23A keys (`patient`, `meds`, `medType`) and without `Patient` → `UNSUPPORTED_VERSION`, message "use source chmed23a" (feature 006). |
 | M-IN-05 | Medication plans carry no revision marker. Prescriptions carry `rev` (absent = 1, pinned = 3); a field required only by a later revision than the declared one and missing → WARNING `CHMED_REVISION_FIELD_MISSING`. Output always conforms to the latest revision (prescriptions `rev` = 3). |
 | M-IN-06 | Unknown fields → INFORMATION `UNKNOWN_FIELD_IGNORED` (CHMED16A: parsers MUST ignore unknown fields); non-empty `PFields` → INFORMATION, not mapped. |
 | M-IN-07 | The input form is detected by content before reading (feature 003, FR-013), in this order: PNG (`89 50 4E 47 0D 0A 1A 0A`) or JPEG (`FF D8 FF`) → QR code image (M-QR-01); GIF, BMP, TIFF, WebP → `IMAGE_UNREADABLE` "unsupported image format"; `https://eprescription.hin.ch/` → signed eRezept URL; `CHMED` → payload (M-IN-02); a JSON object with a top-level `resourceType` → `PARSE_ERROR` "Input is a FHIR resource; use source ch-emed"; anything else → JSON (M-IN-01, M-IN-03). Conversely, source `ch-emed` refuses an image, eRezept URL or payload with `PARSE_ERROR` naming the detected form. |
@@ -39,7 +39,7 @@ pattern for foreign addresses (M-ERX-04) and the treatment of `Rep` above 24 mon
 | M-QR-01 | A PNG or JPEG image is read in memory (no temp files). It must not exceed `maxDecodedSize` bytes nor 40 megapixels (read from the header before decoding) → otherwise `IMAGE_TOO_LARGE`, naming the limit. An image that cannot be decoded → `IMAGE_UNREADABLE`. |
 | M-QR-02 | The image must hold exactly one QR code: none → `QR_NOT_FOUND`; several → `QR_MULTIPLE` (the converter does not choose). |
 | M-QR-03 | The content bytes of the code are read as UTF-8 (byte segments without ECI are taken as raw bytes; with an ECI, as declared). Not valid UTF-8 → `PARSE_ERROR`. |
-| M-QR-04 | The content must be a CHMED payload, read as M-IN-02 (a CHMED23A payload → `UNSUPPORTED_VERSION`), or a signed eRezept URL; anything else → `PARSE_ERROR` "QR code does not hold a CHMED payload". The content is never echoed. The resulting document and report equal those of the payload text. |
+| M-QR-04 | The content must be a CHMED payload, read as M-IN-02 (a CHMED23A payload → `UNSUPPORTED_VERSION`, message "use source chmed23a", feature 006), or a signed eRezept URL; anything else → `PARSE_ERROR` "QR code does not hold a CHMED payload". The content is never echoed. The resulting document and report equal those of the payload text. |
 
 ## QR code output (feature 003)
 

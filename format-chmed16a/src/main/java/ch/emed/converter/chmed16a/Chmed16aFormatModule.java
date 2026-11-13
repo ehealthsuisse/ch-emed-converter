@@ -1,8 +1,5 @@
 package ch.emed.converter.chmed16a;
 
-import ch.emed.converter.chmed16a.io.ChEmedDocumentReader;
-import ch.emed.converter.chmed16a.io.ChEmedDocumentReader.ChEmedDocument;
-import ch.emed.converter.chmed16a.io.ChEmedDocumentReader.DocumentType;
 import ch.emed.converter.chmed16a.io.Chmed16aJsonReader;
 import ch.emed.converter.chmed16a.io.Chmed16aJsonWriter;
 import ch.emed.converter.chmed16a.io.Chmed16aPayloadEncoder;
@@ -20,6 +17,9 @@ import ch.emed.converter.chmed16a.validation.Chmed16aValidator;
 import ch.emed.converter.chmed16a.validation.ErezeptPrescriptionRules;
 import ch.emed.converter.core.api.FormatId;
 import ch.emed.converter.core.api.OutputForm;
+import ch.emed.converter.core.chemed.ChEmedDocumentReader;
+import ch.emed.converter.core.chemed.ChEmedDocumentReader.ChEmedDocument;
+import ch.emed.converter.core.chemed.ChEmedDocumentReader.DocumentType;
 import ch.emed.converter.core.report.Phase;
 import ch.emed.converter.core.report.ReasonCode;
 import ch.emed.converter.core.report.ReportEntry;
@@ -181,7 +181,7 @@ public final class Chmed16aFormatModule implements FormatModule {
 
   @Override
   public byte[] fromChEmed(Bundle document, MappingContext ctx) {
-    ChEmedDocument doc = ChEmedDocumentReader.open(document, ctx.report());
+    ChEmedDocument doc = open(document, ctx);
     if (doc == null) {
       return null;
     }
@@ -207,6 +207,15 @@ public final class Chmed16aFormatModule implements FormatModule {
       return null;
     }
     return write(Chmed16aJsonWriter.write(result), ctx);
+  }
+
+  /**
+   * Opens the CH EMED document: the type decides the CHMED16A document (M-REV-01); confidentiality
+   * and the original representation are reported as not carried over (M-REV-22, M-REV-23).
+   */
+  @MappingRule({"M-REV-01", "M-REV-22", "M-REV-23"})
+  private static ChEmedDocument open(Bundle document, MappingContext ctx) {
+    return ChEmedDocumentReader.open(document, ctx.report(), "CHMED16A");
   }
 
   @Override

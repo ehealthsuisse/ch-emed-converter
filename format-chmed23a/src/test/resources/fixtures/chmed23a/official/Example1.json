@@ -1,0 +1,218 @@
+{
+  "patient": {
+    "fName": "Alice",
+    "lName": "Louloui",
+    "bdt": "1945-01-19",
+    "gender": 2,
+    "street": "Bernstrasse 1",
+    "zip": "3000",
+    "city": "Bern",
+    "country": "CH",
+    "lng": "DE",
+    "phones": [
+      "011 111 11 11",
+      "079 999 99 99"
+    ],
+    "emails": [
+      "alicelouloui1945@fake-e-mail.ch"
+    ],
+    "ids": [
+      {
+        "type": 1,
+        "val": "87588895877545621"
+      }
+    ],
+    "mData": {
+      "rcs": [
+        {
+          "id": 1,
+          "rIds": [
+            577
+          ]
+        },
+        {
+          "id": 3
+        },
+        {
+          "id": 4
+        },
+        {
+          "id": 5
+        },
+        {
+          "id": 6,
+          "rIds": [
+            503
+          ]
+        },
+        {
+          "id": 7,
+          "rIds": [
+            780
+          ]
+        }
+      ],
+      "w": 70.0,
+      "h": 165.0
+    }
+  },
+  "meds": [
+    {
+      "id": "1246564",
+      "idType": 4,
+      "pos": [
+        {
+          "po": {
+            "t": 1,
+            "ds": [
+              1,
+              0,
+              1,
+              0
+            ]
+          },
+          "relMeal": 3,
+          "inRes": false,
+          "unit": "Stk"
+        }
+      ],
+      "rsn": "Pancreas",
+      "autoMed": false,
+      "prscbBy": "123123123123",
+      "nbPack": 1.0
+    },
+    {
+      "id": "5292958",
+      "idType": 3,
+      "pos": [
+        {
+          "dtFrom": "2012-05-25",
+          "po": {
+            "t": 1,
+            "ds": [
+              0,
+              0,
+              1,
+              0
+            ]
+          },
+          "inRes": false,
+          "roa": "20053000",
+          "moa": "19",
+          "unit": "Stk"
+        }
+      ],
+      "rsn": "Cholesterol-lowering drug",
+      "autoMed": false,
+      "prscbBy": "123123123123",
+      "nbPack": 1.0
+    },
+    {
+      "id": "7680334810013",
+      "idType": 2,
+      "pos": [
+        {
+          "dtFrom": "2023-09-20",
+          "dtTo": "2024-04-30",
+          "po": {
+            "t": 4,
+            "cyDuU": 5,
+            "cyDu": 1,
+            "tdo": {
+              "t": 1,
+              "do": {
+                "t": 1,
+                "a": 1.4
+              }
+            },
+            "tdpc": 1
+          },
+          "inRes": false,
+          "roa": "20053000",
+          "moa": "20",
+          "unit": "ml",
+          "appInstr": "Dose using the dosing pipette, place on a spoon and then take undiluted. The pipette must not come into contact with the mouth, saliva or food."
+        }
+      ],
+      "rsn": "Vitamins/minerals",
+      "autoMed": false,
+      "prscbBy": "123123123123",
+      "nbPack": 1.0
+    },
+    {
+      "id": "1512856",
+      "idType": 4,
+      "pos": [
+        {
+          "po": {
+            "t": 4,
+            "cyDuU": 4,
+            "cyDu": 1,
+            "tdo": {
+              "t": 2,
+              "ts": [
+                {
+                  "dt": "09:00:00",
+                  "do": {
+                    "t": 1,
+                    "a": 1.0
+                  }
+                }
+              ]
+            },
+            "tdpc": 1
+          },
+          "inRes": false,
+          "unit": "Stk"
+        }
+      ],
+      "rsn": "Vitamins/minerals",
+      "autoMed": true,
+      "nbPack": 1.0
+    },
+    {
+      "id": "7680473440263",
+      "idType": 2,
+      "pos": [
+        {
+          "po": {
+            "t": 4,
+            "cyDuU": 4,
+            "cyDu": 1,
+            "tdo": {
+              "t": 1,
+              "do": {
+                "t": 1,
+                "a": 1.0
+              }
+            },
+            "tdpc": 3
+          },
+          "inRes": false,
+          "roa": "20003000",
+          "moa": "5",
+          "unit": "Appl"
+        }
+      ],
+      "rsn": "Rheumatism",
+      "autoMed": false,
+      "prscbBy": "123123123123",
+      "nbPack": 1.0
+    }
+  ],
+  "medType": 1,
+  "auth": 1,
+  "dt": "2024-01-09T09:14:36.0000000+01:00",
+  "hcPerson": {
+    "gln": "123123123123",
+    "fName": "Hans",
+    "lName": "Muster"
+  },
+  "hcOrg": {
+    "name": "Medical practice Dr. med. Hans Muster",
+    "street": "Bernstrasse 1",
+    "zip": "3000",
+    "city": "Bern",
+    "country": "CH"
+  }
+}

@@ -59,7 +59,7 @@ class Chmed16aJsonReaderTest {
         .satisfies(
             e -> {
               assertThat(e.code()).isEqualTo(ReasonCode.UNSUPPORTED_VERSION);
-              assertThat(e.message()).contains("CHMED23A");
+              assertThat(e.message()).contains("CHMED23A").contains("use source chmed23a");
             });
   }
 

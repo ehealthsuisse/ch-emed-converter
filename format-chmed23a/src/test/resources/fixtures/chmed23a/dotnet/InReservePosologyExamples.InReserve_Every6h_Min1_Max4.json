@@ -1,0 +1,47 @@
+{
+  "id": "MyId",
+  "medType": 1,
+  "dt": "2024-01-09T09:14:36+01:00",
+  "patient": {
+    "fName": "Dora",
+    "lName": "Graber",
+    "bdt": "1954-12-01",
+    "gender": 2,
+    "lng": "de",
+    "ids": [
+      {
+        "type": 1,
+        "val": "756.1234.5678.97"
+      }
+    ]
+  },
+  "auth": 2,
+  "meds": [
+    {
+      "id": "Med1",
+      "idType": 1,
+      "autoMed": false,
+      "pos": [
+        {
+          "unit": "TABL",
+          "inRes": true,
+          "po": {
+            "t": 4,
+            "cyDuU": 4,
+            "cyDu": 1,
+            "tdo": {
+              "t": 6,
+              "miDuU": 3,
+              "miDu": 6,
+              "do": {
+                "t": 3,
+                "aMin": 1,
+                "aMax": 4
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

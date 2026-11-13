@@ -3,8 +3,8 @@ package ch.emed.converter.chmed16a.mapping.reverse;
 import static ch.emed.converter.chmed16a.mapping.PatientMapper.present;
 
 import ch.emed.converter.chmed16a.mapping.MappingRule;
-import ch.emed.converter.chmed16a.mapping.Profiles;
 import ch.emed.converter.chmed16a.model.Medicament;
+import ch.emed.converter.core.chemed.Profiles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;

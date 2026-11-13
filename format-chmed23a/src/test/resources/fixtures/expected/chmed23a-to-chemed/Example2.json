@@ -1,0 +1,880 @@
+{
+  "resourceType" : "Bundle",
+  "meta" : {
+    "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-document-medicationcard" ]
+  },
+  "identifier" : {
+    "system" : "urn:ietf:rfc:3986",
+    "value" : "urn:uuid:2d3e1a34-815f-5001-98f2-8709dc80bb58"
+  },
+  "type" : "document",
+  "timestamp" : "2024-01-10T15:54:06.0000000+01:00",
+  "entry" : [ {
+    "fullUrl" : "urn:uuid:5eb0f558-8998-50ed-8506-b37ac34e5caf",
+    "resource" : {
+      "resourceType" : "Composition",
+      "id" : "5eb0f558-8998-50ed-8506-b37ac34e5caf",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-composition-medicationcard" ]
+      },
+      "language" : "de-CH",
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"de-CH\" lang=\"de-CH\">Medikationsplan</div>"
+      },
+      "identifier" : {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:2d3e1a34-815f-5001-98f2-8709dc80bb58"
+      },
+      "status" : "final",
+      "type" : {
+        "coding" : [ {
+          "system" : "http://loinc.org",
+          "code" : "56445-0",
+          "display" : "Medication summary Document"
+        }, {
+          "system" : "http://snomed.info/sct",
+          "code" : "736378000",
+          "display" : "Medication management plan (record artifact)"
+        } ]
+      },
+      "subject" : {
+        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+      },
+      "date" : "2024-01-10T15:54:06.0000000+01:00",
+      "author" : [ {
+        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+      } ],
+      "title" : "Medikationsplan",
+      "confidentiality" : "N",
+      "_confidentiality" : {
+        "extension" : [ {
+          "url" : "http://fhir.ch/ig/ch-core/StructureDefinition/ch-ext-epr-confidentialitycode",
+          "valueCodeableConcept" : {
+            "coding" : [ {
+              "system" : "http://snomed.info/sct",
+              "code" : "17621005",
+              "display" : "Normal (qualifier value)"
+            } ]
+          }
+        } ]
+      },
+      "section" : [ {
+        "title" : "Original Darstellung",
+        "code" : {
+          "coding" : [ {
+            "system" : "http://loinc.org",
+            "code" : "55108-5",
+            "display" : "Clinical presentation Document"
+          } ]
+        },
+        "text" : {
+          "extension" : [ {
+            "url" : "http://hl7.org/fhir/StructureDefinition/textLink",
+            "extension" : [ {
+              "url" : "htmlid",
+              "valueString" : "original-representation"
+            }, {
+              "url" : "data",
+              "valueUri" : "urn:uuid:01bd08ce-5807-5285-a1dd-1f56defb48a3"
+            } ]
+          } ],
+          "status" : "generated",
+          "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Representation of the original view: <span id=\"original-representation\">PDF</span></div>"
+        },
+        "entry" : [ {
+          "reference" : "urn:uuid:01bd08ce-5807-5285-a1dd-1f56defb48a3"
+        } ]
+      }, {
+        "title" : "Medikamentenliste",
+        "code" : {
+          "coding" : [ {
+            "system" : "http://loinc.org",
+            "code" : "10160-0",
+            "display" : "History of Medication use Narrative"
+          } ]
+        },
+        "entry" : [ {
+          "reference" : "urn:uuid:e2dd2859-0690-57f2-8743-1f8533414799"
+        }, {
+          "reference" : "urn:uuid:fe6efcd9-01fc-53df-92ab-c498ccfb2579"
+        }, {
+          "reference" : "urn:uuid:c9f9a1a4-5177-5b17-a74a-915644fc23c0"
+        }, {
+          "reference" : "urn:uuid:eb93a258-37a3-516a-9e92-29e0135241b1"
+        }, {
+          "reference" : "urn:uuid:c5cced38-7e83-596d-a45b-af574dc64673"
+        }, {
+          "reference" : "urn:uuid:c0cc0cdc-aee2-5d3c-bf73-a97ca4264027"
+        }, {
+          "reference" : "urn:uuid:2704a432-ec89-56c7-9c87-770650e03b5d"
+        }, {
+          "reference" : "urn:uuid:03413390-fcf1-5d2f-97e4-d1351f5cf0e9"
+        }, {
+          "reference" : "urn:uuid:3c622b52-d1ed-5ca3-af38-87501b442e23"
+        }, {
+          "reference" : "urn:uuid:b3ad7501-d8d1-53c0-8b7b-c8af486ce6cf"
+        } ]
+      }, {
+        "title" : "Kommentar",
+        "code" : {
+          "coding" : [ {
+            "system" : "http://loinc.org",
+            "code" : "48767-8",
+            "display" : "Annotation comment [Interpretation] Narrative"
+          } ]
+        },
+        "text" : {
+          "status" : "generated",
+          "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Please measure your blood pressure daily.</div>"
+        }
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66",
+    "resource" : {
+      "resourceType" : "Patient",
+      "id" : "43f300d8-4333-50aa-8d92-37e8b83b5f66",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-core/StructureDefinition/ch-core-patient-epr" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Urs Mustermann, 1968-05-15</div>"
+      },
+      "identifier" : [ {
+        "system" : "urn:oid:2.16.756.5.30.1.123.100.1.1.1",
+        "value" : "87588895877545621"
+      } ],
+      "name" : [ {
+        "family" : "Mustermann",
+        "given" : [ "Urs" ]
+      } ],
+      "telecom" : [ {
+        "system" : "phone",
+        "value" : "079 999 99 99"
+      } ],
+      "gender" : "male",
+      "birthDate" : "1968-05-15",
+      "address" : [ {
+        "line" : [ "Bernstrasse 1" ],
+        "city" : "Bern",
+        "postalCode" : "3000",
+        "country" : "CH"
+      } ],
+      "communication" : [ {
+        "language" : {
+          "coding" : [ {
+            "system" : "urn:ietf:bcp:47",
+            "code" : "de"
+          } ]
+        },
+        "preferred" : true
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572",
+    "resource" : {
+      "resourceType" : "PractitionerRole",
+      "id" : "6bc2723c-8634-5e7b-afe9-0576a4964572",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-practitionerrole" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Hans Beispiel, Arztpraxis Sonnenschein</div>"
+      },
+      "practitioner" : {
+        "reference" : "urn:uuid:d2647449-86c0-596e-b1e9-915b74b425c5"
+      },
+      "organization" : {
+        "reference" : "urn:uuid:2ed34834-462d-5501-8a0f-895b60f61d3e"
+      }
+    }
+  }, {
+    "fullUrl" : "urn:uuid:d2647449-86c0-596e-b1e9-915b74b425c5",
+    "resource" : {
+      "resourceType" : "Practitioner",
+      "id" : "d2647449-86c0-596e-b1e9-915b74b425c5",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-practitioner" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Hans Beispiel</div>"
+      },
+      "identifier" : [ {
+        "system" : "urn:oid:2.51.1.3",
+        "value" : "7601000000002"
+      } ],
+      "name" : [ {
+        "family" : "Beispiel",
+        "given" : [ "Hans" ]
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:2ed34834-462d-5501-8a0f-895b60f61d3e",
+    "resource" : {
+      "resourceType" : "Organization",
+      "id" : "2ed34834-462d-5501-8a0f-895b60f61d3e",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-organization" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Arztpraxis Sonnenschein, Bernstrasse 1, 3000 Bern</div>"
+      },
+      "identifier" : [ {
+        "system" : "urn:oid:2.51.1.3",
+        "value" : "7601001362383"
+      } ],
+      "name" : "Arztpraxis Sonnenschein",
+      "address" : [ {
+        "line" : [ "Bernstrasse 1" ],
+        "city" : "Bern",
+        "postalCode" : "3000",
+        "country" : "CH"
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:e2dd2859-0690-57f2-8743-1f8533414799",
+    "resource" : {
+      "resourceType" : "MedicationStatement",
+      "id" : "e2dd2859-0690-57f2-8743-1f8533414799",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">GTIN 7680549490031</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "coding" : [ {
+            "system" : "urn:oid:2.51.1.1",
+            "code" : "7680549490031"
+          } ],
+          "text" : "GTIN 7680549490031"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:11fae027-b189-53cc-81b8-8ba3c7a9f882"
+      } ],
+      "status" : "active",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+      },
+      "dateAsserted" : "2024-01-10T15:54:06.0000000+01:00",
+      "informationSource" : {
+        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+      },
+      "reasonCode" : [ {
+        "text" : "Thyroid gland"
+      } ],
+      "dosage" : [ {
+        "additionalInstruction" : [ {
+          "text" : "vor dem Essen"
+        } ],
+        "patientInstruction" : "Take on an empty stomach, at least 30 minutes before breakfast.",
+        "timing" : {
+          "repeat" : {
+            "dayOfWeek" : [ "tue", "thu" ],
+            "timeOfDay" : [ "07:30:00" ]
+          }
+        },
+        "doseAndRate" : [ {
+          "doseQuantity" : {
+            "value" : 1,
+            "unit" : "Stk",
+            "system" : "http://snomed.info/sct",
+            "code" : "767525000"
+          }
+        } ]
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:fe6efcd9-01fc-53df-92ab-c498ccfb2579",
+    "resource" : {
+      "resourceType" : "MedicationStatement",
+      "id" : "fe6efcd9-01fc-53df-92ab-c498ccfb2579",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">GTIN 7680549490031</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "coding" : [ {
+            "system" : "urn:oid:2.51.1.1",
+            "code" : "7680549490031"
+          } ],
+          "text" : "GTIN 7680549490031"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:168db7bd-d959-56c5-b88d-3da1ca915063"
+      } ],
+      "status" : "active",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+      },
+      "dateAsserted" : "2024-01-10T15:54:06.0000000+01:00",
+      "informationSource" : {
+        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+      },
+      "reasonCode" : [ {
+        "text" : "Thyroid gland"
+      } ],
+      "dosage" : [ {
+        "additionalInstruction" : [ {
+          "text" : "vor dem Essen"
+        } ],
+        "patientInstruction" : "Take on an empty stomach, at least 30 minutes before breakfast.",
+        "timing" : {
+          "repeat" : {
+            "dayOfWeek" : [ "sat" ],
+            "timeOfDay" : [ "09:00:00" ]
+          }
+        },
+        "doseAndRate" : [ {
+          "doseQuantity" : {
+            "value" : 1,
+            "unit" : "Stk",
+            "system" : "http://snomed.info/sct",
+            "code" : "767525000"
+          }
+        } ]
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:c9f9a1a4-5177-5b17-a74a-915644fc23c0",
+    "resource" : {
+      "resourceType" : "MedicationStatement",
+      "id" : "c9f9a1a4-5177-5b17-a74a-915644fc23c0",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">GTIN 7680216930020: während 2 Tag(e): abends 0.5 Stk; dann Pause 1 Tag(e); dann während 3 Tag(e): abends 0.75 Stk; dann Pause 1 Tag(e) (wiederholen), vor dem Essen</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "coding" : [ {
+            "system" : "urn:oid:2.51.1.1",
+            "code" : "7680216930020"
+          } ],
+          "text" : "GTIN 7680216930020"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:5e3c3fd7-261f-5851-b3cc-5758a135378f"
+      } ],
+      "status" : "active",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+      },
+      "dateAsserted" : "2024-01-10T15:54:06.0000000+01:00",
+      "informationSource" : {
+        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+      },
+      "reasonCode" : [ {
+        "text" : "Blood thinner"
+      } ],
+      "dosage" : [ {
+        "text" : "während 2 Tag(e): abends 0.5 Stk; dann Pause 1 Tag(e); dann während 3 Tag(e): abends 0.75 Stk; dann Pause 1 Tag(e) (wiederholen), vor dem Essen",
+        "patientInstruction" : "Next doctor's appointment on 29.02.2024",
+        "timing" : {
+          "repeat" : {
+            "boundsPeriod" : {
+              "start" : "2024-01-10",
+              "end" : "2024-02-29"
+            }
+          }
+        }
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:eb93a258-37a3-516a-9e92-29e0135241b1",
+    "resource" : {
+      "resourceType" : "MedicationStatement",
+      "id" : "eb93a258-37a3-516a-9e92-29e0135241b1",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">GTIN 7680656220026: alle 2 Woche(n): Mo: 20:00 1 Stk</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "coding" : [ {
+            "system" : "urn:oid:2.51.1.1",
+            "code" : "7680656220026"
+          } ],
+          "text" : "GTIN 7680656220026"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:b22ba5ff-ea97-5e85-86a1-c31a18f24a17"
+      } ],
+      "status" : "active",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+      },
+      "dateAsserted" : "2024-01-10T15:54:06.0000000+01:00",
+      "informationSource" : {
+        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+      },
+      "dosage" : [ {
+        "text" : "alle 2 Woche(n): Mo: 20:00 1 Stk",
+        "patientInstruction" : "See leaflet",
+        "timing" : {
+          "repeat" : {
+            "boundsPeriod" : {
+              "start" : "2023-11-12"
+            }
+          }
+        },
+        "route" : {
+          "coding" : [ {
+            "system" : "urn:oid:0.4.0.127.0.16.1.1.2.1",
+            "code" : "20066000",
+            "display" : "Subcutaneous use"
+          } ]
+        },
+        "method" : {
+          "coding" : [ {
+            "system" : "urn:oid:0.4.0.127.0.16.1.1.2.1",
+            "code" : "0011",
+            "display" : "Injection"
+          } ]
+        }
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:c5cced38-7e83-596d-a45b-af574dc64673",
+    "resource" : {
+      "resourceType" : "MedicationStatement",
+      "id" : "c5cced38-7e83-596d-a45b-af574dc64673",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">GTIN 7680562030092</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "coding" : [ {
+            "system" : "urn:oid:2.51.1.1",
+            "code" : "7680562030092"
+          } ],
+          "text" : "GTIN 7680562030092"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:ac8408c4-a34e-5c2e-b67e-84bef6a98fb5"
+      } ],
+      "status" : "active",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+      },
+      "dateAsserted" : "2024-01-10T15:54:06.0000000+01:00",
+      "informationSource" : {
+        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+      },
+      "reasonCode" : [ {
+        "text" : "Infection"
+      } ],
+      "dosage" : [ {
+        "patientInstruction" : "Endocarditis prophylaxis. Take 1 pill 2 hours (09:00 a.m.) before the dentist's appointment (02.02.2024 11.00 a.m.).",
+        "timing" : {
+          "repeat" : {
+            "boundsPeriod" : {
+              "start" : "2024-02-02",
+              "end" : "2024-02-02"
+            },
+            "count" : 1,
+            "timeOfDay" : [ "09:00:00" ]
+          }
+        },
+        "doseAndRate" : [ {
+          "doseQuantity" : {
+            "value" : 1,
+            "unit" : "Stk",
+            "system" : "http://snomed.info/sct",
+            "code" : "767525000"
+          }
+        } ]
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:c0cc0cdc-aee2-5d3c-bf73-a97ca4264027",
+    "resource" : {
+      "resourceType" : "MedicationStatement",
+      "id" : "c0cc0cdc-aee2-5d3c-bf73-a97ca4264027",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">GTIN 7680562030092</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "coding" : [ {
+            "system" : "urn:oid:2.51.1.1",
+            "code" : "7680562030092"
+          } ],
+          "text" : "GTIN 7680562030092"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:25e38a91-0302-58b8-a2d0-5fe56eeac71e"
+      } ],
+      "status" : "active",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+      },
+      "dateAsserted" : "2024-01-10T15:54:06.0000000+01:00",
+      "informationSource" : {
+        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+      },
+      "reasonCode" : [ {
+        "text" : "Infection"
+      } ],
+      "dosage" : [ {
+        "timing" : {
+          "repeat" : {
+            "boundsPeriod" : {
+              "start" : "2024-03-06",
+              "end" : "2024-03-11"
+            },
+            "timeOfDay" : [ "08:00:00", "20:00:00" ]
+          }
+        },
+        "doseAndRate" : [ {
+          "doseQuantity" : {
+            "value" : 1,
+            "unit" : "Stk",
+            "system" : "http://snomed.info/sct",
+            "code" : "767525000"
+          }
+        } ]
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:2704a432-ec89-56c7-9c87-770650e03b5d",
+    "resource" : {
+      "resourceType" : "MedicationStatement",
+      "id" : "2704a432-ec89-56c7-9c87-770650e03b5d",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">GTIN 7680302190581</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "coding" : [ {
+            "system" : "urn:oid:2.51.1.1",
+            "code" : "7680302190581"
+          } ],
+          "text" : "GTIN 7680302190581"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:7c0d335c-fa7a-5ec0-8a64-ab30abc8c352"
+      } ],
+      "status" : "active",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+      },
+      "dateAsserted" : "2024-01-10T15:54:06.0000000+01:00",
+      "informationSource" : {
+        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+      },
+      "dosage" : [ {
+        "patientInstruction" : "1 application once a month, next appointment on 10.02.2024",
+        "timing" : {
+          "repeat" : {
+            "frequency" : 1,
+            "period" : 1,
+            "periodUnit" : "mo"
+          }
+        },
+        "route" : {
+          "coding" : [ {
+            "system" : "urn:oid:0.4.0.127.0.16.1.1.2.1",
+            "code" : "20035000",
+            "display" : "Intramuscular use"
+          } ]
+        },
+        "method" : {
+          "coding" : [ {
+            "system" : "urn:oid:0.4.0.127.0.16.1.1.2.1",
+            "code" : "0011",
+            "display" : "Injection"
+          } ]
+        },
+        "doseAndRate" : [ {
+          "doseQuantity" : {
+            "value" : 1,
+            "unit" : "Stk",
+            "system" : "http://snomed.info/sct",
+            "code" : "767525000"
+          }
+        } ]
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:03413390-fcf1-5d2f-97e4-d1351f5cf0e9",
+    "resource" : {
+      "resourceType" : "MedicationStatement",
+      "id" : "03413390-fcf1-5d2f-97e4-d1351f5cf0e9",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">GTIN 7680540300100: If palpitations occur, take Â½ pill and wait 30 minutes. If palpitations persist, take another Â½ pill and wait another 30 minutes. If it does not get better, contact a doctor.</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "coding" : [ {
+            "system" : "urn:oid:2.51.1.1",
+            "code" : "7680540300100"
+          } ],
+          "text" : "GTIN 7680540300100"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:95f65de5-f839-591c-9441-7ef505b9f554"
+      } ],
+      "status" : "active",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+      },
+      "dateAsserted" : "2024-01-10T15:54:06.0000000+01:00",
+      "informationSource" : {
+        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+      },
+      "dosage" : [ {
+        "text" : "If palpitations occur, take Â½ pill and wait 30 minutes. If palpitations persist, take another Â½ pill and wait another 30 minutes. If it does not get better, contact a doctor.",
+        "timing" : {
+          "repeat" : {
+            "boundsPeriod" : {
+              "start" : "2022-07-06"
+            }
+          }
+        },
+        "asNeededBoolean" : true
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:3c622b52-d1ed-5ca3-af38-87501b442e23",
+    "resource" : {
+      "resourceType" : "MedicationStatement",
+      "id" : "3c622b52-d1ed-5ca3-af38-87501b442e23",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Imagikin: alle 1 Monat(e): am Tag des Monats 10: 10-20 gtt</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "text" : "Imagikin"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:cb94e535-1d39-5a6b-9e5e-250dcec6597d"
+      } ],
+      "status" : "active",
+      "category" : {
+        "coding" : [ {
+          "system" : "http://terminology.hl7.org/CodeSystem/medication-statement-category",
+          "code" : "patientspecified",
+          "display" : "Patient Specified"
+        } ]
+      },
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+      },
+      "dateAsserted" : "2024-01-10T15:54:06.0000000+01:00",
+      "informationSource" : {
+        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+      },
+      "dosage" : [ {
+        "text" : "alle 1 Monat(e): am Tag des Monats 10: 10-20 gtt",
+        "timing" : {
+          "repeat" : {
+            "boundsPeriod" : {
+              "start" : "2023-11-10"
+            }
+          }
+        }
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:b3ad7501-d8d1-53c0-8b7b-c8af486ce6cf",
+    "resource" : {
+      "resourceType" : "MedicationStatement",
+      "id" : "b3ad7501-d8d1-53c0-8b7b-c8af486ce6cf",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Imagikin</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "text" : "Imagikin"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:7fb2dad2-9cdd-5a6b-8fd6-323c4713f7c3"
+      } ],
+      "status" : "active",
+      "category" : {
+        "coding" : [ {
+          "system" : "http://terminology.hl7.org/CodeSystem/medication-statement-category",
+          "code" : "patientspecified",
+          "display" : "Patient Specified"
+        } ]
+      },
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:43f300d8-4333-50aa-8d92-37e8b83b5f66"
+      },
+      "dateAsserted" : "2024-01-10T15:54:06.0000000+01:00",
+      "informationSource" : {
+        "reference" : "urn:uuid:6bc2723c-8634-5e7b-afe9-0576a4964572"
+      },
+      "dosage" : [ {
+        "timing" : {
+          "repeat" : {
+            "boundsPeriod" : {
+              "start" : "2024-02-02",
+              "end" : "2024-02-18"
+            },
+            "dayOfWeek" : [ "mon" ],
+            "timeOfDay" : [ "18:00:00" ]
+          }
+        },
+        "asNeededBoolean" : true,
+        "doseAndRate" : [ {
+          "doseQuantity" : {
+            "value" : 2,
+            "unit" : "gtt",
+            "system" : "http://snomed.info/sct",
+            "code" : "732994000"
+          }
+        } ]
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:01bd08ce-5807-5285-a1dd-1f56defb48a3",
+    "resource" : {
+      "resourceType" : "Binary",
+      "id" : "01bd08ce-5807-5285-a1dd-1f56defb48a3",
+      "contentType" : "application/pdf",
+      "data" : "{{pdf}}"
+    }
+  } ]
+}

@@ -100,6 +100,16 @@ class ImageInputIT {
         .noneMatch(m -> m.contains("example.org") || m.contains("H4sI"));
   }
 
+  /** Feature 006, research R3: the refusal names the source of the other version. */
+  @Test
+  void chmed23aImageNamesTheSourceChmed23a() {
+    ConversionResult result = convert("qr/chmed23a.png", TestOptions.withAuthorAndPatientId());
+
+    assertThat(errors(result))
+        .singleElement()
+        .satisfies(e -> assertThat(e.message()).contains("use source chmed23a"));
+  }
+
   @Test
   void corruptImageIsUnreadable() {
     byte[] png = Fixtures.bytes("qr/plan-basic.png");

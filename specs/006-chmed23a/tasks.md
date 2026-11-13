@@ -8,7 +8,7 @@ description: "Task list for feature 006 - CHMED23A ↔ CH EMED"
 **Input**: Design documents from `/specs/006-chmed23a/`
 
 **Prerequisites**:
-- plan.md, spec.md, research.md (R1–R15, F1–F6), data-model.md, contracts/ (library-api.md,
+- plan.md, spec.md, research.md (R1–R15, F1–F9), data-model.md, contracts/ (library-api.md,
   cli.md, rest-api.md), quickstart.md.
 - `dev` builds green on version 1.2.0-SNAPSHOT.
 
@@ -55,7 +55,7 @@ and tested independently.
 
 **Purpose**: The new module, the test corpus and the vendored terminology
 
-- [ ] T001 Create the Maven module `format-chmed23a/pom.xml`:
+- [X] T001 Create the Maven module `format-chmed23a/pom.xml`:
   - parent `ch-emed-converter-parent`;
   - main dependencies `converter-core`, `converter-qr` and `jackson-databind`;
   - test dependencies `converter-validation`, JUnit, AssertJ, `jsonassert`, `logback-classic`, and
@@ -64,19 +64,19 @@ and tested independently.
   Add `<module>format-chmed23a</module>` after `format-chmed16a` in `pom.xml`. Add an empty
   `META-INF/services/ch.emed.converter.core.spi.FormatModule` under
   `format-chmed23a/src/main/resources/`.
-- [ ] T002 [P] Copy the four JSON blocks of `chmed23a/examples.md`, at commit
+- [X] T002 [P] Copy the four JSON blocks of `chmed23a/examples.md`, at commit
   `0b579aa6f3aff10a017498db57048c6504091653`, verbatim to
   `FX/chmed23a/official/Example1.json` … `Example4.json`.
   - Write `FX/chmed23a/official/README.md` with the repository, commit, file, the MIT notice
-    "© 2024 ig-emediplan" and the findings F1–F3, F5 of research R13.
+    "© 2024 ig-emediplan" and the findings F1–F3, F5, F7 of research R13.
   - Check that the files are strict JSON with LF line endings.
-- [ ] T003 [P] Wrap every example block of `chmed23a/posology.md` (pinned commit) into a minimal
+- [X] T003 [P] Wrap every example block of `chmed23a/posology.md` (pinned commit) into a minimal
   carrier document and store each in `FX/chmed23a/posology/<Object>-<n>.json`, e.g.
   `Daily-1.json`, `Cyclic-1.json`, `Sequence-1.json` (research R13.2).
   - The carrier is a plan (`medType` 1, `auth` 2) with patient "Dora Graber" from the README
     example and one medicament `Med1`, `idType` 1, unit `Stk`.
   - `FX/chmed23a/posology/README.md` lists source line and object for each file.
-- [ ] T004 [P] Transcribe the .NET examples that add cases beyond T002 and T003 to JSON in
+- [X] T004 [P] Transcribe the .NET examples that add cases beyond T002 and T003 to JSON in
   `FX/chmed23a/dotnet/`, sources under
   `chmed23a/client-implementations/dotnet/Source/Emediplan.ChMed23A.Examples/` (research R13.3).
   - Name each file after its source test, e.g.
@@ -84,7 +84,7 @@ and tested independently.
   - Replace `DateTimeOffset.Now` by `2024-01-09T09:14:36+01:00`.
   - Together with T003, the fixtures must cover every "Yes" cell of both compatibility tables of
     posology.md. `FX/chmed23a/dotnet/README.md` holds the coverage matrix.
-- [ ] T005 [P] Generate `format-chmed23a/src/main/resources/chmed23a/terminology/` once from the
+- [X] T005 [P] Generate `format-chmed23a/src/main/resources/chmed23a/terminology/` once from the
   pinned `chmed23a/terminology.md` (research R7):
   - `unit.csv` (CDTYP 9);
   - `route.csv` (CDTYP 61);
@@ -93,13 +93,13 @@ and tested independently.
 
   Each has columns `code;de;fr`, is UTF-8 with LF, and has a header comment naming the commit.
   Record the generator command in `format-chmed23a/src/main/resources/chmed23a/terminology/README.md`.
-- [ ] T006 [P] Add `FormatId.CHMED23A` to
+- [X] T006 [P] Add `FormatId.CHMED23A` to
   `converter-core/src/main/java/ch/emed/converter/core/api/FormatId.java`, with Javadoc
   "eMediplan CHMED23A (deprecated by IG eMediplan)".
-- [ ] T007 [P] Add `ReasonCode.CHUNK_INVALID` to
+- [X] T007 [P] Add `ReasonCode.CHUNK_INVALID` to
   `converter-core/src/main/java/ch/emed/converter/core/report/ReasonCode.java`: ERROR, a chunked
   payload that is incomplete or inconsistent (research R5).
-- [ ] T008 Create `docs/mapping/chmed23a-ch-emed.md` with the sections of research R15:
+- [X] T008 Create `docs/mapping/chmed23a-ch-emed.md` with the sections of research R15:
   - header naming the pinned commit and the deprecation (strategy 2025-12-02);
   - Conformance (`C23-OBJ-*`, `C23-POS-*`, `C23-TERM-*`);
   - Input (`M23-IN-*`) and QR (`M23-QR-*`);
@@ -121,7 +121,7 @@ model, reader, validator and transmission format that every story needs
 
 ### Move the CH EMED helpers (R2)
 
-- [ ] T009 Move these classes from `format-chmed16a/src/main/java/ch/emed/converter/chmed16a/` to
+- [X] T009 Move these classes from `format-chmed16a/src/main/java/ch/emed/converter/chmed16a/` to
   `converter-core/src/main/java/ch/emed/converter/core/chemed/`, without changing their behaviour:
   - `io/ChEmedDocumentReader.java`;
   - `mapping/Profiles.java`;
@@ -135,10 +135,10 @@ model, reader, validator and transmission format that every story needs
   - update all imports in `format-chmed16a` (main and test) and `format-ch-emed-epr` (test);
   - move `ChEmedDocumentReaderTest.java` to `converter-core/src/test/java/ch/emed/converter/core/chemed/`;
   - make `MappingTraceabilityTest` (format-chmed16a) scan the new annotation.
-- [ ] T010 Run the full `format-chmed16a` and `format-ch-emed-epr` test suites after T009. All
+- [X] T010 Run the full `format-chmed16a` and `format-ch-emed-epr` test suites after T009. All
   expected outputs must be byte-identical, with no fixture changed. Fix the move until they pass.
   This is the regression gate of research R2.
-- [ ] T011 [P] Write `converter-core/src/test/java/ch/emed/converter/core/api/FormatInfoTest.java`:
+- [X] T011 [P] Write `converter-core/src/test/java/ch/emed/converter/core/api/FormatInfoTest.java`:
   - the existing constructors give `deprecated` = `false`;
   - the new canonical constructor keeps the value;
   - `DefaultConverter.formats()` takes `deprecated()` from the module.
@@ -149,7 +149,7 @@ model, reader, validator and transmission format that every story needs
 
 ### CHMED23A model, reader and validator
 
-- [ ] T012 [P] Create the model records in `M/model/` as in data-model §2, using sealed interfaces
+- [X] T012 [P] Create the model records in `M/model/` as in data-model §2, using sealed interfaces
   with records for each `t`:
   - `Medication`, `Patient`, `PatientId`, `MedicalData`, `RiskCategory`, `Extension`,
     `HealthcarePerson`, `HealthcareOrganization`, `Medicament`, `Posology`;
@@ -162,23 +162,23 @@ model, reader, validator and transmission format that every story needs
   - `TimeUnit`.
 
   Decimals are `BigDecimal`. Lists are immutable and never null.
-- [ ] T013 [P] Write `T/io/Chmed23aJsonReaderTest.java`:
+- [X] T013 [P] Write `T/io/Chmed23aJsonReaderTest.java`:
   - all fixtures of T002–T004 parse;
   - unknown properties give INFORMATION `UNKNOWN_FIELD_IGNORED` with the path (M23-IN rule);
   - an unknown `t` value gives `CHMED_INVALID_FIELD` at the path of `t`;
   - integers given as decimals are rounded with INFORMATION `DERIVED_VALUE` (data-model §2.3);
   - invalid JSON gives `PARSE_ERROR` without content;
   - non-ASCII text is kept.
-- [ ] T014 Implement `M/io/Chmed23aJsonReader.java` with Jackson tree parsing into the T012
+- [X] T014 Implement `M/io/Chmed23aJsonReader.java` with Jackson tree parsing into the T012
   records. Dispatch the polymorphic objects by `t`. Report paths in the form
   `/meds/0/pos/0/po/tdo/ts/1/dt`, never values. Make T013 pass.
-- [ ] T015 [P] Write `T/validation/TerminologyTest.java`:
+- [X] T015 [P] Write `T/validation/TerminologyTest.java`:
   - the CSVs of T005 contain every code of the pinned `terminology.md`, with a copy under
     `FX/chmed23a/terminology.md` as test input;
   - a lookup with any letter case finds the unit code, e.g. `STK` and `Stk`.
 
   Then implement `M/validation/Terminology.java`, which loads the CSVs once and is immutable.
-- [ ] T016 [P] Write `T/validation/Chmed23aValidatorTest.java`, with one synthetic fixture per C23
+- [X] T016 [P] Write `T/validation/Chmed23aValidatorTest.java`, with one synthetic fixture per C23
   rule in `FX/chmed23a/synthetic/invalid-*.json`:
   - every "R" and conditional usage per medType (README tables);
   - value sets;
@@ -195,13 +195,13 @@ model, reader, validator and transmission format that every story needs
   validation tests" in `docs/mapping/chmed23a-ch-emed.md`, which lists every test method of
   `Emediplan.ChMed23A.Tests.Unit/Validation/*`, and asserts that each row names a C23 rule with a
   fixture of T016 or "not applicable" with a reason (research R7.4).
-- [ ] T018 Implement `M/validation/Chmed23aValidator.java` with `validate(Medication,
+- [X] T018 Implement `M/validation/Chmed23aValidator.java` with `validate(Medication,
   ReportCollector, Phase)`, one method per rule group, each annotated with its C23 ids. Make T016
   and T017 pass.
 
 ### Transmission format and input detection
 
-- [ ] T019 [P] Write `T/io/TransmissionFormatTest.java`:
+- [X] T019 [P] Write `T/io/TransmissionFormatTest.java`:
   - decode a payload, case-insensitively (`chmed23a.` is accepted);
   - subversion `B` → `UNSUPPORTED_VERSION`;
   - decompressed size above `maxDecodedSize` → the feature 003 code;
@@ -214,16 +214,16 @@ model, reader, validator and transmission format that every story needs
       with a plain payload → `CHUNK_INVALID`, with the index in the message and no data;
   - encoding: `CHMED23A.` + Base64 of GZip without timestamp; decoding the encoded value gives
     the input bytes; two encodings are byte-identical.
-- [ ] T020 Implement `M/io/TransmissionFormat.java` with `decode(String, long maxDecodedSize,
+- [X] T020 Implement `M/io/TransmissionFormat.java` with `decode(String, long maxDecodedSize,
   ReportCollector)`, `join(List<String>)` and `encode(byte[])`, carrying `@MappingRule` M23-QR
   ids. Writing chunks is not offered (R5). Make T019 pass.
-- [ ] T021 [P] Write `T/io/InputFormDetectorTest.java` for every row of the table in research R3,
+- [X] T021 [P] Write `T/io/InputFormDetectorTest.java` for every row of the table in research R3,
   including whitespace-separated chunks, a leading BOM, CHMED16A JSON and payload, and FHIR JSON.
-- [ ] T022 Implement `M/io/InputFormDetector.java` (R3). Make T021 pass.
+- [X] T022 Implement `M/io/InputFormDetector.java` (R3). Make T021 pass.
 
 ### Module skeleton
 
-- [ ] T023 Create `M/Chmed23aFormatModule.java` and register it in `META-INF/services`:
+- [X] T023 Create `M/Chmed23aFormatModule.java` and register it in `META-INF/services`:
   - `format()` returns `CHMED23A`;
   - `pinnedSpecification()` returns `CHMED23A (ig-emediplan/specification@0b579aa6)`;
   - `inputForms()` returns `json, qr-payload, qr-image`;
@@ -235,14 +235,14 @@ model, reader, validator and transmission format that every story needs
   feature 003 M-QR-01..04), validates with T018, and then delegates to builders that the stories
   add. `fromChEmed` opens the document with `ChEmedDocumentReader` and delegates likewise. Until a
   story adds its builder, the corresponding path fails with `UNSUPPORTED_DOCUMENT_TYPE`.
-- [ ] T024 [P] Create test support in `T/testsupport/`:
+- [X] T024 [P] Create test support in `T/testsupport/`:
   - `Fixtures.java`;
   - `TestOptions.java`;
   - `MappingTestSupport.java` (convert, validate against CH EMED, assert report entries);
   - `CapabilityGaps.java`, which reads the gap list of the mapping specification.
 
   Reuse `PhiScanner` and `ChEmedAssertions` from the `format-chmed16a` test-jar.
-- [ ] T025 Write `T/MappingTraceabilityTest.java`, as in CHMED16A. Every rule id in
+- [X] T025 Write `T/MappingTraceabilityTest.java`, as in CHMED16A. Every rule id in
   `docs/mapping/chmed23a-ch-emed.md` must have an `@MappingRule` in main code and a test that names
   it; every `@MappingRule` id must exist in the document. The test may list rules of later phases as
   pending until the end of Phase 7, where the list must be empty.
@@ -280,7 +280,7 @@ quickstart Scenarios 1–3, 5).
     GLN, ZSR) from the document;
   - option `author` given → not used, INFORMATION;
   - `auth` 2 → Patient as `Composition.author`.
-- [ ] T028 [P] [US1] Write `T/mapping/PosologyToFhirMapperTest.java`, one test per row of the
+- [X] T028 [P] [US1] Write `T/mapping/PosologyToFhirMapperTest.java`, one test per row of the
   research R9 table, using the posology fixtures (T003, T004):
   - each exact row gives the expected `Dosage` (structured `timing`, `doseQuantity`/`doseRange`,
     base and split entries);
@@ -309,18 +309,18 @@ quickstart Scenarios 1–3, 5).
   - `idType` 1–4, `rsn`, `autoMed` → `patientspecified`, `prscbBy` → WARNING;
   - one MedicationStatement per posology;
   - medicament without posology (as M-MED-09).
-- [ ] T031 [P] [US1] Write `T/it/Chmed23aPlanToChEmedIT.java`:
+- [X] T031 [P] [US1] Write `T/it/Chmed23aPlanToChEmedIT.java`:
   - `Example1`–`Example3` and every plan fixture of `posology/` and `dotnet/` convert with outcome
     `SUCCESS` or `SUCCESS_WITH_WARNINGS`, and validate against CH EMED 6.0.0 (FR-008);
   - expected outputs for `Example1`–`Example3` in `FX/expected/` are compared byte-exactly;
-  - expected report entries per example: F1 text kept as given, F2 INFORMATION for usage `-`
+  - expected report entries per example: F1 non-ASCII text kept, F2 INFORMATION for usage `-`
     fields, F3 derived id, `mData` loss, the text-fallback posologies;
   - write outputs to `format-chmed23a/target/it-outputs/` for `tools/validate-outputs.sh`.
-- [ ] T032 [P] [US1] Write `T/it/InputFormsIT.java` (SC-003): for each of `Example1`–`Example3`, the
+- [X] T032 [P] [US1] Write `T/it/InputFormsIT.java` (SC-003): for each of `Example1`–`Example3`, the
   JSON, the encoded payload, the payload in 2/3/4 shuffled chunks (generated in the test) and a QR
   image (`FX/qr/Example{n}.png`, generated once with `QrImageWriter`) give byte-identical CH EMED
   documents and reports.
-- [ ] T033 [P] [US1] Write `T/it/EdgeCasesIT.java` for the spec edge cases on the read side:
+- [X] T033 [P] [US1] Write `T/it/EdgeCasesIT.java` for the spec edge cases on the read side:
   - `medType` 2 → `UNSUPPORTED_DOCUMENT_TYPE` naming MP and Rx (FR-003);
   - CHMED16A JSON and payload declared as `chmed23a` → `UNSUPPORTED_VERSION` "use source
     chmed16a";
@@ -333,30 +333,30 @@ quickstart Scenarios 1–3, 5).
   - umlauts and French and Italian texts preserved (`FX/chmed23a/synthetic/non-ascii.json`);
   - `chmed23a → chmed16a` and `chmed23a → ch-emed-epr` → `UNSUPPORTED_CONVERSION` naming the path
     through `ch-emed` (FR-004).
-- [ ] T034 [P] [US1] Extend
+- [X] T034 [P] [US1] Extend
   `format-chmed16a/src/test/java/ch/emed/converter/chmed16a/io/InputFormDetectorTest.java` and
   `.../it/ImageInputIT.java` with a test that CHMED23A JSON, a payload and an image declared as
   `chmed16a` give `UNSUPPORTED_VERSION` with a message naming `chmed23a` (research R3).
 
 ### Implementation for User Story 1
 
-- [ ] T035 [P] [US1] Implement `M/mapping/PatientMapper.java` (M23-PAT, M23-MDT, M23-EXT for
+- [X] T035 [P] [US1] Implement `M/mapping/PatientMapper.java` (M23-PAT, M23-MDT, M23-EXT for
   patient and medical data). Make T026 pass.
-- [ ] T036 [P] [US1] Implement `M/mapping/AuthorMapper.java` (M23-AUT). Make T027 pass.
-- [ ] T037 [P] [US1] Implement `M/mapping/PosologyText.java`, with localized phrases next to the
+- [X] T036 [P] [US1] Implement `M/mapping/AuthorMapper.java` (M23-AUT). Make T027 pass.
+- [X] T037 [P] [US1] Implement `M/mapping/PosologyText.java`, with localized phrases next to the
   moved `Labels` and no invented codes. Make T029 pass.
-- [ ] T038 [US1] Implement `M/mapping/PosologyToFhirMapper.java` (M23-DOS, research R9). Use
+- [X] T038 [US1] Implement `M/mapping/PosologyToFhirMapper.java` (M23-DOS, research R9). Use
   `core.chemed.Units` and `Terminology`, and add the method table `moa → EDQM` as
   `format-chmed23a/src/main/resources/chmed23a/method-edqm.csv` with only unambiguous rows, marked
   for domain review. Make T028 pass (depends on T037).
-- [ ] T039 [US1] Implement `M/mapping/MedicationCardBuilder.java` and `M/mapping/MappingScope.java`
+- [X] T039 [US1] Implement `M/mapping/MedicationCardBuilder.java` and `M/mapping/MappingScope.java`
   (M23-DOC, M23-MED; derived ids through the `IdStrategy`; original representation through
   `OriginalRepresentationRenderer`). Make T030 pass (depends on T035, T036, T038).
-- [ ] T040 [US1] Wire plans into `Chmed23aFormatModule.toChEmed`: `medType` 1 →
+- [X] T040 [US1] Wire plans into `Chmed23aFormatModule.toChEmed`: `medType` 1 →
   `MedicationCardBuilder`; `medType` 2 and others → `UNSUPPORTED_DOCUMENT_TYPE`. Make T031–T033
   pass, and create the expected outputs of T031 after manual review against the mapping
   specification.
-- [ ] T041 [US1] Change the CHMED16A refusal messages for CHMED23A input in
+- [X] T041 [US1] Change the CHMED16A refusal messages for CHMED23A input in
   `format-chmed16a/src/main/java/ch/emed/converter/chmed16a/io/Chmed16aJsonReader.java` and
   `.../Chmed16aFormatModule.java` to name the source `chmed23a`. Update rules M-IN-04 and M-QR-04 in
   `docs/mapping/chmed16a-ch-emed.md`. Make T034 pass.
