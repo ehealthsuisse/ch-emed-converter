@@ -62,6 +62,12 @@ interpretation points:
   that the physician chose the prescription deliberately and wants it exactly so (README of the
   pinned specification); unlike `isNotSub`, it does not forbid substitution. CH EMED has no element for it, so it is not kept. Open question:
   carry it as text, for example in `MedicationRequest.note`, so that the pharmacy still sees it;
+- `nbPack` as quantity per dispense (M23-RX-06). `nbPack` is the number of packages to be
+  delivered (README of the pinned specification, default 1); the package follows from the product,
+  typically its GTIN. It becomes `dispenseRequest.quantity`, which FHIR defines as the amount per
+  dispense; the default 1 is not materialised. Open question: the specification does not say
+  whether `nbPack` applies to each dispense or to the whole prescription when `reps` allows
+  repetitions (for example 2 packages, 3 repetitions: 2 each time or 2 in total);
 - one MedicationRequest per posology of a prescribed medicament (M23-RX-02, research R10). The
   profile allows one base dosage per request, so a medicament with several posologies (Example 4:
   a tapering scheme with four periods) becomes several requests, and the dispense data, including

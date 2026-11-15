@@ -649,6 +649,11 @@ afterwards so that the work follows the Spec Kit flow (constitution, "Developmen
   - the reading of the eMediplan QR scope line in plan.md (Constitution Check V): each module
     recognises the other version prefix and names the right source instead of dispatching
     automatically. The reviewer confirms this reading or asks for a constitution clarification.
+
+  *PR #10 was merged into `dev` on 2026-11-15 without a recorded review. The review follows
+  afterwards and covers the first two points. The third point is resolved: constitution 1.5.1
+  (2026-11-15) states that the caller names the source CHMED version and that a QR payload whose
+  prefix does not match is refused with a hint naming the matching source.*
 - [X] T085 Decide whether `tools/remote-build.sh load` runs the time tests in the Docker container
   of T081 instead of `taskset -c 0-3` on the host, so that every run uses the reference hardware
   of feature 002 including the memory limit. *Decided 2026-11-15: yes. `load` now runs Maven in

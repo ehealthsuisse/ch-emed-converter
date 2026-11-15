@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-12
 
-**Status**: Draft
+**Status**: Implemented
 
 **Input**: User description: "CHMED23A ↔ CH EMED: Der Converter soll eMediplan-Dokumente im Format CHMED23A in beide Richtungen mit CH EMED 6.0.0 umwandeln, gemäss Conversion Scope der Constitution 1.5.0 und analog zu CHMED16A (Features 001 und 003): Medikationsplan (medType 1) ↔ Medication Card und Rezept (medType 3) ↔ Medication Prescription; PolymedicationCheck (medType 2, auch in CHMED23A deprecated) wird abgelehnt. Quelle ist die veröffentlichte, eingefrorene Spezifikation im Repository ig-emediplan/specification (chmed23a/, chtransmissionformat/, gepinnter Commit); ein JSON-Schema gibt es nicht, die Konformität richtet sich nach Objektmodell, Posologie und Terminologie der Spezifikation. Die IG eMediplan hat CHMED23A eingestellt (Status Deprecated, Strategie 2.12.2025); das Format wird in Doku und Capabilities als deprecated ausgewiesen. Übertragungsformen: Klartext-JSON, QR-Payload im ChTransmissionFormat (Präfix CHMED23A., Base64 über GZip, inklusive gestückelter Payloads CHMED23A.1/4.…) und QR-Bild lesen und schreiben. Die erweiterte Posologie von CHMED23A wird so genau wie möglich in CH EMED abgebildet; was CH EMED oder CHMED23A nicht darstellen kann, wird im Report ausgewiesen, nie still verworfen. CHMED23A erreicht CH EMED EPR und CHMED16A nur über CH EMED (Hub). Verfügbar über Library, CLI und REST mit identischem Verhalten. Testkorpus: die Beispiele der Spezifikation (examples.md, Beispiele der .NET-Referenzimplementierung)."
 
