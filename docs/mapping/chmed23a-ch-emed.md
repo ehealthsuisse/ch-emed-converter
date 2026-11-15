@@ -37,7 +37,11 @@ interpretation points:
 - units beyond the CHMED16A table (`gtt` → drop, `UI` → `[iU]`, UCUM units; `Appl` unmapped;
   M23-DOS-15) and `N/A` for plans without dose unit (M23-REV-12);
 - the meal relation as event timing or as additional instruction text (M23-DOS-16);
-- `sic` and repetition durations under one day reported as clinical loss (M23-RX-04, M23-RX-08);
+- `sic` and repetition durations under one day reported as clinical loss (M23-RX-04, M23-RX-08).
+  `sic` ("sic erat scriptum") tells the pharmacist that the physician chose the prescription
+  deliberately and wants it exactly so (README of the pinned specification); unlike `isNotSub`, it
+  does not forbid substitution. CH EMED has no element for it, so it is not kept. Open question:
+  carry it as text, for example in `MedicationRequest.note`, so that the pharmacy still sees it;
 - one MedicationRequest per posology of a prescribed medicament (M23-RX-02, research R10);
 - GLN and GTIN check digits as WARNING instead of error (C23-OBJ-15, finding F7); the .NET
   reference implementation refuses invalid GLNs.
