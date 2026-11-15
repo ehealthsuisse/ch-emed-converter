@@ -220,18 +220,25 @@ immediately with 503 rather than piling up.
 
 Almost all of the time is the HL7 validation of the produced CH EMED document; the REST layer
 itself adds no measurable time. The hardware makes a large difference (warm service, default
-limits):
+limits, HL7 core 6.10.4; measured 2026-11-14 with `ConversionLoadTest`):
 
-| Case | Linux server, limited to 4 vCPUs (Ryzen 9 3950X) | Windows workstation, 16 logical cores |
-|------|--------------------------------------------------|---------------------------------------|
-| 20 different medications, a realistic large plan | 0.4 s | 3–4 s |
-| 100 different medications, the upper bound | 1.9 s | 16–19 s |
-| 20 simultaneous 20-medication plans, all answered after | 7.9 s | 23–35 s |
+| Case | Reference hardware: Docker container, 4 vCPUs, 8 GB RAM, default heap (Ryzen 9 3950X) | Windows workstation, Intel i7-1260P, 16 logical cores |
+|------|----------------------------------------------------------------------------------------|-------------------------------------------------------|
+| 20 different medications, a realistic large plan | 0.15 s | 0.2–0.3 s |
+| 100 different medications, the upper bound | 0.7 s | 1.0 s |
+| 20 simultaneous 20-medication plans, all answered after | 2.9 s | 7.8 s |
 
-Data is never mixed between requests. Concurrency, measured on the workstation only: the 20
-simultaneous plans took about 24 s in total, whether 4, 8 or 16 ran at the same time; more than
-four only made each conversion slower (with 4 the answers arrived after 7–24 s, with 16 after
-18–23 s). Measure on your own hardware before relying on these numbers.
+With the default `max-concurrent` of 4 the 20 simultaneous plans are answered in five waves of
+four (on the workstation after about 1.9, 3.3, 5.3, 6.5 and 7.8 s). Data is never mixed between
+requests. Measure on your own hardware before relying on these numbers.
+
+Before HL7 core 6.10.4 (2026-11-01, core 6.9.12) the same cases took 0.4 s, 1.9 s and 7.9 s on the
+Linux server limited to 4 vCPUs and 3–4 s, 16–19 s and 23–35 s on the workstation; a repeat with
+core 6.9.12 on the workstation on 2026-11-14 gave 1.6–1.9 s, 7.6 s and 21.7 s. The thread that
+core started for every pattern check costs far more on Windows than on Linux. Concurrency,
+measured then on the workstation: the 20 simultaneous plans took about 24 s in total, whether 4, 8
+or 16 ran at the same time; more than four only made each conversion slower (with 4 the answers
+arrived after 7–24 s, with 16 after 18–23 s).
 
 CH EMED EPR (feature 004, measured 2026-11-09 with the library on the Linux server, 4 vCPUs,
 warm context, output validation included; `format-ch-emed-epr` `PerformanceTest`):

@@ -125,7 +125,7 @@ The conversions of stories 1 to 3 are available through library, CLI and REST wi
 
 **Interfaces**
 
-- **FR-014**: All conversions, forms and options MUST be available through library, CLI and REST with identical behaviour and report, without changing the behaviour of existing conversions.
+- **FR-014**: All conversions, forms and options MUST be available through library, CLI and REST with identical behaviour and report, without changing the behaviour of existing conversions, except that CHMED16A input that is CHMED23A is refused naming the source `chmed23a` (plan, research R3).
 - **FR-015**: The capability information MUST list CHMED23A with its forms and conversions and mark it as deprecated by IG eMediplan; the documentation MUST say so too.
 
 **Data protection**

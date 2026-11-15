@@ -25,6 +25,7 @@ formats can be plugged in as modules.
 | `converter-validation` | offline CH EMED validation with the vendored IG packages |
 | `format-chmed16a` | CHMED16A model, parser, validator, mappers, serializer |
 | `format-chmed23a` | CHMED23A (deprecated by IG eMediplan): model, reader, conformance rules, mappers, writer, QR payload with chunks |
+| `format-ch-emed-epr` | CH EMED EPR 3.0.0 (CARA EMED): PMLC, PRE, MTP, DIS, PADV and PML in both directions with CH EMED |
 | `converter-cli` | picocli command line (`ch-emed-converter.jar`) |
 | `converter-rest` | stateless REST/JSON service, Spring Boot (`ch-emed-converter-rest.jar`) |
 
@@ -66,30 +67,41 @@ java -jar converter-cli/target/ch-emed-converter.jar convert --from chmed16a --t
 java -jar converter-cli/target/ch-emed-converter.jar convert --from ch-emed --to chmed16a \
   card.json --output-form qr-image -o plan.png
 # feature 004: CH EMED EPR (CARA EMED), always through ch-emed
-java -jar converter-cli/target/ch-emed-converter.jar convert --from ch-emed-epr --to ch-emed \n  pmlc.json -o card.json
-java -jar converter-cli/target/ch-emed-converter.jar convert --from ch-emed --to ch-emed-epr \n  rx.json -o pre.json --treatment-plan urn:uuid:<mtp>,urn:uuid:<statement>
-java -jar converter-cli/target/ch-emed-converter.jar convert --from ch-emed --to ch-emed-epr \n  card.json --output-form treatment-plans -o mtp-set.json
+java -jar converter-cli/target/ch-emed-converter.jar convert --from ch-emed-epr --to ch-emed \
+  pmlc.json -o card.json
+java -jar converter-cli/target/ch-emed-converter.jar convert --from ch-emed --to ch-emed-epr \
+  rx.json -o pre.json --treatment-plan urn:uuid:<mtp>,urn:uuid:<statement>
+java -jar converter-cli/target/ch-emed-converter.jar convert --from ch-emed --to ch-emed-epr \
+  card.json --output-form treatment-plans -o mtp-set.json
+# feature 006: CHMED23A (deprecated by IG eMediplan): JSON, payload (also chunks) or QR image
+java -jar converter-cli/target/ch-emed-converter.jar convert --from chmed23a --to ch-emed \
+  plan.json -o card.json
+java -jar converter-cli/target/ch-emed-converter.jar convert --from chmed23a --to ch-emed \
+  plan-chunks.txt -o card.json          # CHMED23A.1/3.… CHMED23A.2/3.… CHMED23A.3/3.…
+java -jar converter-cli/target/ch-emed-converter.jar convert --from ch-emed --to chmed23a \
+  card.json --output-form qr-image -o plan.png
 ```
 
 | Option | Meaning |
 |--------|---------|
 | `--from`, `--to` | `chmed16a`, `chmed23a`, `ch-emed` or `ch-emed-epr`; every conversion has `ch-emed` on one side (convert `chmed16a` → `ch-emed` → `ch-emed-epr` in two steps) |
-| `<input-file>` / `-` | input file or stdin; CHMED16A also as textual QR payload `CHMED16A1…`, PNG/JPEG QR image or signed eRezept URL (detected by content) |
+| `<input-file>` / `-` | input file or stdin; CHMED16A also as textual QR payload `CHMED16A1…`, PNG/JPEG QR image or signed eRezept URL; CHMED23A also as payload `CHMED23A.…`, several chunk payloads in one text input or PNG/JPEG QR image (detected by content) |
 | `-o`, `--output` | output file (default: stdout) |
-| `--output-form document|qr-payload|qr-image|treatment-plans` | output form; `qr-*` for `--to chmed16a` (`qr-image` only for medication plans), `treatment-plans` for `--to ch-emed-epr` and a medication card (one MTP per treatment) ||qr-payload\|qr-image` | output form for `--to chmed16a`; `qr-image` only for medication plans |
+| `--output-form document\|qr-payload\|qr-image\|treatment-plans` | output form; `qr-*` for `--to chmed16a` (`qr-image` only for medication plans) and `--to chmed23a` (`qr-image` also for prescriptions), `treatment-plans` for `--to ch-emed-epr` and a medication card (one MTP per treatment) |
 | `--signature-output <file>` | signature data of a signed eRezept (raw, not verified); default `<output>.signature.json` |
 | `--report <file>`, `--report-format json\|text` | JSON report file; report format on stderr |
 | `--strict` | fail if clinically relevant information cannot be represented |
 | `--language`, `--confidentiality` | document language and confidentiality if the source has none |
-| `--patient-id <system>\
+| `--patient-id <system>\|<value>`, `--author <file>` | data CH EMED requires but CHMED16A or CHMED23A may lack |
 | `--treatment-plan <documentId>,<statementId>` | repeatable, `--to ch-emed-epr`: reference to the treatment plan (MTP) in the EPR of each prescribed medication or card entry without one, in document order |
-| `--original-representation <file>` | `--to ch-emed-epr`: PDF/A used as original representation (otherwise one is rendered for PRE and PMLC) ||<value>`, `--author <file>` | data CH EMED requires but CHMED16A may lack |
+| `--original-representation <file>` | `--to ch-emed-epr`: PDF/A used as original representation (otherwise one is rendered for PRE and PMLC) |
 
 Exit codes: `0` success or success with warnings, `1` failed (nothing on stdout), `2` usage error,
 `3` internal error or validation not completed under system load (`VALIDATION_INCOMPLETE`; retry).
 Full contract: [contracts/cli.md](specs/001-chmed16a-ch-emed-conversion/contracts/cli.md), QR and
 eRezept additions in [specs/003-qr-erezept/contracts/cli.md](specs/003-qr-erezept/contracts/cli.md), CH EMED EPR additions in
-[specs/004-ch-emed-epr/contracts/cli.md](specs/004-ch-emed-epr/contracts/cli.md).
+[specs/004-ch-emed-epr/contracts/cli.md](specs/004-ch-emed-epr/contracts/cli.md), CHMED23A additions in
+[specs/006-chmed23a/contracts/cli.md](specs/006-chmed23a/contracts/cli.md).
 
 ## Library
 
@@ -157,12 +169,26 @@ network** — requests contain patient data. Operation, configuration and probes
 ## Performance
 
 The conversion itself (mapping, PDF, serialization) takes well under 0.2 s for a plan with 100
-medicaments (SC-005a, limit 2 s). The official validation of the produced CH EMED document dominates:
-about 3 s with a warm validation context on a Linux server limited to 4 vCPUs (Ryzen 9 3950X), up
-to 19 s on a slower Windows workstation (SC-005b, limit 30 s). A large realistic plan with 20
-medications takes about 0.5 s there (3–4 s on the workstation; SC-005c, limit 5 s). The cold start
-(loading the packages) takes about 10 s there, up to 40 s on the workstation. Reuse the `Converter`.
-The REST service builds the converter once at startup and adds no measurable time of its own.
+medicaments (SC-005a, limit 2 s). The official validation of the produced document dominates the
+time. Measured on 2026-11-14 with a warm validation context, on the reference hardware (Docker
+container limited to 4 vCPUs and 8 GB RAM, default heap, Ryzen 9 3950X) and on a Windows
+workstation (Intel i7-1260P, 16 logical cores, no limits):
+
+| Case | Reference hardware | Windows workstation | Limit |
+|------|--------------------|---------------------|-------|
+| CHMED16A → CH EMED, 100 medicaments, with validation (SC-005b) | 0.8 s | 2.0 s | 30 s |
+| CHMED16A → CH EMED, 20 medications, with validation (SC-005c) | 0.2 s | 0.4 s | 5 s |
+| CHMED23A → CH EMED → CHMED23A, 20 medications | 0.4 s | 1.0 s | – |
+| CH EMED → CH EMED EPR PMLC, 20 medications | 1.0 s | 2.3 s | 5 s |
+| CH EMED EPR PML ↔ CH EMED, 109 entries | 4 s | 4.5–5.7 s | 30 s |
+| REST service, 20 simultaneous requests with 20 medications (slowest answer) | 2.9 s | 7.8 s | – |
+| Cold start (loading the packages, first conversion) | 5 s | 9 s | – |
+
+These times need HL7 FHIR core 6.10.4 or later, pinned in the parent POM: with the 6.9.12 that
+HAPI 8.12.1 ships, validation is 3–11 times slower on the Windows workstation (100 medicaments
+11 s, PML 50 s) and the EPR limits are missed, because that version starts a thread for every
+pattern check. Reuse the `Converter`. The REST service builds the converter once at startup, adds
+no measurable time of its own and runs at most four conversions at a time by default.
 
 ## Data protection
 

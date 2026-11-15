@@ -605,6 +605,74 @@ capabilities mark the format as deprecated.
 
 ---
 
+## Phase 8: Documentation corrections and re-measurement (added 2026-11-15)
+
+**Purpose**: Correct README errors found in a review of the branch, complete the CHMED23A parts of
+the README and replace outdated performance figures. Documentation only; no code, mapping, output
+or report changes, so no CHANGELOG entry is required (constitution, "Development Workflow").
+
+**Note**: T079–T083 were done on 2026-11-14/15 before they were recorded here; they are entered
+afterwards so that the work follows the Spec Kit flow (constitution, "Development Workflow").
+
+- [X] T079 [P] Correct `README.md`, errors from feature 004:
+  - the three CH EMED EPR CLI examples contain a literal `\n` instead of a line break with `\`;
+  - the options table: unescaped `|` and a duplicated remainder in the `--output-form` row, the
+    `--patient-id <system>|<value>`, `--author <file>` row cut off and its remainder appended to
+    the `--original-representation` row;
+  - `format-ch-emed-epr` missing in the module table.
+- [X] T080 [P] Complete the CHMED23A parts of `README.md` (follow-up to T072), from
+  `contracts/cli.md`: CLI examples (JSON, chunks, QR image), input forms of `<input-file>`,
+  `--output-form` for `--to chmed23a`, `--patient-id`/`--author` also for CHMED23A, link to
+  `contracts/cli.md` of this feature.
+- [X] T081 Re-measure the time tests (`PerformanceTest`, `ConversionLoadTest`):
+  - on the reference hardware of feature 002 (4 vCPU, 8 GB RAM, default heap) as a Docker
+    container on the Linux machine (`--cpuset-cpus=0-3 --memory=8g --memory-swap=8g`,
+    `eclipse-temurin:21-jdk`, no `-Xmx`; checked: 4 CPUs, 8 GB, heap 2 GB);
+  - on the Windows workstation without limits;
+  - as a counter-check on the Windows workstation with `-Dfhir.core.version=6.9.12`.
+
+  Result: all green with core 6.10.4; with core 6.9.12 validation is 3–11 times slower on Windows
+  and the EPR limits SC-005 (PMLC 9.0 s > 5 s) and SC-004 (PML 49.9 s > 30 s) of features 004/005
+  fail. This explains the old Windows figures (core 6.9.12).
+- [X] T082 Replace the "Performance" section of `README.md` with the measurements of T081 (table
+  reference hardware / Windows workstation / limit) and a note that the times need HL7 core
+  6.10.4 or later.
+- [X] T083 Update the "Capacity" table of `docs/operations/rest-service.md` with the measurements of
+  T081; keep the figures of 2026-11-01 (core 6.9.12) as a comparison. The dated measurement
+  records of features 004–006 below it stay unchanged, as does the measurement record in
+  `specs/001-chmed16a-ch-emed-conversion/spec.md` (SC-005b/c).
+- [ ] T084 Review of the whole branch by a reviewer before the merge (constitution quality gate 4),
+  recorded in the PR description. The review covers:
+  - the module `format-chmed23a`, the move to `core.chemed`, the CHMED16A refusal message and
+    OpenAPI 1.3.0;
+  - the documentation corrections T079–T083;
+  - the reading of the eMediplan QR scope line in plan.md (Constitution Check V): each module
+    recognises the other version prefix and names the right source instead of dispatching
+    automatically. The reviewer confirms this reading or asks for a constitution clarification.
+- [X] T085 Decide whether `tools/remote-build.sh load` runs the time tests in the Docker container
+  of T081 instead of `taskset -c 0-3` on the host, so that every run uses the reference hardware
+  of feature 002 including the memory limit. *Decided 2026-11-15: yes. `load` now runs Maven in
+  `eclipse-temurin:21-jdk` with `--cpuset-cpus=0-3 --memory=8g --memory-swap=8g`, no `-Xmx`, as the
+  remote user and with the remote Maven repository; it prints the CPU count and heap first. The
+  script is not versioned (`.gitignore`); syntax and the generated remote command were checked
+  locally. Test run on the Linux machine 2026-11-15: 4 CPUs and 2 GB heap printed, BUILD SUCCESS
+  in 1:47 min, times as in T081 (100 medicaments 0.9 s, 20 simultaneous REST requests slowest
+  2.9 s, PML 109 entries 4.1 s).*
+- [ ] T086 Domain review of the mapping by a person with eMediplan / CH EMED knowledge
+  (constitution quality gate 4, SHOULD), using the domain-review list of
+  `docs/mapping/chmed23a-ch-emed.md`:
+  - the `moa → EDQM` table `method-edqm.csv`;
+  - units `gtt` and `Appl`;
+  - `relMeal` 4–7 as text;
+  - `sic` as clinical loss;
+  - prescriptions with several posologies split into several MedicationRequests (R10).
+
+  Record the outcome in the mapping specification and remove "Domain review pending" there. If the
+  review leads to mapping changes, handle them in a follow-up feature with a CHANGELOG entry. If it
+  is not done before the merge, name it as open in the PR description.
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies
@@ -624,6 +692,8 @@ capabilities mark the format as deprecated.
 - **US4 (Phase 6)**: depends on US1 (read) and US3 (write) for the parity corpus; T062, T064 and
   T068 only need T011.
 - **Polish (Phase 7)**: depends on all stories.
+- **Documentation corrections (Phase 8)**: depends on Phase 7. T079, T080 in parallel; T081 →
+  T082, T083 → T084. T085 and T086 are independent. T084 closes the feature.
 
 ### User Story Dependencies
 
