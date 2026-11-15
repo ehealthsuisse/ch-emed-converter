@@ -62,14 +62,54 @@ interpretation points:
   that the physician chose the prescription deliberately and wants it exactly so (README of the
   pinned specification); unlike `isNotSub`, it does not forbid substitution. CH EMED has no element for it, so it is not kept. Open question:
   carry it as text, for example in `MedicationRequest.note`, so that the pharmacy still sees it;
+- no default for an absent `reps` (M23-RX-05). `reps` says how often a prescription may be
+  redeemed again after the first time (Number `v`), within which period (Duration `d` `u`), or
+  both. The specification says that an absent `reps` counts as Number `v` = 1, so the
+  prescription may be redeemed once more; `v` = 0 makes it non-repeatable. The converter does not
+  materialise this default (constitution II), so `numberOfRepeatsAllowed` stays absent, and FHIR
+  gives an absent value no meaning. Open question: a receiver might read the absence as "no
+  repetition" although CHMED23A allows one; the alternative is to write `numberOfRepeatsAllowed`
+  1 with INFORMATION `DERIVED_VALUE`, which needs a decision on the "no defaults" rule;
+- `nbPack` as quantity per dispense (M23-RX-06). `nbPack` is the number of packages to be
+  delivered (README of the pinned specification, default 1); the package follows from the product,
+  typically its GTIN. It becomes `dispenseRequest.quantity`, which FHIR defines as the amount per
+  dispense; the default 1 is not materialised. Open question: the specification does not say
+  whether `nbPack` applies to each dispense or to the whole prescription when `reps` allows
+  repetitions (for example 2 packages, 3 repetitions: 2 each time or 2 in total);
 - one MedicationRequest per posology of a prescribed medicament (M23-RX-02, research R10). The
   profile allows one base dosage per request, so a medicament with several posologies (Example 4:
   a tapering scheme with four periods) becomes several requests, and the dispense data, including
   `nbPack`, is copied to each. Open question: a pharmacy might read the copies as several
   prescriptions and dispense the packages several times; the alternative is one request with the
   dosage as text, which loses the structure;
+- medical data `mData` not kept (M23-MDT-01). In a plan, `mData` holds weight `w` (kg), height `h`
+  (cm), risk categories `rcs` (for example renal insufficiency, pregnancy as risk 78, allergies),
+  the first day of the last menstruation `dLstMen` (required with risk 78), premature birth `prem` and the time of gestation `toG`
+  (`{week}-{day}`). The Medication Card has no place for them, so each element gives WARNING
+  `UNMAPPABLE_ELEMENT` with clinical loss. Open question: risks such as allergies or pregnancy
+  matter for dispensing; whether they should at least go along as text, for example in the
+  annotation section;
+- medicaments identified by Pharmacode or product number (M23-MED-03, M23-MED-04). `idType` says
+  what `id` holds: 1 free text, 2 GTIN (Refdata), 3 Pharmacode, 4 product number (both from the
+  INDEX database of HCI Solutions; 4 not in prescriptions). Only the GTIN becomes a coding
+  (`urn:oid:2.51.1.1`); the pinned packages have no code system for Pharmacode or product number,
+  so they become `code.text` with WARNING `UNMAPPABLE_ELEMENT`, without clinical loss. Open
+  question: the number is kept as text, but a receiver can no longer identify the product
+  automatically (for example for an interaction check); whether this should count as clinical
+  loss, which makes strict mode fail;
+- `prscbBy` not kept (M23-MED-07). In a plan, `prscbBy` names who prescribed the medicament, as GLN
+  or designation (physician, pharmacist). As for CHMED16A (M-MED-07), it is mapped to no element
+  and gives WARNING `UNMAPPABLE_ELEMENT`. Open questions: whether it should go along as text, for
+  example in `MedicationStatement.note`, or as a reference to the prescriber where a GLN is given;
 - GLN and GTIN check digits as WARNING instead of error (C23-OBJ-15, finding F7); the .NET
-  reference implementation refuses invalid GLNs.
+  reference implementation refuses invalid GLNs. A GLN or GTIN that is not 13 digits or has a wrong
+  GS1 check digit gives WARNING `CHMED_INVALID_FIELD`, and the value is carried unchanged. Reasons:
+  the CHMED23A specification does not constrain these formats, and the official examples must be
+  in the test corpus (constitution III). Of their four GLNs, three are placeholders with 11 or 12
+  digits (Examples 1 and 4), so an error would refuse two of the four examples; all 16 GTINs are
+  valid. The warning is kept because CH EMED EPR requires valid GLNs (`gln-modulus-10`). Open
+  question: whether the converter should follow the .NET reference implementation and refuse
+  invalid GLNs, at least in prescriptions.
 
 ## Conformance
 

@@ -97,10 +97,10 @@ the report format MUST be recorded here (constitution, "Development Workflow").
 
 ### Known limitations
 
-- CHMED23A: the mapping of route, method and unit codes and of the meal relation, `sic`, and the
-  split of a prescribed medicament with several posologies into several requests need the review
-  of a person with eMediplan domain knowledge (list in `docs/mapping/chmed23a-ch-emed.md`). QR
-  symbol parameters are those of CHMED16A, provisionally.
+- CHMED23A: several interpretations of the mapping, for example of codes, units, meal relation,
+  repetitions and medical data, need the review of a person with eMediplan domain knowledge; the
+  list with the open questions is in `docs/mapping/chmed23a-ch-emed.md` ("Domain review
+  pending"). QR symbol parameters are those of CHMED16A, provisionally.
 - CH EMED EPR: the `clinical` flags in `epr/unsupported-elements.json` (which removed elements
   count as clinical loss, WARNING instead of INFORMATION) still need the review of a person with
   CH EMED domain knowledge (feature 004, task T036); this includes the dispense, advice and list
