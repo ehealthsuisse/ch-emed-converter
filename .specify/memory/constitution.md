@@ -1,36 +1,32 @@
 <!--
 Sync Impact Report
 ==================
-Version change: 1.4.1 → 1.5.0
-Bump rationale: MINOR — materially expanded guidance for one Conversion Scope item. "CARA EMED"
-was described as a format of its own; it is the FHIR implementation guide CH EMED EPR
-(`ch.fhir.ig.ch-emed-epr`) maintained by CARA, a profiling of CH EMED for the EPR. The scope row,
-its conformance, test-corpus and serialization rules now name CH EMED EPR, and transport to the
-EPR is stated as out of scope. No principle added or removed; no existing feature relied on the
-old wording.
+Version change: 1.5.0 → 1.5.1
+Bump rationale: PATCH — clarification of the Conversion Scope bullet "eMediplan QR code". "Decoded
+… according to its version prefix" could be read as the converter choosing CHMED16A or CHMED23A
+from the prefix by itself. The bullet now says what features 003 and 006 implement: the caller
+names the source CHMED version, the prefix must match it, and a mismatch is refused with a hint
+naming the matching source. QR output is unchanged. No principle added, removed or redefined; no
+existing behaviour changes.
 
-Modified principles:
-  - I. Specification Conformance → CH EMED EPR (CARA EMED) bullet replaces the CARA EMED bullet;
-    the CH EMED bullet no longer mentions CH EMED EPR.
-  - III. Test-First with Reference Fixtures → corpus names CH EMED EPR instead of CARA EMED.
-  - V. Deterministic, Simple Conversion → hub example CHMED16A → CH EMED EPR.
+Modified principles: none
 
 Modified sections:
-  - Conversion Scope → row "CH EMED EPR (CARA EMED) ↔ CH EMED" and a new bullet defining it.
-  - Domain & Technical Constraints → CH EMED EPR serialized as FHIR JSON.
-  - Development Workflow & Quality Gates → gate 4 names CH EMED EPR instead of CARA.
+  - Conversion Scope → bullet "eMediplan QR code" (input side reworded; output side unchanged).
 
 Added sections: none
 Removed sections: none
 
 Templates requiring updates: none — dependent templates read this file at runtime.
 Affected artefacts:
-  - docs/architecture.md lists "CARA EMED" and "CH EMED EPR" as two planned items; to be merged
-    by feature 004.
+  - specs/006-chmed23a/plan.md, Constitution Check V: the note on QR dispatch is now covered by
+    the constitution text.
+  - specs/006-chmed23a/tasks.md, T084: the review point on the QR scope reading is resolved by
+    this amendment.
 
 Follow-up TODOs: none
 
-Previous amendment (1.4.0 → 1.4.1, PATCH): REST error/report rule clarified.
+Previous amendment (1.4.1 → 1.5.0, MINOR): "CARA EMED" is the IG CH EMED EPR.
 -->
 
 # CH EMED Converter Constitution
@@ -156,10 +152,13 @@ The converter MUST support the following conversions, each in both directions:
 | eMediplan QR code          | ↔ | CH EMED         |
 | eRezept Schweiz (QR / URL) | ↔ | CH EMED         |
 
-- **eMediplan QR code**: input is a QR image or its textual payload; the payload is decoded
-  (prefix, decompression, decoding) into CHMED16A or CHMED23A according to its version prefix
-  and then converted to CH EMED. Output is the CHMED payload and, on request, a QR image.
-  The target CHMED version for QR output MUST be selectable by the caller.
+- **eMediplan QR code**: input is a QR image or its textual payload. The caller names the source
+  CHMED version (CHMED16A or CHMED23A); the payload is decoded (prefix, decompression, decoding)
+  by the rules of that version and then converted to CH EMED. Its version prefix MUST match the
+  named source; otherwise the input MUST be refused with a hint naming the matching source. The
+  converter does not choose the version from the prefix by itself. Output is the CHMED payload
+  and, on request, a QR image. The target CHMED version for QR output MUST be selectable by the
+  caller.
 - **eRezept Schweiz**: input is a signed eRezept QR code or its URL (e.g.
   `https://eprescription.hin.ch/#CHMED16A1…` with identity, timestamp and signature
   parameters); the embedded CHMED16A prescription is converted to a CH EMED
@@ -232,4 +231,4 @@ The converter MUST support the following conversions, each in both directions:
 - Compliance is checked in every plan (Constitution Check) and every code review; unjustified
   complexity or principle violations are grounds for rejecting a change.
 
-**Version**: 1.5.0 | **Ratified**: 2026-10-05 | **Last Amended**: 2026-11-08
+**Version**: 1.5.1 | **Ratified**: 2026-10-05 | **Last Amended**: 2026-11-15
