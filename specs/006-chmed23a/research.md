@@ -317,7 +317,8 @@ WARNING `DOSAGE_FREE_TEXT_FALLBACK` with clinical loss (as M-DOS-07).
   review. Unmapped → WARNING `UNMAPPABLE_ELEMENT` with clinical loss. `method.coding` is required
   by the profile, so the code cannot be carried as text.
 - `unit` (CDTYP 9) → the moved CHMED16A unit table, compared case-insensitively. It is extended for
-  codes the examples use (`gtt`, `Appl`; domain review). An unmapped unit gives text, as M-DOS-08.
+  further CDTYP 9 codes: UCUM units, `UI` → `[iU]` and `gtt` → SNOMED CT `732994000` "Drop".
+  `Appl`, used in Example 1, has no entry (domain review). An unmapped unit gives text, as M-DOS-08.
 
 **`relMeal`**:
 - 1/2/3 combined with day segments or no time → `when` ACM/ACD/ACV, CM/CD/CV, PCM/PCD/PCV, or
