@@ -114,7 +114,7 @@ specs/006-chmed23a/
 ### Source Code (repository root)
 
 ```text
-pom.xml                                         # + module format-chmed23a (after converter-qr)
+pom.xml                                         # + module format-chmed23a (after format-chmed16a)
 
 converter-core/src/main/java/ch/emed/converter/core/
 ├── api/FormatId.java                           # + CHMED23A

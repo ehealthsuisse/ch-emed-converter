@@ -118,7 +118,7 @@ The conversions of stories 1 to 3 are available through library, CLI and REST wi
 - **FR-007**: CHMED23A input and output MUST conform to the object model, posology and terminology of the pinned CHMED23A specification; non-conforming input MUST be refused with findings naming element paths; non-conforming output MUST NOT be returned.
 - **FR-008**: Every CH EMED output MUST validate without errors against the pinned CH EMED profiles, as for CHMED16A.
 - **FR-009**: The posology of CHMED23A MUST be mapped to structured CH EMED dosage wherever CH EMED can express it; otherwise it MUST be carried as dosage text and reported, with clinical loss where structure is lost.
-- **FR-010**: Data required by CH EMED but missing in CHMED23A MUST come from the existing options (patient identifier, author, confidentiality, language); otherwise the conversion MUST fail with `MISSING_REQUIRED_DATA` naming the element, never its value.
+- **FR-010**: Data required by CH EMED but missing in CHMED23A MUST come from the existing options (`patientIdentifier`, `author` including its organization, `confidentiality`, `defaultLanguage`); otherwise the conversion MUST fail with `MISSING_REQUIRED_DATA` naming the element, never its value.
 - **FR-011**: A round trip CHMED23A → CH EMED → CHMED23A MUST give the original document apart from changes documented in the mapping specification, and the reverse round trip likewise.
 - **FR-012**: For identical input and options, output MUST be byte-identical, including QR payloads and images.
 - **FR-013**: The rules of both directions MUST be documented in a mapping specification with rule ids and covered by fixture tests, including all examples of the pinned specification.
@@ -148,7 +148,7 @@ The conversions of stories 1 to 3 are available through library, CLI and REST wi
 - **SC-002**: 100% of these CH EMED documents are converted back to CHMED23A documents that conform to the specification, and the round trips differ only by documented changes.
 - **SC-003**: For every example, the results from plain JSON, QR payload, chunked payload and QR image are identical.
 - **SC-004**: For 100% of the inputs of the test corpus, library, CLI and REST give identical documents and reports.
-- **SC-005**: Converting a plan with 20 medications, including validation, stays within the time limits of feature 001 on the reference hardware.
+- **SC-005**: Converting a plan with 20 medications to CH EMED and back, including validation, takes under 30 seconds with a warm validation context (SC-005b of feature 001) on the reference hardware.
 - **SC-006**: An automated scan of logs and reports from all test runs finds zero patient-identifying data.
 - **SC-007**: During all conversions, no connection to an external service is attempted.
 

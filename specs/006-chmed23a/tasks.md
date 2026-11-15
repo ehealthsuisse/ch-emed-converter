@@ -665,16 +665,13 @@ afterwards so that the work follows the Spec Kit flow (constitution, "Developmen
   2.9 s, PML 109 entries 4.1 s).*
 - [ ] T086 Domain review of the mapping by a person with eMediplan / CH EMED knowledge
   (constitution quality gate 4, SHOULD), using the domain-review list of
-  `docs/mapping/chmed23a-ch-emed.md`:
-  - the `moa → EDQM` table `method-edqm.csv`;
-  - units `gtt` and `Appl`;
-  - `relMeal` 4–7 as text;
-  - `sic` as clinical loss;
-  - prescriptions with several posologies split into several MedicationRequests (R10).
+  `docs/mapping/chmed23a-ch-emed.md` ("Domain review pending"). Each point there states the meaning
+  of the field, what the converter does and the open question; the list is the reference for this
+  task and is not repeated here.
 
   Record the outcome in the mapping specification and remove "Domain review pending" there. If the
-  review leads to mapping changes, handle them in a follow-up feature with a CHANGELOG entry. If it
-  is not done before the merge, name it as open in the PR description.
+  review leads to mapping changes, handle them in a follow-up feature with a CHANGELOG entry.
+  *Not done before the merge of PR #10 (2026-11-15); named as open in PR #10 and #11.*
 
 ---
 
