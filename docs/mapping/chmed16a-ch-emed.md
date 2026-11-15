@@ -13,12 +13,69 @@ of `<CHMED Id>#<path>` (research R8); `fullUrl` and references use `urn:uuid:<id
 
 **Domain review pending (task T118)**: a person with CH EMED / eMediplan knowledge has to confirm the
 interpretation points of this specification. They are marked "domain review" in the rules and
-collected here: the route and unit tables (M-DOS-04, M-DOS-08), SNOMED `767525000` "Unit" for `STK`
-and `732936001` "Tablet" read back as `STK`, the Pharmacode handling (M-MED-03), the meaning of
-`Rep` as validity in months (M-RX-06, M-REV-36), the substitution codes (M-RX-07, M-REV-37), the
-indication code as text (M-RX-08), the receiver as logical reference (M-RX-09), the localized titles
-of the prescription document, the reading of statuses (M-REV-10, M-REV-32), the eRezept zip code
-pattern for foreign addresses (M-ERX-04) and the treatment of `Rep` above 24 months.
+collected here. Each point states the meaning of the field (README of the pinned CHMED16A
+specification, or the eRezept developer documentation), what the converter does and the open
+question:
+- route `Roa` (M-DOS-04). `Roa` is a code of INDEX CDTYP 26, not an EDQM code. Only `PO` is mapped,
+  to EDQM `20053000` "Oral use"; every other code gives WARNING `UNMAPPABLE_ELEMENT` with clinical
+  loss, as the profile requires a coded route. Open question: whether a table CDTYP 26 → EDQM, as
+  for CHMED23A `moa`, is wanted, and which codes it may contain;
+- units (M-DOS-08). `Unit` is a code of INDEX CDTYP 9. `STK` (pieces) becomes SNOMED CT `767525000`
+  "Unit", `TR` (drops) `732994000`, `HUB` (puffs) `732981002`, the mass and volume units and `IE`
+  become UCUM; other units turn the dosage into text with clinical loss. In reverse, `767525000`
+  and `732936001` "Tablet" both become `STK`. Open questions: whether "Unit" is the right code for
+  `STK`, and whether reading "Tablet" as `STK` is acceptable;
+- Pharmacode (M-MED-03). `IdType` 3 is the Pharmacode of the INDEX database of HCI Solutions. The
+  pinned packages have no code system for it, so it becomes `code.text` "Pharmacode <Id>" with
+  WARNING `UNMAPPABLE_ELEMENT`, without clinical loss. Open question: a receiver can no longer
+  identify the product automatically; whether this should count as clinical loss;
+- `Rep` as validity in months (M-RX-06, M-REV-36). The specification calls `Rep` "the number of
+  repetitions in months, e.g. permanent prescription for 6 months". The converter reads it as a
+  validity period: `dispenseRequest.validityPeriod` from the date of the prescription for `Rep`
+  months (inclusive end, as in the official example); `Rep` 0 or absent gives none. In reverse,
+  only periods of whole months 1–24 become `Rep`, and `numberOfRepeatsAllowed` has no counterpart
+  (WARNING with clinical loss). Open questions: whether `Rep` means a validity period or a number
+  of repetitions; and how to treat `Rep` above 24 months, which the converter reads but the
+  eRezept rules refuse on output (M-ERX-04);
+- `NbPack` (M-RX-05). Number of packages to be delivered, default 1. It becomes
+  `dispenseRequest.quantity` (amount per dispense in FHIR); the default is not materialised.
+  Open question: whether `NbPack` applies to each dispense or to the whole prescription when `Rep`
+  makes it a permanent prescription;
+- substitution `Subs` (M-RX-07, M-REV-37). 1 means "do not substitute", 0 (default) allows it. 1
+  becomes code `N`, 0 code `E`; an absent `Subs` gives no substitution, which FHIR and CH EMED EPR
+  (M-EPR-27) also read as "allowed". In reverse, any code other than `N` or `E` becomes 1, the
+  safer reading, with clinical loss. Open question: whether `E` (equivalent) is the right code for
+  "substitution allowed";
+- indication code `IndC` (M-RX-08, M-REV-38). The SL indication code (format `00000.00`) of the
+  eRezept documentation. The pinned packages have no code system for it, so it goes into
+  `reasonCode.text` "SL indication code <IndC>", without clinical loss. Open question: whether a
+  code system exists that may be used;
+- receiver `Rcv` (M-RX-09, M-REV-39). The GLN of the healthcare professional to whom the
+  prescription is sent electronically. It becomes `dispenseRequest.performer` as a logical
+  reference; CHMED16A says nothing else about the receiver. Note: CH EMED EPR does not support this
+  element, so the receiver is lost towards the EPR (`ch-emed-epr.md`, questions for T036);
+- localized titles of the prescription document (M-RX-01, M-DOC-08): "Rezept" / "Ordonnance" /
+  "Prescrizione" and the section titles, chosen by the patient's language. Open question: whether
+  these are the terms the receivers expect;
+- statuses in reverse (M-REV-10, M-REV-32). CHMED16A has no status. Active, intended and completed
+  statements and active and completed requests are written; on-hold, unknown and draft are
+  written with clinical loss; stopped, not-taken and cancelled are left out with clinical loss;
+  entered-in-error is left out. Open question: whether an on-hold medication belongs on the plan;
+- eRezept zip codes (M-ERX-04). The eRezept rules allow 4 or 5 digits for `Zip`. Open question:
+  how to handle a foreign patient or organisation address whose postal code does not fit;
+- medical data `/Patient/Med` (M-MDT-01): weight and height (`Meas`), risk categories `Rc`, first
+  day of the last menstruation `DLstMen`, premature birth `Prem` and time of gestation `ToG`. The
+  Medication Card has no place for them, so each gives WARNING `UNMAPPABLE_ELEMENT` with clinical
+  loss. Open question: risks such as allergies or pregnancy matter for dispensing; whether they
+  should at least go along as text;
+- prescriber `PrscbBy` (M-MED-07). Who prescribed the medicament (physician, pharmacist), or that
+  the patient takes it as self-medication. It is mapped to no element and gives WARNING
+  `UNMAPPABLE_ELEMENT`. Open question: whether it should go along as text or, with a GLN, as a
+  reference;
+- validation `ValBy`, `ValDt` (M-DOC-07). The GLN of the healthcare professional who validated the
+  medication plan, and the date. They are mapped to no element and give WARNING
+  `UNMAPPABLE_ELEMENT` without clinical loss. Open question: whether the validation of a plan is
+  clinically relevant and should be kept, for example as an attester.
 
 ## Input forms
 
