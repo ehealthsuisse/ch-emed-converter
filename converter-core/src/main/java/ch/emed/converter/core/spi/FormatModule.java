@@ -40,6 +40,16 @@ public interface FormatModule {
     return List.of();
   }
 
+  /**
+   * Whether the publisher has withdrawn the format (feature 006, FR-015); listed in the
+   * capabilities. A deprecated format is still converted.
+   *
+   * @return true if deprecated; false by default
+   */
+  default boolean deprecated() {
+    return false;
+  }
+
   FormatId format();
 
   /**

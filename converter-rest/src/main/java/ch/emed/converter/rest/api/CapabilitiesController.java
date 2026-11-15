@@ -78,7 +78,8 @@ public class CapabilitiesController {
                     f.format().externalName(),
                     f.inputForms(),
                     f.outputForms().stream().map(OutputForm::externalName).toList(),
-                    f.documentTypes()))
+                    f.documentTypes(),
+                    f.deprecated()))
         .toList();
   }
 
@@ -118,8 +119,9 @@ public class CapabilitiesController {
             "outputForm",
             "string",
             defaults.outputForm().externalName(),
-            "Output form: document, qr-payload, qr-image (qr-* only for target chmed16a,"
-                + " qr-image only for medication plans) or treatment-plans (only for target"
+            "Output form: document, qr-payload, qr-image (qr-* only for targets chmed16a and"
+                + " chmed23a; qr-image not for chmed16a prescriptions) or treatment-plans (only"
+                + " for target"
                 + " ch-emed-epr and a medication card)."),
         new Option(
             "treatmentPlanReferences",

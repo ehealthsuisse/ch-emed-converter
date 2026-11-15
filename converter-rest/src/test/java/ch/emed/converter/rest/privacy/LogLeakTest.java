@@ -28,6 +28,12 @@ class LogLeakTest extends AbstractRestTest {
 
   /** Patient, author and option values of the fixtures and of the options sent below. */
   private static final String[] SENSITIVE = {
+    // feature 006: patients of the official CHMED23A examples
+    "Louloui",
+    "Mustermann",
+    "Banana",
+    "Bodenseeweg",
+    "87588895877545621",
     // patients of the corpus (plan-basic, medication-card-example, readme example)
     "Muster",
     "1950-03-21",
@@ -114,6 +120,7 @@ class LogLeakTest extends AbstractRestTest {
     }
 
     convertEpr();
+    convertChmed23a();
 
     String log = output.getAll();
     assertThat(log).contains("request timestamp=").doesNotContain(SENSITIVE);

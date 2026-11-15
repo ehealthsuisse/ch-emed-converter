@@ -1,6 +1,4 @@
-package ch.emed.converter.chmed16a.mapping;
-
-import static ch.emed.converter.chmed16a.mapping.PatientMapper.present;
+package ch.emed.converter.core.chemed;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,14 +18,14 @@ import org.hl7.fhir.utilities.xhtml.NodeType;
 import org.hl7.fhir.utilities.xhtml.XhtmlNode;
 
 /**
- * Generated narratives (FHIR dom-6) for the resources of the Medication Card. Contained resources
- * get none (dom-1).
+ * Generated narratives (FHIR dom-6) for the resources of the Medication Card and Prescription.
+ * Contained resources get none (dom-1). Moved from format-chmed16a (feature 006).
  */
-final class Narratives {
+public final class Narratives {
 
   private Narratives() {}
 
-  static void composition(Composition composition) {
+  public static void composition(Composition composition) {
     set(composition, composition.getTitle());
     if (composition.hasLanguage()) {
       // a resource with a language needs lang and xml:lang on its narrative
@@ -37,14 +35,14 @@ final class Narratives {
     }
   }
 
-  static void patient(Patient patient) {
+  public static void patient(Patient patient) {
     String name = patient.hasName() ? name(patient.getNameFirstRep()) : "";
     String birthDate =
         patient.hasBirthDate() ? patient.getBirthDateElement().getValueAsString() : "";
     set(patient, join(", ", name, birthDate));
   }
 
-  static void statement(MedicationStatement statement) {
+  public static void statement(MedicationStatement statement) {
     String medication =
         statement.getContained().stream()
             .filter(Medication.class::isInstance)
@@ -54,12 +52,12 @@ final class Narratives {
     String dosage =
         statement.getDosage().stream()
             .map(Dosage::getText)
-            .filter(PatientMapper::present)
+            .filter(Narratives::present)
             .collect(Collectors.joining("; "));
     set(statement, join(": ", medication, dosage));
   }
 
-  static void request(MedicationRequest request) {
+  public static void request(MedicationRequest request) {
     String medication =
         request.getContained().stream()
             .filter(Medication.class::isInstance)
@@ -69,16 +67,16 @@ final class Narratives {
     String dosage =
         request.getDosageInstruction().stream()
             .map(Dosage::getText)
-            .filter(PatientMapper::present)
+            .filter(Narratives::present)
             .collect(Collectors.joining("; "));
     set(request, join(": ", medication, dosage));
   }
 
-  static void practitioner(Practitioner practitioner) {
+  public static void practitioner(Practitioner practitioner) {
     set(practitioner, practitioner.hasName() ? name(practitioner.getNameFirstRep()) : "");
   }
 
-  static void organization(Organization organization) {
+  public static void organization(Organization organization) {
     String address =
         organization.hasAddress()
             ? join(
@@ -94,7 +92,7 @@ final class Narratives {
     set(organization, join(", ", organization.getName(), address));
   }
 
-  static void practitionerRole(
+  public static void practitionerRole(
       PractitionerRole role, Practitioner practitioner, Organization organization) {
     set(
         role,
@@ -118,7 +116,7 @@ final class Narratives {
   }
 
   /** Generated narrative with the text in a single XHTML div. */
-  static Narrative generated(String text) {
+  public static Narrative generated(String text) {
     XhtmlNode div = new XhtmlNode(NodeType.Element, "div");
     div.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
     div.addText(text);
@@ -126,5 +124,9 @@ final class Narratives {
     narrative.setStatus(Narrative.NarrativeStatus.GENERATED);
     narrative.setDiv(div);
     return narrative;
+  }
+
+  private static boolean present(String value) {
+    return value != null && !value.isBlank();
   }
 }

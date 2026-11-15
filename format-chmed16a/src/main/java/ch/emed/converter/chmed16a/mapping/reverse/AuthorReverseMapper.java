@@ -3,9 +3,9 @@ package ch.emed.converter.chmed16a.mapping.reverse;
 import static ch.emed.converter.chmed16a.mapping.PatientMapper.present;
 
 import ch.emed.converter.chmed16a.mapping.MappingRule;
-import ch.emed.converter.chmed16a.mapping.Profiles;
 import ch.emed.converter.chmed16a.model.HcOrg;
 import ch.emed.converter.chmed16a.model.HcPerson;
+import ch.emed.converter.core.chemed.Profiles;
 import java.util.List;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Organization;

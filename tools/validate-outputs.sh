@@ -4,7 +4,7 @@
 # packages, offline (no terminology server). Expects "Errors: 0".
 #
 # Usage:
-#   ./mvnw verify                      # writes format-chmed16a/target/it-outputs/*.json
+#   ./mvnw verify                      # writes format-chmed16a/ and format-chmed23a/target/it-outputs/*.json
 #   tools/validate-outputs.sh          # downloads tools/validator_cli.jar once if missing
 #
 # Environment: JAVA (default java), VALIDATOR_URL (default: latest release on GitHub).
@@ -13,13 +13,15 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="${SCRIPT_DIR}/.."
 JAR="${SCRIPT_DIR}/validator_cli.jar"
-OUTPUTS="${ROOT}/format-chmed16a/target/it-outputs"
+# CH EMED documents of the CHMED16A and (feature 006) CHMED23A integration tests
+shopt -s nullglob
+FILES=("${ROOT}"/format-chmed16a/target/it-outputs/*.json "${ROOT}"/format-chmed23a/target/it-outputs/*.json)
 PACKAGES="${ROOT}/converter-validation/src/main/resources/packages"
 JAVA="${JAVA:-${JAVA_HOME:+${JAVA_HOME}/bin/}java}"
 URL="${VALIDATOR_URL:-https://github.com/hapifhir/org.hl7.fhir.core/releases/latest/download/validator_cli.jar}"
 
-if [[ ! -d "${OUTPUTS}" ]] || ! ls "${OUTPUTS}"/*.json >/dev/null 2>&1; then
-  echo "No outputs in ${OUTPUTS}; run ./mvnw verify first." >&2
+if [[ ${#FILES[@]} -eq 0 ]]; then
+  echo "No outputs in */target/it-outputs; run ./mvnw verify first." >&2
   exit 2
 fi
 if [[ ! -f "${JAR}" ]]; then
@@ -40,8 +42,8 @@ PY
 )
 
 # one invocation for all documents: loading the packages dominates the run time
-out="$("${JAVA}" -jar "${JAR}" "${OUTPUTS}"/*.json -version 4.0.1 -tx n/a "${ig_args[@]}" 2>&1 || true)"
-count="$(ls "${OUTPUTS}"/*.json | wc -l)"
+out="$("${JAVA}" -jar "${JAR}" "${FILES[@]}" -version 4.0.1 -tx n/a "${ig_args[@]}" 2>&1 || true)"
+count="${#FILES[@]}"
 if grep -Eq "^Success: 0 errors" <<<"${out}"; then
   echo "OK: ${count} documents, $(grep -E '^Success:' <<<"${out}")"
   exit 0

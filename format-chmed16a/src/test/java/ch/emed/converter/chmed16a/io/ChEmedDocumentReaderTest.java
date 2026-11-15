@@ -2,10 +2,11 @@ package ch.emed.converter.chmed16a.io;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import ch.emed.converter.chmed16a.io.ChEmedDocumentReader.ChEmedDocument;
-import ch.emed.converter.chmed16a.io.ChEmedDocumentReader.DocumentType;
 import ch.emed.converter.chmed16a.testsupport.ChEmedAssertions;
 import ch.emed.converter.chmed16a.testsupport.Fixtures;
+import ch.emed.converter.core.chemed.ChEmedDocumentReader;
+import ch.emed.converter.core.chemed.ChEmedDocumentReader.ChEmedDocument;
+import ch.emed.converter.core.chemed.ChEmedDocumentReader.DocumentType;
 import ch.emed.converter.core.report.Phase;
 import ch.emed.converter.core.report.ReasonCode;
 import ch.emed.converter.core.report.ReportCollector;
@@ -21,7 +22,7 @@ class ChEmedDocumentReaderTest {
   private final ReportCollector report = new ReportCollector();
 
   private ChEmedDocument read(byte[] json) {
-    return ChEmedDocumentReader.read(json, ChEmedAssertions.validator(), report);
+    return ChEmedDocumentReader.read(json, ChEmedAssertions.validator(), report, "CHMED16A");
   }
 
   private List<ReportEntry> errors() {

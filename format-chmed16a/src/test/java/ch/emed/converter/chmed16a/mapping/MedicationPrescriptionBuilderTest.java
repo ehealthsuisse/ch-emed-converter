@@ -8,6 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import ch.emed.converter.chmed16a.model.Medication;
 import ch.emed.converter.chmed16a.testsupport.TestOptions;
 import ch.emed.converter.core.api.ConversionOptions;
+import ch.emed.converter.core.chemed.Profiles;
 import ch.emed.converter.core.report.ReasonCode;
 import ch.emed.converter.core.report.ReportEntry;
 import ch.emed.converter.core.report.Severity;

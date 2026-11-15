@@ -1,0 +1,50 @@
+{
+  "patient": {
+    "fName": "Dora",
+    "lName": "Graber",
+    "bdt": "1954-12-01",
+    "gender": 2,
+    "lng": "de",
+    "ids": [
+      {
+        "type": 1,
+        "val": "80756015090002647590"
+      }
+    ]
+  },
+  "meds": [
+    {
+      "id": "Med1",
+      "idType": 1,
+      "pos": [
+        {
+          "po": {
+            "t": 4,
+            "cyDuU": 6,
+            "cyDu": 1,
+            "tdo": {
+              "t": 5,
+              "doms": [
+                1,
+                15
+              ],
+              "tdo": {
+                "t": 1,
+                "do": {
+                  "t": 1,
+                  "a": 1
+                }
+              }
+            },
+            "tdpc": 1
+          },
+          "unit": "Stk"
+        }
+      ],
+      "autoMed": false
+    }
+  ],
+  "medType": 1,
+  "auth": 2,
+  "dt": "2024-01-09T09:14:36+01:00"
+}

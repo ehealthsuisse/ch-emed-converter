@@ -37,6 +37,43 @@ public abstract class AbstractRestTest {
   }
 
   /**
+   * Feature 006: runs the CHMED23A corpus to CH EMED and back, in every output form (privacy and
+   * network tests, SC-006, SC-007).
+   */
+  protected void convertChmed23a() throws Exception {
+    for (java.nio.file.Path input : RestTestSupport.corpus(RestTestSupport.CHMED23A)) {
+      if (!input.toString().endsWith(".json")) {
+        continue;
+      }
+      byte[] response =
+          mvc.perform(
+                  convert(
+                      "chmed23a",
+                      "ch-emed",
+                      RestTestSupport.read(input),
+                      RestTestSupport.withAuthor(
+                          "\"patientIdentifier\":{\"system\":\"urn:oid:2.999.1\","
+                              + "\"value\":\"TEST-0001\"}")))
+              .andReturn()
+              .getResponse()
+              .getContentAsByteArray();
+      JsonNode output = RestTestSupport.json(response).get("output");
+      if (output == null || output.isNull()) {
+        continue;
+      }
+      byte[] chEmed = java.util.Base64.getDecoder().decode(output.asText());
+      for (String form : java.util.List.of("document", "qr-payload", "qr-image")) {
+        mvc.perform(
+            convert(
+                "ch-emed",
+                "chmed23a",
+                chEmed,
+                RestTestSupport.json("{\"outputForm\":\"" + form + "\"}")));
+      }
+    }
+  }
+
+  /**
    * Feature 004: runs CH EMED EPR in both directions through the service, also as treatment-plans
    * and with treatment-plan references (privacy and network tests, SC-007, SC-008).
    */

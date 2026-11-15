@@ -32,6 +32,7 @@ flowchart TB
     end
 
     FMT["<i>                plug-in                </i><br/>format-chmed16a<br/>CHMED16A ↔ CH EMED"]
+    FMT23["<i>                plug-in                </i><br/>format-chmed23a<br/>CHMED23A ↔ CH EMED<br/>(deprecated format)"]
     EPRM["<i>                plug-in                </i><br/>format-ch-emed-epr<br/>CH EMED EPR ↔ CH EMED"]
     VAL["<i>                plug-in                </i><br/>converter-validation<br/>CH EMED, offline"]
     QR["<i>        supporting module        </i><br/>converter-qr<br/>QR image read/write"]
@@ -44,9 +45,11 @@ flowchart TB
     PIPE --> SPIF
     PIPE --> SPIV
     SPIF --> FMT
+    SPIF --> FMT23
     SPIF --> EPRM
     SPIV --> VAL
     FMT --> QR
+    FMT23 --> QR
     VAL --> PKG
 
     classDef client fill:#e8f5e9,stroke:#4c9a5b,color:#1b4332
@@ -58,7 +61,7 @@ flowchart TB
     class CLI,REST,EMB client
     class API,SPIF,SPIV port
     class PIPE corenode
-    class FMT,EPRM,VAL plugin
+    class FMT,FMT23,EPRM,VAL plugin
     class QR,PKG ext
     style core fill:#eff6ff,stroke:#1d4ed8,stroke-width:2px
 ```
@@ -72,13 +75,14 @@ added without changing the core.
 
 | Module | Depends on (project modules) | Notes |
 |---|---|---|
-| `converter-core` | none | HAPI FHIR structures, PDFBox |
+| `converter-core` | none | HAPI FHIR structures, PDFBox; package `chemed` holds the CH EMED side shared by the eMediplan formats (document reader, profiles, labels, narratives, unit table; feature 006) |
 | `converter-qr` | none | ZXing only |
 | `format-chmed16a` | `converter-core`, `converter-qr` | QR images and eRezept URLs (feature 003) |
+| `format-chmed23a` | `converter-core`, `converter-qr` | CHMED23A, deprecated by IG eMediplan (feature 006); JSON, payload with chunks, QR image |
 | `format-ch-emed-epr` | `converter-core` | validates through the validator of the mapping context and renders the PDF/A with `converter-core` |
 | `converter-validation` | `converter-core` | HAPI FHIR validator, vendored IG packages |
-| `converter-cli` | `converter-core`, `converter-validation`; `format-chmed16a` and `format-ch-emed-epr` at runtime | picocli |
-| `converter-rest` | `converter-core`; `format-chmed16a`, `format-ch-emed-epr` and `converter-validation` at runtime | only module with Spring (Spring Boot BOM in its own POM) |
+| `converter-cli` | `converter-core`, `converter-validation`; `format-chmed16a`, `format-chmed23a` and `format-ch-emed-epr` at runtime | picocli |
+| `converter-rest` | `converter-core`; `format-chmed16a`, `format-chmed23a`, `format-ch-emed-epr` and `converter-validation` at runtime | only module with Spring (Spring Boot BOM in its own POM) |
 
 "At runtime" means the module is only put on the classpath, where `ServiceLoader` finds it;
 the client's code does not refer to it. All modules except `converter-rest` are kept free of
@@ -188,13 +192,13 @@ scope and timing are not decided yet.
 flowchart LR
     ERX["eMediplan QR code,<br/>eRezept Schweiz QR code / URL<br/>transmission forms of CHMED16A<br/>implemented, feature 003"]
     CHMED16A["CHMED16A<br/>eMediplan plan and prescription<br/>implemented, feature 001"]
-    CHMED23A["CHMED23A<br/>planned, separate feature"]
+    CHMED23A["CHMED23A<br/>eMediplan plan and prescription<br/>implemented, feature 006<br/>deprecated by IG eMediplan"]
     HUB(("CH EMED 6.0.0<br/>HL7 FHIR R4<br/>hub"))
     EPR["CH EMED EPR 3.0.0<br/>(CARA EMED)<br/>PMLC, PRE, MTP<br/>implemented, feature 004<br/>DIS, PADV, PML<br/>feature 005"]
 
     ERX <-->|read and write| CHMED16A
     CHMED16A <--> HUB
-    CHMED23A <-.-> HUB
+    CHMED23A <--> HUB
     HUB <--> EPR
 
     classDef hub fill:#1d4ed8,stroke:#1e3a8a,stroke-width:3px,color:#ffffff
@@ -203,20 +207,19 @@ flowchart LR
     classDef planned fill:#f3f4f6,stroke:#9ca3af,color:#374151,stroke-dasharray: 5 5
 
     class HUB hub
-    class CHMED16A,EPR plugin
+    class CHMED16A,CHMED23A,EPR plugin
     class ERX form
-    class CHMED23A planned
 ```
 
 | Item | Status | Notes |
 |---|---|---|
 | CHMED16A ↔ CH EMED | implemented (feature 001) | medication plan (MedType 1) and prescription (MedType 3); the prescription output is eRezept-ready |
 | REST service | implemented (feature 002) | plain REST/JSON API on top of `converter-core` (`converter-rest`); documents base64-encoded, same options as the CLI; no access control or TLS in the service |
-| CHMED23A ↔ CH EMED | planned | separate, later feature; CHMED23A was withdrawn by IG eMediplan but stays in the constitution's scope |
+| CHMED23A ↔ CH EMED | implemented (feature 006) | medication plan (medType 1) and prescription (medType 3) in both directions, as JSON, QR payload (`CHMED23A.…`, chunks read only) and QR image; IG eMediplan has withdrawn the format (strategy 2025-12-02), so capabilities mark it as deprecated. No JSON schema exists: conformance rules C23-* and mapping rules in [mapping/chmed23a-ch-emed.md](mapping/chmed23a-ch-emed.md) |
 | eMediplan QR code, eRezept QR code / URL | implemented (feature 003) | transmission forms of CHMED16A, not formats of their own: QR images (PNG/JPEG) and signed eRezept URLs (`https://eprescription.hin.ch/#CHMED16A1…`) are read, the signature data is returned raw and unverified beside the document; QR payloads and, for medication plans, QR images are written (option `outputForm`); prescriptions only as unsigned payload for the HIN erxproxy |
 | CH EMED EPR (CARA EMED) ↔ CH EMED | implemented (features 004, 005) | CH EMED EPR 3.0.0 of CARA, the EPR variant of CH EMED; there is no separate CARA format (constitution 1.5.0). Medication card (PMLC), prescription (PRE) and treatment plan (MTP) in both directions; output form `treatment-plans` makes one MTP per treatment of a card; unsupported elements are removed and reported, the original representation is a PDF/A. Since feature 005 also dispense (DIS), pharmaceutical advice (PADV) and medication list (PML) in both directions; references to other documents are checked within each document and full URLs become `urn:uuid`. Rules: [mapping/ch-emed-epr.md](mapping/ch-emed-epr.md). |
 
-Out of scope for now: the CHMED16A PolymedicationCheck document type.
+Out of scope for now: the PolymedicationCheck document type of CHMED16A and CHMED23A.
 
 ## Adding a format
 

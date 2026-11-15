@@ -44,10 +44,18 @@ public record CapabilitiesResponse(
       @JsonProperty("default") @JsonInclude(JsonInclude.Include.ALWAYS) Object defaultValue,
       String description) {}
 
-  /** Input and output forms of one format, external names (feature 003). */
-  @JsonPropertyOrder({"name", "inputForms", "outputForms"})
+  /**
+   * Input and output forms of one format, external names (feature 003).
+   *
+   * @param deprecated true if the publisher has withdrawn the format (feature 006); absent if false
+   */
+  @JsonPropertyOrder({"name", "inputForms", "outputForms", "documentTypes", "deprecated"})
   public record Format(
-      String name, List<String> inputForms, List<String> outputForms, List<String> documentTypes) {}
+      String name,
+      List<String> inputForms,
+      List<String> outputForms,
+      List<String> documentTypes,
+      @JsonInclude(JsonInclude.Include.NON_DEFAULT) boolean deprecated) {}
 
   /** Operator limits, {@code converter.rest.*}, and the fixed image pixel limit. */
   public record Limits(

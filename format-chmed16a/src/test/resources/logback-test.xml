@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Tests: INFO on the console. Without a configuration Logback logs DEBUG, and the FHIR validator
+     then writes millions of lines per run (several hundred MB over the SSH session of the build). -->
+<configuration>
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} -- %msg%n</pattern>
+    </encoder>
+  </appender>
+  <logger name="org.hl7.fhir" level="WARN"/>
+  <logger name="ca.uhn.fhir" level="WARN"/>
+  <logger name="ca.uhn.fhir.parser.LenientErrorHandler" level="ERROR"/>
+  <logger name="org.apache.fontbox" level="WARN"/>
+  <logger name="org.apache.pdfbox" level="WARN"/>
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+  </root>
+</configuration>

@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: CH EMED Converter REST API
-  version: 1.2.1
+  version: 1.3.0
   description: |
     Stateless conversion between CH EMED and other Swiss eMedication formats.
     The service has no authentication and no TLS; it MUST be operated behind an API gateway,
@@ -28,7 +28,8 @@ paths:
         required: true
         description: |
           Request message with the base64-encoded input document (CHMED16A JSON, CHMED16A QR
-          payload text `CHMED16A1…`, signed eRezept URL text, PNG or JPEG image with one QR code,
+          payload text `CHMED16A1…`, signed eRezept URL text, CHMED23A JSON, CHMED23A QR payload
+          text `CHMED23A.…` (also as several chunk payloads), PNG or JPEG image with one QR code,
           or FHIR JSON; the library detects the form) and the conversion options. Options with personal data are only accepted here, never in
           the URL or in headers.
         content:
@@ -102,7 +103,7 @@ components:
     FormatName:
       type: string
       description: Format name; the set grows with new format modules (see /capabilities).
-      examples: [chmed16a, ch-emed, ch-emed-epr]
+      examples: [chmed16a, chmed23a, ch-emed, ch-emed-epr]
       pattern: '^[a-z0-9-]{1,32}$'
     Outcome:
       type: string
@@ -183,9 +184,10 @@ components:
           enum: [document, qr-payload, qr-image, treatment-plans]
           default: document
           description: |
-            Form of the output. qr-payload and qr-image only for target chmed16a; qr-image only for
-            medication plans (a prescription is refused: it is output as unsigned payload only, to be
-            signed by the HIN erxproxy). treatment-plans only for target ch-emed-epr and a Medication
+            Form of the output. qr-payload and qr-image only for targets chmed16a and chmed23a; for
+            chmed16a, qr-image only for medication plans (a prescription is refused: it is output as
+            unsigned payload only, to be signed by the HIN erxproxy); chmed23a has no signature, so
+            both document types may be written as image. treatment-plans only for target ch-emed-epr and a Medication
             Card: a FHIR Bundle of type collection with one MTP document per treatment
             (application/fhir+json).
         treatmentPlanReferences:
@@ -327,6 +329,9 @@ components:
                 description: Document types the format converts (features 004 and 005), e.g. PMLC, PRE, MTP, DIS, PADV, PML; empty if the format does not name them.
                 items: { type: string }
                 examples: [[PMLC, PRE, MTP, DIS, PADV, PML]]
+              deprecated:
+                type: boolean
+                description: Withdrawn by the publisher of the format; still converted. For chmed23a, IG eMediplan strategy of 2025-12-02. Absent for formats that are not deprecated.
         options:
           type: array
           items:

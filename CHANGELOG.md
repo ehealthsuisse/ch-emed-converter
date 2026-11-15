@@ -22,6 +22,21 @@ the report format MUST be recorded here (constitution, "Development Workflow").
 
 ### Added
 
+- **CHMED23A**, feature 006: new format `chmed23a` (module `format-chmed23a`) in both directions
+  with CH EMED: medication plan (medType 1) ↔ Medication Card, prescription (medType 3) ↔ Medication
+  Prescription; PolymedicationCheck is refused. IG eMediplan has withdrawn CHMED23A (strategy
+  2025-12-02); the format is kept for existing documents and is marked as deprecated. Pinned to
+  `ig-emediplan/specification@0b579aa6`. Input as JSON, QR payload `CHMED23A.…`, chunked payloads
+  (text only) and QR image; output as JSON, QR payload and QR image (also for prescriptions).
+  There is no JSON schema: conformance rules C23-* checked on input and output, traced to the
+  validation tests of the .NET reference implementation; GLN and GTIN check digits give a
+  WARNING (the official examples use invalid GLNs; CH EMED EPR requires valid ones). Posology is structured where CH EMED
+  has an exact equivalent, otherwise carried as text with clinical loss. Rules and capability
+  gaps: `docs/mapping/chmed23a-ch-emed.md`.
+- `FormatId.CHMED23A`; `ReasonCode.CHUNK_INVALID` (ERROR, incomplete or inconsistent chunks);
+  `FormatModule.deprecated()` and `FormatInfo.deprecated` (existing constructors give `false`).
+- CLI `formats` and REST capabilities mark deprecated formats (`; deprecated by IG eMediplan`,
+  property `deprecated`); OpenAPI 1.2.1 → 1.3.0 (new optional property, descriptions).
 - **CH EMED EPR (CARA EMED)**, feature 004: new format `ch-emed-epr` (module `format-ch-emed-epr`)
   for CH EMED EPR 3.0.0, in both directions with CH EMED, for the medication card (PMLC),
   prescription (PRE) and treatment plan (MTP). Input and output are validated against the vendored
@@ -54,6 +69,11 @@ the report format MUST be recorded here (constitution, "Development Workflow").
 
 ### Changed
 
+- Feature 006: the CH EMED side shared by the eMediplan formats (document reader, profiles, labels,
+  narratives, unit table) moved from `format-chmed16a` to `converter-core` (package
+  `ch.emed.converter.core.chemed`); CHMED16A outputs and reports are unchanged.
+- CHMED16A: CHMED23A input (JSON, payload, QR image) is still refused with `UNSUPPORTED_VERSION`;
+  the message now names the source `chmed23a`.
 - Pairs of two non-CH-EMED formats are no longer composed through CH EMED; they are refused with
   `UNSUPPORTED_CONVERSION` and the hint to convert in two steps through `ch-emed` (library, CLI,
   REST `404` detail).
@@ -77,6 +97,10 @@ the report format MUST be recorded here (constitution, "Development Workflow").
 
 ### Known limitations
 
+- CHMED23A: the mapping of route, method and unit codes and of the meal relation, `sic`, and the
+  split of a prescribed medicament with several posologies into several requests need the review
+  of a person with eMediplan domain knowledge (list in `docs/mapping/chmed23a-ch-emed.md`). QR
+  symbol parameters are those of CHMED16A, provisionally.
 - CH EMED EPR: the `clinical` flags in `epr/unsupported-elements.json` (which removed elements
   count as clinical loss, WARNING instead of INFORMATION) still need the review of a person with
   CH EMED domain knowledge (feature 004, task T036); this includes the dispense, advice and list

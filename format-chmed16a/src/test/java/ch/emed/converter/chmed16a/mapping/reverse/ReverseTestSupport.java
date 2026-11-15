@@ -1,9 +1,9 @@
 package ch.emed.converter.chmed16a.mapping.reverse;
 
-import ch.emed.converter.chmed16a.io.ChEmedDocumentReader;
-import ch.emed.converter.chmed16a.io.ChEmedDocumentReader.ChEmedDocument;
 import ch.emed.converter.chmed16a.testsupport.Fixtures;
 import ch.emed.converter.core.api.ConversionOptions;
+import ch.emed.converter.core.chemed.ChEmedDocumentReader;
+import ch.emed.converter.core.chemed.ChEmedDocumentReader.ChEmedDocument;
 import ch.emed.converter.core.fhir.ChEmedJson;
 import ch.emed.converter.core.report.ReportCollector;
 import ch.emed.converter.core.report.ReportEntry;
@@ -21,7 +21,8 @@ final class ReverseTestSupport {
   /** Opens a CH EMED fixture without validation (mapper tests focus on the mapping). */
   static ChEmedDocument document(String fixture) {
     ChEmedDocument doc =
-        ChEmedDocumentReader.open(ChEmedJson.parse(Fixtures.bytes(fixture)), new ReportCollector());
+        ChEmedDocumentReader.open(
+            ChEmedJson.parse(Fixtures.bytes(fixture)), new ReportCollector(), "CHMED16A");
     if (doc == null) {
       throw new IllegalArgumentException("Fixture not a supported document: " + fixture);
     }

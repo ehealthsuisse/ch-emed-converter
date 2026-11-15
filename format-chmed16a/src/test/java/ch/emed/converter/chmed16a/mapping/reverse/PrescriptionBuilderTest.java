@@ -5,9 +5,9 @@ import static ch.emed.converter.chmed16a.mapping.reverse.ReverseTestSupport.entr
 import static ch.emed.converter.chmed16a.mapping.reverse.ReverseTestSupport.scope;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import ch.emed.converter.chmed16a.io.ChEmedDocumentReader.ChEmedDocument;
 import ch.emed.converter.chmed16a.model.Medicament;
 import ch.emed.converter.chmed16a.model.Medication;
+import ch.emed.converter.core.chemed.ChEmedDocumentReader.ChEmedDocument;
 import ch.emed.converter.core.report.ReasonCode;
 import ch.emed.converter.core.report.ReportEntry;
 import ch.emed.converter.core.report.Severity;

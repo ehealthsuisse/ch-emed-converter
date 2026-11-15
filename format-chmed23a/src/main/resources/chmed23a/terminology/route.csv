@@ -1,0 +1,56 @@
+# CHMED23A Route of Administration, terminology.md at ig-emediplan/specification@0b579aa6
+code;de;fr
+20001000;Anwendung am Ohr;Voie auriculaire
+20002500;buccale Anwendung;Voie buccogingivale
+20003000;Anwendung auf der Haut;Voie cutanée
+20004000;dentale Anwendung;Voie dentaire
+20008000;endotracheopulmonale Anwendung;Voie endotrachéobronchique
+20009000;epidurale Anwendung;Voie péridurale
+20011500;extrakorporale Anwendung;Voie extracorporelle
+20013000;gastrointestinale Anwendung;Voie gastro-entérale
+20013500;zur Anwendung mittels Magensonde;Voie gastrique
+20014000;Anwendung am Zahnfleisch;Voie gingivale
+20015000;Hämodialyse;Hémodialyse
+20020000;zur Inhalation;Voie inhalée
+20021000;intestinale Anwendung;Voie intestinale
+20023000;intraarterielle Anwendung;Voie intraartérielle
+20024000;intraartikuläre Anwendung;Voie intraarticulaire
+20025000;intrabursale Anwendung;Voie intrabursale
+20027000;intrakavernöse Anwendung;Voie intracaverneuse
+20030000;intradermale Anwendung;Voie intradermique
+20031700;intraglanduläre Anwendung;Voie intraglandulaire
+20032000;intraläsionale Anwendung;Voie intralésionnelle
+20033000;intralymphatische Anwendung;Voie intralymphatique
+20035000;intramuskuläre Anwendung;Voie intramusculaire
+20036000;intraokulare Anwendung;Voie intraoculaire
+20036500;intraossäre Anwendung;Voie intraosseuse
+20038000;intraperitoneale Anwendung;Voie intrapéritonéale
+20039000;intrapleurale Anwendung;Voie intrapleurale
+20042000;intrathekale Anwendung;Voie intrathécale
+20043000;intratumorale Anwendung;Voie intratumorale
+20044000;intrauterine Anwendung;Voie intra-utérine
+20045000;intravenöse Anwendung;Voie intraveineuse
+20046000;intravesikale Anwendung;Voie intravésicale
+20047000;intravitreal;Voie intravitréenne
+20049000;nasale Anwendung;Voie nasale
+20051000;Anwendung am Auge;Voie ophtalmique
+20053000;zum Einnehmen;Voie orale
+20054000;Anwendung in der Mundhöhle;Voie buccale
+20055000;Anwendung im Mund- und Rachenraum;Voie oropharyngée
+20057000;periartikuläre Anwendung;Voie périarticulaire
+20058000;perineurale Anwendung;Voie périneurale
+20059000;zur periodontalen Anwendung;Voie périodontale
+20059400;peritumorale Anwendung;Voie péritumorale
+20061000;rektale Anwendung;Voie rectale
+20061500;retrobulbäre Anwendung;Voie rétrobulbaire
+20062000;Art der Anwendung nicht spezifizierbar;Autre(s)
+20065000;subkonjunktivale Anwendung;Voie sous-conjonctivale
+20066000;subkutane Anwendung;Voie sous-cutanée
+20067000;sublingual;Voie sublinguale
+20067500;submuköse Anwendung;Voie sous-muqueuse
+20070000;transdermale Anwendung;Voie transdermique
+20071000;Anwendung in der Harnröhre;Voie urétrale
+20072000;vaginale Anwendung;Voie vaginale
+20080000;intracerebroventrikuläre Anwendung;Voie intracérébroventriculaire
+20081000;subretinale Anwendung;voie subrétinale
+20087000;extrapleurale Anwendung;Voie extrapleurale

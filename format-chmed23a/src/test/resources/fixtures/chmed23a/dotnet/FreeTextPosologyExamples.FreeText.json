@@ -1,0 +1,35 @@
+{
+  "id": "MyId",
+  "medType": 1,
+  "dt": "2024-01-09T09:14:36+01:00",
+  "patient": {
+    "fName": "Dora",
+    "lName": "Graber",
+    "bdt": "1954-12-01",
+    "gender": 2,
+    "lng": "de",
+    "ids": [
+      {
+        "type": 1,
+        "val": "756.1234.5678.97"
+      }
+    ]
+  },
+  "auth": 2,
+  "meds": [
+    {
+      "id": "Med1",
+      "idType": 1,
+      "autoMed": false,
+      "pos": [
+        {
+          "unit": "TABL",
+          "po": {
+            "t": 2,
+            "text": "Angabe der Dosierung für 1x täglich abends:\nRamipril – xyz-Pharma 2,5 mg 20 Tbl. N1 PZN01234567 ≫0-0-1≪\nAngabe, dass eine schriftliche Dosierungsanweisung oder ein Medikationsplan vorliegt:\nRamipril – xyz-Pharma 2,5 mg 20 Tbl. N1 PZN01234567 ≫Dj≪"
+          }
+        }
+      ]
+    }
+  ]
+}

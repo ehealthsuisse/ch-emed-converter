@@ -1,0 +1,571 @@
+{
+  "resourceType" : "Bundle",
+  "meta" : {
+    "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-document-medicationcard" ]
+  },
+  "identifier" : {
+    "system" : "urn:ietf:rfc:3986",
+    "value" : "urn:uuid:51c4ab12-0c88-5457-98dc-a2367843a03f"
+  },
+  "type" : "document",
+  "timestamp" : "2024-01-09T09:14:36.0000000+01:00",
+  "entry" : [ {
+    "fullUrl" : "urn:uuid:de07a6c2-89b7-520e-a1e2-f8c3dce8366d",
+    "resource" : {
+      "resourceType" : "Composition",
+      "id" : "de07a6c2-89b7-520e-a1e2-f8c3dce8366d",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-composition-medicationcard" ]
+      },
+      "language" : "de-CH",
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"de-CH\" lang=\"de-CH\">Medikationsplan</div>"
+      },
+      "identifier" : {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:51c4ab12-0c88-5457-98dc-a2367843a03f"
+      },
+      "status" : "final",
+      "type" : {
+        "coding" : [ {
+          "system" : "http://loinc.org",
+          "code" : "56445-0",
+          "display" : "Medication summary Document"
+        }, {
+          "system" : "http://snomed.info/sct",
+          "code" : "736378000",
+          "display" : "Medication management plan (record artifact)"
+        } ]
+      },
+      "subject" : {
+        "reference" : "urn:uuid:23c31643-ee69-5590-a55c-d789d10611bc"
+      },
+      "date" : "2024-01-09T09:14:36.0000000+01:00",
+      "author" : [ {
+        "reference" : "urn:uuid:197d2eaf-f14c-55bb-8a48-8fb5397e1699"
+      } ],
+      "title" : "Medikationsplan",
+      "confidentiality" : "N",
+      "_confidentiality" : {
+        "extension" : [ {
+          "url" : "http://fhir.ch/ig/ch-core/StructureDefinition/ch-ext-epr-confidentialitycode",
+          "valueCodeableConcept" : {
+            "coding" : [ {
+              "system" : "http://snomed.info/sct",
+              "code" : "17621005",
+              "display" : "Normal (qualifier value)"
+            } ]
+          }
+        } ]
+      },
+      "section" : [ {
+        "title" : "Original Darstellung",
+        "code" : {
+          "coding" : [ {
+            "system" : "http://loinc.org",
+            "code" : "55108-5",
+            "display" : "Clinical presentation Document"
+          } ]
+        },
+        "text" : {
+          "extension" : [ {
+            "url" : "http://hl7.org/fhir/StructureDefinition/textLink",
+            "extension" : [ {
+              "url" : "htmlid",
+              "valueString" : "original-representation"
+            }, {
+              "url" : "data",
+              "valueUri" : "urn:uuid:bc77b4a1-95e5-52fe-b687-abbbcc6fb388"
+            } ]
+          } ],
+          "status" : "generated",
+          "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Representation of the original view: <span id=\"original-representation\">PDF</span></div>"
+        },
+        "entry" : [ {
+          "reference" : "urn:uuid:bc77b4a1-95e5-52fe-b687-abbbcc6fb388"
+        } ]
+      }, {
+        "title" : "Medikamentenliste",
+        "code" : {
+          "coding" : [ {
+            "system" : "http://loinc.org",
+            "code" : "10160-0",
+            "display" : "History of Medication use Narrative"
+          } ]
+        },
+        "entry" : [ {
+          "reference" : "urn:uuid:86e67e08-03fe-52ab-b2d7-d3a1727f8b35"
+        }, {
+          "reference" : "urn:uuid:f6e9a4a6-ced4-50f8-a826-24eea347889d"
+        }, {
+          "reference" : "urn:uuid:d1cbaf12-eff8-561f-bd31-4d57c3e76386"
+        }, {
+          "reference" : "urn:uuid:fce9dd86-502a-5967-92ef-7cda33925ea7"
+        }, {
+          "reference" : "urn:uuid:5bb60d3e-622c-5f01-ad13-464bff353686"
+        } ]
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:23c31643-ee69-5590-a55c-d789d10611bc",
+    "resource" : {
+      "resourceType" : "Patient",
+      "id" : "23c31643-ee69-5590-a55c-d789d10611bc",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-core/StructureDefinition/ch-core-patient-epr" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Alice Louloui, 1945-01-19</div>"
+      },
+      "identifier" : [ {
+        "system" : "urn:oid:2.16.756.5.30.1.123.100.1.1.1",
+        "value" : "87588895877545621"
+      } ],
+      "name" : [ {
+        "family" : "Louloui",
+        "given" : [ "Alice" ]
+      } ],
+      "telecom" : [ {
+        "system" : "phone",
+        "value" : "011 111 11 11"
+      }, {
+        "system" : "phone",
+        "value" : "079 999 99 99"
+      }, {
+        "system" : "email",
+        "value" : "alicelouloui1945@fake-e-mail.ch"
+      } ],
+      "gender" : "female",
+      "birthDate" : "1945-01-19",
+      "address" : [ {
+        "line" : [ "Bernstrasse 1" ],
+        "city" : "Bern",
+        "postalCode" : "3000",
+        "country" : "CH"
+      } ],
+      "communication" : [ {
+        "language" : {
+          "coding" : [ {
+            "system" : "urn:ietf:bcp:47",
+            "code" : "de"
+          } ]
+        },
+        "preferred" : true
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:197d2eaf-f14c-55bb-8a48-8fb5397e1699",
+    "resource" : {
+      "resourceType" : "PractitionerRole",
+      "id" : "197d2eaf-f14c-55bb-8a48-8fb5397e1699",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-practitionerrole" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Hans Muster, Medical practice Dr. med. Hans Muster</div>"
+      },
+      "practitioner" : {
+        "reference" : "urn:uuid:32851e28-898f-5558-9452-a2ba8ababdbc"
+      },
+      "organization" : {
+        "reference" : "urn:uuid:3216d282-2c09-5040-980c-4410348d0892"
+      }
+    }
+  }, {
+    "fullUrl" : "urn:uuid:32851e28-898f-5558-9452-a2ba8ababdbc",
+    "resource" : {
+      "resourceType" : "Practitioner",
+      "id" : "32851e28-898f-5558-9452-a2ba8ababdbc",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-practitioner" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Hans Muster</div>"
+      },
+      "identifier" : [ {
+        "system" : "urn:oid:2.51.1.3",
+        "value" : "123123123123"
+      } ],
+      "name" : [ {
+        "family" : "Muster",
+        "given" : [ "Hans" ]
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:3216d282-2c09-5040-980c-4410348d0892",
+    "resource" : {
+      "resourceType" : "Organization",
+      "id" : "3216d282-2c09-5040-980c-4410348d0892",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-organization" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Medical practice Dr. med. Hans Muster, Bernstrasse 1, 3000 Bern</div>"
+      },
+      "name" : "Medical practice Dr. med. Hans Muster",
+      "address" : [ {
+        "line" : [ "Bernstrasse 1" ],
+        "city" : "Bern",
+        "postalCode" : "3000",
+        "country" : "CH"
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:86e67e08-03fe-52ab-b2d7-d3a1727f8b35",
+    "resource" : {
+      "resourceType" : "MedicationStatement",
+      "id" : "86e67e08-03fe-52ab-b2d7-d3a1727f8b35",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Product number 1246564</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "text" : "Product number 1246564"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:b415ad78-3e44-5984-bbac-1f80d52f17d1"
+      } ],
+      "status" : "active",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:23c31643-ee69-5590-a55c-d789d10611bc"
+      },
+      "dateAsserted" : "2024-01-09T09:14:36.0000000+01:00",
+      "informationSource" : {
+        "reference" : "urn:uuid:197d2eaf-f14c-55bb-8a48-8fb5397e1699"
+      },
+      "reasonCode" : [ {
+        "text" : "Pancreas"
+      } ],
+      "dosage" : [ {
+        "sequence" : 1,
+        "timing" : {
+          "repeat" : {
+            "when" : [ "PCM" ]
+          }
+        },
+        "doseAndRate" : [ {
+          "doseQuantity" : {
+            "value" : 1,
+            "unit" : "Stk",
+            "system" : "http://snomed.info/sct",
+            "code" : "767525000"
+          }
+        } ]
+      }, {
+        "sequence" : 2,
+        "timing" : {
+          "repeat" : {
+            "when" : [ "PCV" ]
+          }
+        },
+        "doseAndRate" : [ {
+          "doseQuantity" : {
+            "value" : 1,
+            "unit" : "Stk",
+            "system" : "http://snomed.info/sct",
+            "code" : "767525000"
+          }
+        } ]
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:f6e9a4a6-ced4-50f8-a826-24eea347889d",
+    "resource" : {
+      "resourceType" : "MedicationStatement",
+      "id" : "f6e9a4a6-ced4-50f8-a826-24eea347889d",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Pharmacode 5292958</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "text" : "Pharmacode 5292958"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:b56b0889-ca8f-5308-962c-6985bc50cc39"
+      } ],
+      "status" : "active",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:23c31643-ee69-5590-a55c-d789d10611bc"
+      },
+      "dateAsserted" : "2024-01-09T09:14:36.0000000+01:00",
+      "informationSource" : {
+        "reference" : "urn:uuid:197d2eaf-f14c-55bb-8a48-8fb5397e1699"
+      },
+      "reasonCode" : [ {
+        "text" : "Cholesterol-lowering drug"
+      } ],
+      "dosage" : [ {
+        "timing" : {
+          "repeat" : {
+            "boundsPeriod" : {
+              "start" : "2012-05-25"
+            },
+            "when" : [ "EVE" ]
+          }
+        },
+        "route" : {
+          "coding" : [ {
+            "system" : "urn:oid:0.4.0.127.0.16.1.1.2.1",
+            "code" : "20053000",
+            "display" : "Oral use"
+          } ]
+        },
+        "method" : {
+          "coding" : [ {
+            "system" : "urn:oid:0.4.0.127.0.16.1.1.2.1",
+            "code" : "0019",
+            "display" : "Swallowing"
+          } ]
+        },
+        "doseAndRate" : [ {
+          "doseQuantity" : {
+            "value" : 1,
+            "unit" : "Stk",
+            "system" : "http://snomed.info/sct",
+            "code" : "767525000"
+          }
+        } ]
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:d1cbaf12-eff8-561f-bd31-4d57c3e76386",
+    "resource" : {
+      "resourceType" : "MedicationStatement",
+      "id" : "d1cbaf12-eff8-561f-bd31-4d57c3e76386",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">GTIN 7680334810013</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "coding" : [ {
+            "system" : "urn:oid:2.51.1.1",
+            "code" : "7680334810013"
+          } ],
+          "text" : "GTIN 7680334810013"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:5415733c-dde5-58aa-8c15-fc490fa96d51"
+      } ],
+      "status" : "active",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:23c31643-ee69-5590-a55c-d789d10611bc"
+      },
+      "dateAsserted" : "2024-01-09T09:14:36.0000000+01:00",
+      "informationSource" : {
+        "reference" : "urn:uuid:197d2eaf-f14c-55bb-8a48-8fb5397e1699"
+      },
+      "reasonCode" : [ {
+        "text" : "Vitamins/minerals"
+      } ],
+      "dosage" : [ {
+        "patientInstruction" : "Dose using the dosing pipette, place on a spoon and then take undiluted. The pipette must not come into contact with the mouth, saliva or food.",
+        "timing" : {
+          "repeat" : {
+            "boundsPeriod" : {
+              "start" : "2023-09-20",
+              "end" : "2024-04-30"
+            },
+            "frequency" : 1,
+            "period" : 1,
+            "periodUnit" : "wk"
+          }
+        },
+        "route" : {
+          "coding" : [ {
+            "system" : "urn:oid:0.4.0.127.0.16.1.1.2.1",
+            "code" : "20053000",
+            "display" : "Oral use"
+          } ]
+        },
+        "doseAndRate" : [ {
+          "doseQuantity" : {
+            "value" : 1.4,
+            "unit" : "ml",
+            "system" : "http://unitsofmeasure.org",
+            "code" : "mL"
+          }
+        } ]
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:fce9dd86-502a-5967-92ef-7cda33925ea7",
+    "resource" : {
+      "resourceType" : "MedicationStatement",
+      "id" : "fce9dd86-502a-5967-92ef-7cda33925ea7",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">Product number 1512856</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "text" : "Product number 1512856"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:f8968e2d-e651-5f07-8852-483ffe65b2d8"
+      } ],
+      "status" : "active",
+      "category" : {
+        "coding" : [ {
+          "system" : "http://terminology.hl7.org/CodeSystem/medication-statement-category",
+          "code" : "patientspecified",
+          "display" : "Patient Specified"
+        } ]
+      },
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:23c31643-ee69-5590-a55c-d789d10611bc"
+      },
+      "dateAsserted" : "2024-01-09T09:14:36.0000000+01:00",
+      "informationSource" : {
+        "reference" : "urn:uuid:197d2eaf-f14c-55bb-8a48-8fb5397e1699"
+      },
+      "reasonCode" : [ {
+        "text" : "Vitamins/minerals"
+      } ],
+      "dosage" : [ {
+        "timing" : {
+          "repeat" : {
+            "timeOfDay" : [ "09:00:00" ]
+          }
+        },
+        "doseAndRate" : [ {
+          "doseQuantity" : {
+            "value" : 1.0,
+            "unit" : "Stk",
+            "system" : "http://snomed.info/sct",
+            "code" : "767525000"
+          }
+        } ]
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:5bb60d3e-622c-5f01-ad13-464bff353686",
+    "resource" : {
+      "resourceType" : "MedicationStatement",
+      "id" : "5bb60d3e-622c-5f01-ad13-464bff353686",
+      "meta" : {
+        "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medicationstatement-card" ]
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">GTIN 7680473440263: alle 1 Tag(e) 3x: 1 Appl</div>"
+      },
+      "contained" : [ {
+        "resourceType" : "Medication",
+        "id" : "med",
+        "meta" : {
+          "profile" : [ "http://fhir.ch/ig/ch-emed/StructureDefinition/ch-emed-medication" ]
+        },
+        "code" : {
+          "coding" : [ {
+            "system" : "urn:oid:2.51.1.1",
+            "code" : "7680473440263"
+          } ],
+          "text" : "GTIN 7680473440263"
+        }
+      } ],
+      "identifier" : [ {
+        "system" : "urn:ietf:rfc:3986",
+        "value" : "urn:uuid:4d17cb08-d12f-515f-aaf5-26bd1bf5fa38"
+      } ],
+      "status" : "active",
+      "medicationReference" : {
+        "reference" : "#med"
+      },
+      "subject" : {
+        "reference" : "urn:uuid:23c31643-ee69-5590-a55c-d789d10611bc"
+      },
+      "dateAsserted" : "2024-01-09T09:14:36.0000000+01:00",
+      "informationSource" : {
+        "reference" : "urn:uuid:197d2eaf-f14c-55bb-8a48-8fb5397e1699"
+      },
+      "reasonCode" : [ {
+        "text" : "Rheumatism"
+      } ],
+      "dosage" : [ {
+        "text" : "alle 1 Tag(e) 3x: 1 Appl",
+        "route" : {
+          "coding" : [ {
+            "system" : "urn:oid:0.4.0.127.0.16.1.1.2.1",
+            "code" : "20003000",
+            "display" : "Cutaneous use"
+          } ]
+        },
+        "method" : {
+          "coding" : [ {
+            "system" : "urn:oid:0.4.0.127.0.16.1.1.2.1",
+            "code" : "0005",
+            "display" : "Application"
+          } ]
+        }
+      } ]
+    }
+  }, {
+    "fullUrl" : "urn:uuid:bc77b4a1-95e5-52fe-b687-abbbcc6fb388",
+    "resource" : {
+      "resourceType" : "Binary",
+      "id" : "bc77b4a1-95e5-52fe-b687-abbbcc6fb388",
+      "contentType" : "application/pdf",
+      "data" : "{{pdf}}"
+    }
+  } ]
+}

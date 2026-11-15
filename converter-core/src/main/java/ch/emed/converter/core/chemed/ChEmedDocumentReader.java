@@ -1,7 +1,6 @@
-package ch.emed.converter.chmed16a.io;
+package ch.emed.converter.core.chemed;
 
 import ca.uhn.fhir.parser.DataFormatException;
-import ch.emed.converter.chmed16a.mapping.MappingRule;
 import ch.emed.converter.core.fhir.ChEmedJson;
 import ch.emed.converter.core.report.Phase;
 import ch.emed.converter.core.report.ReasonCode;
@@ -20,9 +19,10 @@ import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
 
 /**
- * Opens CH EMED document Bundles for the reverse mapping (mapping spec M-REV-*): parses, validates
- * against the pinned profiles, detects the document type from {@code Composition.type} (FR-007) and
- * resolves references inside the Bundle.
+ * Opens CH EMED document Bundles for the reverse mappings of the eMediplan formats (CHMED16A rules
+ * M-REV-01/22/23, CHMED23A rules M23-REV-*): parses, validates against the pinned profiles, detects
+ * the document type from {@code Composition.type} and resolves references inside the Bundle. Moved
+ * from format-chmed16a (feature 006, research R2).
  */
 public final class ChEmedDocumentReader {
 
@@ -112,10 +112,11 @@ public final class ChEmedDocumentReader {
    * @param json UTF-8 FHIR JSON
    * @param validator CH EMED validator (phase {@code VALIDATE_INPUT})
    * @param report receives problems
+   * @param target name of the target format in messages, e.g. {@code CHMED16A}
    * @return the document, or null if it cannot be converted (ERROR entries)
    */
   public static ChEmedDocument read(
-      byte[] json, ChEmedValidator validator, ReportCollector report) {
+      byte[] json, ChEmedValidator validator, ReportCollector report, String target) {
     Bundle bundle;
     try {
       bundle = ChEmedJson.parse(json);
@@ -130,17 +131,17 @@ public final class ChEmedDocumentReader {
     if (validation.stream().anyMatch(e -> e.severity() == Severity.ERROR)) {
       return null;
     }
-    return open(bundle, report);
+    return open(bundle, report, target);
   }
 
   /**
-   * Detects the document type of a validated Bundle and reports CH EMED elements without CHMED16A
-   * counterpart (M-REV-22, M-REV-23).
+   * Detects the document type of a validated Bundle and reports CH EMED elements without a
+   * counterpart in the target format (confidentiality, original representation).
    *
+   * @param target name of the target format in messages, e.g. {@code CHMED16A}
    * @return the document, or null if the type is not supported (ERROR entry)
    */
-  @MappingRule({"M-REV-01", "M-REV-22", "M-REV-23"})
-  public static ChEmedDocument open(Bundle bundle, ReportCollector report) {
+  public static ChEmedDocument open(Bundle bundle, ReportCollector report, String target) {
     Composition composition =
         bundle.getEntry().stream()
             .map(BundleEntryComponent::getResource)
@@ -175,7 +176,9 @@ public final class ChEmedDocumentReader {
               ReasonCode.UNMAPPABLE_ELEMENT,
               Phase.MAP,
               "Composition.confidentiality",
-              "Document confidentiality has no CHMED16A counterpart and is not carried over"));
+              "Document confidentiality has no "
+                  + target
+                  + " counterpart and is not carried over"));
     }
     if (composition.getSection().stream()
         .anyMatch(s -> hasCode(s.getCode(), ORIGINAL_REPRESENTATION_CODE))) {

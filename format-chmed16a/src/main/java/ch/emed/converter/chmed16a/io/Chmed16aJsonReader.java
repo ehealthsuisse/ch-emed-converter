@@ -130,7 +130,8 @@ public final class Chmed16aJsonReader {
               ReasonCode.PARSE_ERROR,
               Phase.PARSE,
               "/",
-              "Input looks like a URL but is not a signed eRezept URL (host eprescription.hin.ch)"));
+              "Input looks like a URL but is not a signed eRezept URL (host"
+                  + " eprescription.hin.ch)"));
       return null;
     } else {
       report.add(
@@ -166,8 +167,7 @@ public final class Chmed16aJsonReader {
               ReasonCode.UNSUPPORTED_VERSION,
               Phase.PARSE,
               "/",
-              "Input is a CHMED23A document (camelCase keys); only CHMED16A is supported by this"
-                  + " conversion"));
+              "Input is a CHMED23A document (camelCase keys); use source chmed23a"));
       return null;
     }
     Reader reader = new Reader(report);

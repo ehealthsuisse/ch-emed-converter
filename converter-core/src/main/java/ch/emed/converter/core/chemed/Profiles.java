@@ -1,6 +1,9 @@
-package ch.emed.converter.chmed16a.mapping;
+package ch.emed.converter.core.chemed;
 
-/** Canonical URLs and code systems of the pinned CH EMED 6.0.0 / CH Core 6.0.0 packages. */
+/**
+ * Canonical URLs and code systems of the pinned CH EMED 6.0.0 / CH Core 6.0.0 packages, shared by
+ * the eMediplan formats (moved from format-chmed16a, feature 006).
+ */
 public final class Profiles {
 
   public static final String DOCUMENT_CARD =

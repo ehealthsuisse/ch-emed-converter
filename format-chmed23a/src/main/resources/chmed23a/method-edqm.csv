@@ -1,0 +1,17 @@
+# CHMED23A moa (CDTYP 62) -> EDQM administration method of CH Term 3.3.0 (ValueSet edqm-administrationmethod).
+# Rows only where the zero-padded code exists and the German designations match (case-insensitive); domain review.
+moa;edqm;display
+4;0004;Administration
+5;0005;Application
+7;0007;Chewing
+8;0008;Gargling
+9;0009;Infusion
+10;0010;Inhalation
+11;0011;Injection
+12;0012;Insertion
+13;0013;Instillation
+17;0017;Spraying
+18;0018;Sucking
+19;0019;Swallowing
+112;0112;Dialysis
+113;0113;Implantation

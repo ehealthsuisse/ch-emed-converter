@@ -27,7 +27,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 /**
  * T047 and T067 (feature 004, US5, contracts/rest-api.md), T023 (feature 005): CH EMED EPR through
- * REST, OpenAPI 1.2.1.
+ * REST, OpenAPI 1.2.1 (now 1.3.0).
  */
 class EprConversionContractTest extends AbstractRestTest {
 

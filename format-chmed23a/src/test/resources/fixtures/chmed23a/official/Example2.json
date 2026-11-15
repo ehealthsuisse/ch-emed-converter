@@ -1,0 +1,403 @@
+{
+  "patient": {
+    "fName": "Urs",
+    "lName": "Mustermann",
+    "bdt": "1968-05-15",
+    "gender": 1,
+    "street": "Bernstrasse 1",
+    "zip": "3000",
+    "city": "Bern",
+    "country": "CH",
+    "lng": "DE",
+    "phones": [
+      "079 999 99 99"
+    ],
+    "ids": [
+      {
+        "type": 1,
+        "val": "87588895877545621"
+      }
+    ],
+    "mData": {
+      "rcs": [
+        {
+          "id": 4
+        },
+        {
+          "id": 5,
+          "rIds": [
+            615
+          ]
+        },
+        {
+          "id": 6
+        },
+        {
+          "id": 7
+        }
+      ]
+    }
+  },
+  "meds": [
+    {
+      "id": "7680549490031",
+      "idType": 2,
+      "pos": [
+        {
+          "po": {
+            "t": 4,
+            "cyDuU": 5,
+            "cyDu": 1,
+            "tdo": {
+              "t": 4,
+              "wds": [
+                2,
+                4
+              ],
+              "tdo": {
+                "t": 2,
+                "ts": [
+                  {
+                    "dt": "07:30:00",
+                    "do": {
+                      "t": 1,
+                      "a": 1.0
+                    }
+                  }
+                ]
+              }
+            },
+            "tdpc": 1
+          },
+          "relMeal": 1,
+          "unit": "Stk",
+          "appInstr": "Take on an empty stomach, at least 30 minutes before breakfast."
+        },
+        {
+          "po": {
+            "t": 4,
+            "cyDuU": 5,
+            "cyDu": 1,
+            "tdo": {
+              "t": 4,
+              "wds": [
+                6
+              ],
+              "tdo": {
+                "t": 2,
+                "ts": [
+                  {
+                    "dt": "09:00:00",
+                    "do": {
+                      "t": 1,
+                      "a": 1.0
+                    }
+                  }
+                ]
+              }
+            },
+            "tdpc": 1
+          },
+          "relMeal": 1,
+          "unit": "Stk",
+          "appInstr": "Take on an empty stomach, at least 30 minutes before breakfast."
+        }
+      ],
+      "rsn": "Thyroid gland",
+      "autoMed": false,
+      "prscbBy": "45745874584",
+      "nbPack": 1.0
+    },
+    {
+      "id": "7680216930020",
+      "idType": 2,
+      "pos": [
+        {
+          "dtFrom": "2024-01-10",
+          "dtTo": "2024-02-29",
+          "po": {
+            "t": 5,
+            "sos": [
+              {
+                "t": 1,
+                "po": {
+                  "t": 1,
+                  "ds": [
+                    0,
+                    0,
+                    0.5,
+                    0
+                  ]
+                },
+                "duU": 4,
+                "du": 2
+              },
+              {
+                "t": 2,
+                "duU": 4,
+                "du": 1
+              },
+              {
+                "t": 1,
+                "po": {
+                  "t": 1,
+                  "ds": [
+                    0,
+                    0,
+                    0.75,
+                    0
+                  ]
+                },
+                "duU": 4,
+                "du": 3
+              },
+              {
+                "t": 2,
+                "duU": 4,
+                "du": 1
+              }
+            ]
+          },
+          "relMeal": 1,
+          "inRes": false,
+          "unit": "Stk",
+          "appInstr": "Next doctor's appointment on 29.02.2024"
+        }
+      ],
+      "rsn": "Blood thinner",
+      "autoMed": false,
+      "prscbBy": "55255255255",
+      "nbPack": 1.0
+    },
+    {
+      "id": "7680656220026",
+      "idType": 2,
+      "pos": [
+        {
+          "dtFrom": "2023-11-12",
+          "po": {
+            "t": 4,
+            "cyDuU": 5,
+            "cyDu": 2,
+            "tdo": {
+              "t": 4,
+              "wds": [
+                1
+              ],
+              "tdo": {
+                "t": 2,
+                "ts": [
+                  {
+                    "dt": "20:00:00",
+                    "do": {
+                      "t": 1,
+                      "a": 1.0
+                    }
+                  }
+                ]
+              }
+            },
+            "tdpc": 1
+          },
+          "inRes": false,
+          "roa": "20066000",
+          "moa": "11",
+          "unit": "Stk",
+          "appInstr": "See leaflet"
+        }
+      ],
+      "autoMed": false,
+      "prscbBy": "45745874584",
+      "nbPack": 1.0
+    },
+    {
+      "id": "7680562030092",
+      "idType": 2,
+      "pos": [
+        {
+          "dtFrom": "2024-02-02",
+          "dtTo": "2024-02-02",
+          "po": {
+            "t": 3,
+            "tdo": {
+              "t": 2,
+              "ts": [
+                {
+                  "dt": "09:00:00",
+                  "do": {
+                    "t": 1,
+                    "a": 1.0
+                  }
+                }
+              ]
+            }
+          },
+          "inRes": false,
+          "unit": "Stk",
+          "appInstr": "Endocarditis prophylaxis. Take 1 pill 2 hours (09:00 a.m.) before the dentist's appointment (02.02.2024 11.00 a.m.)."
+        },
+        {
+          "dtFrom": "2024-03-06",
+          "dtTo": "2024-03-11",
+          "po": {
+            "t": 4,
+            "cyDuU": 4,
+            "cyDu": 1,
+            "tdo": {
+              "t": 2,
+              "ts": [
+                {
+                  "dt": "08:00:00",
+                  "do": {
+                    "t": 1,
+                    "a": 1.0
+                  }
+                },
+                {
+                  "dt": "20:00:00",
+                  "do": {
+                    "t": 1,
+                    "a": 1.0
+                  }
+                }
+              ]
+            },
+            "tdpc": 1
+          },
+          "inRes": false,
+          "unit": "Stk"
+        }
+      ],
+      "rsn": "Infection",
+      "autoMed": false,
+      "prscbBy": "45745874584",
+      "nbPack": 1.0
+    },
+    {
+      "id": "7680302190581",
+      "idType": 2,
+      "pos": [
+        {
+          "po": {
+            "t": 4,
+            "cyDuU": 6,
+            "cyDu": 1,
+            "tdo": {
+              "t": 1,
+              "do": {
+                "t": 1,
+                "a": 1.0
+              }
+            },
+            "tdpc": 1
+          },
+          "inRes": false,
+          "roa": "20035000",
+          "moa": "11",
+          "unit": "Stk",
+          "appInstr": "1 application once a month, next appointment on 10.02.2024"
+        }
+      ],
+      "autoMed": false,
+      "prscbBy": "45745874584",
+      "nbPack": 1.0
+    },
+    {
+      "id": "7680540300100",
+      "idType": 2,
+      "pos": [
+        {
+          "dtFrom": "2022-07-06",
+          "po": {
+            "t": 2,
+            "text": "If palpitations occur, take Â½ pill and wait 30 minutes. If palpitations persist, take another Â½ pill and wait another 30 minutes. If it does not get better, contact a doctor."
+          },
+          "inRes": true,
+          "unit": "Stk"
+        }
+      ],
+      "autoMed": false,
+      "prscbBy": "45745874584",
+      "nbPack": 1.0
+    },
+    {
+      "id": "Imagikin",
+      "idType": 1,
+      "pos": [
+        {
+          "dtFrom": "2023-11-10",
+          "po": {
+            "t": 4,
+            "cyDuU": 6,
+            "cyDu": 1,
+            "tdo": {
+              "t": 5,
+              "doms": [
+                10
+              ],
+              "tdo": {
+                "t": 1,
+                "do": {
+                  "t": 3,
+                  "aMin": 10.0,
+                  "aMax": 20.0
+                }
+              }
+            },
+            "tdpc": 1
+          },
+          "inRes": false,
+          "unit": "gtt"
+        },
+        {
+          "dtFrom": "2024-02-02",
+          "dtTo": "2024-02-18",
+          "po": {
+            "t": 4,
+            "cyDuU": 5,
+            "cyDu": 1,
+            "tdo": {
+              "t": 4,
+              "wds": [
+                1
+              ],
+              "tdo": {
+                "t": 2,
+                "ts": [
+                  {
+                    "dt": "18:00:00",
+                    "do": {
+                      "t": 1,
+                      "a": 2.0
+                    }
+                  }
+                ]
+              }
+            },
+            "tdpc": 1
+          },
+          "inRes": true,
+          "unit": "gtt"
+        }
+      ],
+      "autoMed": true,
+      "nbPack": 1.0
+    }
+  ],
+  "medType": 1,
+  "auth": 1,
+  "dt": "2024-01-10T15:54:06.0000000+01:00",
+  "rmk": "Please measure your blood pressure daily.",
+  "hcPerson": {
+    "fName": "Hans",
+    "lName": "Beispiel"
+  },
+  "hcOrg": {
+    "gln": "7601001362383",
+    "name": "Arztpraxis Sonnenschein",
+    "street": "Bernstrasse 1",
+    "zip": "3000",
+    "city": "Bern",
+    "country": "CH"
+  }
+}

@@ -1,0 +1,254 @@
+{
+  "patient": {
+    "fName": "Sebastian",
+    "lName": "Example",
+    "bdt": "1971-05-15",
+    "gender": 1,
+    "street": "Bernstrasse 1",
+    "zip": "3000",
+    "city": "Bern",
+    "country": "CH",
+    "lng": "DE",
+    "phones": [
+      "079 999 99 99"
+    ],
+    "ids": [
+      {
+        "type": 2,
+        "sId": "9.99.999.9.99",
+        "val": "87588895877545621"
+      }
+    ],
+    "mData": {
+      "rcs": [
+        {
+          "id": 1
+        },
+        {
+          "id": 2
+        },
+        {
+          "id": 4
+        },
+        {
+          "id": 5,
+          "rIds": [
+            615
+          ]
+        },
+        {
+          "id": 6
+        },
+        {
+          "id": 7
+        }
+      ],
+      "w": 80.0,
+      "h": 179.0
+    }
+  },
+  "meds": [
+    {
+      "id": "7680388400376",
+      "idType": 2,
+      "pos": [
+        {
+          "dtFrom": "2024-02-08",
+          "dtTo": "2024-02-10",
+          "po": {
+            "t": 1,
+            "ds": [
+              0.25,
+              0,
+              0.25,
+              0
+            ]
+          },
+          "inRes": false,
+          "unit": "Stk"
+        },
+        {
+          "dtFrom": "2024-02-11",
+          "dtTo": "2024-02-13",
+          "po": {
+            "t": 1,
+            "ds": [
+              0.5,
+              0,
+              0.5,
+              0
+            ]
+          },
+          "inRes": false,
+          "unit": "Stk"
+        },
+        {
+          "dtFrom": "2024-02-14",
+          "dtTo": "2024-02-16",
+          "po": {
+            "t": 1,
+            "ds": [
+              0.75,
+              0,
+              0.75,
+              0
+            ]
+          },
+          "inRes": false,
+          "unit": "Stk"
+        },
+        {
+          "dtFrom": "2024-02-17",
+          "po": {
+            "t": 1,
+            "ds": [
+              1,
+              0,
+              1,
+              0
+            ]
+          },
+          "inRes": false,
+          "unit": "Stk"
+        }
+      ],
+      "autoMed": false,
+      "prscbBy": "123123123123",
+      "reps": {
+        "t": 2,
+        "u": 6,
+        "d": 6
+      },
+      "isNotSub": false,
+      "nbPack": 1.0
+    },
+    {
+      "id": "7680563180079",
+      "idType": 2,
+      "pos": [
+        {
+          "dtFrom": "2024-02-08",
+          "po": {
+            "t": 4,
+            "cyDuU": 4,
+            "cyDu": 1,
+            "tdo": {
+              "t": 3,
+              "ss": [
+                {
+                  "s": 1,
+                  "do": {
+                    "t": 3,
+                    "aMin": 1.0,
+                    "aMax": 2.0
+                  }
+                },
+                {
+                  "s": 3,
+                  "do": {
+                    "t": 3,
+                    "aMin": 1.0,
+                    "aMax": 2.0
+                  }
+                }
+              ]
+            },
+            "tdpc": 1
+          },
+          "inRes": true,
+          "unit": "Stk",
+          "appInstr": "Maximum 4 pills a day"
+        }
+      ],
+      "rsn": "Pain",
+      "autoMed": false,
+      "prscbBy": "123123123123",
+      "isNotSub": true,
+      "nbPack": 2.0
+    },
+    {
+      "id": "7680552740055",
+      "idType": 2,
+      "pos": [
+        {
+          "dtFrom": "2024-02-08",
+          "dtTo": "2024-02-28",
+          "po": {
+            "t": 4,
+            "cyDuU": 4,
+            "cyDu": 1,
+            "tdo": {
+              "t": 2,
+              "ts": [
+                {
+                  "dt": "21:00:00",
+                  "do": {
+                    "t": 1,
+                    "a": 20.0
+                  }
+                }
+              ]
+            },
+            "tdpc": 1
+          },
+          "inRes": false,
+          "unit": "gtt"
+        }
+      ],
+      "rsn": "Cough",
+      "prscbBy": "123123123123",
+      "reps": {
+        "t": 1,
+        "v": 0
+      },
+      "isNotSub": false,
+      "nbPack": 1.0
+    },
+    {
+      "id": "7680362030131",
+      "idType": 2,
+      "pos": [
+        {
+          "dtFrom": "2024-02-08",
+          "po": {
+            "t": 1,
+            "ds": [
+              0,
+              0,
+              0,
+              0.5
+            ]
+          },
+          "inRes": true,
+          "unit": "Stk",
+          "appInstr": "Take half an hour before bedtime."
+        }
+      ],
+      "autoMed": false,
+      "prscbBy": "123123123123",
+      "reps": {
+        "t": 1,
+        "v": 2
+      },
+      "isNotSub": false,
+      "nbPack": 1.0
+    }
+  ],
+  "medType": 3,
+  "auth": 1,
+  "dt": "2024-02-08T10:01:23.0000000+01:00",
+  "hcPerson": {
+    "gln": "123123123123",
+    "fName": "Hans",
+    "lName": "Muster"
+  },
+  "hcOrg": {
+    "gln": "55255255255",
+    "name": "Arztpraxis Sonnenschein",
+    "street": "Bernstrasse 1",
+    "zip": "3000",
+    "city": "Bern",
+    "country": "CH",
+    "zsr": "XX.1254"
+  }
+}

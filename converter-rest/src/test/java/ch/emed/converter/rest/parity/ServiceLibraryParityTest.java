@@ -43,11 +43,18 @@ class ServiceLibraryParityTest extends AbstractRestTest {
   @TempDir static Path temp;
 
   static Stream<Arguments> corpus() {
-    return Stream.concat(
-        RestTestSupport.corpus(RestTestSupport.CHMED16A).stream()
-            .map(p -> Arguments.of(p, "chmed16a", "ch-emed")),
-        RestTestSupport.corpus(RestTestSupport.CH_EMED).stream()
-            .map(p -> Arguments.of(p, "ch-emed", "chmed16a")));
+    return Stream.of(
+            RestTestSupport.corpus(RestTestSupport.CHMED16A).stream()
+                .map(p -> Arguments.of(p, "chmed16a", "ch-emed")),
+            RestTestSupport.corpus(RestTestSupport.CH_EMED).stream()
+                .map(p -> Arguments.of(p, "ch-emed", "chmed16a")),
+            // feature 006, SC-004: the CHMED23A corpus and the CH EMED documents to CHMED23A
+            RestTestSupport.corpus(RestTestSupport.CHMED23A).stream()
+                .filter(p -> p.toString().endsWith(".json"))
+                .map(p -> Arguments.of(p, "chmed23a", "ch-emed")),
+            RestTestSupport.corpus(RestTestSupport.CH_EMED).stream()
+                .map(p -> Arguments.of(p, "ch-emed", "chmed23a")))
+        .flatMap(s -> s);
   }
 
   /** Includes every failing input: parity also holds for outcome and report of failures. */

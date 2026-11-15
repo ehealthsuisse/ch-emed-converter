@@ -4,6 +4,9 @@ import static ch.emed.converter.chmed16a.mapping.PatientMapper.present;
 
 import ch.emed.converter.chmed16a.model.Medicament;
 import ch.emed.converter.chmed16a.model.Medication;
+import ch.emed.converter.core.chemed.Labels;
+import ch.emed.converter.core.chemed.Narratives;
+import ch.emed.converter.core.chemed.Profiles;
 import ch.emed.converter.core.render.OriginalRepresentationRenderer;
 import ch.emed.converter.core.report.Phase;
 import ch.emed.converter.core.report.ReasonCode;

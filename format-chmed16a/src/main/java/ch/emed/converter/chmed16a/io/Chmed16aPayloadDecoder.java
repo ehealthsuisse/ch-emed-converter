@@ -64,7 +64,9 @@ public final class Chmed16aPayloadDecoder {
           "Payload declares CHMED"
               + format.group(1)
               + format.group(2).charAt(0)
-              + "; only CHMED16A is supported by this conversion",
+              + (format.group(1).equals("23") && format.group(2).startsWith("A")
+                  ? "; use source chmed23a"
+                  : "; only CHMED16A is supported by this conversion"),
           true);
     }
     Matcher release = RELEASE_16.matcher(normalized.substring(7));
