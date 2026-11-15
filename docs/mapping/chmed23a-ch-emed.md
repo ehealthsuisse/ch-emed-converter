@@ -33,16 +33,41 @@ M-…".
 **Domain review pending**: a person with eMediplan / CH EMED knowledge has to confirm these
 interpretation points:
 - the method table `method-edqm.csv` (CDTYP 62 → EDQM by the German designation, M23-DOS-14) and
-  the route codes taken as EDQM codes (M23-DOS-13);
+  the route codes taken as EDQM codes (M23-DOS-13). The route codes `roa` (CDTYP 61) are EDQM
+  codes themselves and are carried unchanged. The method codes `moa` (CDTYP 62) are HCI codes only
+  "based on" EDQM; the table matches them by their German designation (for example `19`
+  "schlucken"), and all 14 codes have a row. Open question: whether codes with the same designation
+  mean the same; a wrong method code would be worse than none, and the profile requires
+  `method.coding`, so the method cannot be carried as text instead;
 - units beyond the CHMED16A table (`gtt` → drop, `UI` → `[iU]`, UCUM units; `Appl` unmapped;
-  M23-DOS-15) and `N/A` for plans without dose unit (M23-REV-12);
-- the meal relation as event timing or as additional instruction text (M23-DOS-16);
-- `sic` and repetition durations under one day reported as clinical loss (M23-RX-04, M23-RX-08).
-  `sic` ("sic erat scriptum") tells the pharmacist that the physician chose the prescription
-  deliberately and wants it exactly so (README of the pinned specification); unlike `isNotSub`, it
-  does not forbid substitution. CH EMED has no element for it, so it is not kept. Open question:
+  M23-DOS-15) and `N/A` for plans without dose unit (M23-REV-12). `gtt` (drops) becomes SNOMED CT
+  `732994000` "Drop (unit of presentation)", `UI` (international units) UCUM `[iU]`. `Appl` (one
+  application, for example of an ointment) has no entry, so the dosage becomes text (Example 1:
+  "alle 1 Tag(e) 3x: 1 Appl"). `N/A` means "no unit"; it is written in reverse when a CH EMED
+  dosage has no dose unit, because a plan requires one. Open question: whether a unit of
+  presentation exists for `Appl`, so that such dosages stay structured;
+- the meal relation as event timing or as additional instruction text (M23-DOS-16). `relMeal`
+  1–3 (before, during, after a meal) map to the FHIR event timing codes AC…, C…, PC… (with times
+  of day they become text, as FHIR does not allow `when` together with `timeOfDay`); 4–7 (empty
+  stomach, high-fat meal, light meal, main meal; posology.md "Relative to meal") have no such code
+  and become the localized label in `additionalInstruction.text`, reported without clinical loss.
+  Open questions: whether "empty stomach" should count as clinical loss, since it can decide the
+  effect of a medicament; and whether a code from a pinned terminology (for example SNOMED CT) is
+  allowed in `additionalInstruction`, as no codes may be invented;
+- repetition durations under one day reported as clinical loss (M23-RX-04): `reps` with a duration
+  in seconds, minutes or hours, that is a prescription that may be repeated only for some hours.
+  `dispenseRequest.validityPeriod` is computed in whole days, so the duration is not kept. Open
+  question: whether such prescriptions occur in practice; if not, the report entry is enough;
+- `sic` reported as clinical loss (M23-RX-08). `sic` ("sic erat scriptum") tells the pharmacist
+  that the physician chose the prescription deliberately and wants it exactly so (README of the
+  pinned specification); unlike `isNotSub`, it does not forbid substitution. CH EMED has no element for it, so it is not kept. Open question:
   carry it as text, for example in `MedicationRequest.note`, so that the pharmacy still sees it;
-- one MedicationRequest per posology of a prescribed medicament (M23-RX-02, research R10);
+- one MedicationRequest per posology of a prescribed medicament (M23-RX-02, research R10). The
+  profile allows one base dosage per request, so a medicament with several posologies (Example 4:
+  a tapering scheme with four periods) becomes several requests, and the dispense data, including
+  `nbPack`, is copied to each. Open question: a pharmacy might read the copies as several
+  prescriptions and dispense the packages several times; the alternative is one request with the
+  dosage as text, which loses the structure;
 - GLN and GTIN check digits as WARNING instead of error (C23-OBJ-15, finding F7); the .NET
   reference implementation refuses invalid GLNs.
 
