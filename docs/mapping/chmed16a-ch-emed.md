@@ -15,7 +15,8 @@ of `<CHMED Id>#<path>` (research R8); `fullUrl` and references use `urn:uuid:<id
 interpretation points of this specification. They are marked "domain review" in the rules and
 collected here. Each point states the meaning of the field (README of the pinned CHMED16A
 specification, or the eRezept developer documentation), what the converter does and the open
-question:
+question (as questions for the reviewer, in German and English:
+[domain-review-questions.md](domain-review-questions.md)):
 - route `Roa` (M-DOS-04). `Roa` is a code of INDEX CDTYP 26, not an EDQM code. Only `PO` is mapped,
   to EDQM `20053000` "Oral use"; every other code gives WARNING `UNMAPPABLE_ELEMENT` with clinical
   loss, as the profile requires a coded route. Open question: whether a table CDTYP 26 → EDQM, as
@@ -36,7 +37,10 @@ question:
   only periods of whole months 1–24 become `Rep`, and `numberOfRepeatsAllowed` has no counterpart
   (WARNING with clinical loss). Open questions: whether `Rep` means a validity period or a number
   of repetitions; and how to treat `Rep` above 24 months, which the converter reads but the
-  eRezept rules refuse on output (M-ERX-04);
+  eRezept rules refuse on output (M-ERX-04). The CH EMED 7 working group (see below) reads `Rep`
+  the same way: repeatability in months only, 0 means a single dispense, no number of
+  repetitions. `Rep` 0 gives no element today; `numberOfRepeatsAllowed` 0 would state the single
+  dispense explicitly, whatever an absent value comes to mean;
 - `NbPack` (M-RX-05). Number of packages to be delivered, default 1. It becomes
   `dispenseRequest.quantity` (amount per dispense in FHIR); the default is not materialised.
   Open question: whether `NbPack` applies to each dispense or to the whole prescription when `Rep`
@@ -75,7 +79,32 @@ question:
 - validation `ValBy`, `ValDt` (M-DOC-07). The GLN of the healthcare professional who validated the
   medication plan, and the date. They are mapped to no element and give WARNING
   `UNMAPPABLE_ELEMENT` without clinical loss. Open question: whether the validation of a plan is
-  clinically relevant and should be kept, for example as an attester.
+  clinically relevant and should be kept, for example as an attester. The CH EMED 7 working group
+  discusses recording the verification of the whole plan, for example with the IHE MeOw extension
+  `verificationInformation` (verifier and time) on MedicationStatement; low priority.
+
+**CH EMED 7 working group (work in progress, nothing decided)**: the eMedication FHIR & Content
+sub-working group prepares the revision CH EMED 7.0.0 (draft proposal and meetings up to
+2026-11-12). Its draft lists the gaps between CHMED16A and CH EMED. Points that would change this
+mapping if adopted:
+- what an absent `numberOfRepeatsAllowed` means is open: the working group proposed "number
+  undefined" (0 = single dispense); the FHIR R6 change request FHIR-58711 proposes "no repeats";
+  HL7 is considering an additional element. This decides whether M-RX-06 (`Rep` without
+  `numberOfRepeatsAllowed`) stays right;
+- `timing.repeat.boundsPeriod` is to state the bounds of its own dosage element only, with the
+  overall treatment period elsewhere. M-DOS-01 writes the treatment period
+  into the base entry, and M-REV-16/M-REV-17 group entries by `boundsPeriod`;
+- `sequence` stays allowed, but the guidance is to prefer `boundsPeriod`, with a warning if
+  `sequence` and `boundsPeriod` are combined (vote on 2026-11-26). The split dosages of M-DOS-02
+  carry `sequence` 1 and `boundsPeriod` in the base entry, as CH EMED 6 requires;
+- a warning if `timing.code` or `timing.event` is combined with `timing.repeat`; the converter
+  writes neither;
+- dosage instructions stay required for prescriptions and plans;
+- CH EMED is to be separated from the EPR profiles (CH EMED today derives its documents from
+  `CHCoreDocumentEPR`), which may lift the required patient identifier and
+  confidentiality code;
+- concept maps CDTYP 9 → CH TERM UnitCode and CDTYP 26 → EDQM route are recommended for CH TERM
+  (see the open questions on units and `Roa` above).
 
 ## Input forms
 

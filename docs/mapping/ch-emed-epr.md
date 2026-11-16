@@ -100,7 +100,8 @@ note author and time, dispense details) and are reported as INFORMATION. The fla
 T036).
 
 **Questions for the review (T036)**: these elements are marked not clinical (`clinical: false`),
-but carry information that may matter clinically:
+but carry information that may matter clinically (as questions for the reviewer, in German and
+English, with the list above: [domain-review-questions.md](domain-review-questions.md), group E):
 - `MedicationStatement.category`: holds the self-medication of an eMediplan (`AutoMed` →
   `patientspecified`, M-MED-06 of `chmed16a-ch-emed.md`, M23-MED-06 of `chmed23a-ch-emed.md`). On
   the way eMediplan → CH EMED → CH EMED EPR, "self-medication" is lost without clinical loss;
@@ -112,6 +113,21 @@ but carry information that may matter clinically:
   CHANGELOG entry;
 - `MedicationDispense.daysSupply`: for how many days the dispensed amount lasts;
 - `MedicationRequest.priority`: for example an urgent prescription.
+
+**CH EMED 7 working group (work in progress, nothing decided)**: the eMedication FHIR & Content
+sub-working group prepares the revision CH EMED 7.0.0 (draft proposal and meetings up to
+2026-11-12). Points that would touch this mapping if adopted:
+- CH EMED is to be separated from the EPR profiles. CH EMED EPR stays a format of its own, and the
+  requirements above that CH EMED inherits from the EPR today (patient identifier, confidentiality
+  code) would then come only from CH EMED EPR and be checked here;
+- the dispenser `MedicationDispense.performer.actor`, today a PractitionerRole, may also become an
+  organisation (the pharmacy with its GLN), as in EU MPD: pharmacy systems do not record the
+  individual pharmacist. Clarification with DigiSanté is pending;
+- alignment with IHE and EU MPD at resource level is accepted, for example
+  `MedicationDispense.authorizingPrescription` besides the CH EMED prescription extension,
+  `recorder`, and `renderedDosageInstruction`;
+- a PRE in CH EMED EPR must be linked to an MTP, which converters from an
+  eMediplan prescription have to create or find (here: `treatmentPlanReferences`, M-EPR-24).
 
 ### Required data per document type
 
