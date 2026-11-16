@@ -31,7 +31,8 @@ The rules follow CHMED16A (`chmed16a-ch-emed.md`) wherever the formats agree; su
 M-…".
 
 **Domain review pending**: a person with eMediplan / CH EMED knowledge has to confirm these
-interpretation points:
+interpretation points (as questions for the reviewer, in German and English:
+[domain-review-questions.md](domain-review-questions.md)):
 - the method table `method-edqm.csv` (CDTYP 62 → EDQM by the German designation, M23-DOS-14) and
   the route codes taken as EDQM codes (M23-DOS-13). The route codes `roa` (CDTYP 61) are EDQM
   codes themselves and are carried unchanged. The method codes `moa` (CDTYP 62) are HCI codes only
@@ -110,6 +111,25 @@ interpretation points:
   valid. The warning is kept because CH EMED EPR requires valid GLNs (`gln-modulus-10`). Open
   question: whether the converter should follow the .NET reference implementation and refuse
   invalid GLNs, at least in prescriptions.
+
+**CH EMED 7 working group (work in progress, nothing decided)**: the eMedication FHIR & Content
+sub-working group prepares the revision CH EMED 7.0.0 (draft proposal and meetings up to
+2026-11-12). Besides the points shared with CHMED16A (`chmed16a-ch-emed.md`: repeats,
+`boundsPeriod`, `sequence`, separation from the EPR profiles), its draft touches these review
+points:
+- meal relation (M23-DOS-16): `when` codes other than
+  MORN/NOON/EVE/NIGHT give a validation warning in CH EMED 6 (`ch-emed-event-timing`), so the
+  AC…/C…/PC… codes written for `relMeal` 1–3 do as well. The draft names SNOMED CT codes for
+  "before/after a meal" in `additionalInstruction` as the alternative;
+- `sic` (M23-RX-08): dropping it is not considered an option; IHE and EU MPD
+  have an `offLabel` extension, whether it fits is open;
+- absent `reps` (M23-RX-05): the meaning of an absent `numberOfRepeatsAllowed` is open (working
+  group: number undefined; FHIR-58711: no repeats);
+- several posologies (M23-RX-02): with `boundsPeriod` per dosage element and the overall period
+  given separately, a tapering scheme could stay in one
+  MedicationRequest with several dosages instead of one request per posology;
+- `hcPerson` without GLN in plans: care homes and home care object to a
+  required GLN.
 
 ## Conformance
 
