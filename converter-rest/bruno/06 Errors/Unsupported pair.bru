@@ -1,0 +1,26 @@
+meta {
+  name: Unsupported pair
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/conversions/chmed16a/ch-emed-epr
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "document": "eyJJZCI6IjBjN2YwZjdlLTNiMWMtNGMxZS05YTU1LTFhMmIzYzRkNWUwMSIsIk1lZFR5cGUiOjEsIkF1dGgiOiI3NjAxMDAwMDAwMDAxIiwiRHQiOiIyMDI2LTEwLTAxVDA5OjMwOjAwKzAyOjAwIiwiUGF0aWVudCI6eyJGTmFtZSI6IkhhbnMiLCJMTmFtZSI6Ik11c3RlciIsIkJEdCI6IjE5NTAtMDMtMjEiLCJHZW5kZXIiOjEsIlN0cmVldCI6IlRlc3R3ZWcgMSIsIlppcCI6IjMwMDAiLCJDaXR5IjoiQmVybiIsIkxuZyI6ImRlIiwiUGhvbmUiOiIrNDEgMzEgMDAwIDAwIDAwIiwiSWRzIjpbeyJUeXBlIjoxLCJWYWwiOiI4MDc1NjAwMDAwMDAwMDAwMDAwMSJ9XX0sCiJNZWRpY2FtZW50cyI6WwogeyJJZCI6Ijc2ODA1MjExMDEzMDYiLCJJZFR5cGUiOjIsIlBvcyI6W3siRHRGcm9tIjoiMjAyNi0xMC0wMSIsIkQiOlsxLDAsMC41LDBdfV0sIlVuaXQiOiJTVEsiLCJUa2dSc24iOiJCbHV0aG9jaGRydWNrIiwiQXBwSW5zdHIiOiJNaXQgV2Fzc2VyIGVpbm5laG1lbiIsIkF1dG9NZWQiOjAsIlJvYSI6IlBPIn0sCiB7IklkIjoiNzY4MDUwMDQ0MDMzNCIsIklkVHlwZSI6MiwiUG9zIjpbeyJEdEZyb20iOiIyMDI2LTEwLTAxIiwiRHRUbyI6IjIwMjYtMTItMzEiLCJEIjpbMCwwLDEsMF19XSwiVW5pdCI6IlNUSyIsIkF1dG9NZWQiOjB9Cl19Cg=="
+  }
+}
+
+tests {
+  test("status 404", function () {
+    expect(res.status).to.equal(404);
+  });
+  test("errorType UNSUPPORTED_CONVERSION", function () {
+    expect(res.body.errorType).to.equal("UNSUPPORTED_CONVERSION");
+  });
+}

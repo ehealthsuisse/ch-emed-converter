@@ -1,0 +1,29 @@
+meta {
+  name: Card as QR image
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/v1/conversions/ch-emed/chmed16a
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "document": "{{chEmedCard}}",
+    "options": {
+      "outputForm": "qr-image"
+    }
+  }
+}
+
+tests {
+  test("status 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  test("outputMediaType image/png", function () {
+    expect(res.body.outputMediaType).to.equal("image/png");
+  });
+}

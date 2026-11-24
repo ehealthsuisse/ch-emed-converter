@@ -1,0 +1,30 @@
+meta {
+  name: Prescription without HcPerson, no option
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/api/v1/conversions/chmed16a/ch-emed
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "document": "eyJQYXRpZW50Ijp7IkZOYW1lIjoiSGFucyIsIkxOYW1lIjoiTXVzdGVyIiwiQkR0IjoiMTk1MC0wMy0yMSIsIkdlbmRlciI6MSwiSWRzIjpbeyJUeXBlIjoxLCJWYWwiOiI4MDc1NjAwMDAwMDAwMDAwMDAwMSJ9XX0sIk1lZGljYW1lbnRzIjpbeyJJZCI6Ijc2ODA1MjExMDEzMDYiLCJJZFR5cGUiOjIsIlBvcyI6W3siRCI6WzEsMCwwLDBdfV0sIlVuaXQiOiJTVEsifV0sIk1lZFR5cGUiOjMsIklkIjoiM2MwZjVhNjEtMjdkOC00YTdlLWIzYTktNmYwZTViMGM5ZDExIiwiQXV0aCI6Ijc2MDEwMDAwMDAwMDEiLCJEdCI6IjIwMjYtMTAtMDFUMDk6MzA6MDArMDI6MDAifQ=="
+  }
+}
+
+tests {
+  test("status 422", function () {
+    expect(res.status).to.equal(422);
+  });
+  test("errorType CONVERSION_FAILED", function () {
+    expect(res.body.errorType).to.equal("CONVERSION_FAILED");
+  });
+  test("report contains MISSING_REQUIRED_DATA", function () {
+    const codes = res.body.report.entries.map((e) => e.code);
+    expect(codes).to.include("MISSING_REQUIRED_DATA");
+  });
+}

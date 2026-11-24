@@ -1,0 +1,17 @@
+meta {
+  name: OpenAPI
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/v1/openapi.yaml
+  body: none
+  auth: none
+}
+
+tests {
+  test("status 200", function () {
+    expect(res.status).to.equal(200);
+  });
+}

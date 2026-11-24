@@ -1,0 +1,30 @@
+meta {
+  name: Invalid JSON input
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/v1/conversions/chmed16a/ch-emed
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "document": "eyJJZCI6ICJicm9rZW4iLCAiTWVkVHlwZSI6IDEsICJQYXRpZW50Ijogew=="
+  }
+}
+
+tests {
+  test("status 422", function () {
+    expect(res.status).to.equal(422);
+  });
+  test("errorType INVALID_INPUT", function () {
+    expect(res.body.errorType).to.equal("INVALID_INPUT");
+  });
+  test("report contains PARSE_ERROR", function () {
+    const codes = res.body.report.entries.map((e) => e.code);
+    expect(codes).to.include("PARSE_ERROR");
+  });
+}

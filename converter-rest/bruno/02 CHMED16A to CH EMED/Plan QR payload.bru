@@ -1,0 +1,40 @@
+meta {
+  name: Plan QR payload
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/conversions/chmed16a/ch-emed
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "document": "Q0hNRUQxNkExSDRzSUFBQUFBQUFDQTVWUlhVdkRRQkQ4SzJGZnZjaHVMaDl0M3F4RkxYNVNvNExTaHpSWm02QmVTbkpGU3VsL2R5L1ZxdUNMeHhIWW5ibloyY2tHSmlXa2dFWHlqTThKKzNwT2hSOFd4UDR3anlLZjhtQ3VpN0NNR0FrVVhIS1pyWmNNS1NrNFd0bEtYaVl4RW40ZVJ4bGJhUVlZeEQ2aGo1VGhNTldZSWg1Z0lGOGgzT1MyWmlPc0RaeGM1VzhpQm1lNTZRUzUrQ3d2VjUzbFZocWpYb3lHa1NocFAzRHlwMnhLd1p5Qlc5c3lPMExHblgzbmhlZnd4M29wSFkzOXFPUGFycVVhY1d1Y3ZGbElVYkx6VURYR1RUb0l5ZFBrQ2R2cnIwQ1Rzb1AwYVFQN1BlL3pWMkVPTUlsaS9IVUl0ck50bjBsZGlIRmpkdy83UEpONGdGRkFoS1F4N2xWM2VvSE1ibmE4c1QxcG03ZGZZYm40QkNPRkNnOGpoYlB0VE1HZHFkMlN0OW01d05uTFl0b1p0OU9yeE44VVZkbXVpaGNCanBiTGllbHM2K0tycmZlUWR4MjNIdGZHY0NYZW9QOWZqWGlGRkJWTW0xeUlOOWV3VlQ4Tkk0WWhhaDMreTdETm1uMHY4UFhYRXJLQ29yOVcrUFloOFgwQTVkWjVLbjhDQUFBPQo=",
+    "options": {
+      "author": {
+        "gln": "7601000000001",
+        "given": "Anna",
+        "family": "Beispiel",
+        "organization": {
+          "name": "Praxis Beispiel",
+          "street": "Testweg 1",
+          "zip": "3000",
+          "city": "Bern",
+          "country": "CH"
+        }
+      }
+    }
+  }
+}
+
+tests {
+  test("status 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  test("outputMediaType application/fhir+json", function () {
+    expect(res.body.outputMediaType).to.equal("application/fhir+json");
+  });
+}

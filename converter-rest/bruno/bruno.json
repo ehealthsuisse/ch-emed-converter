@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "CH EMED Converter REST",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

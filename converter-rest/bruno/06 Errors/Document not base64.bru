@@ -1,0 +1,26 @@
+meta {
+  name: Document not base64
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/conversions/chmed16a/ch-emed
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "document": "not base64!"
+  }
+}
+
+tests {
+  test("status 400", function () {
+    expect(res.status).to.equal(400);
+  });
+  test("errorType MALFORMED_REQUEST", function () {
+    expect(res.body.errorType).to.equal("MALFORMED_REQUEST");
+  });
+}

@@ -1,0 +1,29 @@
+meta {
+  name: eMediplan card to EPR treatment plans
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/v1/conversions/ch-emed/ch-emed-epr
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "document": "{{chEmedCardOfficial}}",
+    "options": {
+      "outputForm": "treatment-plans"
+    }
+  }
+}
+
+tests {
+  test("status 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  test("outputMediaType application/fhir+json", function () {
+    expect(res.body.outputMediaType).to.equal("application/fhir+json");
+  });
+}
