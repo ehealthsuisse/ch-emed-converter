@@ -19,6 +19,11 @@ the report format MUST be recorded here (constitution, "Development Workflow").
 - Remaining: OGNL 3.3.4 (CVE-2026-113730, moderate), a transitive dependency of Thymeleaf in the HL7
   validator; the fix needs OGNL 3.4, which Thymeleaf 3.1 does not support. The converter evaluates
   no templates or OGNL expressions from input, so the flaw is not reachable.
+- Report messages of the FHIR validation: an apostrophe in a word ("can't", "doesn't") was taken
+  for an opening quote, so the quoted value after it stayed visible in the report, e.g.
+  `can'…'http://loinc.org#55108-5'` in `Terminology_PassThrough_TX_Message`. Apostrophes are now
+  told apart from quotes, and a value that is never closed is removed up to the end of the
+  message. Only the text of such messages changes; codes, severities and paths do not.
 
 ### Added
 

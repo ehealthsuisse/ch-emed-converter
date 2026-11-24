@@ -28,6 +28,47 @@ class ValidationMessageSanitizerTest {
   }
 
   @Test
+  void apostropheInWordDoesNotOpenQuote() {
+    // Terminology_PassThrough_TX_Message: "{0} (for ''{1}#{2}'')"; the apostrophe of "can't"
+    // must not pair with the opening quote of the value
+    String sanitized =
+        ValidationMessageSanitizer.sanitize(
+            "Terminology_PassThrough_TX_Message",
+            "CodeSystem is unknown and can't be validated (for 'http://loinc.org#55108-5')");
+
+    assertThat(sanitized)
+        .isEqualTo(
+            "Terminology_PassThrough_TX_Message: CodeSystem is unknown and can't be validated"
+                + " (for '…')");
+  }
+
+  @Test
+  void removesValueAfterSeveralApostropheWords() {
+    String sanitized =
+        ValidationMessageSanitizer.sanitize(
+            null, "The name doesn't match and isn't allowed: 'Wegmüller', see the patient's data");
+
+    assertThat(sanitized)
+        .doesNotContain("Wegmüller")
+        .isEqualTo("The name doesn't match and isn't allowed: '…', see the patient's data");
+  }
+
+  @Test
+  void removesQuotedValueContainingApostrophe() {
+    String sanitized =
+        ValidationMessageSanitizer.sanitize(null, "The value 'O'Brien' exceeds the length");
+
+    assertThat(sanitized).doesNotContain("Brien").isEqualTo("The value '…' exceeds the length");
+  }
+
+  @Test
+  void removesUnclosedQuotedValue() {
+    String sanitized = ValidationMessageSanitizer.sanitize(null, "Can't parse 'Wegmüller");
+
+    assertThat(sanitized).doesNotContain("Wegmüller").isEqualTo("Can't parse '…");
+  }
+
+  @Test
   void removesDatesAndLongDigitSequences() {
     String sanitized =
         ValidationMessageSanitizer.sanitize(
