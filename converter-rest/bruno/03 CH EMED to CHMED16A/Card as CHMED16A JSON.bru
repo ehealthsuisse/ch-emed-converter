@@ -1,0 +1,26 @@
+meta {
+  name: Card as CHMED16A JSON
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/conversions/ch-emed/chmed16a
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "document": "{{chEmedCard}}"
+  }
+}
+
+tests {
+  test("status 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  test("outputMediaType application/json", function () {
+    expect(res.body.outputMediaType).to.equal("application/json");
+  });
+}

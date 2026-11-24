@@ -1,0 +1,30 @@
+meta {
+  name: Signed eRezept URL
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/v1/conversions/chmed16a/ch-emed
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "document": "aHR0cHM6Ly9lcHJlc2NyaXB0aW9uLmhpbi5jaC8jQ0hNRUQxNkExSDRzSUFBQUFBQUFBQTRWU1lXL2FNQkQ5SzVhL05rSG5oRkNTVDZPbEsyaHJoOVpza3pieHdTUkhZZ0ZPNUppT0R2SGZkM2FvVktwSmk1SVB2bmUrdkh2dkhmbENXb1hhOHV6SVB6N0tIZktNejZUdWVNQS9uNDhQKzg2aW9jTE5sTnE0U0JNSUlRNGpRYVY3MUNWaG1RajRreldJcmlISHp2N0dpam44cDJxcEVnTUFIVzZWZmFIVERScE5wMFhkYURmK2FpaFlMQmkxTVA4UzlMVjRKdUI2QkFMNkowMnBPaTg3bnYwNjh2eWxSZi9INzNKTGJXTzRUa1p3OFFoK1dwNEMvb0NsS21nSGJmdUw4OUpQSFVNU0NRRWlocEdmMnMrTGlGSFQ5MDF0M2xCbkJORW9GRkVZdTBXbWhJZ0FBaGdrQVN4UHk0Qi8wOHB0KzVSL0lualN0blBkV2VQa1VwYjlrRjJIaHFIU0dtc2k0SFpDVWlJbW1mYXJ6ck4vWEMxa3NmRS9udXZ5MWlrYnhjTms0TmdIWjdKM3FrS05IVnNZaWEwMDByNGhMRjVuZ1dORHUvYmxPRGp2dVJMcnVCQVlwbVV5REljU01Cd2pGR0VrUjRWWXB6Z3VJWExFOTdhKzFCcThiNTFiWmVZWk9aVzg4NzBnWkw3SUljMWl5QUN1SU1wNnkzWWJaNjJ5RmhrWkxPMWVWNnpjbTZKbXBVSTJhUnRiNHdhcDArQ3paemtyRm1pNlJydmszVy8xUDBpODVqR3ZVYjdKbzhzWFNVUUR2cGpLM1Q3WFNhU0Q2cGlIQTErY3JOZnFRTWhrdTYxd1IyNGdtNU1qQnBtTHhoL2xmTG1JYmVWOCsxOXczMnZ6THNoQ3VJOWVndTUyVXJtTXRwN2FCenpJWGJ2RlFVTzhUNmUvdFgyYjVud0RBQUE9Jmk9RXJpa2ErTXVzdGVyKyUyOEhJTiU3Q2VtdXN0MSUyOSZ0PTE3NjcyMjU2MDAmcz0zMDY2MDIzMTAwYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWIK"
+  }
+}
+
+tests {
+  test("status 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  test("has signature", function () {
+    expect(res.body).to.have.property("signature");
+  });
+  test("report contains SIGNATURE_NOT_VERIFIED", function () {
+    const codes = res.body.report.entries.map((e) => e.code);
+    expect(codes).to.include("SIGNATURE_NOT_VERIFIED");
+  });
+}

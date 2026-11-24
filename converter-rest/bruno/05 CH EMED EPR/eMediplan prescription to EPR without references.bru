@@ -1,0 +1,27 @@
+meta {
+  name: eMediplan prescription to EPR without references
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/v1/conversions/ch-emed/ch-emed-epr
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "document": "{{chEmedRxErezept}}"
+  }
+}
+
+tests {
+  test("status 422", function () {
+    expect(res.status).to.equal(422);
+  });
+  test("report contains MISSING_REQUIRED_DATA", function () {
+    const codes = res.body.report.entries.map((e) => e.code);
+    expect(codes).to.include("MISSING_REQUIRED_DATA");
+  });
+}

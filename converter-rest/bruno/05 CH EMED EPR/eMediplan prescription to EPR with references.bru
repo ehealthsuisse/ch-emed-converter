@@ -1,0 +1,35 @@
+meta {
+  name: eMediplan prescription to EPR with references
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/v1/conversions/ch-emed/ch-emed-epr
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "document": "{{chEmedRxErezept}}",
+    "options": {
+      "treatmentPlanReferences": [
+        {
+          "documentId": "urn:uuid:6f1c2a3b-0000-4000-8000-000000000001",
+          "statementId": "urn:uuid:6f1c2a3b-0000-4000-8000-000000000002"
+        }
+      ]
+    }
+  }
+}
+
+tests {
+  test("status 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  test("report contains DERIVED_VALUE", function () {
+    const codes = res.body.report.entries.map((e) => e.code);
+    expect(codes).to.include("DERIVED_VALUE");
+  });
+}

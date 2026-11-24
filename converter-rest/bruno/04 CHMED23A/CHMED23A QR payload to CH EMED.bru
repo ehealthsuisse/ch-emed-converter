@@ -1,0 +1,26 @@
+meta {
+  name: CHMED23A QR payload to CH EMED
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/v1/conversions/chmed23a/ch-emed
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "document": "{{chmed23aPayload}}"
+  }
+}
+
+tests {
+  test("status 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  test("outputMediaType application/fhir+json", function () {
+    expect(res.body.outputMediaType).to.equal("application/fhir+json");
+  });
+}

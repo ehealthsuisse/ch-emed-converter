@@ -1,0 +1,29 @@
+meta {
+  name: CH EMED to CHMED23A QR image
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/v1/conversions/ch-emed/chmed23a
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "document": "{{chEmedFrom23a}}",
+    "options": {
+      "outputForm": "qr-image"
+    }
+  }
+}
+
+tests {
+  test("status 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  test("outputMediaType image/png", function () {
+    expect(res.body.outputMediaType).to.equal("image/png");
+  });
+}

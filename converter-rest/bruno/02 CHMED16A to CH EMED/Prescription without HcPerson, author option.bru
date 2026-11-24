@@ -1,0 +1,41 @@
+meta {
+  name: Prescription without HcPerson, author option
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/v1/conversions/chmed16a/ch-emed
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "document": "eyJQYXRpZW50Ijp7IkZOYW1lIjoiSGFucyIsIkxOYW1lIjoiTXVzdGVyIiwiQkR0IjoiMTk1MC0wMy0yMSIsIkdlbmRlciI6MSwiSWRzIjpbeyJUeXBlIjoxLCJWYWwiOiI4MDc1NjAwMDAwMDAwMDAwMDAwMSJ9XX0sIk1lZGljYW1lbnRzIjpbeyJJZCI6Ijc2ODA1MjExMDEzMDYiLCJJZFR5cGUiOjIsIlBvcyI6W3siRCI6WzEsMCwwLDBdfV0sIlVuaXQiOiJTVEsifV0sIk1lZFR5cGUiOjMsIklkIjoiM2MwZjVhNjEtMjdkOC00YTdlLWIzYTktNmYwZTViMGM5ZDExIiwiQXV0aCI6Ijc2MDEwMDAwMDAwMDEiLCJEdCI6IjIwMjYtMTAtMDFUMDk6MzA6MDArMDI6MDAifQ==",
+    "options": {
+      "author": {
+        "gln": "7601000000001",
+        "given": "Anna",
+        "family": "Beispiel",
+        "organization": {
+          "name": "Praxis Beispiel",
+          "street": "Testweg 1",
+          "zip": "3000",
+          "city": "Bern",
+          "country": "CH"
+        }
+      }
+    }
+  }
+}
+
+tests {
+  test("status 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  test("report contains DERIVED_VALUE", function () {
+    const codes = res.body.report.entries.map((e) => e.code);
+    expect(codes).to.include("DERIVED_VALUE");
+  });
+}

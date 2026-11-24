@@ -1,0 +1,29 @@
+meta {
+  name: Prescription as QR payload
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/v1/conversions/ch-emed/chmed16a
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "document": "{{chEmedRx}}",
+    "options": {
+      "outputForm": "qr-payload"
+    }
+  }
+}
+
+tests {
+  test("status 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  test("outputMediaType text/plain", function () {
+    expect(res.body.outputMediaType).to.equal("text/plain");
+  });
+}

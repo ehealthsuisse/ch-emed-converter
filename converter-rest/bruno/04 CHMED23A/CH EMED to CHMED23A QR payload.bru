@@ -1,0 +1,34 @@
+meta {
+  name: CH EMED to CHMED23A QR payload
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/v1/conversions/ch-emed/chmed23a
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "document": "{{chEmedFrom23a}}",
+    "options": {
+      "outputForm": "qr-payload"
+    }
+  }
+}
+
+script:post-response {
+  // input for the following requests
+  if (res.status === 200) bru.setVar("chmed23aPayload", res.body.output);
+}
+
+tests {
+  test("status 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  test("outputMediaType text/plain", function () {
+    expect(res.body.outputMediaType).to.equal("text/plain");
+  });
+}

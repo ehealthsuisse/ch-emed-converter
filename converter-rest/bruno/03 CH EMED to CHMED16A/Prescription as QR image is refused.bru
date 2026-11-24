@@ -1,0 +1,33 @@
+meta {
+  name: Prescription as QR image is refused
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/v1/conversions/ch-emed/chmed16a
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "document": "{{chEmedRx}}",
+    "options": {
+      "outputForm": "qr-image"
+    }
+  }
+}
+
+tests {
+  test("status 422", function () {
+    expect(res.status).to.equal(422);
+  });
+  test("errorType CONVERSION_FAILED", function () {
+    expect(res.body.errorType).to.equal("CONVERSION_FAILED");
+  });
+  test("report contains QR_IMAGE_NOT_ALLOWED", function () {
+    const codes = res.body.report.entries.map((e) => e.code);
+    expect(codes).to.include("QR_IMAGE_NOT_ALLOWED");
+  });
+}

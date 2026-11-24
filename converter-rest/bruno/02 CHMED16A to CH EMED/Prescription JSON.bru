@@ -1,0 +1,31 @@
+meta {
+  name: Prescription JSON
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/v1/conversions/chmed16a/ch-emed
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "document": "eyJQYXRpZW50Ijp7IkZOYW1lIjoiSGFucyIsIkxOYW1lIjoiTXVzdGVyIiwiQkR0IjoiMTk1MC0wMy0yMSIsIkdlbmRlciI6MSwiU3RyZWV0IjoiVGVzdHdlZyAxIiwiWmlwIjoiMzAwMCIsIkNpdHkiOiJCZXJuIiwiUGhvbmUiOiIrNDEgMzEgMDAwIDAwIDAwIiwiUmN2IjoiNzYwMTAwMDAwMDA5OSIsIklkcyI6W3siVHlwZSI6MSwiVmFsIjoiODA3NTYwMDAwMDAwMDAwMDAwMDEifV19LCJNZWRpY2FtZW50cyI6W3siSWQiOiI3NjgwNTIxMTAxMzA2IiwiSWRUeXBlIjoyLCJQb3MiOlt7IkR0VG8iOiIyMDI2LTEyLTMxIiwiRCI6WzEsMCwwLjUsMF19XSwiVW5pdCI6IlNUSyIsIkFwcEluc3RyIjoiTWl0IFdhc3NlciBlaW5uZWhtZW4iLCJSZXAiOjMsIlN1YnMiOjEsIk5iUGFjayI6MiwiSW5kQyI6IjEyMzQ1LjAxIn0seyJJZCI6IkVpZ2VuZXMgUHJhZXBhcmF0IiwiSWRUeXBlIjoxLCJTdWJzIjowfV0sIk1lZFR5cGUiOjMsIklkIjoiN2IxZjNjMWUtOWQ1NC00YTBlLThlMGMtMmE2YzFmOWU4ZDAyIiwiQXV0aCI6Ijc2MDEwMDAwMDAwMDEiLCJac3IiOiJIMTIzNDU2IiwiRHQiOiIyMDI2LTEwLTAxVDA5OjMwOjAwKzAyOjAwIiwiUm1rIjoiQml0dGUgQmVyYXR1bmcgZHVyY2ggZGllIEFwb3RoZWtlIiwicmV2IjozLCJIY1BlcnNvbiI6eyJHbG4iOiI3NjAxMDAwMDAwMDAxIiwiRk5hbWUiOiJUaGVhIiwiTE5hbWUiOiJUZXN0In0sIkhjT3JnIjp7Ik5hbWUiOiJQcmF4aXMgVGVzdCIsIk5hbWVBZmZpeCI6IkFsbGdlbWVpbmUgSW5uZXJlIE1lZGl6aW4iLCJTdHJlZXQiOiJUZXN0Z2Fzc2UgMSIsIlppcCI6IjMwMDAiLCJDaXR5IjoiQmVybiIsIlpzciI6IkgxMjM0NTYiLCJQaG9uZSI6Iis0MSAzMSAxMTEgMTEgMTEiLCJFbWFpbCI6InByYXhpc0BleGFtcGxlLm9yZyJ9fQ=="
+  }
+}
+
+script:post-response {
+  // input for the following requests
+  if (res.status === 200) bru.setVar("chEmedRx", res.body.output);
+}
+
+tests {
+  test("status 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  test("outputMediaType application/fhir+json", function () {
+    expect(res.body.outputMediaType).to.equal("application/fhir+json");
+  });
+}

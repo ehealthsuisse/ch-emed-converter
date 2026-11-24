@@ -1,0 +1,26 @@
+meta {
+  name: Capabilities
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/v1/capabilities
+  body: none
+  auth: none
+}
+
+tests {
+  test("status 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  test("has conversions", function () {
+    expect(res.body).to.have.property("conversions");
+  });
+  test("has formats", function () {
+    expect(res.body).to.have.property("formats");
+  });
+  test("has limits", function () {
+    expect(res.body).to.have.property("limits");
+  });
+}

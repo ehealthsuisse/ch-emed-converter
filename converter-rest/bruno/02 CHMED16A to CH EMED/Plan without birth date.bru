@@ -1,0 +1,27 @@
+meta {
+  name: Plan without birth date
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/api/v1/conversions/chmed16a/ch-emed
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "document": "eyJJZCI6IjBjN2YwZjdlLTNiMWMtNGMxZS05YTU1LTFhMmIzYzRkNWUyMiIsIk1lZFR5cGUiOjEsIkF1dGgiOiI3NjAxMDAwMDAwMDAxIiwiRHQiOiIyMDI2LTEwLTAxVDA5OjMwOjAwKzAyOjAwIiwKIlBhdGllbnQiOnsiRk5hbWUiOiJIYW5zIiwiTE5hbWUiOiJNdXN0ZXIiLCJHZW5kZXIiOjEsIkxuZyI6ImRlIiwiSWRzIjpbeyJUeXBlIjoxLCJWYWwiOiI4MDc1NjAwMDAwMDAwMDAwMDAwMSJ9XX0sCiJNZWRpY2FtZW50cyI6W3siSWQiOiI3NjgwNTIxMTAxMzA2IiwiSWRUeXBlIjoyLCJQb3MiOlt7IkR0RnJvbSI6IjIwMjYtMTAtMDEiLCJEIjpbMSwwLDAsMF19XSwiVW5pdCI6IlNUSyIsIkF1dG9NZWQiOjB9XX0K"
+  }
+}
+
+tests {
+  test("status 422", function () {
+    expect(res.status).to.equal(422);
+  });
+  test("report contains MISSING_REQUIRED_DATA", function () {
+    const codes = res.body.report.entries.map((e) => e.code);
+    expect(codes).to.include("MISSING_REQUIRED_DATA");
+  });
+}
