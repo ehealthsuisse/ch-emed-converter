@@ -54,8 +54,56 @@ class FailureStatusContractTest extends AbstractRestTest {
             "MALFORMED_REQUEST");
     // the caller's property name is not echoed, only the known parent path
     assertThat(problem.get("detail").asText())
-        .contains("options.(unknown property)")
+        .isEqualTo(
+            "Invalid or unknown property: options.(unknown property); allowed: strict, language,"
+                + " confidentiality, patientIdentifier, author, outputForm,"
+                + " treatmentPlanReferences, originalRepresentation")
         .doesNotContain("foo");
+  }
+
+  @Test
+  void unknownTopLevelPropertyListsAllowedNames() throws Exception {
+    JsonNode problem =
+        assertProblem(
+            raw("ch-emed", "chmed16a", "{\"document\":\"e30=\",\"foo\":1}"),
+            400,
+            "MALFORMED_REQUEST");
+    assertThat(problem.get("detail").asText())
+        .isEqualTo("Invalid or unknown property: (unknown property); allowed: document, options");
+  }
+
+  @Test
+  void unknownPropertyInListElementListsAllowedNames() throws Exception {
+    JsonNode problem =
+        assertProblem(
+            convert(
+                "ch-emed",
+                "ch-emed-epr",
+                CARD,
+                RestTestSupport.json(
+                    "{\"treatmentPlanReferences\":[{\"documentId\":\"urn:uuid:x\",\"foo\":1}]}")),
+            400,
+            "MALFORMED_REQUEST");
+    assertThat(problem.get("detail").asText())
+        .isEqualTo(
+            "Invalid or unknown property: options.treatmentPlanReferences[0].(unknown property);"
+                + " allowed: documentId, statementId")
+        .doesNotContain("foo");
+  }
+
+  @Test
+  void wrongTypeOfListOptionNamesTheOption() throws Exception {
+    JsonNode problem =
+        assertProblem(
+            convert(
+                "ch-emed",
+                "ch-emed-epr",
+                CARD,
+                RestTestSupport.json("{\"treatmentPlanReferences\":\"x\"}")),
+            400,
+            "MALFORMED_REQUEST");
+    assertThat(problem.get("detail").asText())
+        .isEqualTo("Invalid or unknown property: options.treatmentPlanReferences");
   }
 
   @Test
