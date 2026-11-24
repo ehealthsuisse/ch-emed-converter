@@ -1,12 +1,15 @@
 package ch.emed.converter.rest.error;
 
 import ch.emed.converter.rest.execution.BoundedConversionExecutor;
+import ch.emed.converter.rest.model.ConversionRequestMessage;
 import ch.emed.converter.rest.web.RequestAttributes;
 import ch.emed.converter.rest.web.RequestSizeLimitFilter;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.RecordComponent;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -104,47 +107,71 @@ public class GlobalExceptionHandler {
 
   /**
    * Property path of a Jackson failure, e.g. {@code options.patientIdentifier.system}. Property
-   * names come from the caller, so only names of the contract are echoed; the path ends before the
-   * first unknown name, which is replaced by a placeholder.
+   * names come from the caller, so only names of the request message are echoed: the path ends
+   * before the first unknown name, which is replaced by a placeholder and followed by the names
+   * allowed at that place. The names are taken from the request records, which follow
+   * contracts/openapi.yaml.
    */
   private static String jsonPath(Throwable e) {
     for (Throwable t = e; t != null; t = t.getCause()) {
       if (t instanceof JacksonException jackson) {
-        List<String> segments = new ArrayList<>();
+        StringBuilder path = new StringBuilder();
+        Class<?> type = ConversionRequestMessage.class;
         for (JacksonException.Reference ref : jackson.getPath()) {
           String name = ref.getPropertyName();
-          if (name == null || !CONTRACT_PROPERTIES.contains(name)) {
-            segments.add("(unknown property)");
+          if (name == null && ref.getIndex() >= 0) {
+            path.append('[').append(ref.getIndex()).append(']');
+            continue;
+          }
+          RecordComponent component = component(type, name);
+          if (component == null) {
+            if (!path.isEmpty()) {
+              path.append('.');
+            }
+            path.append("(unknown property)");
+            if (type.isRecord()) {
+              path.append("; allowed: ").append(names(type));
+            }
             break;
           }
-          segments.add(name);
+          if (!path.isEmpty()) {
+            path.append('.');
+          }
+          path.append(name);
+          type = valueType(component);
         }
-        return String.join(".", segments);
+        return path.toString();
       }
     }
     return "";
   }
 
-  /** Property names of the request message in contracts/openapi.yaml. */
-  private static final Set<String> CONTRACT_PROPERTIES =
-      Set.of(
-          "document",
-          "options",
-          "strict",
-          "language",
-          "confidentiality",
-          "patientIdentifier",
-          "system",
-          "value",
-          "author",
-          "gln",
-          "given",
-          "family",
-          "organization",
-          "name",
-          "street",
-          "zip",
-          "city",
-          "country",
-          "outputForm");
+  /** The record component of that name, or null if there is none. */
+  private static RecordComponent component(Class<?> type, String name) {
+    if (name == null || !type.isRecord()) {
+      return null;
+    }
+    for (RecordComponent component : type.getRecordComponents()) {
+      if (component.getName().equals(name)) {
+        return component;
+      }
+    }
+    return null;
+  }
+
+  /** The type of a component's value; for a list the type of its elements. */
+  private static Class<?> valueType(RecordComponent component) {
+    if (List.class.isAssignableFrom(component.getType())
+        && component.getGenericType() instanceof ParameterizedType list
+        && list.getActualTypeArguments()[0] instanceof Class<?> element) {
+      return element;
+    }
+    return component.getType();
+  }
+
+  private static String names(Class<?> type) {
+    return Arrays.stream(type.getRecordComponents())
+        .map(RecordComponent::getName)
+        .collect(Collectors.joining(", "));
+  }
 }

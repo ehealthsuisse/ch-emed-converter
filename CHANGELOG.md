@@ -74,6 +74,11 @@ the report format MUST be recorded here (constitution, "Development Workflow").
 
 ### Changed
 
+- REST problem `MALFORMED_REQUEST` for an unknown request property: `detail` now lists the property
+  names allowed at that place, e.g. `Invalid or unknown property: options.(unknown property);
+  allowed: strict, language, …`; the unknown name itself is still not echoed. A wrong value or
+  unknown property inside `treatmentPlanReferences` or at `originalRepresentation` was reported as
+  `options.(unknown property)`; it now names its path, e.g. `options.treatmentPlanReferences[0]`.
 - Feature 006: the CH EMED side shared by the eMediplan formats (document reader, profiles, labels,
   narratives, unit table) moved from `format-chmed16a` to `converter-core` (package
   `ch.emed.converter.core.chemed`); CHMED16A outputs and reports are unchanged.
